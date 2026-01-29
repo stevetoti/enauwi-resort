@@ -123,7 +123,7 @@ export default function VoiceCallWidget() {
       // Start the voice conversation session
       await conversation.startSession({
         agentId: AGENT_ID,
-        connectionType: 'webSocket' as const,
+        connectionType: 'websocket' as const,
       })
     } catch (error) {
       console.error('Failed to start voice call:', error)
