@@ -48,9 +48,15 @@ DINING:
 - Beachfront dining experiences
 
 GETTING HERE:
-- Fly into Port Vila (VLI) - Bauerfield Airport
-- Resort provides airport transfers
-- Located on the main island of Efate
+- Fly into Port Vila (VLI) - Bauerfield International Airport
+- Take a connecting flight to Norsup Airport on Malekula Island (Air Vanuatu domestic)
+- Resort provides airport transfers from Norsup
+- Located in South West Bay, Malekula Island, Malampa Province
+
+CONTACT:
+- Phone: +678 22170
+- Email: info@enauwiresort.vu
+- Website: https://enauwi-resort.vercel.app
 
 LANGUAGE NOTE: You understand English, Bislama, French, and basic Chinese. Respond in the same language the guest uses.
 
@@ -183,6 +189,35 @@ export async function POST(request: NextRequest) {
     })
 
     const aiResponse = completion.choices[0]?.message?.content || 'I apologize, but I\'m having trouble responding right now. Please try again.'
+
+    // Check if AI response mentions sending email/info — trigger actual email
+    const emailPatterns = /i['']ll send|sending you|email you|send .* details|send .* information/i
+    if (emailPatterns.test(aiResponse)) {
+      // Extract guest email from conversation if mentioned
+      const allMessages = [...conversationHistory.map((m: { content: string }) => m.content)].join(' ')
+      const emailMatch = allMessages.match(/[\w.-]+@[\w.-]+\.\w+/)
+      
+      if (emailMatch) {
+        try {
+          const baseUrl = request.nextUrl.origin
+          await fetch(`${baseUrl}/api/email/send`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'concierge_email',
+              data: {
+                guestName: 'Guest',
+                guestEmail: emailMatch[0],
+                subject: 'Information from E\'Nauwi Beach Resort Concierge',
+                body: aiResponse,
+              }
+            })
+          })
+        } catch (emailError) {
+          console.error('Failed to send concierge email:', emailError)
+        }
+      }
+    }
 
     return NextResponse.json({
       message: aiResponse,

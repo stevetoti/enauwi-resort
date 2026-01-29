@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageCircle, Send, X, Globe, Bot } from 'lucide-react'
+import { MessageCircle, Send, X, Globe, Bot, Phone, ExternalLink } from 'lucide-react'
 import type { ChatMessage } from '@/types'
 
 const languages = {
@@ -43,6 +43,118 @@ const translations = {
   }
 }
 
+const quickReplies = [
+  { label: '🏨 Show me rooms', message: 'Show me the available rooms and prices' },
+  { label: '🏄 Activities', message: 'What activities and experiences do you offer?' },
+  { label: '✈️ How to get there', message: 'How do I get to E\'Nauwi Beach Resort?' },
+  { label: '📞 Contact reception', message: 'How can I contact the reception team?' },
+]
+
+// Room data for rendering cards
+const roomData: Record<string, { name: string; image: string; price: string; description: string; amenities: string[] }> = {
+  'oceanfront bungalow': {
+    name: 'Oceanfront Bungalow',
+    image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&q=80',
+    price: '12,000 VT',
+    description: 'Private deck with ocean views, direct beach access',
+    amenities: ['🏖️ Beach Access', '📶 WiFi', '❄️ AC'],
+  },
+  'tropical garden suite': {
+    name: 'Tropical Garden Suite',
+    image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&q=80',
+    price: '18,000 VT',
+    description: 'Spacious suite with garden views and kitchenette',
+    amenities: ['🌿 Garden View', '🍳 Kitchen', '📶 WiFi'],
+  },
+  'premium beachfront villa': {
+    name: 'Premium Beachfront Villa',
+    image: 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=400&q=80',
+    price: '25,000 VT',
+    description: 'Private pool, full kitchen, panoramic ocean views',
+    amenities: ['🏊 Pool', '🌊 Ocean View', '🍳 Kitchen'],
+  },
+}
+
+// Simple markdown renderer
+function renderMarkdown(text: string): string {
+  return text
+    // Bold: **text** or __text__
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(.*?)__/g, '<strong>$1</strong>')
+    // Italic: *text* or _text_
+    .replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
+    // Links: [text](url)
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" class="text-blue-400 underline hover:text-blue-300">$1</a>')
+    // Lists: lines starting with - or •
+    .replace(/^[\-•]\s+(.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
+    // Numbers list: 1. text
+    .replace(/^\d+\.\s+(.+)$/gm, '<li class="ml-4 list-decimal">$1</li>')
+    // Line breaks
+    .replace(/\n/g, '<br>')
+}
+
+// Detect room mentions in text
+function detectRoomMentions(text: string): string[] {
+  const rooms: string[] = []
+  const lower = text.toLowerCase()
+  for (const key of Object.keys(roomData)) {
+    if (lower.includes(key)) {
+      rooms.push(key)
+    }
+  }
+  // Also detect by price patterns
+  if (lower.includes('12,000') || lower.includes('12000') || lower.includes('bungalow')) {
+    if (!rooms.includes('oceanfront bungalow')) rooms.push('oceanfront bungalow')
+  }
+  if (lower.includes('18,000') || lower.includes('18000') || lower.includes('garden suite')) {
+    if (!rooms.includes('tropical garden suite')) rooms.push('tropical garden suite')
+  }
+  if (lower.includes('25,000') || lower.includes('25000') || lower.includes('villa') || lower.includes('premium')) {
+    if (!rooms.includes('premium beachfront villa')) rooms.push('premium beachfront villa')
+  }
+  return rooms
+}
+
+function RoomCard({ roomKey }: { roomKey: string }) {
+  const room = roomData[roomKey]
+  if (!room) return null
+  
+  return (
+    <div className="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm my-2">
+      <div className="h-28 relative">
+        <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
+        <div className="absolute top-2 right-2 bg-ocean-dark/80 text-white text-xs font-bold px-2 py-1 rounded-full">
+          {room.price}/night
+        </div>
+      </div>
+      <div className="p-3">
+        <h4 className="font-semibold text-sm text-gray-900 mb-1">{room.name}</h4>
+        <p className="text-xs text-gray-500 mb-2">{room.description}</p>
+        <div className="flex flex-wrap gap-1 mb-2">
+          {room.amenities.map((a, i) => (
+            <span key={i} className="text-[10px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded-full">{a}</span>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <a
+            href={`/book`}
+            className="flex-1 text-center text-xs font-semibold bg-gold text-ocean-dark py-1.5 rounded-lg hover:bg-gold-light transition-colors"
+          >
+            Book Now
+          </a>
+          <a
+            href="#accommodations"
+            className="flex items-center justify-center gap-1 text-xs font-medium text-ocean border border-ocean/20 px-2 py-1.5 rounded-lg hover:bg-ocean-50 transition-colors"
+          >
+            <ExternalLink size={10} />
+            View
+          </a>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -50,8 +162,10 @@ export default function ChatWidget() {
   const [isTyping, setIsTyping] = useState(false)
   const [currentLanguage, setCurrentLanguage] = useState<keyof typeof languages>('en')
   const [showLanguageSelector, setShowLanguageSelector] = useState(false)
+  const [showQuickReplies, setShowQuickReplies] = useState(true)
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const t = translations[currentLanguage]
 
@@ -63,7 +177,6 @@ export default function ChatWidget() {
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      // Add welcome message
       setMessages([{
         role: 'assistant',
         content: t.welcome,
@@ -73,12 +186,29 @@ export default function ChatWidget() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, t.welcome])
 
-  const sendMessage = async () => {
-    if (!inputMessage.trim()) return
+  // Auto-resize textarea
+  const adjustTextareaHeight = useCallback(() => {
+    const textarea = textareaRef.current
+    if (textarea) {
+      textarea.style.height = 'auto'
+      const maxHeight = 96 // ~4 lines
+      textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px'
+    }
+  }, [])
+
+  useEffect(() => {
+    adjustTextareaHeight()
+  }, [inputMessage, adjustTextareaHeight])
+
+  const sendMessage = async (messageText?: string) => {
+    const text = messageText || inputMessage
+    if (!text.trim()) return
+
+    setShowQuickReplies(false)
 
     const userMessage: ChatMessage = {
       role: 'user',
-      content: inputMessage,
+      content: text,
       timestamp: new Date()
     }
 
@@ -86,14 +216,17 @@ export default function ChatWidget() {
     setInputMessage('')
     setIsTyping(true)
 
+    // Reset textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+    }
+
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: inputMessage,
+          message: text,
           language: currentLanguage,
           messages: messages
         })
@@ -115,7 +248,7 @@ export default function ChatWidget() {
       console.error('Error sending message:', error)
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Sorry, I\'m having trouble connecting right now. Please try again later.',
+        content: 'Sorry, I\'m having trouble connecting right now. Please try again or call us at +678 22170.',
         timestamp: new Date()
       }])
     } finally {
@@ -123,11 +256,12 @@ export default function ChatWidget() {
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       sendMessage()
     }
+    // Shift+Enter = new line (default behavior)
   }
 
   const formatTime = (date: Date) => {
@@ -146,17 +280,24 @@ export default function ChatWidget() {
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            className="mb-4 w-80 h-96 bg-white rounded-2xl shadow-2xl border border-blue-100 flex flex-col overflow-hidden"
+            className="mb-4 w-[340px] sm:w-96 h-[500px] bg-white rounded-2xl shadow-2xl border border-blue-100 flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center justify-between shrink-0">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                   <Bot size={16} />
                 </div>
                 <div>
                   <h3 className="font-semibold text-sm">E&apos;Nauwi Concierge</h3>
-                  <p className="text-xs text-blue-100">Online now</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs text-blue-100">Online now</p>
+                    <span className="text-[10px] text-blue-200">•</span>
+                    <a href="tel:+67822170" className="text-xs text-blue-200 hover:text-white flex items-center gap-1">
+                      <Phone size={9} />
+                      +678 22170
+                    </a>
+                  </div>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
@@ -175,7 +316,7 @@ export default function ChatWidget() {
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.8 }}
-                        className="absolute right-0 top-10 bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-32"
+                        className="absolute right-0 top-10 bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-32 z-10"
                       >
                         {Object.entries(languages).map(([code, lang]) => (
                           <button
@@ -208,27 +349,49 @@ export default function ChatWidget() {
 
             {/* Messages */}
             <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-gradient-to-b from-blue-50/30 to-white">
-              {messages.map((message, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`max-w-xs px-3 py-2 rounded-2xl text-sm ${
-                    message.role === 'user' 
-                      ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white' 
-                      : 'bg-white border border-gray-200 text-gray-800 shadow-sm'
-                  }`}>
-                    <p>{message.content}</p>
-                    <p className={`text-xs mt-1 ${
-                      message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
-                    }`}>
-                      {formatTime(message.timestamp)}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
+              {messages.map((message, index) => {
+                const roomMentions = message.role === 'assistant' ? detectRoomMentions(message.content) : []
+                
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className={`max-w-[85%] ${message.role === 'user' ? '' : ''}`}>
+                      <div className={`px-3 py-2 rounded-2xl text-sm ${
+                        message.role === 'user' 
+                          ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white' 
+                          : 'bg-white border border-gray-200 text-gray-800 shadow-sm'
+                      }`}>
+                        {message.role === 'assistant' ? (
+                          <div 
+                            className="chat-markdown leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: renderMarkdown(message.content) }} 
+                          />
+                        ) : (
+                          <p className="whitespace-pre-wrap">{message.content}</p>
+                        )}
+                        <p className={`text-xs mt-1 ${
+                          message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
+                        }`}>
+                          {formatTime(message.timestamp)}
+                        </p>
+                      </div>
+                      
+                      {/* Room Cards */}
+                      {roomMentions.length > 0 && (
+                        <div className="mt-2 space-y-2">
+                          {roomMentions.map((roomKey) => (
+                            <RoomCard key={roomKey} roomKey={roomKey} />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )
+              })}
               
               {isTyping && (
                 <motion.div
@@ -249,25 +412,48 @@ export default function ChatWidget() {
               <div ref={messagesEndRef} />
             </div>
 
+            {/* Quick Replies */}
+            {showQuickReplies && messages.length <= 1 && (
+              <div className="px-4 py-2 border-t border-gray-50 bg-gray-50/50">
+                <div className="flex flex-wrap gap-1.5">
+                  {quickReplies.map((qr) => (
+                    <button
+                      key={qr.label}
+                      onClick={() => sendMessage(qr.message)}
+                      className="text-xs px-3 py-1.5 bg-white border border-blue-200 text-blue-700 rounded-full hover:bg-blue-50 hover:border-blue-300 transition-all font-medium"
+                    >
+                      {qr.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Input */}
-            <div className="p-4 border-t border-gray-100 bg-white">
-              <div className="flex space-x-2">
-                <input
-                  type="text"
+            <div className="p-3 border-t border-gray-100 bg-white shrink-0">
+              <div className="flex items-end gap-2">
+                <textarea
+                  ref={textareaRef}
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyDown}
                   placeholder={t.placeholder}
-                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  rows={1}
+                  className="flex-1 px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none overflow-hidden"
+                  style={{ minHeight: '38px', maxHeight: '96px' }}
                 />
                 <button
-                  onClick={sendMessage}
+                  onClick={() => sendMessage()}
                   disabled={!inputMessage.trim() || isTyping}
-                  className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center"
+                  className="px-3 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center shrink-0"
+                  style={{ height: '38px' }}
                 >
                   <Send size={16} />
                 </button>
               </div>
+              <p className="text-[10px] text-gray-400 mt-1 text-center">
+                Shift+Enter for new line • Enter to send
+              </p>
             </div>
           </motion.div>
         )}

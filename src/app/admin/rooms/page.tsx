@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   BedDouble,
   Edit2,
@@ -10,6 +10,10 @@ import {
   ToggleRight,
   Users,
   ImageIcon,
+  Upload,
+  Trash2,
+  Link as LinkIcon,
+  Plus,
 } from 'lucide-react'
 import { createClientSupabase } from '@/lib/supabase'
 import { formatVatu } from '@/lib/utils'
@@ -210,11 +214,112 @@ function RoomEditModal({
     price_vt: room.price_vt,
     max_guests: room.max_guests,
     amenities: room.amenities.join(', '),
-    images: room.images.join('\n'),
   })
+  const [images, setImages] = useState<string[]>(room.images || [])
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [urlInput, setUrlInput] = useState('')
+  const [showUrlInput, setShowUrlInput] = useState(false)
+  const [dragActive, setDragActive] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const supabase = createClientSupabase()
+
+  const handleUpload = async (files: FileList | File[]) => {
+    const fileArray = Array.from(files)
+    if (fileArray.length === 0) return
+    
+    setUploading(true)
+    const newUrls: string[] = []
+    
+    for (const file of fileArray) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert(`${file.name} is not an image file`)
+        continue
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`${file.name} is too large (max 5MB)`)
+        continue
+      }
+
+      const ext = file.name.split('.').pop() || 'jpg'
+      const fileName = `${room.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+      
+      const { error } = await supabase.storage
+        .from('room-images')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false,
+        })
+
+      if (error) {
+        console.error('Upload error:', error)
+        alert(`Failed to upload ${file.name}: ${error.message}`)
+        continue
+      }
+
+      const { data: urlData } = supabase.storage
+        .from('room-images')
+        .getPublicUrl(fileName)
+
+      newUrls.push(urlData.publicUrl)
+    }
+
+    if (newUrls.length > 0) {
+      setImages(prev => [...prev, ...newUrls])
+    }
+    setUploading(false)
+  }
+
+  const handleDeleteImage = async (url: string, index: number) => {
+    if (!confirm('Remove this image?')) return
+    
+    // If it's a supabase storage URL, also delete from storage
+    if (url.includes('room-images')) {
+      try {
+        const path = url.split('/room-images/')[1]
+        if (path) {
+          await supabase.storage.from('room-images').remove([decodeURIComponent(path)])
+        }
+      } catch (err) {
+        console.error('Error deleting from storage:', err)
+      }
+    }
+    
+    setImages(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const handleAddUrl = () => {
+    if (!urlInput.trim()) return
+    try {
+      new URL(urlInput) // validate URL
+      setImages(prev => [...prev, urlInput.trim()])
+      setUrlInput('')
+      setShowUrlInput(false)
+    } catch {
+      alert('Please enter a valid URL')
+    }
+  }
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true)
+    } else if (e.type === 'dragleave') {
+      setDragActive(false)
+    }
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+    if (e.dataTransfer.files) {
+      handleUpload(e.dataTransfer.files)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -230,7 +335,7 @@ function RoomEditModal({
           price_vt: formData.price_vt,
           max_guests: formData.max_guests,
           amenities: formData.amenities.split(',').map((a) => a.trim()).filter(Boolean),
-          images: formData.images.split('\n').map((u) => u.trim()).filter(Boolean),
+          images,
         })
         .eq('id', room.id)
 
@@ -246,7 +351,7 @@ function RoomEditModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">Edit Room</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
@@ -335,17 +440,110 @@ function RoomEditModal({
             />
           </div>
 
+          {/* Image Upload Section */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Image URLs (one per line)
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Room Images
             </label>
-            <textarea
-              value={formData.images}
-              onChange={(e) => setFormData({ ...formData, images: e.target.value })}
-              rows={3}
-              placeholder="https://images.unsplash.com/photo-..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent font-mono text-xs"
-            />
+            
+            {/* Image Thumbnails */}
+            {images.length > 0 && (
+              <div className="grid grid-cols-4 gap-2 mb-3">
+                {images.map((url, idx) => (
+                  <div key={idx} className="relative group rounded-lg overflow-hidden h-20 bg-gray-100">
+                    <img src={url} alt={`Room ${idx + 1}`} className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteImage(url, idx)}
+                      className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash2 className="h-4 w-4 text-white" />
+                    </button>
+                    {idx === 0 && (
+                      <span className="absolute top-1 left-1 text-[9px] bg-blue-600 text-white px-1 rounded">
+                        Main
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Drag & Drop Upload Area */}
+            <div
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all ${
+                dragActive
+                  ? 'border-blue-500 bg-blue-50'
+                  : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+              }`}
+            >
+              {uploading ? (
+                <div className="flex items-center justify-center gap-2 text-blue-600">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                  <span className="text-sm font-medium">Uploading...</span>
+                </div>
+              ) : (
+                <>
+                  <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                  <p className="text-sm text-gray-600 mb-1">
+                    <span className="font-medium text-blue-600">Click to upload</span> or drag & drop
+                  </p>
+                  <p className="text-xs text-gray-400">PNG, JPG, WebP up to 5MB</p>
+                </>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => e.target.files && handleUpload(e.target.files)}
+                className="hidden"
+              />
+            </div>
+
+            {/* Or paste URL */}
+            <div className="mt-2">
+              {showUrlInput ? (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={urlInput}
+                    onChange={(e) => setUrlInput(e.target.value)}
+                    placeholder="https://images.unsplash.com/photo-..."
+                    className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddUrl())}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddUrl}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                  >
+                    <Plus className="h-3 w-3" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setShowUrlInput(false); setUrlInput('') }}
+                    className="px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowUrlInput(true)}
+                  className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  <LinkIcon className="h-3 w-3" />
+                  Or paste image URL
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="flex gap-3 pt-2">

@@ -8,6 +8,7 @@ import Location from "@/components/Location";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
+import VoiceCallWidget from "@/components/VoiceCallWidget";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       <Contact />
       <Footer />
       <ChatWidget />
+      <VoiceCallWidget />
     </main>
   );
 }

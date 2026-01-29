@@ -114,10 +114,39 @@ export async function POST(request: NextRequest) {
       throw bookingError
     }
 
+    const reference = generateBookingReference()
+
+    // Send confirmation emails (fire-and-forget)
+    try {
+      const baseUrl = request.nextUrl.origin
+      await fetch(`${baseUrl}/api/email/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'booking_confirmation',
+          data: {
+            guestName,
+            guestEmail,
+            guestPhone,
+            roomName: room.name,
+            checkIn: new Date(checkIn).toLocaleDateString('en-US', { dateStyle: 'long' }),
+            checkOut: new Date(checkOut).toLocaleDateString('en-US', { dateStyle: 'long' }),
+            guests,
+            totalPrice: `VT ${totalPrice.toLocaleString()}`,
+            reference,
+            specialRequests
+          }
+        })
+      })
+    } catch (emailError) {
+      console.error('Failed to send booking email:', emailError)
+      // Don't fail the booking if email fails
+    }
+
     // Return booking confirmation
     return NextResponse.json({
       booking,
-      reference: generateBookingReference(),
+      reference,
       room,
       totalPrice,
       nights

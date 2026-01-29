@@ -13,11 +13,13 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const activities = [
   {
     icon: Waves,
     title: "Snorkeling & Diving",
+    slug: "snorkeling-diving",
     description:
       "Explore vibrant coral reefs teeming with tropical fish, sea turtles, and colourful marine life in Malekula's crystal-clear waters.",
     image:
@@ -28,6 +30,7 @@ const activities = [
   {
     icon: TreePalm,
     title: "Cultural Village Tour",
+    slug: "cultural-village-tour",
     description:
       "Visit traditional kastom villages and experience ancient Melanesian customs, sand drawings, and ceremonial dances unique to Malekula.",
     image:
@@ -38,6 +41,7 @@ const activities = [
   {
     icon: Ship,
     title: "Island Hopping",
+    slug: "island-hopping",
     description:
       "Cruise to neighbouring islands and discover secluded beaches, hidden caves, and breathtaking volcanic landscapes across the archipelago.",
     image:
@@ -48,6 +52,7 @@ const activities = [
   {
     icon: Fish,
     title: "Sport Fishing",
+    slug: "sport-fishing",
     description:
       "Cast your line into deep Pacific waters for marlin, tuna, and mahi-mahi with our experienced local fishing guides.",
     image:
@@ -58,6 +63,7 @@ const activities = [
   {
     icon: Mountain,
     title: "Rainforest Hiking",
+    slug: "jungle-trek",
     description:
       "Trek through lush tropical rainforest to hidden waterfalls, ancient banyan trees, and stunning panoramic island viewpoints.",
     image:
@@ -68,6 +74,7 @@ const activities = [
   {
     icon: Sailboat,
     title: "Ocean Kayaking",
+    slug: "sunset-kayaking",
     description:
       "Paddle along the stunning coastline, exploring mangrove channels, sea caves, and pristine lagoons at your own pace.",
     image:
@@ -127,52 +134,56 @@ export default function Activities() {
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.3 + idx * 0.1 }}
-              className="group relative rounded-3xl overflow-hidden cursor-pointer shadow-lg shadow-ocean/5 hover:shadow-2xl hover:shadow-ocean/15 transition-all duration-500 hover:-translate-y-2"
             >
-              {/* Image */}
-              <div className="relative h-80">
-                <Image
-                  src={activity.image}
-                  alt={activity.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/90 via-ocean-dark/40 to-transparent" />
+              <Link
+                href={`/activities/${activity.slug}`}
+                className="group relative rounded-3xl overflow-hidden cursor-pointer shadow-lg shadow-ocean/5 hover:shadow-2xl hover:shadow-ocean/15 transition-all duration-500 hover:-translate-y-2 block"
+              >
+                {/* Image */}
+                <div className="relative h-80">
+                  <Image
+                    src={activity.image}
+                    alt={activity.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/90 via-ocean-dark/40 to-transparent" />
 
-                {/* Tag */}
-                <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-medium rounded-full border border-white/20">
-                    {activity.tag}
-                  </span>
-                </div>
+                  {/* Tag */}
+                  <div className="absolute top-4 left-4">
+                    <span className="px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-medium rounded-full border border-white/20">
+                      {activity.tag}
+                    </span>
+                  </div>
 
-                {/* Duration */}
-                <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1 bg-black/30 backdrop-blur-md text-white/80 text-xs rounded-full">
-                  <Clock size={10} />
-                  {activity.duration}
-                </div>
+                  {/* Duration */}
+                  <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1 bg-black/30 backdrop-blur-md text-white/80 text-xs rounded-full">
+                    <Clock size={10} />
+                    {activity.duration}
+                  </div>
 
-                {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-gold/20 backdrop-blur-md flex items-center justify-center border border-gold/30">
-                      <activity.icon size={18} className="text-gold-light" />
+                  {/* Content */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-gold/20 backdrop-blur-md flex items-center justify-center border border-gold/30">
+                        <activity.icon size={18} className="text-gold-light" />
+                      </div>
+                      <h3 className="font-serif text-xl font-bold text-white">
+                        {activity.title}
+                      </h3>
                     </div>
-                    <h3 className="font-serif text-xl font-bold text-white">
-                      {activity.title}
-                    </h3>
-                  </div>
 
-                  <p className="text-white/70 text-sm leading-relaxed mb-4">
-                    {activity.description}
-                  </p>
+                    <p className="text-white/70 text-sm leading-relaxed mb-4">
+                      {activity.description}
+                    </p>
 
-                  <div className="flex items-center gap-2 text-gold-light text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
-                    Learn More <ArrowRight size={14} />
+                    <div className="flex items-center gap-2 text-gold-light text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
+                      Learn More <ArrowRight size={14} />
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             </motion.div>
           ))}
         </div>

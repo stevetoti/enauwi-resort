@@ -111,8 +111,17 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* CTA + Mobile Toggle */}
+          {/* Phone + CTA + Mobile Toggle */}
           <div className="flex items-center gap-3">
+            <a
+              href="tel:+67822170"
+              className={`hidden md:flex items-center gap-1.5 text-sm font-medium transition-colors duration-300 ${
+                isScrolled ? "text-ocean/70 hover:text-ocean" : "text-white/70 hover:text-white"
+              }`}
+            >
+              <Phone size={13} />
+              +678 22170
+            </a>
             <a
               href="/book"
               className={`hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
@@ -121,7 +130,6 @@ export default function Navbar() {
                   : "bg-white/20 backdrop-blur text-white border border-white/30 hover:bg-white/30"
               }`}
             >
-              <Phone size={14} />
               Book Now
             </a>
 
