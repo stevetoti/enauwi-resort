@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Calendar, Users, MapPin, Wifi, Car, Coffee, ShowerHead } from 'lucide-react'
 import { Room } from '@/types'
 import { formatVatu, getDaysBetween } from '@/lib/utils'
@@ -26,7 +26,7 @@ export default function BookPage() {
     setCheckOut(dayAfter.toISOString().split('T')[0])
   }, [])
 
-  const searchRooms = async () => {
+  const searchRooms = useCallback(async () => {
     if (!checkIn || !checkOut) return
 
     setLoading(true)
@@ -51,13 +51,13 @@ export default function BookPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [checkIn, checkOut, guests])
 
   useEffect(() => {
     if (checkIn && checkOut) {
       searchRooms()
     }
-  }, [checkIn, checkOut, guests])
+  }, [checkIn, checkOut, guests, searchRooms])
 
   const getAmenityIcon = (amenity: string) => {
     const amenityLower = amenity.toLowerCase()

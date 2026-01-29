@@ -114,7 +114,7 @@ export default function Navbar() {
           {/* CTA + Mobile Toggle */}
           <div className="flex items-center gap-3">
             <a
-              href="#contact"
+              href="/book"
               className={`hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
                 isScrolled
                   ? "bg-ocean text-white hover:bg-ocean-light shadow-lg shadow-ocean/20"
@@ -169,7 +169,7 @@ export default function Navbar() {
               ))}
             </div>
             <motion.a
-              href="#contact"
+              href="/book"
               onClick={() => setIsMobileOpen(false)}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
