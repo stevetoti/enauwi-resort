@@ -23,63 +23,46 @@ GETTING HERE:
 
 ACCOMMODATIONS & PRICING (in Vanuatu Vatu - VT):
 1. Oceanfront Bungalow - 12,000 VT per night (~$100 USD)
-   - Sleeps 2 guests
-   - Private deck with ocean views, direct beach access
+   - Sleeps 2 guests, private deck with ocean views, direct beach access
    - Air conditioning, WiFi, mini fridge
    
 2. Tropical Garden Suite - 18,000 VT per night (~$150 USD)
-   - Sleeps up to 4 guests
-   - Garden views and kitchenette, spacious living area
+   - Sleeps up to 4 guests, garden views and kitchenette
    - Private bathroom and balcony
 
 3. Premium Beachfront Villa - 25,000 VT per night (~$210 USD)
-   - Sleeps up to 6 guests
-   - Private pool and full kitchen, multiple bedrooms
+   - Sleeps up to 6 guests, private pool and full kitchen
    - Panoramic ocean views, luxury amenities
 
 ACTIVITIES & EXPERIENCES:
-- Snorkeling & diving in crystal clear waters (equipment provided)
+- Snorkeling & diving in crystal clear waters
 - Traditional Vanuatu cultural shows and village visits
-- Island hopping excursions to nearby islands
-- Volcano tours (Mount Benbow on Ambrym Island)
-- Traditional cooking classes featuring lap lap (national dish)
-- Sunset cruise experiences
-- Deep sea fishing charters
-- Spa treatments with local ingredients (coconut, tamanu oil)
-- Guided rainforest walks and birdwatching
-- Canoe/kayak rentals
-- Beach bonfire evenings with kava ceremony
+- Island hopping, volcano tours, cooking classes
+- Sunset cruise, deep sea fishing, spa treatments
+- Guided rainforest walks, kayak rentals, beach bonfires with kava
 
 DINING:
-- Fresh seafood caught daily from local waters
-- Traditional lap lap, tuluk, and island cuisine
-- International cuisine options
-- Beachfront dining under the stars
-- Tropical cocktails and fresh fruit juices
+- Fresh seafood daily, traditional lap lap and island cuisine
+- International options, beachfront dining under the stars
 - Complimentary breakfast included with all rooms
 
-BOOKING PROCESS:
-- Guests can book online at enauwi-resort.vercel.app/book
-- Or you can take their details: name, email, phone, dates, room preference
-- Mention current availability if asked
-- Payment can be arranged at check-in
+BOOKING: Guests can book online at enauwi-resort.vercel.app/book or call +678 22170
+Free cancellation up to 48 hours before check-in.
 
-LANGUAGES: You understand English, Bislama, French, and basic Chinese. Respond in the same language the guest uses. If they speak Bislama, respond in Bislama.
-
-IMPORTANT GUIDELINES:
-- Be warm, enthusiastic, and genuinely helpful
-- Keep responses conversational and not too long (this is a voice call)
-- If asked about things you don't know, offer to connect them with staff at +678 22170
-- Recommend activities based on guest interests
-- Mention the resort website for booking: enauwi-resort.vercel.app/book
-- If someone asks about cancellation: free cancellation up to 48 hours before check-in`
+GUIDELINES:
+- Be warm, enthusiastic, genuinely helpful
+- Keep responses conversational and concise (voice call)
+- Respond in the same language the guest uses (English, Bislama, French)
+- If unsure, offer to connect them with staff at +678 22170`
 
 export default function VoiceCallWidget() {
   const [isCallActive, setIsCallActive] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [showCallUI, setShowCallUI] = useState(false)
 
+  // Use controlled micMuted state via the hook
   const conversation = useConversation({
+    micMuted: isMuted,
     onConnect: () => {
       console.log('ElevenLabs voice call connected')
       setIsCallActive(true)
@@ -91,12 +74,12 @@ export default function VoiceCallWidget() {
       setShowCallUI(false)
       setIsMuted(false)
     },
-    onError: (error: string) => {
-      console.error('ElevenLabs voice call error:', error)
+    onError: (message: string) => {
+      console.error('ElevenLabs voice call error:', message)
       setIsCallActive(false)
       setShowCallUI(false)
     },
-    onModeChange: (mode: { mode: string }) => {
+    onModeChange: ({ mode }: { mode: string }) => {
       console.log('Mode changed:', mode)
     },
     overrides: {
@@ -112,7 +95,7 @@ export default function VoiceCallWidget() {
 
   const startCall = useCallback(async () => {
     if (!AGENT_ID) {
-      console.error('ElevenLabs Agent ID not configured')
+      alert('Voice calling is not yet configured. Please call us at +678 22170.')
       return
     }
 
@@ -123,11 +106,11 @@ export default function VoiceCallWidget() {
       // Start the voice conversation session
       await conversation.startSession({
         agentId: AGENT_ID,
-        connectionType: 'websocket' as const,
+        connectionType: 'websocket',
       })
     } catch (error) {
       console.error('Failed to start voice call:', error)
-      alert('Could not start voice call. Please ensure microphone access is allowed.')
+      alert('Could not start voice call. Please ensure microphone access is allowed, or call us at +678 22170.')
     }
   }, [conversation])
 
@@ -143,12 +126,8 @@ export default function VoiceCallWidget() {
   }, [conversation])
 
   const toggleMute = useCallback(() => {
-    const newMuted = !isMuted
-    setIsMuted(newMuted)
-    if (conversation.setMicMuted) {
-      conversation.setMicMuted(newMuted)
-    }
-  }, [isMuted, conversation])
+    setIsMuted(prev => !prev)
+  }, [])
 
   const handleCallButton = useCallback(() => {
     if (isCallActive) {
