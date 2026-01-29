@@ -7,6 +7,7 @@ import Gallery from "@/components/Gallery";
 import Location from "@/components/Location";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import ChatWidget from "@/components/ChatWidget";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <Location />
       <Contact />
       <Footer />
+      <ChatWidget />
     </main>
   );
 }
