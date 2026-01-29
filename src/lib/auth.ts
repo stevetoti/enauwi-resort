@@ -1,4 +1,4 @@
-import { createServerSupabase } from './supabase'
+import { createServerSupabase } from './supabase-server'
 
 export interface AdminUser {
   id: string
