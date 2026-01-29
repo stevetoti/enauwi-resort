@@ -32,6 +32,7 @@ export interface Room {
   amenities: string[]
   images: string[]
   available: boolean
+  created_at: string
 }
 
 export interface Guest {
@@ -52,8 +53,50 @@ export interface Booking {
   guest_phone: string
   check_in: string
   check_out: string
-  status: string
+  status: 'pending' | 'confirmed' | 'cancelled' | 'checked_in' | 'checked_out'
   notes: string
   language: string
+  total_price?: number
+  num_guests: number
+  special_requests?: string
   created_at: string
+  room?: Room
+}
+
+export interface Staff {
+  id: string
+  email: string
+  password_hash: string
+  name: string
+  role: 'super_admin' | 'manager' | 'staff'
+  created_at: string
+}
+
+export interface RoomAvailability {
+  id: string
+  room_id: string
+  date: string
+  available: boolean
+  price_override?: number
+  room?: Room
+}
+
+export interface BookingFormData {
+  checkIn: string
+  checkOut: string
+  guests: number
+  roomId: string
+  guestName: string
+  guestEmail: string
+  guestPhone: string
+  specialRequests?: string
+}
+
+export interface AdminStats {
+  totalBookings: number
+  todayCheckIns: number
+  todayCheckOuts: number
+  occupancyRate: number
+  totalRevenue: number
+  pendingBookings: number
 }
