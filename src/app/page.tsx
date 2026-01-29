@@ -8,7 +8,7 @@ import Location from "@/components/Location";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
-import VoiceCallWidget from "@/components/VoiceCallWidget";
+// import VoiceCallWidget from "@/components/VoiceCallWidget"; // TODO: Fix ElevenLabs types
 
 export default function Home() {
   return (
@@ -23,7 +23,7 @@ export default function Home() {
       <Contact />
       <Footer />
       <ChatWidget />
-      <VoiceCallWidget />
+      {/* <VoiceCallWidget /> */}
     </main>
   );
 }
