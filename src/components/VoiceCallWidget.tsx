@@ -7,89 +7,35 @@ import { useConversation } from '@elevenlabs/react'
 
 const AGENT_ID = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID || ''
 
-const RESORT_SYSTEM_PROMPT = `You are the friendly AI voice concierge for E'Nauwi Beach Resort, a luxury eco-resort on Malekula Island, Vanuatu. You speak warmly and naturally with a welcoming Pacific Island hospitality style. Always greet guests with "Welkam!" (the Bislama greeting used in Vanuatu).
-
-RESORT OVERVIEW:
-- E'Nauwi Beach Resort is located on the pristine shores of Malekula Island, the second largest island in Vanuatu
-- Phone: +678 22170
-- Email: info@enauwi.com
-- 100% eco-friendly, 5-star rated, just 50 meters from the beach
-- Authentic Melanesian warmth and culture
-
-GETTING HERE:
-- Fly to Port Vila (VLI), then take a connecting flight to Norsup Airport on Malekula Island
-- Resort provides airport transfers from Norsup Airport
-- Alternative: charter flights can be arranged
-
-ACCOMMODATIONS & PRICING (in Vanuatu Vatu - VT):
-1. Oceanfront Bungalow - 12,000 VT per night (~$100 USD)
-   - Sleeps 2 guests, private deck with ocean views, direct beach access
-   - Air conditioning, WiFi, mini fridge
-   
-2. Tropical Garden Suite - 18,000 VT per night (~$150 USD)
-   - Sleeps up to 4 guests, garden views and kitchenette
-   - Private bathroom and balcony
-
-3. Premium Beachfront Villa - 25,000 VT per night (~$210 USD)
-   - Sleeps up to 6 guests, private pool and full kitchen
-   - Panoramic ocean views, luxury amenities
-
-ACTIVITIES & EXPERIENCES:
-- Snorkeling & diving in crystal clear waters
-- Traditional Vanuatu cultural shows and village visits
-- Island hopping, volcano tours, cooking classes
-- Sunset cruise, deep sea fishing, spa treatments
-- Guided rainforest walks, kayak rentals, beach bonfires with kava
-
-DINING:
-- Fresh seafood daily, traditional lap lap and island cuisine
-- International options, beachfront dining under the stars
-- Complimentary breakfast included with all rooms
-
-BOOKING: Guests can book online at enauwi-resort.vercel.app/book or call +678 22170
-Free cancellation up to 48 hours before check-in.
-
-GUIDELINES:
-- Be warm, enthusiastic, genuinely helpful
-- Keep responses conversational and concise (voice call)
-- Respond in the same language the guest uses (English, Bislama, French)
-- If unsure, offer to connect them with staff at +678 22170`
-
 export default function VoiceCallWidget() {
   const [isCallActive, setIsCallActive] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [showCallUI, setShowCallUI] = useState(false)
+  const [callStatus, setCallStatus] = useState<string>('idle')
+  const [errorMsg, setErrorMsg] = useState<string>('')
 
-  // Use controlled micMuted state via the hook
   const conversation = useConversation({
     micMuted: isMuted,
     onConnect: () => {
-      console.log('ElevenLabs voice call connected')
-      setIsCallActive(true)
-      setShowCallUI(true)
+      console.log('[Voice] Connected')
+      setCallStatus('connected')
+      setErrorMsg('')
     },
     onDisconnect: () => {
-      console.log('ElevenLabs voice call disconnected')
+      console.log('[Voice] Disconnected')
+      setCallStatus('idle')
       setIsCallActive(false)
       setShowCallUI(false)
       setIsMuted(false)
     },
     onError: (message: string) => {
-      console.error('ElevenLabs voice call error:', message)
-      setIsCallActive(false)
-      setShowCallUI(false)
+      console.error('[Voice] Error:', message)
+      setErrorMsg(message || 'Connection error')
+      setCallStatus('error')
+      // Don't close UI — show error to user instead
     },
     onModeChange: ({ mode }: { mode: string }) => {
-      console.log('Mode changed:', mode)
-    },
-    overrides: {
-      agent: {
-        prompt: {
-          prompt: RESORT_SYSTEM_PROMPT,
-        },
-        firstMessage: "Welkam! Welcome to E'Nauwi Beach Resort! I'm your AI concierge. How can I help you today? Whether you're looking to book a stay, learn about our activities, or just want to know more about beautiful Malekula Island — I'm here for you!",
-        language: 'en',
-      },
+      console.log('[Voice] Mode:', mode)
     },
   })
 
@@ -99,18 +45,28 @@ export default function VoiceCallWidget() {
       return
     }
 
-    try {
-      // Request microphone permission first
-      await navigator.mediaDevices.getUserMedia({ audio: true })
+    setErrorMsg('')
+    setCallStatus('connecting')
+    setShowCallUI(true)
+    setIsCallActive(true)
 
-      // Start the voice conversation session
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true })
+    } catch {
+      setErrorMsg('Microphone access denied')
+      setCallStatus('error')
+      return
+    }
+
+    try {
       await conversation.startSession({
         agentId: AGENT_ID,
         connectionType: 'websocket',
       })
     } catch (error) {
-      console.error('Failed to start voice call:', error)
-      alert('Could not start voice call. Please ensure microphone access is allowed, or call us at +678 22170.')
+      console.error('[Voice] startSession failed:', error)
+      setErrorMsg(String(error) || 'Failed to connect')
+      setCallStatus('error')
     }
   }, [conversation])
 
@@ -118,11 +74,13 @@ export default function VoiceCallWidget() {
     try {
       await conversation.endSession()
     } catch (error) {
-      console.error('Failed to end voice call:', error)
+      console.error('[Voice] endSession failed:', error)
     }
     setIsCallActive(false)
     setShowCallUI(false)
     setIsMuted(false)
+    setCallStatus('idle')
+    setErrorMsg('')
   }, [conversation])
 
   const toggleMute = useCallback(() => {
@@ -137,9 +95,17 @@ export default function VoiceCallWidget() {
     }
   }, [isCallActive, startCall, endCall])
 
+  const statusText = () => {
+    if (errorMsg) return `⚠️ ${errorMsg}`
+    if (callStatus === 'connecting') return '📡 Connecting...'
+    if (conversation.status === 'connected') {
+      return conversation.isSpeaking ? '🔊 Speaking...' : '🎧 Listening...'
+    }
+    return '📡 Connecting...'
+  }
+
   return (
     <div className="fixed bottom-4 left-4 z-50">
-      {/* Active Call UI */}
       <AnimatePresence>
         {showCallUI && (
           <motion.div
@@ -149,20 +115,14 @@ export default function VoiceCallWidget() {
             className="mb-4 bg-white rounded-2xl shadow-2xl border border-blue-100 overflow-hidden w-72"
           >
             {/* Call Header */}
-            <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white p-4">
+            <div className={`text-white p-4 ${errorMsg ? 'bg-gradient-to-r from-red-500 to-red-600' : 'bg-gradient-to-r from-emerald-600 to-emerald-700'}`}>
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                   <Phone size={18} />
                 </div>
                 <div>
                   <h3 className="font-semibold text-sm">E&apos;Nauwi Concierge</h3>
-                  <p className="text-xs text-emerald-100">
-                    {conversation.status === 'connected'
-                      ? conversation.isSpeaking
-                        ? '🔊 Speaking...'
-                        : '🎧 Listening...'
-                      : 'Connecting...'}
-                  </p>
+                  <p className="text-xs opacity-80">{statusText()}</p>
                 </div>
               </div>
             </div>
@@ -170,7 +130,6 @@ export default function VoiceCallWidget() {
             {/* Voice Visualizer */}
             <div className="p-6 flex items-center justify-center bg-gradient-to-b from-emerald-50/50 to-white">
               <div className="relative">
-                {/* Pulse ring animation when speaking */}
                 {conversation.isSpeaking && (
                   <>
                     <motion.div
@@ -185,15 +144,30 @@ export default function VoiceCallWidget() {
                     />
                   </>
                 )}
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center relative z-10">
+                <div className={`w-16 h-16 rounded-full flex items-center justify-center relative z-10 ${errorMsg ? 'bg-gradient-to-br from-red-400 to-red-500' : 'bg-gradient-to-br from-emerald-500 to-emerald-600'}`}>
                   <Volume2 size={24} className="text-white" />
                 </div>
               </div>
             </div>
 
+            {/* Error retry */}
+            {errorMsg && (
+              <div className="px-4 pb-2 text-center">
+                <button
+                  onClick={() => { endCall(); setTimeout(startCall, 500) }}
+                  className="text-sm text-emerald-600 underline hover:text-emerald-800"
+                >
+                  Retry connection
+                </button>
+                <span className="text-gray-400 mx-2">|</span>
+                <a href="tel:+67822170" className="text-sm text-blue-600 underline hover:text-blue-800">
+                  Call +678 22170
+                </a>
+              </div>
+            )}
+
             {/* Call Controls */}
             <div className="p-4 flex items-center justify-center space-x-4 border-t border-gray-100">
-              {/* Mute Button */}
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
@@ -208,7 +182,6 @@ export default function VoiceCallWidget() {
                 {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
               </motion.button>
 
-              {/* End Call Button */}
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
