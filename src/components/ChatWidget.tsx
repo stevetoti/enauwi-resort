@@ -14,28 +14,28 @@ const languages = {
 
 const translations = {
   en: {
-    welcome: 'Bula! Welcome to E\'Nauwi Beach Resort! How can I help you today?',
+    welcome: 'Welkam! Welcome to E\'Nauwi Beach Resort! How can I help you today?',
     placeholder: 'Type your message...',
     send: 'Send',
     minimize: 'Minimize chat',
     language: 'Language'
   },
   bi: {
-    welcome: 'Bula! Welkam long E\'Nauwi Beach Resort! Olsem wanem mi save helpem yu today?',
+    welcome: 'Welkam! Welkam long E\'Nauwi Beach Resort! Olsem wanem mi save helpem yu today?',
     placeholder: 'Taepem mesij blong yu...',
     send: 'Sendem',
     minimize: 'Smolmakem chat',
     language: 'Language'
   },
   fr: {
-    welcome: 'Bula! Bienvenue au E\'Nauwi Beach Resort! Comment puis-je vous aider aujourd\'hui?',
+    welcome: 'Welkam! Bienvenue au E\'Nauwi Beach Resort! Comment puis-je vous aider aujourd\'hui?',
     placeholder: 'Tapez votre message...',
     send: 'Envoyer',
     minimize: 'Minimiser le chat',
     language: 'Langue'
   },
   zh: {
-    welcome: 'Bula! 欢迎来到E\'Nauwi海滩度假村！今天我可以为您做些什么？',
+    welcome: 'Welkam! 欢迎来到E\'Nauwi海滩度假村！今天我可以为您做些什么？',
     placeholder: '请输入您的消息...',
     send: '发送',
     minimize: '最小化聊天',
@@ -70,6 +70,7 @@ export default function ChatWidget() {
         timestamp: new Date()
       }])
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, t.welcome])
 
   const sendMessage = async () => {
@@ -154,7 +155,7 @@ export default function ChatWidget() {
                   <Bot size={16} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-sm">E'Nauwi Concierge</h3>
+                  <h3 className="font-semibold text-sm">E&apos;Nauwi Concierge</h3>
                   <p className="text-xs text-blue-100">Online now</p>
                 </div>
               </div>

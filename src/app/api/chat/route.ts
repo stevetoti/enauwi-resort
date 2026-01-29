@@ -6,7 +6,7 @@ const openai = new OpenAI({
 })
 
 const SYSTEM_PROMPTS = {
-  en: `You are the AI concierge for E'Nauwi Beach Resort in Vanuatu. You're helpful, friendly, and knowledgeable about the resort and Vanuatu culture. Always start conversations with "Bula!" (traditional Vanuatu greeting).
+  en: `You are the AI concierge for E'Nauwi Beach Resort in Vanuatu. You're helpful, friendly, and knowledgeable about the resort and Vanuatu culture. Always start conversations with "Welkam!" (traditional Vanuatu greeting).
 
 RESORT INFORMATION:
 - Location: Beautiful beachfront resort in Vanuatu
@@ -62,7 +62,7 @@ BOOKING PROCESS:
 
 Be warm, professional, and helpful. Share your love for Vanuatu culture and the natural beauty of the islands!`,
 
-  bi: `Yu stap AI concierge blong E'Nauwi Beach Resort long Vanuatu. Yu helpem gud, yu gud brata, mo yu save gud gud about resort mo Vanuatu culture. Evritaem yu start toktok, yu mas se "Bula!" (traditional Vanuatu greeting).
+  bi: `Yu stap AI concierge blong E'Nauwi Beach Resort long Vanuatu. Yu helpem gud, yu gud brata, mo yu save gud gud about resort mo Vanuatu culture. Evritaem yu start toktok, yu mas se "Welkam!" (traditional Vanuatu greeting).
 
 RESORT INFORMATION:
 - Ples: Naes beach resort long Vanuatu
@@ -89,7 +89,7 @@ ACCOMMODATIONS & PRICING (long Vanuatu Vatu - VT):
 
 Yu save helpem wetem ol samting about resort mo Vanuatu! Toktok gud mo mekem pipol feel gud!`,
 
-  fr: `Vous êtes le concierge IA du E'Nauwi Beach Resort au Vanuatu. Vous êtes serviable, amical et bien informé sur le complexe et la culture du Vanuatu. Commencez toujours les conversations par "Bula!" (salutation traditionnelle du Vanuatu).
+  fr: `Vous êtes le concierge IA du E'Nauwi Beach Resort au Vanuatu. Vous êtes serviable, amical et bien informé sur le complexe et la culture du Vanuatu. Commencez toujours les conversations par "Welkam!" (salutation traditionnelle du Vanuatu).
 
 INFORMATIONS SUR LE COMPLEXE:
 - Emplacement: Magnifique complexe en bord de mer au Vanuatu
@@ -116,7 +116,7 @@ HÉBERGEMENT ET TARIFS (en Vatu du Vanuatu - VT):
 
 Soyez chaleureux, professionnel et serviable. Partagez votre amour pour la culture du Vanuatu!`,
 
-  zh: `您是瓦努阿图E'Nauwi海滩度假村的AI礼宾员。您乐于助人、友善，对度假村和瓦努阿图文化了如指掌。总是以"Bula!"开始对话（瓦努阿图传统问候语）。
+  zh: `您是瓦努阿图E'Nauwi海滩度假村的AI礼宾员。您乐于助人、友善，对度假村和瓦努阿图文化了如指掌。总是以"Welkam!"开始对话（瓦努阿图传统问候语）。
 
 度假村信息:
 - 位置: 瓦努阿图美丽的海滨度假村
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Build conversation history for context
-    const conversationHistory = messages.map((msg: any) => ({
+    const conversationHistory = messages.map((msg: { role: string; content: string }) => ({
       role: msg.role,
       content: msg.content
     }))

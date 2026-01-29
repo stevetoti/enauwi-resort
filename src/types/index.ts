@@ -29,8 +29,8 @@ export interface Room {
   description: string
   price_vt: number
   max_guests: number
-  amenities: any
-  images: any
+  amenities: string[]
+  images: string[]
   available: boolean
 }
 
@@ -40,7 +40,7 @@ export interface Guest {
   email: string
   phone: string
   language: string
-  preferences: any
+  preferences: Record<string, string>
   created_at: string
 }
 
