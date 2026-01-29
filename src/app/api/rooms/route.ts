@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabase } from '@/lib/supabase-server'
+import { createServiceSupabase } from '@/lib/supabase-server'
 // Room type used in response
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createServerSupabase()
+    const supabase = createServiceSupabase()
     const { searchParams } = new URL(request.url)
     
     const checkIn = searchParams.get('checkIn')

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabase } from '@/lib/supabase-server'
+import { createServiceSupabase } from '@/lib/supabase-server'
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createServerSupabase()
+    const supabase = createServiceSupabase()
     const { id } = params
     const { status } = await request.json()
 

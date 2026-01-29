@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabase } from '@/lib/supabase-server'
+import { createServiceSupabase } from '@/lib/supabase-server'
 import { BookingFormData } from '@/types'
 import { generateBookingReference, getDaysBetween } from '@/lib/utils'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createServerSupabase()
+    const supabase = createServiceSupabase()
     const bookingData: BookingFormData = await request.json()
     
     const {
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createServerSupabase()
+    const supabase = createServiceSupabase()
     const { searchParams } = new URL(request.url)
     const email = searchParams.get('email')
 
