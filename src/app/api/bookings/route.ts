@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServiceSupabase } from '@/lib/supabase-server'
 import { BookingFormData } from '@/types'
 import { generateBookingReference, getDaysBetween } from '@/lib/utils'
+import { sendBookingNotifications } from '@/lib/notifications'
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = createServiceSupabase()
     const bookingData: BookingFormData = await request.json()
-    
+
     const {
       checkIn,
       checkOut,
@@ -116,32 +117,28 @@ export async function POST(request: NextRequest) {
 
     const reference = generateBookingReference()
 
-    // Send confirmation emails (fire-and-forget)
-    try {
-      const baseUrl = request.nextUrl.origin
-      await fetch(`${baseUrl}/api/email/send`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'booking_confirmation',
-          data: {
-            guestName,
-            guestEmail,
-            guestPhone,
-            roomName: room.name,
-            checkIn: new Date(checkIn).toLocaleDateString('en-US', { dateStyle: 'long' }),
-            checkOut: new Date(checkOut).toLocaleDateString('en-US', { dateStyle: 'long' }),
-            guests,
-            totalPrice: `VT ${totalPrice.toLocaleString()}`,
-            reference,
-            specialRequests
-          }
-        })
-      })
-    } catch (emailError) {
-      console.error('Failed to send booking email:', emailError)
-      // Don't fail the booking if email fails
-    }
+    // ── Multi-channel notifications (fire-and-forget) ────────────
+    const baseUrl = request.nextUrl.origin
+    const formattedCheckIn = new Date(checkIn).toLocaleDateString('en-US', { dateStyle: 'long' })
+    const formattedCheckOut = new Date(checkOut).toLocaleDateString('en-US', { dateStyle: 'long' })
+    const formattedPrice = `VT ${totalPrice.toLocaleString()}`
+
+    sendBookingNotifications(baseUrl, {
+      guestName,
+      guestEmail,
+      guestPhone,
+      reference,
+      roomName: room.name,
+      checkIn: formattedCheckIn,
+      checkOut: formattedCheckOut,
+      guests,
+      nights,
+      totalPrice: formattedPrice,
+      specialRequests,
+      bookingId: booking.id,
+    }).catch(err => {
+      console.error('[Booking] Notification dispatch error:', err)
+    })
 
     // Return booking confirmation
     return NextResponse.json({

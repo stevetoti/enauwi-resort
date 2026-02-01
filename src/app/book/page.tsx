@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Calendar, Users, MapPin, Wifi, Car, Coffee, ShowerHead } from 'lucide-react'
+import { Calendar, Users, MapPin, Wifi, Car, Coffee, ShowerHead, AlertTriangle, Clock, CreditCard, Plane, Baby } from 'lucide-react'
 import { Room } from '@/types'
 import { formatVatu, getDaysBetween } from '@/lib/utils'
 
@@ -225,6 +225,81 @@ export default function BookPage() {
             <p className="text-gray-400 mt-2">Try different dates or reduce the number of guests.</p>
           </div>
         )}
+
+        {/* Policies & Information */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Check-in/Check-out */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Clock className="h-5 w-5 text-blue-600" />
+              <h3 className="text-lg font-bold text-gray-900">Check-in & Check-out</h3>
+            </div>
+            <ul className="space-y-2 text-sm text-gray-700">
+              <li className="flex justify-between"><span>Check-in</span><span className="font-semibold">2:00 PM</span></li>
+              <li className="flex justify-between"><span>Check-out</span><span className="font-semibold">10:00 AM</span></li>
+              <li className="flex justify-between"><span>Late check-out</span><span className="font-semibold">VUV 2,500/hr</span></li>
+              <li className="text-gray-500 text-xs mt-2">Late check-out subject to availability</li>
+            </ul>
+          </div>
+
+          {/* Cancellation Policy */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <AlertTriangle className="h-5 w-5 text-amber-500" />
+              <h3 className="text-lg font-bold text-gray-900">Cancellation Policy</h3>
+            </div>
+            <ul className="space-y-2 text-sm text-gray-700">
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 font-bold">✓</span>
+                <span><strong>14+ days</strong> before arrival — Free cancellation, full refund</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-amber-500 font-bold">!</span>
+                <span><strong>Within 14 days</strong> — 50% refund of total amount</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-500 font-bold">✗</span>
+                <span><strong>Within 7 days / No-show</strong> — 100% charge of booking</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Fees & Charges */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <CreditCard className="h-5 w-5 text-blue-600" />
+              <h3 className="text-lg font-bold text-gray-900">Fees & Charges</h3>
+            </div>
+            <ul className="space-y-2 text-sm text-gray-700">
+              <li className="flex justify-between"><span>Tourism Levy</span><span className="font-semibold">VUV 200/room/day</span></li>
+              <li className="flex justify-between"><span>Credit card surcharge</span><span className="font-semibold">4%</span></li>
+              <li className="text-gray-500 text-xs mt-2">Tourism levy charged at check-out. Cash and credit cards accepted.</li>
+            </ul>
+          </div>
+
+          {/* Airport Shuttle & Kids */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Plane className="h-5 w-5 text-blue-600" />
+              <h3 className="text-lg font-bold text-gray-900">Airport Shuttle & Kids</h3>
+            </div>
+            <ul className="space-y-2 text-sm text-gray-700">
+              <li className="flex justify-between"><span>Adult shuttle (one-way)</span><span className="font-semibold">VUV 2,000</span></li>
+              <li className="flex justify-between"><span>Child shuttle 2–12 yrs (one-way)</span><span className="font-semibold">VUV 1,000</span></li>
+              <li className="flex items-start gap-2 mt-2">
+                <Baby className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
+                <span>Up to 2 children under 12 stay <strong>free</strong> in parent&apos;s room using existing bedding</span>
+              </li>
+              <li className="text-gray-500 text-xs mt-2">Contact property 72 hours before arrival to arrange transfers</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center">
+          <a href="/terms" className="text-blue-600 hover:text-blue-800 text-sm font-medium underline">
+            View full Terms, Conditions & Privacy Policy →
+          </a>
+        </div>
       </div>
 
       {/* Booking Form Modal */}

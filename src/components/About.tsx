@@ -2,31 +2,31 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Home, Compass, UtensilsCrossed, Waves } from "lucide-react";
+import { Home, UtensilsCrossed, Waves, Ship } from "lucide-react";
 import Image from "next/image";
 
 const highlights = [
   {
     icon: Home,
-    title: "Beachfront Bungalows",
+    title: "Beachfront Rooms & Garden Bungalows",
     description:
-      "Wake up to the sound of waves in our handcrafted traditional bungalows, built with local materials and designed for ultimate comfort.",
+      "Choose from comfortable beachfront rooms with lagoon views or charming garden bungalows surrounded by tropical greenery — all designed for a relaxing island stay.",
     image:
       "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=600&q=80",
   },
   {
-    icon: Compass,
-    title: "Island Adventures",
+    icon: Ship,
+    title: "Kayaking & Snorkeling",
     description:
-      "Explore hidden lagoons, ancient cultural sites, and pristine coral reefs. Every day brings a new discovery on Malekula Island.",
+      "Explore the calm lagoon waters and our private island by kayak, or discover the vibrant underwater world with snorkeling right from the resort.",
     image:
       "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=600&q=80",
   },
   {
     icon: UtensilsCrossed,
-    title: "Local Cuisine",
+    title: "Open-Air Restaurant & Bar",
     description:
-      "Savour fresh seafood and traditional Melanesian dishes prepared by our local chefs using ingredients sourced from island gardens and waters.",
+      "Enjoy relaxed dining in our open-air restaurant with background music and scenic views, or unwind at the bar with a refreshing tropical drink.",
     image:
       "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
   },
@@ -60,7 +60,7 @@ export default function About() {
           >
             <Waves size={14} className="text-ocean" />
             <span className="text-ocean/70 text-sm font-medium uppercase tracking-wider">
-              Discover Paradise
+              Your Island Retreat
             </span>
           </motion.div>
 
@@ -70,8 +70,8 @@ export default function About() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="section-heading"
           >
-            A Hidden Gem in the{" "}
-            <span className="text-gold-gradient">South Pacific</span>
+            A Family-Friendly{" "}
+            <span className="text-gold-gradient">Island Retreat</span>
           </motion.h2>
 
           <motion.p
@@ -80,11 +80,11 @@ export default function About() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="section-subheading"
           >
-            Nestled along the pristine shores of Malekula Island, E&apos;Nauwi
-            Beach Resort offers an authentic escape into one of the Pacific&apos;s
-            last untouched paradises. Here, turquoise waters meet lush tropical
-            forests, and the warmth of Melanesian hospitality makes every guest
-            feel like family.
+            E&apos;Nauwi Beach Resort is a family-friendly island retreat set
+            along a peaceful beachfront with calm lagoon waters and beautiful
+            island views. The resort offers a relaxed environment ideal for
+            families, couples, and groups seeking comfort, good food, and
+            genuine island hospitality.
           </motion.p>
         </div>
 
@@ -113,9 +113,9 @@ export default function About() {
               transition={{ duration: 0.5, delay: 0.8 }}
               className="absolute -bottom-6 -right-4 sm:right-6 bg-white rounded-2xl p-5 shadow-xl shadow-ocean/10 border border-ocean/5"
             >
-              <div className="text-3xl font-serif font-bold text-ocean">15+</div>
+              <div className="text-3xl font-serif font-bold text-ocean">🌴</div>
               <div className="text-ocean/60 text-sm font-medium">
-                Years of<br />Hospitality
+                Family<br />Friendly
               </div>
             </motion.div>
           </motion.div>
@@ -127,26 +127,26 @@ export default function About() {
             className="space-y-6"
           >
             <h3 className="font-serif text-2xl sm:text-3xl font-bold text-ocean">
-              Where Time Slows Down & Nature Speaks
+              Relax, Explore & Enjoy
             </h3>
             <p className="text-ocean/70 leading-relaxed text-lg">
-              Far from the crowds and noise, E&apos;Nauwi is a place where you
-              reconnect — with nature, with culture, and with yourself. Our
-              resort is built with deep respect for the land and sea, using
-              sustainable practices and employing local community members.
+              Guests can enjoy peaceful days by the beach, relaxing swims in our
+              outdoor pool surrounded by coconut trees, lagoon kayaking, and
+              casual dining with scenic views. The resort is designed to
+              encourage relaxation, connection, and enjoyable island moments.
             </p>
             <p className="text-ocean/70 leading-relaxed">
-              Whether you&apos;re seeking adventure in untouched coral reefs,
-              cultural immersion in traditional kastom villages, or simply the
-              peace of a hammock swaying under coconut palms — this is your
-              place.
+              Families love our kids trampoline and jumping castle, plus our
+              Nanny Service available from 8am to 8pm. Whether you&apos;re
+              snorkeling on the lagoon, exploring our private island, or simply
+              unwinding with a drink at the bar — E&apos;Nauwi is your place.
             </p>
             <div className="grid grid-cols-2 gap-4 pt-4">
               {[
-                { val: "12", label: "Bungalows" },
-                { val: "3", label: "Dining Areas" },
-                { val: "500m", label: "Private Beach" },
-                { val: "24/7", label: "Guest Service" },
+                { val: "2:00 PM", label: "Check-in" },
+                { val: "10:00 AM", label: "Check-out" },
+                { val: "8–8", label: "Nanny Service" },
+                { val: "8–5", label: "Front Desk" },
               ].map((s) => (
                 <div
                   key={s.label}
