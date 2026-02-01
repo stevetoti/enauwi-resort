@@ -24,9 +24,9 @@ const footerLinks = [
     title: "Information",
     links: [
       { label: "Getting Here", href: "#location" },
-      { label: "Book a Room", href: "#contact" },
-      { label: "Travel Tips", href: "#location" },
-      { label: "FAQ", href: "#about" },
+      { label: "Book a Room", href: "/book" },
+      { label: "Terms & Policies", href: "/terms" },
+      { label: "Contact Us", href: "#contact" },
     ],
   },
 ];

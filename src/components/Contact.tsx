@@ -44,8 +44,8 @@ const contactInfo = [
   },
   {
     icon: Clock,
-    label: "Business Hours",
-    value: "Mon–Sun: 7:00 AM – 9:00 PM (VUT)",
+    label: "Front Desk Hours",
+    value: "Mon–Sun: 8:00 AM – 5:00 PM (VUT)",
     href: null,
   },
 ];
