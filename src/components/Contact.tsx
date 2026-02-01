@@ -33,8 +33,8 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "info@enauwiresort.vu",
-    href: "mailto:info@enauwiresort.vu",
+    value: "gm@enauwibeachresort.com",
+    href: "mailto:gm@enauwibeachresort.com",
   },
   {
     icon: MapPin,

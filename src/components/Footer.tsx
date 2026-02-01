@@ -108,7 +108,7 @@ export default function Footer() {
               <li className="flex items-center gap-3">
                 <Mail size={16} className="text-gold/60 shrink-0" />
                 <span className="text-white/40 text-sm">
-                  info@enauwiresort.vu
+                  gm@enauwibeachresort.com
                 </span>
               </li>
             </ul>

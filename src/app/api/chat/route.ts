@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
+import { createServiceSupabase } from '@/lib/supabase-server'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -55,7 +56,7 @@ GETTING HERE:
 
 CONTACT:
 - Phone: +678 22170
-- Email: info@enauwiresort.vu
+- Email: gm@enauwibeachresort.com
 - Website: https://enauwi-resort.vercel.app
 
 LANGUAGE NOTE: You understand English, Bislama, French, and basic Chinese. Respond in the same language the guest uses.
@@ -190,6 +191,34 @@ export async function POST(request: NextRequest) {
 
     const aiResponse = completion.choices[0]?.message?.content || 'I apologize, but I\'m having trouble responding right now. Please try again.'
 
+    // Save conversation to Supabase (fire-and-forget)
+    try {
+      const supabase = createServiceSupabase()
+      
+      let convId = conversationId
+      
+      // Create conversation if new
+      if (!convId) {
+        const { data: conv } = await supabase
+          .from('conversations')
+          .insert({ channel: 'website', language: language || 'en' })
+          .select('id')
+          .single()
+        convId = conv?.id
+      }
+
+      if (convId) {
+        // Save user message and AI response
+        await supabase.from('messages').insert([
+          { conversation_id: convId, role: 'user', content: message, language: language || 'en' },
+          { conversation_id: convId, role: 'assistant', content: aiResponse, language: language || 'en' }
+        ])
+      }
+    } catch (saveError) {
+      console.error('Failed to save conversation:', saveError)
+      // Don't fail the response if save fails
+    }
+
     // Check if AI response mentions sending email/info — trigger actual email
     const emailPatterns = /i['']ll send|sending you|email you|send .* details|send .* information/i
     if (emailPatterns.test(aiResponse)) {
@@ -221,7 +250,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       message: aiResponse,
-      conversationId
+      conversationId: conversationId || undefined
     })
 
   } catch (error) {
