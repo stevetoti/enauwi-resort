@@ -5,64 +5,83 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Camera, ZoomIn } from "lucide-react";
 import Image from "next/image";
 
+/**
+ * GALLERY PHOTOS
+ * ─────────────────────────────────────────────────────────────────
+ * When the 22 professional drone/resort photos arrive from Dropbox:
+ *
+ * 1. Upload them to Supabase Storage:
+ *      bucket: "gallery" (create it first)
+ *      URL pattern: https://jfiqbifwueoyqtajbhed.supabase.co/storage/v1/object/public/gallery/FILENAME
+ *
+ * 2. Or upload to /public/gallery/ in this project and reference as:
+ *      /gallery/drone-shot-1.jpg
+ *
+ * 3. Replace the Unsplash URLs below with the real URLs.
+ *    Keep the same category/span structure.
+ *
+ * TIP: Use span "col-span-2 row-span-2" for hero/drone shots,
+ *      "col-span-2" for wide shots, "" for standard squares.
+ * ─────────────────────────────────────────────────────────────────
+ */
 const photos = [
   {
     src: "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=1200&q=80",
-    alt: "Tropical sunset with palm trees",
+    alt: "E'Nauwi Beach Resort aerial view",
     category: "Resort",
     span: "col-span-2 row-span-2",
   },
   {
     src: "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?w=800&q=80",
-    alt: "Crystal clear beach waters",
+    alt: "Calm lagoon waters at E'Nauwi",
     category: "Beach",
     span: "",
   },
   {
     src: "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&q=80",
-    alt: "Luxury resort room interior",
+    alt: "Beachfront room interior",
     category: "Rooms",
     span: "",
   },
   {
     src: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80",
-    alt: "Snorkeling in coral reefs",
+    alt: "Snorkeling in the lagoon",
     category: "Activities",
     span: "",
   },
   {
     src: "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=1200&q=80",
-    alt: "Aerial view of tropical island",
+    alt: "Island views from the resort",
     category: "Island",
     span: "col-span-2",
   },
   {
     src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
-    alt: "Fine dining experience",
+    alt: "Open-air restaurant dining",
     category: "Dining",
     span: "",
   },
   {
     src: "https://images.unsplash.com/photo-1472745942893-4b9f730c7668?w=800&q=80",
-    alt: "Ocean kayaking adventure",
+    alt: "Kayaking on the lagoon",
     category: "Activities",
     span: "",
   },
   {
     src: "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&q=80",
-    alt: "Relaxing hammock by the beach",
-    category: "Relaxation",
+    alt: "Swimming pool under coconut trees",
+    category: "Pool",
     span: "",
   },
   {
     src: "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&q=80",
-    alt: "Beachfront bungalow",
+    alt: "Garden bungalow exterior",
     category: "Rooms",
     span: "",
   },
   {
     src: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1200&q=80",
-    alt: "Resort pool and ocean view",
+    alt: "Resort pool and ocean panorama",
     category: "Resort",
     span: "col-span-2",
   },
