@@ -1,93 +1,95 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   Bed,
   Users,
-  Maximize,
   Wifi,
   Wind,
   Coffee,
+  Tv,
+  Phone,
+  Refrigerator,
   Bath,
-  Eye,
-  Star,
   ArrowRight,
+  ChevronDown,
+  ChevronUp,
+  Shirt,
+  Fan,
+  UtensilsCrossed,
 } from "lucide-react";
 import Image from "next/image";
 
 const rooms = [
   {
-    name: "Beach Bungalow",
-    tagline: "Classic Island Living",
+    name: "2BR Deluxe Bungalow",
+    tagline: "Lagoon Beachfront",
     price: "12,000",
-    image:
-      "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&q=80",
-    description:
-      "Traditional thatched-roof bungalow steps from the water's edge. Fall asleep to the rhythm of gentle waves and wake to golden sunrises.",
-    size: "35m²",
-    guests: "2 Adults",
-    bed: "Queen Bed",
-    features: ["Ocean View", "Private Deck", "Outdoor Shower", "WiFi"],
-    popular: false,
-  },
-  {
-    name: "Family Villa",
-    tagline: "Space for Memories",
-    price: "18,000",
-    image:
-      "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&q=80",
-    description:
-      "Spacious two-bedroom villa surrounded by tropical gardens. Perfect for families looking to share an unforgettable island experience together.",
-    size: "65m²",
-    guests: "4 Adults + 2 Kids",
-    bed: "King + Twin Beds",
-    features: [
-      "Garden & Ocean View",
-      "Living Area",
-      "Kitchenette",
-      "WiFi",
-    ],
-    popular: true,
-  },
-  {
-    name: "Premium Suite",
-    tagline: "Ultimate Luxury",
-    price: "25,000",
     image:
       "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
     description:
-      "Our finest accommodation with panoramic ocean views, private plunge pool, and personalised butler service. Pure indulgence in paradise.",
-    size: "90m²",
-    guests: "2 Adults",
-    bed: "King Bed",
-    features: [
-      "Panoramic Ocean View",
-      "Plunge Pool",
-      "Butler Service",
-      "Premium WiFi",
-    ],
+      "Facing the beach and tranquil lagoon, our two-bedroom lagoon beachfront suite bungalows offer a quiet, spacious retreat with refreshing breezes and breathtaking sunset views.",
+    guests: "Up to 4 Guests",
+    bed: "2 Bedrooms",
+    popular: true,
+  },
+  {
+    name: "2BR Superior Bungalow",
+    tagline: "Garden",
+    price: "18,000",
+    image:
+      "https://images.unsplash.com/photo-1578774204375-826dc5d996ed?w=800&q=80",
+    description:
+      "Set behind the lagoon beachfront bungalows, this two-bedroom suite is nestled among flowering gardens and local fruit trees, with gentle peek-through views of the beach.",
+    guests: "Up to 4 Guests",
+    bed: "2 Bedrooms",
+    popular: false,
+  },
+  {
+    name: "Deluxe 1BR Bungalow",
+    tagline: "Lagoon Beachfront",
+    price: "25,000",
+    image:
+      "https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=800&q=80",
+    description:
+      "Set directly on the lagoon beachfront, this Deluxe Single Room features sweeping lagoon and island views, with kayaking just moments from your door.",
+    guests: "Up to 2 Guests",
+    bed: "1 Bedroom",
+    popular: false,
+  },
+  {
+    name: "Superior 1BR Bungalow",
+    tagline: "Garden",
+    price: "10,000",
+    image:
+      "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&q=80",
+    description:
+      "Our one-bedroom back-row bungalow is tucked among lush flowers, offering a peaceful and private retreat surrounded by natural beauty.",
+    guests: "Up to 2 Guests",
+    bed: "1 Bedroom",
     popular: false,
   },
 ];
 
-const featureIcons: Record<string, React.ElementType> = {
-  WiFi: Wifi,
-  "Premium WiFi": Wifi,
-  "Ocean View": Eye,
-  "Garden & Ocean View": Eye,
-  "Panoramic Ocean View": Eye,
-  "Outdoor Shower": Bath,
-  "Private Deck": Maximize,
-  "Living Area": Maximize,
-  "Plunge Pool": Bath,
-  Kitchenette: Coffee,
-  "Butler Service": Star,
-};
+const allRoomFeatures = [
+  { icon: Bath, label: "Towels provided" },
+  { icon: Wifi, label: "Internet Access" },
+  { icon: Wind, label: "Air Conditioned living room" },
+  { icon: Shirt, label: "Bathrobes provided" },
+  { icon: Tv, label: "Television" },
+  { icon: Fan, label: "Ceiling Fans" },
+  { icon: Phone, label: "Telephone" },
+  { icon: Refrigerator, label: "Mini Fridge" },
+  { icon: Bath, label: "Toiletries" },
+  { icon: UtensilsCrossed, label: "Cutlery" },
+  { icon: Coffee, label: "Tea/Coffee Station" },
+];
 
 export default function Accommodations() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const [showFeatures, setShowFeatures] = useState(false);
 
   return (
     <section
@@ -137,23 +139,23 @@ export default function Accommodations() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-white/60 text-lg max-w-2xl mx-auto"
           >
-            Each of our accommodations blends traditional Melanesian architecture
-            with modern comforts, creating spaces that are as beautiful as the
-            island itself.
+            Choose from beachfront lagoon bungalows with stunning sunset views
+            or peaceful garden bungalows nestled among flowering trees — each
+            offering genuine island comfort.
           </motion.p>
         </div>
 
-        {/* Room Cards */}
-        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
+        {/* Room Cards — 2x2 grid */}
+        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
           {rooms.map((room, idx) => (
             <motion.div
               key={room.name}
               initial={{ opacity: 0, y: 50 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, delay: 0.3 + idx * 0.15 }}
+              transition={{ duration: 0.7, delay: 0.3 + idx * 0.12 }}
               className={`group relative bg-white/10 backdrop-blur-sm rounded-3xl overflow-hidden border transition-all duration-500 hover:bg-white/15 ${
                 room.popular
-                  ? "border-gold/40 ring-1 ring-gold/20 lg:scale-[1.03]"
+                  ? "border-gold/40 ring-1 ring-gold/20"
                   : "border-white/10 hover:border-white/20"
               }`}
             >
@@ -164,13 +166,13 @@ export default function Accommodations() {
               )}
 
               {/* Image */}
-              <div className="relative h-64 overflow-hidden">
+              <div className="relative h-56 overflow-hidden">
                 <Image
                   src={room.image}
                   alt={room.name}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  sizes="(max-width: 768px) 100vw, 33vw"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/80 via-ocean-dark/20 to-transparent" />
 
@@ -200,30 +202,11 @@ export default function Accommodations() {
                 {/* Quick specs */}
                 <div className="flex items-center gap-4 text-white/40 text-xs mb-5">
                   <span className="flex items-center gap-1">
-                    <Maximize size={12} /> {room.size}
-                  </span>
-                  <span className="flex items-center gap-1">
                     <Users size={12} /> {room.guests}
                   </span>
                   <span className="flex items-center gap-1">
                     <Bed size={12} /> {room.bed}
                   </span>
-                </div>
-
-                {/* Features */}
-                <div className="grid grid-cols-2 gap-2 mb-6">
-                  {room.features.map((feature) => {
-                    const Icon = featureIcons[feature] || Wind;
-                    return (
-                      <div
-                        key={feature}
-                        className="flex items-center gap-2 text-white/60 text-xs"
-                      >
-                        <Icon size={12} className="text-gold/60" />
-                        {feature}
-                      </div>
-                    );
-                  })}
                 </div>
 
                 {/* CTA */}
@@ -243,12 +226,51 @@ export default function Accommodations() {
           ))}
         </div>
 
+        {/* All Room Features - Expandable */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.6, delay: 0.9 }}
+          className="mt-12"
+        >
+          <button
+            onClick={() => setShowFeatures(!showFeatures)}
+            className="mx-auto flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 rounded-full text-white/70 text-sm font-medium transition-all duration-300 border border-white/10"
+          >
+            All Room Features
+            {showFeatures ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </button>
+
+          {showFeatures && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="mt-6 bg-white/5 rounded-2xl p-6 border border-white/10"
+            >
+              <p className="text-white/40 text-xs uppercase tracking-wider mb-4 text-center">
+                Every room includes
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                {allRoomFeatures.map((feature) => (
+                  <div
+                    key={feature.label}
+                    className="flex items-center gap-2 text-white/60 text-sm"
+                  >
+                    <feature.icon size={14} className="text-gold/60 shrink-0" />
+                    {feature.label}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
+
         {/* Note */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: 1 }}
-          className="text-center text-white/30 text-sm mt-10"
+          className="text-center text-white/30 text-sm mt-8"
         >
           All rates in Vanuatu Vatu (VT). Prices include breakfast. Seasonal rates may apply.
         </motion.p>

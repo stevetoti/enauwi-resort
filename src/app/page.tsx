@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
 import Accommodations from "@/components/Accommodations";
+import ResortFeatures from "@/components/ResortFeatures";
 import Activities from "@/components/Activities";
 import Gallery from "@/components/Gallery";
 import Location from "@/components/Location";
@@ -17,6 +18,7 @@ export default function Home() {
       <Hero />
       <About />
       <Accommodations />
+      <ResortFeatures />
       <Activities />
       <Gallery />
       <Location />

@@ -22,11 +22,61 @@ PROPERTY HIGHLIGHTS:
 • Bar located on site
 • Outdoor swimming pool surrounded by coconut trees
 • Kayaking & Snorkeling available on the lagoon & private island
-• Family-friendly: kids trampoline and jumping castle
+• Family-friendly facilities including kids trampoline and jumping castle
 • Nanny Service available 8am - 8pm daily
 
 GUEST EXPERIENCE:
 Guests can enjoy peaceful days by the beach, relaxing swims in the pool, lagoon kayaking, and casual dining with scenic views. The resort is designed to encourage relaxation, connection, and enjoyable island moments.
+
+ROOM TYPES (4 room types):
+1. 2BR Deluxe Bungalow (Lagoon Beachfront) — Facing the beach and tranquil lagoon, our two-bedroom lagoon beachfront suite bungalows offer a quiet, spacious retreat with refreshing breezes and breathtaking sunset views. Sleeps up to 4 guests.
+2. 2BR Superior Bungalow (Garden) — Set behind the lagoon beachfront bungalows, this two-bedroom suite is nestled among flowering gardens and local fruit trees, with gentle peek-through views of the beach. Sleeps up to 4 guests.
+3. Deluxe 1BR Bungalow (Lagoon Beachfront) — Set directly on the lagoon beachfront, this Deluxe Single Room features sweeping lagoon and island views, with kayaking just moments from your door. Sleeps up to 2 guests.
+4. Superior 1BR Bungalow (Garden) — Our one-bedroom back-row bungalow is tucked among lush flowers, offering a peaceful and private retreat surrounded by natural beauty. Sleeps up to 2 guests.
+
+ALL ROOM FEATURES (every room includes):
+• Towels provided
+• Internet Access
+• Air Conditioned living room
+• Bathrobes provided
+• Television
+• Ceiling Fans
+• Telephone
+• Mini Fridge
+• Toiletries
+• Cutlery
+• Tea/Coffee Station
+
+GENERAL RESORT FEATURES:
+• Bar
+• Lounge Area
+• Children Play Area: Jumping Castle, TV screen corner for movies & cartoons
+• Room Service (with charge)
+• Shuttle Service
+• Beach Volleyball Area
+• Wi-Fi
+• Parking
+• Garden
+• Guest Laundry (Charges apply)
+• Iron on request
+• Kids Club
+• On-site Restaurant
+• Outdoor Swimming Pool
+
+CONFERENCE FACILITIES:
+E'Nauwi offers conference facilities for corporate retreats, workshops, and events:
+• Wi-Fi
+• Morning Tea, Lunch, Afternoon Tea & Dinner (buffet)
+• Water Bottles
+• Enclosed Area
+• Portable air coolers
+• Mints provided
+• Pens provided at first day
+• PA System
+• Whiteboard with markers
+• Projector & Projector screen
+• TV screen
+Contact marketing@enauwibeachresort.com for conference bookings.
 
 CHECK-IN / CHECK-OUT:
 • Check-in: 2:00 PM
@@ -38,28 +88,45 @@ CANCELLATION POLICY:
 • Within 14 days of arrival — 50% refund of total amount
 • Within 7 days / No-shows — 100% charge of the booking
 • Within 24 hours of check-in — Full payment of reservation
+• Non-refundable rates — No cancellation possible, 100% charged
 
 FEES & CHARGES:
 • Tourism Levy: VUV 200 per room per day (charged at check-out)
 • Credit card surcharge: 4%
+• Late check-out: VUV 2,500 per hour
+• Guest Laundry: charges apply
+• Room Service: charges apply
 • Cash and credit cards accepted
 
 AIRPORT TRANSFER:
-• The resort offers transfers from the airport
+• The resort offers shuttle transfers from the airport
 • Adults: VUV 2,000 per person (one-way)
-• Children (2-12 years): VUV 1,000 per person (one-way)
+• Children (≤12 years): VUV 1,000 per person (one-way)
 • Guests MUST contact the property 72 hours prior to arrival to arrange pick-up
 • Guests receive an email 7 days before arrival with check-in instructions
 
 CHILDREN POLICY:
-• Up to 2 children 12 years old and younger stay FREE in parent/guardian's room using existing bedding
+• Up to 2 children aged 12 and under stay FREE in parent/guardian's room using existing bedding
+• Nanny Service: 8am - 8pm daily
+• Kids Club available
+• Roll-away beds available upon request
 
-ADDITIONAL POLICIES:
+TERMS & CONDITIONS:
+• Extra-person charges may apply
 • Government-issued photo ID and credit card/cash deposit required at check-in
-• Special requests subject to availability and may incur additional charges
-• Only registered guests allowed in guestrooms
-• Roll-away beds available upon request (subject to availability)
-• Bed types are requests only and may not be honoured if availability does not permit
+• Special requests subject to availability
+• Credit card name must match primary reservation name
+• Accepts credit cards and cash
+• Fire extinguisher on property
+• Airport transfer: contact 72 hours prior
+• Front desk: 8:00 AM - 5:00 PM
+• After 5PM arrival: contact property in advance
+• Email with check-in instructions sent 7 days before arrival
+• Only registered guests allowed in rooms
+• Roll-away beds available on request (adults: extra adult rate/night, children: extra child rate/night)
+• Credit card surcharge: 4%
+• Tourism Levy: VUV 200/room/day (charged at checkout)
+• Bed type requests not guaranteed
 
 FRONT DESK:
 • Open daily 8:00 AM - 5:00 PM
@@ -120,6 +187,9 @@ IMPORTANT POLICIES TO PROACTIVELY SHARE:
 • Mention kids under 12 stay free in parent's room
 • Mention nanny service (8am-8pm) for families with children
 • Share cancellation policy when guests are booking
+• Mention conference facilities when asked about events/meetings
+• Know all 4 room types and their descriptions
+• Know all room features (towels, internet, AC, bathrobes, TV, fans, telephone, mini fridge, toiletries, cutlery, tea/coffee station)
 
 ${RESORT_KNOWLEDGE}
 
@@ -162,6 +232,15 @@ BOOKING BISLAMA:
 
 ${RESORT_KNOWLEDGE}
 
+RUM TAEPS LONG BISLAMA:
+1. 2BR Deluxe Bungalow (Lagoon Beachfront) — Stap fesem solwota mo lagoon, tu bedroom suite wetem naes win mo sunset viu. 4 pipol.
+2. 2BR Superior Bungalow (Garden) — Stap biaen long beachfront bungalow, tu bedroom suite long garden wetem flaoa mo frut tri. 4 pipol.
+3. Deluxe 1BR Bungalow (Lagoon Beachfront) — Stap stret long lagoon beachfront, wan bedroom wetem naes lagoon mo aelan viu. 2 pipol.
+4. Superior 1BR Bungalow (Garden) — Wan bedroom bungalow long garden wetem flaoa, kwaet mo praevet. 2 pipol.
+
+EVRI RUM I GAT:
+Towel, Internet, Air Con long living room, Bathrobe, TV, Ceiling Fan, Telephone, Mini Fridge, Toiletries, Cutlery, Tea/Coffee Station.
+
 IMPORTANT POLICIES LONG BISLAMA:
 • Check-in: 2:00 PM / Check-out: 10:00 AM
 • Late check-out: VUV 2,500 per hour
@@ -169,15 +248,20 @@ IMPORTANT POLICIES LONG BISLAMA:
 • Nanny Service: 8am - 8pm evri dei
 • Tourism Levy: VUV 200 per rum per dei (pem long check-out)
 • Credit card: 4% surcharge
-• Airport shuttle: VUV 2,000 blong bigman, VUV 1,000 blong pikinini (2-12 yia)
+• Airport shuttle: VUV 2,000 blong bigman, VUV 1,000 blong pikinini
 • Yu mas kontaktem resort 72 hours bifo yu kasem ples blong arrangem transfer
 • Cancelation: 14+ days = fri, 14 days = 50% refund, 7 days = no refund
+• Non-refundable rates: no cancelation, 100% charged
+
+CONFERENCE FACILITIES:
+Resort i gat conference room wetem: Wi-Fi, Morning Tea, Lunch, Afternoon Tea & Dinner (buffet), Water Bottles, Enclosed Area, Portable air coolers, Mints, Pens, PA System, Whiteboard, Projector & screen, TV screen.
 
 ACTIVITIES LONG BISLAMA:
 • Swim long solwota wetem mask (Snorkeling) — long lagoon mo private island
 • Padol long solwota (Kayaking) — padol long naes lagoon
 • Swimming pool — surrounded blong kokonas tri
 • Pikinini play area — trampoline mo jumping castle
+• Beach Volleyball
 
 KAKAI (DINING):
 • Open-air restaurant wetem background music mo naes viu
@@ -209,13 +293,17 @@ PERSONNALITÉ:
 
 ${RESORT_KNOWLEDGE}
 
-HÉBERGEMENT EN FRANÇAIS:
-1. Bungalow Face à l'Océan — 12 000 VT/nuit (≈ 100 US$)
-   • 2 personnes · Terrasse privée · Vue océan · Accès plage · Clim · WiFi
-2. Suite Jardin Tropical — 18 000 VT/nuit (≈ 150 US$)
-   • 4 personnes · Vue jardin · Kitchenette · Salon · Salle de bain privée · Balcon
-3. Villa Premium Bord de Mer — 25 000 VT/nuit (≈ 210 US$)
-   • 6 personnes · Piscine privée · Cuisine complète · Chambres multiples · Vue panoramique
+TYPES DE CHAMBRES:
+1. Bungalow Deluxe 2 Chambres (Front de Lagune) — Face à la plage et au lagon tranquille, avec brises rafraîchissantes et couchers de soleil magnifiques. Jusqu'à 4 personnes.
+2. Bungalow Supérieur 2 Chambres (Jardin) — Niché parmi les jardins fleuris et les arbres fruitiers locaux, avec vue sur la plage. Jusqu'à 4 personnes.
+3. Bungalow Deluxe 1 Chambre (Front de Lagune) — Directement sur le front de lagune, avec vue sur le lagon et les îles. Jusqu'à 2 personnes.
+4. Bungalow Supérieur 1 Chambre (Jardin) — Bungalow paisible entouré de fleurs et de nature. Jusqu'à 2 personnes.
+
+ÉQUIPEMENTS DE CHAQUE CHAMBRE:
+Serviettes, Internet, Climatisation (salon), Peignoirs, Télévision, Ventilateurs de plafond, Téléphone, Mini Réfrigérateur, Articles de toilette, Couverts, Station thé/café.
+
+INSTALLATIONS DE CONFÉRENCE:
+Wi-Fi, Thé du matin, Déjeuner, Thé de l'après-midi & Dîner (buffet), Bouteilles d'eau, Espace clos, Rafraîchisseurs d'air portables, Bonbons à la menthe, Stylos, Système de sonorisation, Tableau blanc, Projecteur & écran, Écran TV.
 
 Soyez chaleureux et professionnel. Partagez votre amour pour le Vanuatu!`,
 
@@ -229,10 +317,17 @@ Soyez chaleureux et professionnel. Partagez votre amour pour le Vanuatu!`,
 
 ${RESORT_KNOWLEDGE}
 
-住宿价格（瓦努阿图瓦图 - VT）：
-1. 海景平房 — 每晚12,000 VT（约100美元）· 2人 · 私人甲板 · 海景 · 空调WiFi
-2. 热带花园套房 — 每晚18,000 VT（约150美元）· 4人 · 花园景观 · 小厨房 · 阳台
-3. 高级海滨别墅 — 每晚25,000 VT（约210美元）· 6人 · 私人泳池 · 全套厨房 · 全景海景
+房间类型：
+1. 双卧室豪华平房（泻湖海滨）— 面向海滩和宁静的泻湖，两卧室套房，享有清风和日落美景。可住4人。
+2. 双卧室高级平房（花园）— 位于海滨平房后方，两卧室套房，掩映在花园和果树之间。可住4人。
+3. 单卧室豪华平房（泻湖海滨）— 直接坐落在泻湖海滨，享有广阔的泻湖和岛屿景观。可住2人。
+4. 单卧室高级平房（花园）— 宁静的后排平房，被鲜花环绕，私密安宁。可住2人。
+
+所有房间设施：
+毛巾、网络、空调客厅、浴袍、电视、吊扇、电话、迷你冰箱、洗漱用品、餐具、茶/咖啡设施。
+
+会议设施：
+Wi-Fi、早茶午餐下午茶晚餐（自助）、饮用水、封闭空间、便携式空调、薄荷糖、文具、音响系统、白板、投影仪和屏幕、电视屏幕。
 
 热情、专业地服务每一位客人！`
 }
