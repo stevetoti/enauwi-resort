@@ -13,6 +13,7 @@ import {
   X,
   Shield,
   ChevronRight,
+  ConciergeBell,
 } from 'lucide-react'
 import { createClientSupabase } from '@/lib/supabase'
 
@@ -21,6 +22,7 @@ const sidebarLinks = [
   { href: '/admin/bookings', label: 'Bookings', icon: Calendar },
   { href: '/admin/rooms', label: 'Rooms', icon: BedDouble },
   { href: '/admin/guests', label: 'Guests', icon: Users },
+  { href: '/admin/services', label: 'Services', icon: ConciergeBell },
 ]
 
 export default function AdminLayout({

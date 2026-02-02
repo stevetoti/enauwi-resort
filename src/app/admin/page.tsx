@@ -11,6 +11,8 @@ import {
   DollarSign,
   Clock,
   TrendingUp,
+  ConciergeBell,
+  Package,
 } from 'lucide-react'
 import { createClientSupabase } from '@/lib/supabase'
 import { formatVatu, formatDate } from '@/lib/utils'
@@ -25,6 +27,9 @@ interface DashboardStats {
   pendingBookings: number
   totalRooms: number
   totalGuests: number
+  serviceOrdersToday: number
+  serviceRevenueToday: number
+  pendingConferences: number
 }
 
 export default function AdminDashboard() {
@@ -37,6 +42,9 @@ export default function AdminDashboard() {
     pendingBookings: 0,
     totalRooms: 0,
     totalGuests: 0,
+    serviceOrdersToday: 0,
+    serviceRevenueToday: 0,
+    pendingConferences: 0,
   })
   const [recentBookings, setRecentBookings] = useState<(Booking & { room?: Room })[]>([])
   const [loading, setLoading] = useState(true)
@@ -58,6 +66,19 @@ export default function AdminDashboard() {
 
       // Fetch guests
       const { data: guests } = await supabase.from('guests').select('id')
+
+      // Fetch service orders for today
+      const { data: serviceOrders } = await supabase
+        .from('service_orders')
+        .select('*')
+        .gte('created_at', today + 'T00:00:00')
+        .lte('created_at', today + 'T23:59:59')
+
+      // Fetch pending conference bookings
+      const { data: confBookings } = await supabase
+        .from('conference_bookings')
+        .select('*')
+        .eq('status', 'pending')
 
       const allBookings = bookings || []
       const allRooms = rooms || []
@@ -91,6 +112,14 @@ export default function AdminDashboard() {
         (b) => b.status === 'pending'
       ).length
 
+      const allServiceOrders = (serviceOrders || []).filter(
+        (o: { status: string }) => o.status !== 'cancelled'
+      )
+      const serviceRevenueToday = allServiceOrders.reduce(
+        (sum: number, o: { total_price?: number }) => sum + (o.total_price || 0),
+        0
+      )
+
       setStats({
         totalBookings: allBookings.length,
         todayCheckIns,
@@ -100,6 +129,9 @@ export default function AdminDashboard() {
         pendingBookings,
         totalRooms: allRooms.length,
         totalGuests: guests?.length || 0,
+        serviceOrdersToday: allServiceOrders.length,
+        serviceRevenueToday,
+        pendingConferences: confBookings?.length || 0,
       })
 
       setRecentBookings(allBookings.slice(0, 10))
@@ -207,6 +239,43 @@ export default function AdminDashboard() {
               <p className="text-xl font-bold text-gray-900">{stats.pendingBookings}</p>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Service Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <Package className="h-5 w-5 text-purple-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Service Orders Today</p>
+              <p className="text-xl font-bold text-gray-900">{stats.serviceOrdersToday}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-emerald-100 rounded-lg">
+              <ConciergeBell className="h-5 w-5 text-emerald-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Service Revenue Today</p>
+              <p className="text-xl font-bold text-gray-900">{formatVatu(stats.serviceRevenueToday)}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+          <Link href="/admin/services" className="flex items-center gap-3">
+            <div className="p-2 bg-orange-100 rounded-lg">
+              <Calendar className="h-5 w-5 text-orange-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Pending Conferences</p>
+              <p className="text-xl font-bold text-gray-900">{stats.pendingConferences}</p>
+            </div>
+          </Link>
         </div>
       </div>
 

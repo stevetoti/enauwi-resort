@@ -100,3 +100,57 @@ export interface AdminStats {
   totalRevenue: number
   pendingBookings: number
 }
+
+export interface Service {
+  id: string
+  name: string
+  category: 'conference' | 'food_beverage' | 'activities' | 'other_services'
+  description: string
+  unit_price: number
+  price_unit: string
+  is_placeholder_price: boolean
+  amenities: string[] | null
+  available: boolean
+  sort_order: number
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ConferenceBooking {
+  id: string
+  service_id: string
+  booking_date: string
+  start_time: string
+  end_time: string
+  booking_type: 'half_day' | 'full_day'
+  number_of_attendees: number
+  special_requirements: string | null
+  contact_name: string
+  contact_email: string
+  contact_phone: string | null
+  total_price: number | null
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed'
+  notes: string | null
+  created_at: string
+  updated_at: string
+  service?: Service
+}
+
+export interface ServiceOrder {
+  id: string
+  booking_id: string | null
+  service_id: string
+  quantity: number
+  unit_price: number
+  total_price: number
+  status: 'pending' | 'confirmed' | 'delivered' | 'cancelled'
+  notes: string | null
+  room_number: string | null
+  guest_name: string | null
+  guest_email: string | null
+  created_at: string
+  updated_at: string
+  service?: Service
+  booking?: Booking
+}
