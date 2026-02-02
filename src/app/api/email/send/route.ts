@@ -3,7 +3,7 @@ import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-const ADMIN_EMAILS = ['gm@enauwibeachresort.com', 'toti@pacificwavedigital.com', 'steve@pacificwavedigital.com']
+const ADMIN_EMAILS = ['reservation@enauwibeachresort.com', 'gm@enauwibeachresort.com', 'marketing@enauwibeachresort.com', 'toti@pacificwavedigital.com', 'steve@pacificwavedigital.com']
 const FROM_NOREPLY = 'E\'Nauwi Beach Resort <noreply@totiroom.pacificwavedigital.com>'
 const FROM_CONCIERGE = 'E\'Nauwi Concierge <concierge@totiroom.pacificwavedigital.com>'
 
