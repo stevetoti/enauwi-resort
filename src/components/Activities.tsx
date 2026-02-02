@@ -75,7 +75,7 @@ const resortActivities = [
     icon: Heart,
     title: "Wedding Venue",
     description:
-      "Say &apos;I do&apos; in a beautiful beachfront setting with lagoon views and tropical gardens — the perfect backdrop for wedding ceremonies and photo shoots.",
+      "Say \u2018I do\u2019 in a beautiful beachfront setting with lagoon views and tropical gardens — the perfect backdrop for wedding ceremonies and photo shoots.",
     image:
       "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
     tag: "Events",
