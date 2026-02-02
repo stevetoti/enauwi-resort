@@ -29,34 +29,34 @@ import {
 } from "lucide-react";
 
 const resortFeatures = [
-  { icon: Wine, label: "Bar" },
-  { icon: Sofa, label: "Lounge Area" },
-  { icon: Baby, label: "Children Play Area", detail: "Jumping Castle, TV screen corner for movies & cartoons" },
-  { icon: ConciergeBell, label: "Room Service", detail: "With charge" },
-  { icon: Bus, label: "Shuttle Service" },
-  { icon: Volleyball, label: "Beach Volleyball Area" },
-  { icon: Wifi, label: "Wi-Fi" },
-  { icon: ParkingCircle, label: "Parking" },
-  { icon: TreePalm, label: "Garden" },
-  { icon: WashingMachine, label: "Guest Laundry", detail: "Charges apply" },
-  { icon: Shirt, label: "Iron on request" },
-  { icon: Users, label: "Kids Club" },
-  { icon: UtensilsCrossed, label: "On-site Restaurant" },
-  { icon: Waves, label: "Outdoor Swimming Pool" },
+  { icon: Wine, label: "Bar", detail: "Tropical cocktails & cold drinks" },
+  { icon: Sofa, label: "Lounge Area", detail: "Relax with an ocean breeze" },
+  { icon: Baby, label: "Children Play Area", detail: "Jumping castle, movies & cartoons" },
+  { icon: ConciergeBell, label: "Room Service", detail: "Delivered to your door" },
+  { icon: Bus, label: "Shuttle Service", detail: "Airport & local transfers" },
+  { icon: Volleyball, label: "Beach Volleyball", detail: "Sandy court by the shore" },
+  { icon: Wifi, label: "Wi-Fi", detail: "Stay connected" },
+  { icon: ParkingCircle, label: "Parking", detail: "Complimentary on-site" },
+  { icon: TreePalm, label: "Tropical Gardens", detail: "Frangipani, palms & fruit trees" },
+  { icon: WashingMachine, label: "Guest Laundry", detail: "Wash & fold available" },
+  { icon: Shirt, label: "Iron on Request", detail: "For a polished look" },
+  { icon: Users, label: "Kids Club", detail: "Supervised fun for little ones" },
+  { icon: UtensilsCrossed, label: "On-site Restaurant", detail: "Fresh island cuisine daily" },
+  { icon: Waves, label: "Swimming Pool", detail: "Surrounded by coconut palms" },
 ];
 
 const conferenceFeatures = [
-  { icon: Wifi, label: "Wi-Fi" },
-  { icon: Coffee, label: "Morning Tea, Lunch, Afternoon Tea & Dinner", detail: "Buffet" },
+  { icon: Wifi, label: "High-speed Wi-Fi" },
+  { icon: Coffee, label: "Full-day catering", detail: "Morning tea, lunch, afternoon tea & dinner buffet" },
   { icon: Droplets, label: "Water Bottles" },
-  { icon: Star, label: "Enclosed Area" },
+  { icon: Star, label: "Private enclosed space" },
   { icon: Wind, label: "Portable air coolers" },
-  { icon: Candy, label: "Mints provided" },
-  { icon: PenTool, label: "Pens provided at first day" },
+  { icon: Candy, label: "Mints & refreshments" },
+  { icon: PenTool, label: "Stationery provided" },
   { icon: Mic, label: "PA System" },
-  { icon: PenTool, label: "Whiteboard with markers" },
-  { icon: Projector, label: "Projector & Projector screen" },
-  { icon: Tv, label: "TV screen" },
+  { icon: PenTool, label: "Whiteboard & markers" },
+  { icon: Projector, label: "Projector & screen" },
+  { icon: Tv, label: "Large TV screen" },
 ];
 
 export default function ResortFeatures() {
@@ -86,8 +86,8 @@ export default function ResortFeatures() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="section-heading"
           >
-            Everything You{" "}
-            <span className="text-gold-gradient">Need</span>
+            More Than a Stay —{" "}
+            <span className="text-gold-gradient">An Experience</span>
           </motion.h2>
 
           <motion.p
@@ -96,8 +96,9 @@ export default function ResortFeatures() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="section-subheading"
           >
-            From family-friendly play areas to a relaxing poolside bar, our resort
-            offers all the amenities for a perfect island stay.
+            A poolside cocktail under the coconut palms. The kids laughing on the
+            jumping castle while you read in the lounge. Volleyball on the sand
+            before dinner. Everything you need is here — nothing you don&apos;t.
           </motion.p>
         </div>
 
@@ -135,16 +136,18 @@ export default function ResortFeatures() {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full mb-4">
               <Projector size={14} className="text-gold-light" />
               <span className="text-white/70 text-sm font-medium uppercase tracking-wider">
-                Conference Facilities
+                Conference &amp; Events
               </span>
             </div>
             <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white mb-3">
-              Host Your Event in{" "}
-              <span className="text-gold-light">Paradise</span>
+              Meet Where the{" "}
+              <span className="text-gold-light">Ocean Inspires</span>
             </h3>
-            <p className="text-white/50 text-sm max-w-xl mx-auto">
-              E&apos;Nauwi offers a fully equipped conference space ideal for
-              corporate retreats, workshops, and team-building events on the island.
+            <p className="text-white/50 text-sm max-w-2xl mx-auto">
+              Swap the boardroom for an island breeze. Our fully equipped
+              conference space is ideal for corporate retreats, planning
+              workshops, and team-building events — with full-day catering,
+              modern AV, and the kind of scenery that sparks fresh thinking.
             </p>
           </div>
 

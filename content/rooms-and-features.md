@@ -1,30 +1,50 @@
 # E'Nauwi Beach Resort — Rooms, Features & Policies Reference
 
 *Source: marketing@enauwibeachresort.com — Updated February 2026*
+*Enhanced marketing copy — approved for creative freedom*
+
+---
+
+## About Us
+
+Tucked along a quiet stretch of Malekula's South West Bay, E'Nauwi Beach Resort is where warm sand, calm lagoon waters, and genuine Melanesian hospitality come together. This is not a place that tries to impress — it's a place that lets you breathe, reconnect, and remember what matters. Ideal for families, couples, and groups seeking comfort, good food, and genuine island hospitality.
+
+### Property Highlights
+- Beachfront location with lagoon and island views
+- Comfortable beachfront rooms and garden bungalows
+- Open-air restaurant — dine under the palms with fresh island seafood and tropical flavours set to live background music
+- Bar on site with tropical cocktails and cold drinks
+- Outdoor swimming pool surrounded by coconut palms
+- Kayaking & Snorkeling on the lagoon and private island
+- Family-friendly facilities including kids trampoline, jumping castle, and Kids Club
+- Nanny Service 8am - 8pm daily
+
+### Guest Experience
+Spend mornings floating in a lagoon so still it mirrors the sky. Cool off in the pool beneath swaying coconut palms. Paddle a kayak to the private island for an afternoon of snorkelling. Then settle into the restaurant as the sun dips behind the islands and the aroma of freshly grilled seafood fills the evening air. Whether it's a family holiday, a romantic escape, or a group getaway, E'Nauwi wraps every guest in the kind of warmth you only find on a Melanesian island.
 
 ---
 
 ## Room Types
 
 ### 1. 2BR Deluxe Bungalow (Lagoon Beachfront)
-"Facing the beach and tranquil lagoon, our two-bedroom lagoon beachfront suite bungalows offer a quiet, spacious retreat with refreshing breezes and breathtaking sunset views."
+Step outside and the lagoon is right there — turquoise, still, and stretching toward the islands on the horizon. This spacious two-bedroom bungalow sits front-row on the beachfront, where warm trade-wind breezes drift through the living area and every evening brings a sunset you'll want to photograph twice.
 - Sleeps: Up to 4 guests
 - Location: Lagoon Beachfront
 
 ### 2. 2BR Superior Bungalow (Garden)
-"Set behind the lagoon beachfront bungalows, this two-bedroom suite is nestled among flowering gardens and local fruit trees, with gentle peek-through views of the beach."
+Tucked just behind the beachfront row, this two-bedroom retreat is wrapped in the colour and fragrance of Vanuatu's tropical gardens — flowering hibiscus, local mango and papaya trees, and the soft sound of the ocean filtering through the leaves. The beach is a short stroll away, but your private garden world feels miles from anywhere.
 - Sleeps: Up to 4 guests
-- Location: Garden
+- Location: Tropical Garden
 
 ### 3. Deluxe 1BR Bungalow (Lagoon Beachfront)
-"Set directly on the lagoon beachfront, this Deluxe Single Room features sweeping lagoon and island views, with kayaking just moments from your door."
+For couples and solo travellers who want the lagoon all to themselves. This intimate one-bedroom bungalow opens directly onto the beachfront with sweeping views across the water to the outer islands. Grab a kayak from the shore, snorkel at your doorstep, or simply settle into the quiet with a good book and the sound of gentle waves.
 - Sleeps: Up to 2 guests
 - Location: Lagoon Beachfront
 
 ### 4. Superior 1BR Bungalow (Garden)
-"Our one-bedroom back-row bungalow is tucked among lush flowers, offering a peaceful and private retreat surrounded by natural beauty."
+Escape to your own private sanctuary, nestled among fragrant tropical flowers and swaying palms. This charming one-bedroom bungalow offers a peaceful retreat surrounded by Vanuatu's lush natural beauty — the perfect hideaway to recharge after a day of island adventure.
 - Sleeps: Up to 2 guests
-- Location: Garden
+- Location: Tropical Garden
 
 ---
 
@@ -44,60 +64,46 @@
 ---
 
 ## General Resort Features
-- Bar
-- Lounge Area
-- Children Play Area: Jumping Castle, TV screen corner for movies & cartoons
-- Room Service (with charge)
-- Shuttle Service
-- Beach Volleyball Area
-- Wi-Fi
-- Parking
-- Garden
-- Guest Laundry (Charges apply)
+- Bar — tropical cocktails & cold drinks
+- Lounge Area — relax with an ocean breeze
+- Children Play Area — jumping castle, TV screen corner for movies & cartoons
+- Room Service — delivered to your door (charges apply)
+- Shuttle Service — airport & local transfers
+- Beach Volleyball Area — sandy court by the shore
+- Wi-Fi throughout the resort
+- Complimentary Parking
+- Tropical Gardens — frangipani, palms & fruit trees
+- Guest Laundry — wash & fold available (charges apply)
 - Iron on request
-- Kids Club
-- On-site Restaurant
-- Outdoor Swimming Pool
+- Kids Club — supervised fun for little ones
+- On-site Restaurant — fresh island cuisine daily
+- Outdoor Swimming Pool — surrounded by coconut palms
 
 ---
 
-## Conference Facilities
-- Wi-Fi
-- Morning Tea, Lunch, Afternoon Tea & Dinner (buffet)
+## Conference & Events
+Swap the boardroom for an island breeze. Our fully equipped conference space is ideal for corporate retreats, planning workshops, and team-building events — with full-day catering, modern AV, and scenery that sparks fresh thinking.
+
+- High-speed Wi-Fi
+- Full-day catering: Morning Tea, Lunch, Afternoon Tea & Dinner (buffet)
 - Water Bottles
-- Enclosed Area
+- Private enclosed space
 - Portable air coolers
-- Mints provided
-- Pens provided at first day
+- Mints & refreshments
+- Stationery provided (pens on first day)
 - PA System
-- Whiteboard with markers
-- Projector & Projector screen
-- TV screen
+- Whiteboard & markers
+- Projector & screen
+- Large TV screen
 
----
-
-## About Us
-"E'Nauwi Beach Resort is a family-friendly island retreat set along a peaceful beachfront with calm lagoon waters and beautiful island views. The resort offers a relaxed environment ideal for families, couples, and groups seeking comfort, good food, and genuine island hospitality."
-
-### Property Highlights
-- Beachfront location with lagoon and island views
-- Comfortable beachfront rooms and garden bungalows
-- Open-air restaurant with relaxed dining atmosphere and background music
-- Bar located on site
-- Outdoor swimming pool surrounded by coconut trees
-- Kayaking & Snorkeling available on the lagoon & private island
-- Family-friendly facilities including kids trampoline and jumping castle
-- Nanny Service 8am - 8pm
-
-### Guest Experience
-"Guests can enjoy peaceful days by the beach, relaxing swims in the pool, lagoon kayaking, and casual dining with scenic views. The resort is designed to encourage relaxation, connection, and enjoyable island moments."
+Contact marketing@enauwibeachresort.com for conference bookings and pricing.
 
 ---
 
 ## Policies
 
 ### Cancellation Policy
-- Free cancellation 14+ days prior to check-in
+- Free cancellation 14+ days prior to check-in (full refund)
 - Within 14 days: 50% refund
 - Within 7 days or no-show: 100% charge
 - Within 24 hours: full payment charged

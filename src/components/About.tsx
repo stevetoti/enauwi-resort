@@ -10,7 +10,7 @@ const highlights = [
     icon: Home,
     title: "Beachfront Rooms & Garden Bungalows",
     description:
-      "Choose from comfortable beachfront rooms with lagoon views or charming garden bungalows surrounded by tropical greenery — all designed for a relaxing island stay.",
+      "Wake to the whisper of waves in a lagoon-front bungalow, or retreat to a garden hideaway wrapped in frangipani and birdsong. Every room is designed so the island comes to you.",
     image:
       "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=600&q=80",
   },
@@ -18,7 +18,7 @@ const highlights = [
     icon: Ship,
     title: "Kayaking & Snorkeling",
     description:
-      "Explore the calm lagoon waters and our private island by kayak, or discover the vibrant underwater world with snorkeling right from the resort.",
+      "Glide across the glass-calm lagoon by kayak, paddle out to our private island, or slip beneath the surface to discover coral gardens alive with tropical fish and sea turtles.",
     image:
       "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=600&q=80",
   },
@@ -26,7 +26,7 @@ const highlights = [
     icon: UtensilsCrossed,
     title: "Open-Air Restaurant & Bar",
     description:
-      "Enjoy relaxed dining in our open-air restaurant with background music and scenic views, or unwind at the bar with a refreshing tropical drink.",
+      "Dine under the palms with the lagoon stretching out before you. Fresh island seafood, tropical flavours, and a well-stocked bar — all set to the gentle rhythm of live background music.",
     image:
       "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
   },
@@ -70,8 +70,8 @@ export default function About() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="section-heading"
           >
-            A Family-Friendly{" "}
-            <span className="text-gold-gradient">Island Retreat</span>
+            Where the Ocean Meets{" "}
+            <span className="text-gold-gradient">Island Soul</span>
           </motion.h2>
 
           <motion.p
@@ -80,11 +80,11 @@ export default function About() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="section-subheading"
           >
-            E&apos;Nauwi Beach Resort is a family-friendly island retreat set
-            along a peaceful beachfront with calm lagoon waters and beautiful
-            island views. The resort offers a relaxed environment ideal for
-            families, couples, and groups seeking comfort, good food, and
-            genuine island hospitality.
+            Tucked along a quiet stretch of Malekula&apos;s South West Bay,
+            E&apos;Nauwi Beach Resort is where warm sand, calm lagoon waters, and
+            genuine Melanesian hospitality come together. This is not a place
+            that tries to impress — it&apos;s a place that lets you breathe,
+            reconnect, and remember what matters.
           </motion.p>
         </div>
 
@@ -127,19 +127,22 @@ export default function About() {
             className="space-y-6"
           >
             <h3 className="font-serif text-2xl sm:text-3xl font-bold text-ocean">
-              Relax, Explore & Enjoy
+              Slow Down. Dive In. Feel at Home.
             </h3>
             <p className="text-ocean/70 leading-relaxed text-lg">
-              Guests can enjoy peaceful days by the beach, relaxing swims in our
-              outdoor pool surrounded by coconut trees, lagoon kayaking, and
-              casual dining with scenic views. The resort is designed to
-              encourage relaxation, connection, and enjoyable island moments.
+              Spend your mornings floating in a lagoon so still it mirrors the
+              sky. Cool off in our pool beneath swaying coconut palms. Paddle a
+              kayak to our private island for an afternoon of snorkelling. Then
+              settle into the restaurant as the sun dips behind the islands
+              and the aroma of freshly grilled seafood fills the evening air.
             </p>
             <p className="text-ocean/70 leading-relaxed">
-              Families love our kids trampoline and jumping castle, plus our
-              Nanny Service available from 8am to 8pm. Whether you&apos;re
-              snorkeling on the lagoon, exploring our private island, or simply
-              unwinding with a drink at the bar — E&apos;Nauwi is your place.
+              Travelling with little ones? They&apos;ll love the jumping castle
+              and trampoline while you enjoy a quiet moment — our nanny service
+              runs 8 am to 8 pm so you can truly relax. Whether it&apos;s a
+              family holiday, a romantic escape, or a group getaway,
+              E&apos;Nauwi wraps every guest in the kind of warmth you
+              only find on a Melanesian island.
             </p>
             <div className="grid grid-cols-2 gap-4 pt-4">
               {[

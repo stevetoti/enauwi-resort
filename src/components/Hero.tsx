@@ -98,9 +98,9 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 1.1 }}
             className="text-white/80 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-light"
           >
-            Your island paradise on the pristine shores of Malekula.
+            A family-friendly island retreat with calm lagoon waters
             <br className="hidden sm:block" />
-            Where crystal waters meet authentic Melanesian warmth.
+            and genuine island hospitality on Malekula Island, Vanuatu.
           </motion.p>
 
           {/* CTAs */}
@@ -132,9 +132,9 @@ export default function Hero() {
             className="mt-16 flex items-center justify-center gap-8 sm:gap-12"
           >
             {[
-              { value: "5★", label: "Rated" },
-              { value: "50m", label: "To Beach" },
-              { value: "100%", label: "Eco-Friendly" },
+              { value: "🌊", label: "Beachfront" },
+              { value: "🏊", label: "Pool & Lagoon" },
+              { value: "👨‍👩‍👧‍👦", label: "Family-Friendly" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="text-2xl sm:text-3xl font-serif font-bold text-white">

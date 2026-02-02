@@ -16,6 +16,7 @@ const footerLinks = [
     links: [
       { label: "About Us", href: "#about" },
       { label: "Accommodations", href: "#accommodations" },
+      { label: "Features & Amenities", href: "#features" },
       { label: "Activities", href: "#activities" },
       { label: "Gallery", href: "#gallery" },
     ],
@@ -50,8 +51,9 @@ export default function Footer() {
               </span>
             </a>
             <p className="text-white/40 text-sm leading-relaxed mb-6">
-              Your luxury island paradise on the pristine shores of Malekula
-              Island, Vanuatu. Where crystal waters meet Melanesian warmth.
+              A family-friendly island retreat set along a peaceful beachfront
+              with calm lagoon waters and beautiful island views on Malekula
+              Island, Vanuatu.
             </p>
             <div className="flex gap-3">
               {[Facebook, Instagram].map((Icon, i) => (

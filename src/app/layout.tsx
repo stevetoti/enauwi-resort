@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "E'Nauwi Beach Resort | Luxury Island Paradise in Malekula, Vanuatu",
+  title: "E'Nauwi Beach Resort | Family-Friendly Island Retreat in Malekula, Vanuatu",
   description:
-    "Experience the untouched beauty of Malekula Island at E'Nauwi Beach Resort. Luxury beachfront bungalows, world-class snorkeling, authentic Melanesian culture, and pristine white sand beaches await you in Vanuatu's hidden paradise.",
+    "E'Nauwi Beach Resort is a family-friendly island retreat on Malekula Island, Vanuatu. Comfortable beachfront bungalows, calm lagoon waters, kayaking, snorkeling, and genuine island hospitality await families, couples, and groups.",
   keywords:
-    "Vanuatu resort, Malekula Island, beach resort, luxury accommodation, Pacific Islands, island paradise, snorkeling, Melanesian culture",
+    "Vanuatu resort, Malekula Island, beach resort, family-friendly accommodation, Pacific Islands, island retreat, snorkeling, kayaking, lagoon, Melanesian hospitality",
   openGraph: {
     title: "E'Nauwi Beach Resort | Malekula Island, Vanuatu",
     description:
-      "Your luxury island paradise awaits on the pristine shores of Malekula.",
+      "A family-friendly island retreat with calm lagoon waters and beautiful island views on Malekula.",
     images: [
       "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=1200&q=80",
     ],

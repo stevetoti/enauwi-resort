@@ -13,26 +13,26 @@ LOCATION: South West Bay, Malekula Island, Malampa Province, Vanuatu
 WEBSITE: https://enauwibeachresort.com
 
 ABOUT US:
-E'Nauwi Beach Resort is a family-friendly island retreat set along a peaceful beachfront with calm lagoon waters and beautiful island views. The resort offers a relaxed environment ideal for families, couples, and groups seeking comfort, good food, and genuine island hospitality.
+Tucked along a quiet stretch of Malekula's South West Bay, E'Nauwi Beach Resort is where warm sand, calm lagoon waters, and genuine Melanesian hospitality come together. This is not a place that tries to impress — it's a place that lets you breathe, reconnect, and remember what matters. Ideal for families, couples, and groups seeking comfort, good food, and genuine island hospitality.
 
 PROPERTY HIGHLIGHTS:
 • Beachfront location with lagoon and island views
 • Comfortable beachfront rooms and garden bungalows
-• Open-air restaurant with relaxed dining atmosphere and background music
-• Bar located on site
-• Outdoor swimming pool surrounded by coconut trees
-• Kayaking & Snorkeling available on the lagoon & private island
-• Family-friendly facilities including kids trampoline and jumping castle
+• Open-air restaurant — dine under the palms with fresh island seafood and tropical flavours set to live background music
+• Bar on site with tropical cocktails and cold drinks
+• Outdoor swimming pool surrounded by coconut palms
+• Kayaking & Snorkeling on the lagoon and private island
+• Family-friendly facilities including kids trampoline, jumping castle, and Kids Club
 • Nanny Service available 8am - 8pm daily
 
 GUEST EXPERIENCE:
-Guests can enjoy peaceful days by the beach, relaxing swims in the pool, lagoon kayaking, and casual dining with scenic views. The resort is designed to encourage relaxation, connection, and enjoyable island moments.
+Spend mornings floating in a lagoon so still it mirrors the sky. Cool off in the pool beneath swaying coconut palms. Paddle a kayak to the private island for an afternoon of snorkelling. Then settle into the restaurant as the sun dips behind the islands and the aroma of freshly grilled seafood fills the evening air. Whether it's a family holiday, a romantic escape, or a group getaway, E'Nauwi wraps every guest in the kind of warmth you only find on a Melanesian island.
 
 ROOM TYPES (4 room types):
-1. 2BR Deluxe Bungalow (Lagoon Beachfront) — Facing the beach and tranquil lagoon, our two-bedroom lagoon beachfront suite bungalows offer a quiet, spacious retreat with refreshing breezes and breathtaking sunset views. Sleeps up to 4 guests.
-2. 2BR Superior Bungalow (Garden) — Set behind the lagoon beachfront bungalows, this two-bedroom suite is nestled among flowering gardens and local fruit trees, with gentle peek-through views of the beach. Sleeps up to 4 guests.
-3. Deluxe 1BR Bungalow (Lagoon Beachfront) — Set directly on the lagoon beachfront, this Deluxe Single Room features sweeping lagoon and island views, with kayaking just moments from your door. Sleeps up to 2 guests.
-4. Superior 1BR Bungalow (Garden) — Our one-bedroom back-row bungalow is tucked among lush flowers, offering a peaceful and private retreat surrounded by natural beauty. Sleeps up to 2 guests.
+1. 2BR Deluxe Bungalow (Lagoon Beachfront) — Step outside and the lagoon is right there — turquoise, still, and stretching toward the islands on the horizon. This spacious two-bedroom bungalow sits front-row on the beachfront, where warm trade-wind breezes drift through the living area and every evening brings a sunset you'll want to photograph twice. Sleeps up to 4 guests.
+2. 2BR Superior Bungalow (Garden) — Tucked just behind the beachfront row, this two-bedroom retreat is wrapped in the colour and fragrance of Vanuatu's tropical gardens — flowering hibiscus, local mango and papaya trees, and the soft sound of the ocean filtering through the leaves. The beach is a short stroll away, but your private garden world feels miles from anywhere. Sleeps up to 4 guests.
+3. Deluxe 1BR Bungalow (Lagoon Beachfront) — For couples and solo travellers who want the lagoon all to themselves. This intimate one-bedroom bungalow opens directly onto the beachfront with sweeping views across the water to the outer islands. Grab a kayak from the shore, snorkel at your doorstep, or simply settle into the quiet with a good book and the sound of gentle waves. Sleeps up to 2 guests.
+4. Superior 1BR Bungalow (Garden) — Escape to your own private sanctuary, nestled among fragrant tropical flowers and swaying palms. This charming one-bedroom bungalow offers a peaceful retreat surrounded by Vanuatu's lush natural beauty — the perfect hideaway to recharge after a day of island adventure. Sleeps up to 2 guests.
 
 ALL ROOM FEATURES (every room includes):
 • Towels provided
@@ -48,35 +48,35 @@ ALL ROOM FEATURES (every room includes):
 • Tea/Coffee Station
 
 GENERAL RESORT FEATURES:
-• Bar
-• Lounge Area
-• Children Play Area: Jumping Castle, TV screen corner for movies & cartoons
-• Room Service (with charge)
-• Shuttle Service
-• Beach Volleyball Area
-• Wi-Fi
-• Parking
-• Garden
-• Guest Laundry (Charges apply)
+• Bar — tropical cocktails & cold drinks
+• Lounge Area — relax with an ocean breeze
+• Children Play Area — jumping castle, TV screen corner for movies & cartoons
+• Room Service — delivered to your door (charges apply)
+• Shuttle Service — airport & local transfers
+• Beach Volleyball Area — sandy court by the shore
+• Wi-Fi throughout the resort
+• Complimentary Parking
+• Tropical Gardens — frangipani, palms & fruit trees
+• Guest Laundry — wash & fold available (charges apply)
 • Iron on request
-• Kids Club
-• On-site Restaurant
-• Outdoor Swimming Pool
+• Kids Club — supervised fun for little ones
+• On-site Restaurant — fresh island cuisine daily
+• Outdoor Swimming Pool — surrounded by coconut palms
 
-CONFERENCE FACILITIES:
-E'Nauwi offers conference facilities for corporate retreats, workshops, and events:
-• Wi-Fi
-• Morning Tea, Lunch, Afternoon Tea & Dinner (buffet)
+CONFERENCE & EVENTS:
+Swap the boardroom for an island breeze. Our fully equipped conference space is ideal for corporate retreats, planning workshops, and team-building events — with full-day catering, modern AV, and scenery that sparks fresh thinking:
+• High-speed Wi-Fi
+• Full-day catering: Morning Tea, Lunch, Afternoon Tea & Dinner (buffet)
 • Water Bottles
-• Enclosed Area
+• Private enclosed space
 • Portable air coolers
-• Mints provided
-• Pens provided at first day
+• Mints & refreshments
+• Stationery provided (pens on first day)
 • PA System
-• Whiteboard with markers
-• Projector & Projector screen
-• TV screen
-Contact marketing@enauwibeachresort.com for conference bookings.
+• Whiteboard & markers
+• Projector & screen
+• Large TV screen
+Contact marketing@enauwibeachresort.com for conference bookings and pricing.
 
 CHECK-IN / CHECK-OUT:
 • Check-in: 2:00 PM
@@ -233,10 +233,10 @@ BOOKING BISLAMA:
 ${RESORT_KNOWLEDGE}
 
 RUM TAEPS LONG BISLAMA:
-1. 2BR Deluxe Bungalow (Lagoon Beachfront) — Stap fesem solwota mo lagoon, tu bedroom suite wetem naes win mo sunset viu. 4 pipol.
-2. 2BR Superior Bungalow (Garden) — Stap biaen long beachfront bungalow, tu bedroom suite long garden wetem flaoa mo frut tri. 4 pipol.
-3. Deluxe 1BR Bungalow (Lagoon Beachfront) — Stap stret long lagoon beachfront, wan bedroom wetem naes lagoon mo aelan viu. 2 pipol.
-4. Superior 1BR Bungalow (Garden) — Wan bedroom bungalow long garden wetem flaoa, kwaet mo praevet. 2 pipol.
+1. 2BR Deluxe Bungalow (Lagoon Beachfront) — Yu step aotsaed mo lagoon i stap stret long fes blong yu — blu, kwaet, mo i stretap go long ol aelan. Bigfala tu-bedroom bungalow wetem naes win i blo thru mo evri aftenun yu lukim wan sunset we yu no save fogetem. 4 pipol.
+2. 2BR Superior Bungalow (Garden) — Stap biaen smol long beachfront, tu-bedroom retreat we i raonem wetem ol naes flaoa, mango tri mo pawpaw tri. Solwota i kwaet kwaet long biaen long ol lif. Beach i klosap nomo bat garden blong yu i filim olsem wan narafala wol. 4 pipol.
+3. Deluxe 1BR Bungalow (Lagoon Beachfront) — Blong ol kapol mo wan wan traveller we oli wantem lagoon blong olgeta nomo. Wan naes wan-bedroom bungalow we doa i open stret long beachfront wetem viu i go kasem ol narafala aelan. Tekem kayak, snorkel long doa blong yu, o sidaon kwaet wetem buk blong yu mo saon blong weiv. 2 pipol.
+4. Superior 1BR Bungalow (Garden) — Wan praevet ples blong yu nomo, stap long medel blong ol smolnaes flaoa mo kokonas palm. Wan naes wan-bedroom bungalow blong spel afta wan bigfala dei long aelan. 2 pipol.
 
 EVRI RUM I GAT:
 Towel, Internet, Air Con long living room, Bathrobe, TV, Ceiling Fan, Telephone, Mini Fridge, Toiletries, Cutlery, Tea/Coffee Station.
@@ -294,10 +294,10 @@ PERSONNALITÉ:
 ${RESORT_KNOWLEDGE}
 
 TYPES DE CHAMBRES:
-1. Bungalow Deluxe 2 Chambres (Front de Lagune) — Face à la plage et au lagon tranquille, avec brises rafraîchissantes et couchers de soleil magnifiques. Jusqu'à 4 personnes.
-2. Bungalow Supérieur 2 Chambres (Jardin) — Niché parmi les jardins fleuris et les arbres fruitiers locaux, avec vue sur la plage. Jusqu'à 4 personnes.
-3. Bungalow Deluxe 1 Chambre (Front de Lagune) — Directement sur le front de lagune, avec vue sur le lagon et les îles. Jusqu'à 2 personnes.
-4. Bungalow Supérieur 1 Chambre (Jardin) — Bungalow paisible entouré de fleurs et de nature. Jusqu'à 2 personnes.
+1. Bungalow Deluxe 2 Chambres (Front de Lagune) — Ouvrez la porte et le lagon est là — turquoise, immobile, s'étirant vers les îles à l'horizon. Ce spacieux bungalow de deux chambres se trouve en première ligne sur le front de mer, bercé par la brise des alizés et des couchers de soleil que vous voudrez photographier deux fois. Jusqu'à 4 personnes.
+2. Bungalow Supérieur 2 Chambres (Jardin) — Niché juste derrière le front de mer, ce refuge de deux chambres est enveloppé par les couleurs et les parfums des jardins tropicaux du Vanuatu — hibiscus en fleur, manguiers et papayers, et le doux murmure de l'océan filtrant à travers les feuilles. Jusqu'à 4 personnes.
+3. Bungalow Deluxe 1 Chambre (Front de Lagune) — Pour les couples et voyageurs solo qui veulent le lagon pour eux seuls. Ce bungalow intimiste ouvre directement sur le front de mer avec une vue panoramique sur les îles. Kayak au bord de l'eau, snorkeling à votre porte, ou simplement le calme avec un bon livre. Jusqu'à 2 personnes.
+4. Bungalow Supérieur 1 Chambre (Jardin) — Évadez-vous dans votre propre sanctuaire privé, niché parmi les fleurs tropicales parfumées et les palmiers ondulants. Un charmant bungalow d'une chambre — le refuge parfait après une journée d'aventure insulaire. Jusqu'à 2 personnes.
 
 ÉQUIPEMENTS DE CHAQUE CHAMBRE:
 Serviettes, Internet, Climatisation (salon), Peignoirs, Télévision, Ventilateurs de plafond, Téléphone, Mini Réfrigérateur, Articles de toilette, Couverts, Station thé/café.
@@ -318,10 +318,10 @@ Soyez chaleureux et professionnel. Partagez votre amour pour le Vanuatu!`,
 ${RESORT_KNOWLEDGE}
 
 房间类型：
-1. 双卧室豪华平房（泻湖海滨）— 面向海滩和宁静的泻湖，两卧室套房，享有清风和日落美景。可住4人。
-2. 双卧室高级平房（花园）— 位于海滨平房后方，两卧室套房，掩映在花园和果树之间。可住4人。
-3. 单卧室豪华平房（泻湖海滨）— 直接坐落在泻湖海滨，享有广阔的泻湖和岛屿景观。可住2人。
-4. 单卧室高级平房（花园）— 宁静的后排平房，被鲜花环绕，私密安宁。可住2人。
+1. 双卧室豪华平房（泻湖海滨）— 推开门，泻湖就在眼前——碧绿宁静，延伸至远处的岛屿。宽敞的两卧室海滨平房，信风轻拂客厅，每个傍晚都有值得珍藏的落日。可住4人。
+2. 双卧室高级平房（花园）— 隐匿于海滨平房后方，被瓦努阿图热带花园的色彩与芬芳环绕——盛开的芙蓉花、芒果树与木瓜树，海浪声透过树叶轻柔传来。海滩近在咫尺，却有属于自己的花园世界。可住4人。
+3. 单卧室豪华平房（泻湖海滨）— 为想独享泻湖的情侣和独行旅者而设。私密的单卧室平房直通海滨，坐拥远岛全景。在门前划皮艇、浮潜，或只是伴着海浪声静静阅读。可住2人。
+4. 单卧室高级平房（花园）— 逃离喧嚣，走进您的私人花园秘境。芬芳的热带花卉与摇曳的棕榈环绕着这间迷人的单卧室平房——岛屿探险后最完美的休憩之所。可住2人。
 
 所有房间设施：
 毛巾、网络、空调客厅、浴袍、电视、吊扇、电话、迷你冰箱、洗漱用品、餐具、茶/咖啡设施。

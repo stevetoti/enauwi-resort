@@ -16,8 +16,8 @@ const steps = [
     icon: Car,
     title: "15-Minute Resort Transfer",
     description:
-      "Our complimentary shuttle meets every arriving flight. Sit back and enjoy the scenic coastal drive to the resort through lush tropical countryside.",
-    highlight: "Free airport transfer",
+      "Our shuttle service meets arriving flights — sit back and enjoy the scenic coastal drive to the resort through lush tropical countryside. Contact us 72 hours prior to arrange pick-up.",
+    highlight: "VUV 2,000/adult · VUV 1,000/child",
   },
   {
     icon: MapPin,
@@ -184,9 +184,9 @@ export default function Location() {
                   <div>
                     <p className="font-medium text-ocean">Contact</p>
                     <p className="text-ocean/60 text-sm">
-                      +678 XXX XXXX
+                      <a href="tel:+67822170" className="hover:text-ocean transition-colors">+678 22170</a>
                       <br />
-                      info@enauwiresort.vu
+                      <a href="mailto:gm@enauwibeachresort.com" className="hover:text-ocean transition-colors">gm@enauwibeachresort.com</a>
                     </p>
                   </div>
                 </div>
