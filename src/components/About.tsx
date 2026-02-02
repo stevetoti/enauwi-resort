@@ -80,11 +80,11 @@ export default function About() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="section-subheading"
           >
-            Tucked along a quiet stretch of Malekula&apos;s South West Bay,
-            E&apos;Nauwi Beach Resort is where warm sand, calm lagoon waters, and
-            genuine Melanesian hospitality come together. This is not a place
-            that tries to impress — it&apos;s a place that lets you breathe,
-            reconnect, and remember what matters.
+            E&apos;Nauwi Beach Resort is a family-friendly island retreat set
+            along a peaceful beachfront with calm lagoon waters and beautiful
+            island views. The resort offers a relaxed environment ideal for
+            families, couples, and groups seeking comfort, good food, and
+            genuine island hospitality.
           </motion.p>
         </div>
 

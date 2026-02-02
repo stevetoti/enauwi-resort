@@ -4,84 +4,93 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import {
   Waves,
-  TreePalm,
-  Ship,
-  Fish,
-  Mountain,
   Sailboat,
-  Clock,
+  UtensilsCrossed,
+  Wine,
+  Baby,
+  Cake,
+  Heart,
+  Compass,
   ArrowRight,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const activities = [
+const resortActivities = [
   {
     icon: Waves,
-    title: "Snorkeling & Diving",
-    slug: "snorkeling-diving",
+    title: "Swimming Pool",
     description:
-      "Explore vibrant coral reefs teeming with tropical fish, sea turtles, and colourful marine life in Malekula's crystal-clear waters.",
+      "Enjoy our outdoor pool nestled among coconut trees, overlooking the beach and just moments from the bar — ideal for relaxed family time and sunny afternoons.",
     image:
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80",
-    duration: "2-3 hours",
-    tag: "Most Popular",
-  },
-  {
-    icon: TreePalm,
-    title: "Cultural Village Tour",
-    slug: "cultural-village-tour",
-    description:
-      "Visit traditional kastom villages and experience ancient Melanesian customs, sand drawings, and ceremonial dances unique to Malekula.",
-    image:
-      "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=800&q=80",
-    duration: "Half day",
-    tag: "Cultural",
-  },
-  {
-    icon: Ship,
-    title: "Island Hopping",
-    slug: "island-hopping",
-    description:
-      "Cruise to neighbouring islands and discover secluded beaches, hidden caves, and breathtaking volcanic landscapes across the archipelago.",
-    image:
-      "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?w=800&q=80",
-    duration: "Full day",
-    tag: "Adventure",
-  },
-  {
-    icon: Fish,
-    title: "Sport Fishing",
-    slug: "sport-fishing",
-    description:
-      "Cast your line into deep Pacific waters for marlin, tuna, and mahi-mahi with our experienced local fishing guides.",
-    image:
-      "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=800&q=80",
-    duration: "4-6 hours",
-    tag: "Sport",
-  },
-  {
-    icon: Mountain,
-    title: "Rainforest Hiking",
-    slug: "jungle-trek",
-    description:
-      "Trek through lush tropical rainforest to hidden waterfalls, ancient banyan trees, and stunning panoramic island viewpoints.",
-    image:
-      "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&q=80",
-    duration: "3-5 hours",
-    tag: "Nature",
+      "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=800&q=80",
+    tag: "On-Site",
   },
   {
     icon: Sailboat,
-    title: "Ocean Kayaking",
-    slug: "sunset-kayaking",
+    title: "Kayaking & Snorkeling",
     description:
-      "Paddle along the stunning coastline, exploring mangrove channels, sea caves, and pristine lagoons at your own pace.",
+      "Explore the lagoon by kayak and enjoy a gentle, relaxing way to experience the ocean. Ideal for sunny days and quiet moments on the water.",
     image:
       "https://images.unsplash.com/photo-1472745942893-4b9f730c7668?w=800&q=80",
-    duration: "2-3 hours",
-    tag: "Relaxation",
+    tag: "Water Sports",
   },
+  {
+    icon: UtensilsCrossed,
+    title: "Restaurant",
+    description:
+      "Our restaurant offers uninterrupted views toward the island and the still lagoon, with gentle, relaxing music creating a calm and enjoyable dining atmosphere.",
+    image:
+      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
+    tag: "Dining",
+  },
+  {
+    icon: Wine,
+    title: "Bar",
+    description:
+      "Unwind with tropical cocktails and cold drinks at our on-site bar, perfectly positioned near the pool and beach for the ultimate island refreshment.",
+    image:
+      "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=80",
+    tag: "Dining",
+  },
+  {
+    icon: Baby,
+    title: "Kids Club",
+    description:
+      "Trampoline, jumping castle, and a fun daily schedule — 8am coloring & games, 10am treasure hunt, 1pm kayak adventure. Nanny service available 8am–8pm.",
+    image:
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
+    tag: "Family",
+  },
+  {
+    icon: Cake,
+    title: "Birthday Celebrations",
+    description:
+      "Plan a surprise birthday — notify the resort a day before, and our pastry chef will bake a custom cake while staff serenade the birthday guest.",
+    image:
+      "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800&q=80",
+    tag: "Celebrations",
+  },
+  {
+    icon: Heart,
+    title: "Wedding Venue",
+    description:
+      "Say &apos;I do&apos; in a beautiful beachfront setting with lagoon views and tropical gardens — the perfect backdrop for wedding ceremonies and photo shoots.",
+    image:
+      "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
+    tag: "Events",
+  },
+];
+
+const adventureLinks = [
+  { title: "Snorkeling & Diving", slug: "snorkeling-diving" },
+  { title: "Island Hopping", slug: "island-hopping" },
+  { title: "Cultural Village Tour", slug: "cultural-village-tour" },
+  { title: "Sport Fishing", slug: "sport-fishing" },
+  { title: "Rainforest Hiking", slug: "jungle-trek" },
+  { title: "Sunset Kayaking", slug: "sunset-kayaking" },
+  { title: "Sand Drawing Experience", slug: "sand-drawing" },
+  { title: "Cooking Class", slug: "cooking-class" },
 ];
 
 export default function Activities() {
@@ -111,8 +120,8 @@ export default function Activities() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="section-heading"
           >
-            Island{" "}
-            <span className="text-gold-gradient">Adventures</span>
+            Resort{" "}
+            <span className="text-gold-gradient">Experiences</span>
           </motion.h2>
 
           <motion.p
@@ -121,24 +130,21 @@ export default function Activities() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="section-subheading"
           >
-            From thrilling ocean adventures to peaceful cultural experiences,
-            Malekula Island offers something extraordinary for every traveller.
+            From poolside relaxation and lagoon kayaking to birthday celebrations
+            and island adventures — there&apos;s something for everyone at E&apos;Nauwi.
           </motion.p>
         </div>
 
-        {/* Activity Grid */}
+        {/* Resort Activity Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {activities.map((activity, idx) => (
+          {resortActivities.map((activity, idx) => (
             <motion.div
               key={activity.title}
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.3 + idx * 0.1 }}
             >
-              <Link
-                href={`/activities/${activity.slug}`}
-                className="group relative rounded-3xl overflow-hidden cursor-pointer shadow-lg shadow-ocean/5 hover:shadow-2xl hover:shadow-ocean/15 transition-all duration-500 hover:-translate-y-2 block"
-              >
+              <div className="group relative rounded-3xl overflow-hidden shadow-lg shadow-ocean/5 hover:shadow-2xl hover:shadow-ocean/15 transition-all duration-500 hover:-translate-y-2">
                 {/* Image */}
                 <div className="relative h-80">
                   <Image
@@ -157,12 +163,6 @@ export default function Activities() {
                     </span>
                   </div>
 
-                  {/* Duration */}
-                  <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1 bg-black/30 backdrop-blur-md text-white/80 text-xs rounded-full">
-                    <Clock size={10} />
-                    {activity.duration}
-                  </div>
-
                   {/* Content */}
                   <div className="absolute bottom-0 left-0 right-0 p-6">
                     <div className="flex items-center gap-3 mb-3">
@@ -174,19 +174,57 @@ export default function Activities() {
                       </h3>
                     </div>
 
-                    <p className="text-white/70 text-sm leading-relaxed mb-4">
+                    <p className="text-white/70 text-sm leading-relaxed">
                       {activity.description}
                     </p>
-
-                    <div className="flex items-center gap-2 text-gold-light text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
-                      Learn More <ArrowRight size={14} />
-                    </div>
                   </div>
                 </div>
-              </Link>
+              </div>
             </motion.div>
           ))}
         </div>
+
+        {/* Island Adventures Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, delay: 0.8 }}
+          className="mt-16"
+        >
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-ocean/5 rounded-full mb-4">
+              <Compass size={14} className="text-ocean" />
+              <span className="text-ocean/70 text-sm font-medium uppercase tracking-wider">
+                Off-Site Adventures
+              </span>
+            </div>
+            <h3 className="font-serif text-2xl sm:text-3xl font-bold text-ocean mb-3">
+              Explore{" "}
+              <span className="text-gold-gradient">Malekula Island</span>
+            </h3>
+            <p className="text-ocean/60 text-base max-w-2xl mx-auto">
+              Guided excursions and island experiences available through the resort.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {adventureLinks.map((adv) => (
+              <Link
+                key={adv.slug}
+                href={`/activities/${adv.slug}`}
+                className="group flex items-center justify-between gap-3 px-5 py-4 bg-white rounded-2xl border border-ocean/10 hover:border-ocean/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+              >
+                <span className="text-ocean font-medium text-sm group-hover:text-ocean-dark transition-colors">
+                  {adv.title}
+                </span>
+                <ArrowRight
+                  size={14}
+                  className="text-ocean/30 group-hover:text-gold transition-colors shrink-0"
+                />
+              </Link>
+            ))}
+          </div>
+        </motion.div>
 
         {/* CTA */}
         <motion.div
@@ -199,7 +237,7 @@ export default function Activities() {
             href="#contact"
             className="inline-flex items-center gap-2 px-8 py-4 bg-ocean text-white rounded-full font-semibold hover:bg-ocean-light transition-all duration-300 shadow-lg shadow-ocean/20 hover:shadow-xl hover:shadow-ocean/30 hover:scale-105"
           >
-            Book an Experience
+            Enquire About Activities
             <ArrowRight size={16} />
           </a>
         </motion.div>

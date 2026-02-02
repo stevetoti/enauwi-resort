@@ -29,7 +29,7 @@ const rooms = [
     image:
       "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
     description:
-      "Step outside and the lagoon is right there — turquoise, still, and stretching toward the islands on the horizon. This spacious two-bedroom bungalow sits front-row on the beachfront, where warm trade-wind breezes drift through the living area and every evening brings a sunset you'll want to photograph twice.",
+      "Facing the beach and tranquil lagoon, our two-bedroom lagoon beachfront suite bungalows offer a quiet, spacious retreat with refreshing breezes and breathtaking sunset views.",
     guests: "Up to 4 Guests",
     bed: "2 Bedrooms",
     popular: true,
@@ -41,7 +41,7 @@ const rooms = [
     image:
       "https://images.unsplash.com/photo-1578774204375-826dc5d996ed?w=800&q=80",
     description:
-      "Tucked just behind the beachfront row, this two-bedroom retreat is wrapped in the colour and fragrance of Vanuatu's tropical gardens — flowering hibiscus, local mango and papaya trees, and the soft sound of the ocean filtering through the leaves. The beach is a short stroll away, but your private garden world feels miles from anywhere.",
+      "Set behind the lagoon beachfront bungalows, this two-bedroom suite is nestled among flowering gardens and local fruit trees, with gentle peek-through views of the beach.",
     guests: "Up to 4 Guests",
     bed: "2 Bedrooms",
     popular: false,
@@ -53,7 +53,7 @@ const rooms = [
     image:
       "https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=800&q=80",
     description:
-      "For couples and solo travellers who want the lagoon all to themselves. This intimate one-bedroom bungalow opens directly onto the beachfront with sweeping views across the water to the outer islands. Grab a kayak from the shore, snorkel at your doorstep, or simply settle into the quiet with a good book and the sound of gentle waves.",
+      "Set directly on the lagoon beachfront, this Deluxe Single Room features sweeping lagoon and island views, with kayaking just moments from your door.",
     guests: "Up to 2 Guests",
     bed: "1 Bedroom",
     popular: false,
@@ -65,7 +65,7 @@ const rooms = [
     image:
       "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&q=80",
     description:
-      "Escape to your own private sanctuary, nestled among fragrant tropical flowers and swaying palms. This charming one-bedroom bungalow offers a peaceful retreat surrounded by Vanuatu's lush natural beauty — the perfect hideaway to recharge after a day of island adventure.",
+      "Our one-bedroom back-row bungalow is tucked among lush flowers, offering a peaceful and private retreat surrounded by natural beauty.",
     guests: "Up to 2 Guests",
     bed: "1 Bedroom",
     popular: false,

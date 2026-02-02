@@ -98,9 +98,16 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 1.1 }}
             className="text-white/80 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-light"
           >
-            A family-friendly island retreat with calm lagoon waters
-            <br className="hidden sm:block" />
-            and genuine island hospitality on Malekula Island, Vanuatu.
+            <span className="text-gold-light italic font-serif text-xl sm:text-2xl block mb-3">
+              &ldquo;Refreshing mornings, Restful afternoons
+              <br className="hidden sm:block" />
+              and Relishing nights&rdquo;
+            </span>
+            <span className="text-white/60 text-base">
+              A peaceful beachfront retreat with lagoon views and warm island hospitality
+              <br className="hidden sm:block" />
+              on Malekula Island, Vanuatu.
+            </span>
           </motion.p>
 
           {/* CTAs */}
