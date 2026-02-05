@@ -54,21 +54,21 @@ const quickReplies = [
 const roomData: Record<string, { name: string; image: string; price: string; description: string; amenities: string[] }> = {
   'oceanfront bungalow': {
     name: 'Oceanfront Bungalow',
-    image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&q=80',
+    image: '/images/resort/resort-lagoon-kayak-sm.jpg',
     price: '12,000 VT',
     description: 'Private deck with ocean views, direct beach access',
     amenities: ['🏖️ Beach Access', '📶 WiFi', '❄️ AC'],
   },
   'tropical garden suite': {
     name: 'Tropical Garden Suite',
-    image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&q=80',
+    image: '/images/resort/resort-buildings-aerial-sm.jpg',
     price: '18,000 VT',
     description: 'Spacious suite with garden views and kitchenette',
     amenities: ['🌿 Garden View', '🍳 Kitchen', '📶 WiFi'],
   },
   'premium beachfront villa': {
     name: 'Premium Beachfront Villa',
-    image: 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=400&q=80',
+    image: '/images/resort/beach-resort-overview-sm.jpg',
     price: '25,000 VT',
     description: 'Private pool, full kitchen, panoramic ocean views',
     amenities: ['🏊 Pool', '🌊 Ocean View', '🍳 Kitchen'],

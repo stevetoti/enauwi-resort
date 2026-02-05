@@ -33,3 +33,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 supabase/.temp/
+
+# Original high-res resort photos (too large for git)
+public/images/resort/originals/

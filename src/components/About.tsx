@@ -95,8 +95,8 @@ export default function About() {
           >
             <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-ocean/10">
               <Image
-                src="https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?w=800&q=80"
-                alt="Pristine beach in Vanuatu"
+                src="/images/resort/resort-lagoon-aerial.jpg"
+                alt="E'Nauwi Beach Resort aerial view of the lagoon and palm trees"
                 width={800}
                 height={600}
                 className="w-full h-[400px] lg:h-[500px] object-cover"

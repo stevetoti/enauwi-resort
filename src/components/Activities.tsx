@@ -22,8 +22,7 @@ const resortActivities = [
     title: "Swimming Pool",
     description:
       "Enjoy our outdoor pool nestled among coconut trees, overlooking the beach and just moments from the bar — ideal for relaxed family time and sunny afternoons.",
-    image:
-      "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=800&q=80",
+    image: "/images/resort/beach-resort-overview-sm.jpg",
     tag: "On-Site",
   },
   {
@@ -31,8 +30,7 @@ const resortActivities = [
     title: "Kayaking & Snorkeling",
     description:
       "Explore the lagoon by kayak and enjoy a gentle, relaxing way to experience the ocean. Ideal for sunny days and quiet moments on the water.",
-    image:
-      "https://images.unsplash.com/photo-1472745942893-4b9f730c7668?w=800&q=80",
+    image: "/images/resort/beach-kayaks-cove-sm.jpg",
     tag: "Water Sports",
   },
   {
@@ -40,8 +38,7 @@ const resortActivities = [
     title: "Restaurant",
     description:
       "Our restaurant offers uninterrupted views toward the island and the still lagoon, with gentle, relaxing music creating a calm and enjoyable dining atmosphere.",
-    image:
-      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
+    image: "/images/resort/resort-coral-reef-sm.jpg",
     tag: "Dining",
   },
   {
@@ -49,8 +46,7 @@ const resortActivities = [
     title: "Bar",
     description:
       "Unwind with tropical cocktails and cold drinks at our on-site bar, perfectly positioned near the pool and beach for the ultimate island refreshment.",
-    image:
-      "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=80",
+    image: "/images/resort/resort-lagoon-aerial-sm.jpg",
     tag: "Dining",
   },
   {
@@ -58,8 +54,7 @@ const resortActivities = [
     title: "Kids Club",
     description:
       "Trampoline, jumping castle, and a fun daily schedule — 8am coloring & games, 10am treasure hunt, 1pm kayak adventure. Nanny service available 8am–8pm.",
-    image:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
+    image: "/images/resort/lagoon-island-view-sm.jpg",
     tag: "Family",
   },
   {
@@ -67,8 +62,7 @@ const resortActivities = [
     title: "Birthday Celebrations",
     description:
       "Plan a surprise birthday — notify the resort a day before, and our pastry chef will bake a custom cake while staff serenade the birthday guest.",
-    image:
-      "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800&q=80",
+    image: "/images/resort/private-island-sandbar-sm.jpg",
     tag: "Celebrations",
   },
   {
@@ -76,8 +70,7 @@ const resortActivities = [
     title: "Wedding Venue",
     description:
       "Say \u2018I do\u2019 in a beautiful beachfront setting with lagoon views and tropical gardens — the perfect backdrop for wedding ceremonies and photo shoots.",
-    image:
-      "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
+    image: "/images/resort/wedding-beach-couple-sm.jpg",
     tag: "Events",
   },
 ];

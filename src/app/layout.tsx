@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     description:
       "A family-friendly island retreat with calm lagoon waters and beautiful island views on Malekula.",
     images: [
-      "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=1200&q=80",
+      "/images/resort/beach-resort-overview.jpg",
     ],
     type: "website",
   },

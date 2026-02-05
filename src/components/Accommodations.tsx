@@ -26,8 +26,7 @@ const rooms = [
     name: "2BR Deluxe Bungalow",
     tagline: "Lagoon Beachfront",
     price: "12,000",
-    image:
-      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
+    image: "/images/resort/resort-lagoon-kayak-sm.jpg",
     description:
       "Facing the beach and tranquil lagoon, our two-bedroom lagoon beachfront suite bungalows offer a quiet, spacious retreat with refreshing breezes and breathtaking sunset views.",
     guests: "Up to 4 Guests",
@@ -38,8 +37,7 @@ const rooms = [
     name: "2BR Superior Bungalow",
     tagline: "Tropical Garden",
     price: "18,000",
-    image:
-      "https://images.unsplash.com/photo-1578774204375-826dc5d996ed?w=800&q=80",
+    image: "/images/resort/resort-buildings-aerial-sm.jpg",
     description:
       "Set behind the lagoon beachfront bungalows, this two-bedroom suite is nestled among flowering gardens and local fruit trees, with gentle peek-through views of the beach.",
     guests: "Up to 4 Guests",
@@ -50,8 +48,7 @@ const rooms = [
     name: "Deluxe 1BR Bungalow",
     tagline: "Lagoon Beachfront",
     price: "25,000",
-    image:
-      "https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=800&q=80",
+    image: "/images/resort/beach-resort-overview-sm.jpg",
     description:
       "Set directly on the lagoon beachfront, this Deluxe Single Room features sweeping lagoon and island views, with kayaking just moments from your door.",
     guests: "Up to 2 Guests",
@@ -62,8 +59,7 @@ const rooms = [
     name: "Superior 1BR Bungalow",
     tagline: "Tropical Garden",
     price: "10,000",
-    image:
-      "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&q=80",
+    image: "/images/resort/resort-coral-reef-sm.jpg",
     description:
       "Our one-bedroom back-row bungalow is tucked among lush flowers, offering a peaceful and private retreat surrounded by natural beauty.",
     guests: "Up to 2 Guests",
