@@ -11,24 +11,21 @@ const highlights = [
     title: "Beachfront Rooms & Garden Bungalows",
     description:
       "Wake to the whisper of waves in a lagoon-front bungalow, or retreat to a garden hideaway wrapped in frangipani and birdsong. Every room is designed so the island comes to you.",
-    image:
-      "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=600&q=80",
+    image: "/images/resort/resort-buildings-aerial-sm.jpg",
   },
   {
     icon: Ship,
     title: "Kayaking & Snorkeling",
     description:
       "Glide across the glass-calm lagoon by kayak, paddle out to our private island, or slip beneath the surface to discover coral gardens alive with tropical fish and sea turtles.",
-    image:
-      "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=600&q=80",
+    image: "/images/resort/beach-kayaks-cove-sm.jpg",
   },
   {
     icon: UtensilsCrossed,
     title: "Open-Air Restaurant & Bar",
     description:
       "Dine under the palms with the lagoon stretching out before you. Fresh island seafood, tropical flavours, and a well-stocked bar — all set to the gentle rhythm of live background music.",
-    image:
-      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
+    image: "/images/resort/resort-coral-reef-sm.jpg",
   },
 ];
 
