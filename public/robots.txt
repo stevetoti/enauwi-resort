@@ -1,0 +1,11 @@
+# E'Nauwi Beach Resort — robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://enauwibeachresort.com/sitemap.xml
+
+# Block admin panel from indexing
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
