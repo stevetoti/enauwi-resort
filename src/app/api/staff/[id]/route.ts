@@ -39,15 +39,28 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await request.json()
-    const { name, role_id, department, phone, profile_photo, status } = body
+    const { name, role_id, department, department_id, phone, profile_photo, status } = body
 
     const updateData: Record<string, unknown> = {}
     if (name !== undefined) updateData.name = name
     if (role_id !== undefined) updateData.role_id = role_id
     if (department !== undefined) updateData.department = department
+    if (department_id !== undefined) updateData.department_id = department_id
     if (phone !== undefined) updateData.phone = phone
     if (profile_photo !== undefined) updateData.profile_photo = profile_photo
     if (status !== undefined) updateData.status = status
+
+    // If department_id is provided, also update the department name
+    if (department_id) {
+      const { data: dept } = await supabase
+        .from('departments')
+        .select('name')
+        .eq('id', department_id)
+        .single()
+      if (dept) {
+        updateData.department = dept.name
+      }
+    }
 
     const { data, error } = await supabase
       .from('staff')
@@ -55,7 +68,8 @@ export async function PATCH(
       .eq('id', id)
       .select(`
         *,
-        role_details:roles(*)
+        role_details:roles(*),
+        department_details:departments(*)
       `)
       .single()
 

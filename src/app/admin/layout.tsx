@@ -18,6 +18,7 @@ import {
   MessageSquare,
   Building2,
   Megaphone,
+  Settings,
 } from 'lucide-react'
 import { createClientSupabase } from '@/lib/supabase'
 
@@ -28,8 +29,10 @@ const sidebarLinks = [
   { href: '/admin/guests', label: 'Guests', icon: Users },
   { href: '/admin/services', label: 'Services', icon: ConciergeBell },
   { href: '/admin/staff', label: 'Staff', icon: UserCog },
+  { href: '/admin/departments', label: 'Departments', icon: Building2 },
+  { href: '/admin/roles', label: 'Roles', icon: Shield },
   { href: '/admin/communications', label: 'Communications', icon: MessageSquare },
-  { href: '/admin/conferences', label: 'Conferences', icon: Building2 },
+  { href: '/admin/conferences', label: 'Conferences', icon: Settings },
   { href: '/admin/announcements', label: 'Announcements', icon: Megaphone },
 ]
 

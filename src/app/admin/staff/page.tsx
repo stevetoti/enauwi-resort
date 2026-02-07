@@ -16,15 +16,17 @@ import {
   UserCheck,
   ChevronDown,
 } from 'lucide-react'
-import { Staff, Role, StaffAttendance } from '@/types'
+import { Staff, Role, StaffAttendance, Department } from '@/types'
 
 interface StaffWithAttendance extends Staff {
   todayAttendance?: StaffAttendance
+  department_details?: Department
 }
 
 export default function StaffManagementPage() {
   const [staff, setStaff] = useState<StaffWithAttendance[]>([])
   const [roles, setRoles] = useState<Role[]>([])
+  const [departments, setDepartments] = useState<Department[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
@@ -57,6 +59,11 @@ export default function StaffManagementPage() {
       const rolesRes = await fetch('/api/roles')
       const rolesData = await rolesRes.json()
       setRoles(rolesData)
+
+      // Fetch departments
+      const deptRes = await fetch('/api/departments')
+      const deptData = await deptRes.json()
+      setDepartments(deptData)
     } catch (error) {
       console.error('Error fetching data:', error)
     } finally {
@@ -325,6 +332,7 @@ export default function StaffManagementPage() {
       {showInviteModal && (
         <InviteStaffModal
           roles={roles}
+          departments={departments}
           onClose={() => setShowInviteModal(false)}
           onSuccess={() => {
             setShowInviteModal(false)
@@ -338,6 +346,7 @@ export default function StaffManagementPage() {
         <EditStaffModal
           staff={selectedStaff}
           roles={roles}
+          departments={departments}
           onClose={() => {
             setShowEditModal(false)
             setSelectedStaff(null)
@@ -356,10 +365,12 @@ export default function StaffManagementPage() {
 // Invite Staff Modal Component
 function InviteStaffModal({
   roles,
+  departments,
   onClose,
   onSuccess,
 }: {
   roles: Role[]
+  departments: Department[]
   onClose: () => void
   onSuccess: () => void
 }) {
@@ -367,7 +378,7 @@ function InviteStaffModal({
     name: '',
     email: '',
     role_id: '',
-    department: '',
+    department_id: '',
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -464,18 +475,16 @@ function InviteStaffModal({
               Department
             </label>
             <select
-              value={formData.department}
-              onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+              value={formData.department_id}
+              onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Select department</option>
-              <option value="Front Desk">Front Desk</option>
-              <option value="Housekeeping">Housekeeping</option>
-              <option value="Kitchen">Kitchen</option>
-              <option value="Restaurant">Restaurant</option>
-              <option value="Maintenance">Maintenance</option>
-              <option value="Security">Security</option>
-              <option value="Management">Management</option>
+              {departments.filter(d => d.is_active).map((dept) => (
+                <option key={dept.id} value={dept.id}>
+                  {dept.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -505,11 +514,13 @@ function InviteStaffModal({
 function EditStaffModal({
   staff,
   roles,
+  departments,
   onClose,
   onSuccess,
 }: {
   staff: Staff
   roles: Role[]
+  departments: Department[]
   onClose: () => void
   onSuccess: () => void
 }) {
@@ -517,7 +528,7 @@ function EditStaffModal({
     name: staff.name,
     email: staff.email,
     role_id: staff.role_id || '',
-    department: staff.department || '',
+    department_id: (staff as StaffWithAttendance & { department_id?: string }).department_id || '',
     phone: staff.phone || '',
   })
   const [loading, setLoading] = useState(false)
@@ -625,18 +636,16 @@ function EditStaffModal({
               Department
             </label>
             <select
-              value={formData.department}
-              onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+              value={formData.department_id}
+              onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Select department</option>
-              <option value="Front Desk">Front Desk</option>
-              <option value="Housekeeping">Housekeeping</option>
-              <option value="Kitchen">Kitchen</option>
-              <option value="Restaurant">Restaurant</option>
-              <option value="Maintenance">Maintenance</option>
-              <option value="Security">Security</option>
-              <option value="Management">Management</option>
+              {departments.filter(d => d.is_active).map((dept) => (
+                <option key={dept.id} value={dept.id}>
+                  {dept.name}
+                </option>
+              ))}
             </select>
           </div>
 

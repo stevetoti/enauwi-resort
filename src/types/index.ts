@@ -375,3 +375,183 @@ export interface SendMessageRequest {
   subject?: string
   guestId?: string
 }
+
+// =====================================================
+// DEPARTMENT TYPES
+// =====================================================
+export interface Department {
+  id: string
+  name: string
+  description?: string
+  image_url?: string
+  color: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+  member_count?: number
+}
+
+export interface DepartmentAnnouncement {
+  id: string
+  department_id: string
+  title: string
+  content: string
+  priority: 'low' | 'normal' | 'high' | 'urgent'
+  pinned: boolean
+  created_by?: string
+  expires_at?: string
+  created_at: string
+  updated_at: string
+  author?: Staff
+  department?: Department
+}
+
+export interface DepartmentDocument {
+  id: string
+  department_id: string
+  name: string
+  description?: string
+  url: string
+  file_type?: string
+  file_size?: number
+  category?: string
+  uploaded_by?: string
+  created_at: string
+  updated_at: string
+  uploader?: Staff
+  department?: Department
+}
+
+// =====================================================
+// PERMISSION AREAS FOR GRANULAR ACCESS CONTROL
+// =====================================================
+export interface PermissionArea {
+  key: string
+  label: string
+  description: string
+  actions: {
+    key: string
+    label: string
+  }[]
+}
+
+export const PERMISSION_AREAS: PermissionArea[] = [
+  {
+    key: 'dashboard',
+    label: 'Dashboard',
+    description: 'View dashboard and statistics',
+    actions: [{ key: 'view', label: 'View' }]
+  },
+  {
+    key: 'bookings',
+    label: 'Bookings',
+    description: 'Manage room reservations',
+    actions: [
+      { key: 'view', label: 'View' },
+      { key: 'create', label: 'Create' },
+      { key: 'edit', label: 'Edit' },
+      { key: 'delete', label: 'Delete' }
+    ]
+  },
+  {
+    key: 'rooms',
+    label: 'Rooms',
+    description: 'Manage room inventory',
+    actions: [
+      { key: 'view', label: 'View' },
+      { key: 'create', label: 'Create' },
+      { key: 'edit', label: 'Edit' },
+      { key: 'delete', label: 'Delete' }
+    ]
+  },
+  {
+    key: 'guests',
+    label: 'Guests',
+    description: 'Manage guest information',
+    actions: [
+      { key: 'view', label: 'View' },
+      { key: 'create', label: 'Create' },
+      { key: 'edit', label: 'Edit' },
+      { key: 'delete', label: 'Delete' }
+    ]
+  },
+  {
+    key: 'staff',
+    label: 'Staff',
+    description: 'Manage staff members',
+    actions: [
+      { key: 'view', label: 'View' },
+      { key: 'create', label: 'Create' },
+      { key: 'edit', label: 'Edit' },
+      { key: 'delete', label: 'Delete' }
+    ]
+  },
+  {
+    key: 'communications',
+    label: 'Communications',
+    description: 'Send messages to guests',
+    actions: [
+      { key: 'view', label: 'View' },
+      { key: 'send', label: 'Send' }
+    ]
+  },
+  {
+    key: 'conferences',
+    label: 'Conferences',
+    description: 'Manage conference bookings',
+    actions: [
+      { key: 'view', label: 'View' },
+      { key: 'create', label: 'Create' },
+      { key: 'edit', label: 'Edit' },
+      { key: 'delete', label: 'Delete' }
+    ]
+  },
+  {
+    key: 'announcements',
+    label: 'Announcements',
+    description: 'Internal staff announcements',
+    actions: [
+      { key: 'view', label: 'View' },
+      { key: 'create', label: 'Create' },
+      { key: 'edit', label: 'Edit' },
+      { key: 'delete', label: 'Delete' }
+    ]
+  },
+  {
+    key: 'reports',
+    label: 'Reports',
+    description: 'View analytics and reports',
+    actions: [{ key: 'view', label: 'View' }]
+  },
+  {
+    key: 'settings',
+    label: 'Settings',
+    description: 'System configuration',
+    actions: [
+      { key: 'view', label: 'View' },
+      { key: 'edit', label: 'Edit' }
+    ]
+  },
+  {
+    key: 'departments',
+    label: 'Departments',
+    description: 'Manage resort departments',
+    actions: [
+      { key: 'view', label: 'View' },
+      { key: 'create', label: 'Create' },
+      { key: 'edit', label: 'Edit' },
+      { key: 'delete', label: 'Delete' }
+    ]
+  },
+  {
+    key: 'roles',
+    label: 'Roles',
+    description: 'Manage staff roles and permissions',
+    actions: [
+      { key: 'view', label: 'View' },
+      { key: 'create', label: 'Create' },
+      { key: 'edit', label: 'Edit' },
+      { key: 'delete', label: 'Delete' }
+    ]
+  }
+]
