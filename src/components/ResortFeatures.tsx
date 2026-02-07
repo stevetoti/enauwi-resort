@@ -170,7 +170,7 @@ export default function ResortFeatures() {
 
           <div className="text-center mt-8">
             <a
-              href="mailto:marketing@enauwibeachresort.com"
+              href="/services#conference"
               className="inline-flex items-center gap-2 px-6 py-3 bg-gold text-ocean-dark rounded-xl font-semibold text-sm hover:bg-gold-light transition-all duration-300 shadow-lg shadow-gold/20"
             >
               Enquire About Conference Bookings
