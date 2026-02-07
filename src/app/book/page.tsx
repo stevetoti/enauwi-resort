@@ -2,9 +2,195 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { Calendar, Users, MapPin, Wifi, Car, Coffee, ShowerHead, AlertTriangle, Clock, CreditCard, Plane, Baby, ArrowLeft } from 'lucide-react'
+import Image from 'next/image'
+import { Calendar, Users, ChevronLeft, ChevronRight, Check, Star, Wifi, Wind, Coffee, Tv, Bath, ArrowLeft, X } from 'lucide-react'
 import { Room } from '@/types'
 import { formatVatu, getDaysBetween } from '@/lib/utils'
+
+// Hero images for the slider
+const heroImages = [
+  { src: '/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg', alt: 'Lagoon view from living room' },
+  { src: '/images/resort/malili-rooms/beach-kayaks-opt-pro.jpg', alt: 'Beach with kayaks' },
+  { src: '/images/resort/malili-rooms/queen-bed-artistic-opt-pro.jpg', alt: 'Comfortable queen bed' },
+  { src: '/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg', alt: 'Bungalow patio' },
+  { src: '/images/resort/malili-rooms/living-room-3-opt-pro.jpg', alt: 'Modern living room' },
+]
+
+// Room gallery images
+const roomGalleries: Record<string, string[]> = {
+  'default': [
+    '/images/resort/malili-rooms/living-room-1-opt-pro.jpg',
+    '/images/resort/malili-rooms/queen-bed-opt-pro.jpg',
+    '/images/resort/malili-rooms/bathroom-full-opt-pro.jpg',
+    '/images/resort/malili-rooms/amenities-tray-opt-pro.jpg',
+  ],
+  '1br': [
+    '/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg',
+    '/images/resort/malili-rooms/queen-bed-artistic-opt-pro.jpg',
+    '/images/resort/malili-rooms/living-room-5-opt-pro.jpg',
+    '/images/resort/malili-rooms/bathroom-full-opt-pro.jpg',
+    '/images/resort/malili-rooms/swan-towel-artistic-opt-pro.jpg',
+  ],
+  '2br': [
+    '/images/resort/malili-rooms/living-room-3-opt-pro.jpg',
+    '/images/resort/malili-rooms/queen-bed-opt-pro.jpg',
+    '/images/resort/malili-rooms/bedroom-1-opt-pro.jpg',
+    '/images/resort/malili-rooms/living-kitchenette-opt-pro.jpg',
+    '/images/resort/malili-rooms/bathroom-toiletries-opt-pro.jpg',
+  ],
+}
+
+const amenityIcons: Record<string, React.ReactNode> = {
+  'wifi': <Wifi className="w-4 h-4" />,
+  'air': <Wind className="w-4 h-4" />,
+  'coffee': <Coffee className="w-4 h-4" />,
+  'tv': <Tv className="w-4 h-4" />,
+  'bath': <Bath className="w-4 h-4" />,
+}
+
+function ImageSlider({ images, autoPlay = true }: { images: { src: string; alt: string }[]; autoPlay?: boolean }) {
+  const [current, setCurrent] = useState(0)
+
+  useEffect(() => {
+    if (!autoPlay) return
+    const timer = setInterval(() => {
+      setCurrent(prev => (prev + 1) % images.length)
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [images.length, autoPlay])
+
+  return (
+    <div className="relative w-full h-full overflow-hidden">
+      {images.map((img, idx) => (
+        <div
+          key={idx}
+          className={`absolute inset-0 transition-opacity duration-700 ${idx === current ? 'opacity-100' : 'opacity-0'}`}
+        >
+          <Image src={img.src} alt={img.alt} fill className="object-cover" priority={idx === 0} />
+        </div>
+      ))}
+      
+      {/* Navigation dots */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        {images.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrent(idx)}
+            className={`w-2 h-2 rounded-full transition-all ${idx === current ? 'bg-white w-6' : 'bg-white/50'}`}
+          />
+        ))}
+      </div>
+      
+      {/* Arrows */}
+      <button
+        onClick={() => setCurrent(prev => (prev - 1 + images.length) % images.length)}
+        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition shadow-lg"
+      >
+        <ChevronLeft className="w-5 h-5 text-gray-800" />
+      </button>
+      <button
+        onClick={() => setCurrent(prev => (prev + 1) % images.length)}
+        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition shadow-lg"
+      >
+        <ChevronRight className="w-5 h-5 text-gray-800" />
+      </button>
+    </div>
+  )
+}
+
+function RoomGallery({ images }: { images: string[] }) {
+  const [current, setCurrent] = useState(0)
+  const [showLightbox, setShowLightbox] = useState(false)
+
+  return (
+    <>
+      <div className="relative aspect-[4/3] rounded-xl overflow-hidden group">
+        <Image 
+          src={images[current]} 
+          alt="Room" 
+          fill 
+          className="object-cover cursor-pointer transition-transform group-hover:scale-105" 
+          onClick={() => setShowLightbox(true)}
+        />
+        
+        {/* Photo count badge */}
+        <div className="absolute bottom-3 right-3 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
+          📷 {current + 1}/{images.length}
+        </div>
+
+        {/* Thumbnail strip */}
+        <div className="absolute bottom-3 left-3 flex gap-1.5">
+          {images.slice(0, 4).map((img, idx) => (
+            <button
+              key={idx}
+              onClick={(e) => { e.stopPropagation(); setCurrent(idx); }}
+              className={`w-12 h-12 rounded-lg overflow-hidden border-2 transition-all ${idx === current ? 'border-white' : 'border-transparent opacity-70 hover:opacity-100'}`}
+            >
+              <Image src={img} alt="" width={48} height={48} className="object-cover w-full h-full" />
+            </button>
+          ))}
+          {images.length > 4 && (
+            <button
+              onClick={() => setShowLightbox(true)}
+              className="w-12 h-12 rounded-lg bg-black/60 text-white text-xs font-bold flex items-center justify-center hover:bg-black/80"
+            >
+              +{images.length - 4}
+            </button>
+          )}
+        </div>
+
+        {/* Arrows */}
+        <button
+          onClick={(e) => { e.stopPropagation(); setCurrent(prev => (prev - 1 + images.length) % images.length); }}
+          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); setCurrent(prev => (prev + 1) % images.length); }}
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Lightbox */}
+      {showLightbox && (
+        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center" onClick={() => setShowLightbox(false)}>
+          <button className="absolute top-4 right-4 text-white text-3xl hover:text-gray-300" onClick={() => setShowLightbox(false)}>
+            <X />
+          </button>
+          <button
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-4xl hover:text-gray-300"
+            onClick={(e) => { e.stopPropagation(); setCurrent(prev => (prev - 1 + images.length) % images.length); }}
+          >
+            <ChevronLeft className="w-10 h-10" />
+          </button>
+          <button
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-4xl hover:text-gray-300"
+            onClick={(e) => { e.stopPropagation(); setCurrent(prev => (prev + 1) % images.length); }}
+          >
+            <ChevronRight className="w-10 h-10" />
+          </button>
+          <div className="relative w-full max-w-5xl h-[80vh] m-4" onClick={(e) => e.stopPropagation()}>
+            <Image src={images[current]} alt="Room" fill className="object-contain" />
+          </div>
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+            {images.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={(e) => { e.stopPropagation(); setCurrent(idx); }}
+                className={`w-16 h-12 rounded-lg overflow-hidden border-2 ${idx === current ? 'border-white' : 'border-transparent opacity-50'}`}
+              >
+                <Image src={images[idx]} alt="" width={64} height={48} className="object-cover w-full h-full" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
 
 export default function BookPage() {
   const [checkIn, setCheckIn] = useState('')
@@ -14,498 +200,367 @@ export default function BookPage() {
   const [loading, setLoading] = useState(false)
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
   const [showBookingForm, setShowBookingForm] = useState(false)
+  const [bookingData, setBookingData] = useState({
+    name: '', email: '', phone: '', requests: ''
+  })
+  const [submitting, setSubmitting] = useState(false)
+  const [bookingSuccess, setBookingSuccess] = useState<string | null>(null)
 
-  // Set default dates (today + 1 and today + 2)
   useEffect(() => {
     const today = new Date()
     const tomorrow = new Date(today)
     tomorrow.setDate(today.getDate() + 1)
     const dayAfter = new Date(today)
     dayAfter.setDate(today.getDate() + 2)
-
     setCheckIn(tomorrow.toISOString().split('T')[0])
     setCheckOut(dayAfter.toISOString().split('T')[0])
   }, [])
 
   const searchRooms = useCallback(async () => {
     if (!checkIn || !checkOut) return
-
     setLoading(true)
     try {
-      const params = new URLSearchParams({
-        checkIn,
-        checkOut,
-        guests: guests.toString()
-      })
-
+      const params = new URLSearchParams({ checkIn, checkOut, guests: guests.toString() })
       const response = await fetch(`/api/rooms?${params}`)
       const data = await response.json()
-      
-      if (data.error) {
-        console.error('Error:', data.error)
-        return
-      }
-
-      setRooms(data.rooms)
+      if (!data.error) setRooms(data.rooms)
     } catch (error) {
-      console.error('Error searching rooms:', error)
+      console.error('Error:', error)
     } finally {
       setLoading(false)
     }
   }, [checkIn, checkOut, guests])
 
   useEffect(() => {
-    if (checkIn && checkOut) {
-      searchRooms()
-    }
+    if (checkIn && checkOut) searchRooms()
   }, [checkIn, checkOut, guests, searchRooms])
 
-  const getAmenityIcon = (amenity: string) => {
-    const amenityLower = amenity.toLowerCase()
-    if (amenityLower.includes('wifi')) return <Wifi className="h-4 w-4" />
-    if (amenityLower.includes('beach') || amenityLower.includes('view')) return <MapPin className="h-4 w-4" />
-    if (amenityLower.includes('kitchen')) return <Coffee className="h-4 w-4" />
-    if (amenityLower.includes('parking') || amenityLower.includes('car')) return <Car className="h-4 w-4" />
-    if (amenityLower.includes('shower') || amenityLower.includes('bathroom')) return <ShowerHead className="h-4 w-4" />
-    return <div className="h-4 w-4 bg-ocean rounded-full" />
+  const calculateNights = () => checkIn && checkOut ? getDaysBetween(checkIn, checkOut) : 1
+  const calculateTotal = (room: Room) => room.price_vt * calculateNights()
+
+  const getRoomGallery = (room: Room) => {
+    const name = room.name.toLowerCase()
+    if (name.includes('2') || name.includes('two')) return roomGalleries['2br']
+    if (name.includes('1') || name.includes('one') || name.includes('single')) return roomGalleries['1br']
+    return roomGalleries['default']
   }
 
-  const calculateTotal = (room: Room) => {
-    if (!checkIn || !checkOut) return room.price_vt
-    const nights = getDaysBetween(checkIn, checkOut)
-    return room.price_vt * nights
-  }
-
-  return (
-    <div className="min-h-screen bg-sand">
-      {/* Header */}
-      <div className="bg-ocean-dark text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-ocean-100 hover:text-white mb-6 text-sm transition-colors">
-            <ArrowLeft className="h-4 w-4" />
-            Back to E&apos;Nauwi Beach Resort
-          </Link>
-          <h1 className="font-serif text-4xl font-bold mb-4">Book Your Stay</h1>
-          <p className="text-ocean-100 text-lg">Experience island paradise at E&apos;Nauwi Beach Resort</p>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Search Form */}
-        <div className="bg-white rounded-2xl shadow-sm border border-ocean/5 p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-ocean/70 mb-2">
-                <Calendar className="h-4 w-4 inline mr-1" />
-                Check-in
-              </label>
-              <input
-                type="date"
-                value={checkIn}
-                onChange={(e) => setCheckIn(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
-                className="w-full px-3 py-2 border border-ocean/10 rounded-xl focus:ring-2 focus:ring-ocean/20 focus:border-ocean/30 transition-all text-ocean"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-ocean/70 mb-2">
-                <Calendar className="h-4 w-4 inline mr-1" />
-                Check-out
-              </label>
-              <input
-                type="date"
-                value={checkOut}
-                onChange={(e) => setCheckOut(e.target.value)}
-                min={checkIn || new Date().toISOString().split('T')[0]}
-                className="w-full px-3 py-2 border border-ocean/10 rounded-xl focus:ring-2 focus:ring-ocean/20 focus:border-ocean/30 transition-all text-ocean"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-ocean/70 mb-2">
-                <Users className="h-4 w-4 inline mr-1" />
-                Guests
-              </label>
-              <select
-                value={guests}
-                onChange={(e) => setGuests(parseInt(e.target.value))}
-                className="w-full px-3 py-2 border border-ocean/10 rounded-xl focus:ring-2 focus:ring-ocean/20 focus:border-ocean/30 transition-all text-ocean"
-              >
-                {[1, 2, 3, 4, 5, 6].map(num => (
-                  <option key={num} value={num}>{num} Guest{num > 1 ? 's' : ''}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-end">
-              <button
-                onClick={searchRooms}
-                disabled={loading || !checkIn || !checkOut}
-                className="w-full bg-ocean text-white py-2 px-4 rounded-xl hover:bg-ocean-light disabled:bg-ocean/30 font-medium transition-colors shadow-lg shadow-ocean/20"
-              >
-                {loading ? 'Searching...' : 'Search Rooms'}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Results */}
-        {rooms.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {rooms.map((room) => (
-              <div key={room.id} className="bg-white rounded-2xl shadow-sm border border-ocean/5 overflow-hidden hover:shadow-lg transition-shadow">
-                {/* Room Image */}
-                <div className="h-48 bg-gradient-to-br from-ocean to-ocean-light flex items-center justify-center">
-                  {room.images && room.images[0] ? (
-                    <img 
-                      src={room.images[0]} 
-                      alt={room.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="text-white text-center">
-                      <MapPin className="h-12 w-12 mx-auto mb-2" />
-                      <p className="font-medium">{room.type}</p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="p-6">
-                  <div className="mb-4">
-                    <h3 className="font-serif text-xl font-bold text-ocean mb-2">{room.name}</h3>
-                    <p className="text-ocean/60 text-sm">{room.description}</p>
-                  </div>
-
-                  {/* Amenities */}
-                  <div className="mb-4">
-                    <p className="text-sm font-medium text-ocean/70 mb-2">Amenities</p>
-                    <div className="flex flex-wrap gap-2">
-                      {room.amenities.map((amenity, index) => (
-                        <div key={index} className="flex items-center gap-1 text-xs bg-ocean/5 text-ocean/70 px-2 py-1 rounded-full">
-                          {getAmenityIcon(amenity)}
-                          <span>{amenity}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Capacity */}
-                  <div className="mb-4">
-                    <div className="flex items-center text-sm text-ocean/60">
-                      <Users className="h-4 w-4 mr-1" />
-                      Up to {room.max_guests} guests
-                    </div>
-                  </div>
-
-                  {/* Pricing */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <p className="text-2xl font-bold text-ocean">{formatVatu(room.price_vt)}</p>
-                      <p className="text-sm text-ocean/50">per night</p>
-                    </div>
-                    {checkIn && checkOut && (
-                      <div className="text-right">
-                        <p className="text-lg font-semibold text-gold-dark">{formatVatu(calculateTotal(room))}</p>
-                        <p className="text-sm text-ocean/50">{getDaysBetween(checkIn, checkOut)} nights</p>
-                      </div>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      setSelectedRoom(room)
-                      setShowBookingForm(true)
-                    }}
-                    className="w-full bg-gold text-ocean-dark py-2 px-4 rounded-xl hover:bg-gold-light font-semibold transition-colors shadow-lg shadow-gold/20"
-                  >
-                    Book Now
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {rooms.length === 0 && !loading && checkIn && checkOut && (
-          <div className="text-center py-12">
-            <div className="text-ocean/50 text-lg">No available rooms found for your selected dates.</div>
-            <p className="text-ocean/30 mt-2">Try different dates or reduce the number of guests.</p>
-          </div>
-        )}
-
-        {/* Policies & Information */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Check-in/Check-out */}
-          <div className="bg-white rounded-2xl shadow-sm border border-ocean/5 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Clock className="h-5 w-5 text-ocean" />
-              <h3 className="font-serif text-lg font-bold text-ocean">Check-in & Check-out</h3>
-            </div>
-            <ul className="space-y-2 text-sm text-ocean/70">
-              <li className="flex justify-between"><span>Check-in</span><span className="font-semibold text-ocean">2:00 PM</span></li>
-              <li className="flex justify-between"><span>Check-out</span><span className="font-semibold text-ocean">10:00 AM</span></li>
-              <li className="flex justify-between"><span>Late check-out</span><span className="font-semibold text-ocean">VUV 2,500/hr</span></li>
-              <li className="text-ocean/40 text-xs mt-2">Late check-out subject to availability</li>
-            </ul>
-          </div>
-
-          {/* Cancellation Policy */}
-          <div className="bg-white rounded-2xl shadow-sm border border-ocean/5 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <AlertTriangle className="h-5 w-5 text-gold-dark" />
-              <h3 className="font-serif text-lg font-bold text-ocean">Cancellation Policy</h3>
-            </div>
-            <ul className="space-y-2 text-sm text-ocean/70">
-              <li className="flex items-start gap-2">
-                <span className="text-green font-bold">✓</span>
-                <span><strong className="text-ocean">14+ days</strong> before arrival — Free cancellation, full refund</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-gold-dark font-bold">!</span>
-                <span><strong className="text-ocean">Within 14 days</strong> — 50% refund of total amount</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-red-500 font-bold">✗</span>
-                <span><strong className="text-ocean">Within 7 days / No-show</strong> — 100% charge of booking</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Fees & Charges */}
-          <div className="bg-white rounded-2xl shadow-sm border border-ocean/5 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <CreditCard className="h-5 w-5 text-ocean" />
-              <h3 className="font-serif text-lg font-bold text-ocean">Fees & Charges</h3>
-            </div>
-            <ul className="space-y-2 text-sm text-ocean/70">
-              <li className="flex justify-between"><span>Tourism Levy</span><span className="font-semibold text-ocean">VUV 200/room/day</span></li>
-              <li className="flex justify-between"><span>Credit card surcharge</span><span className="font-semibold text-ocean">4%</span></li>
-              <li className="text-ocean/40 text-xs mt-2">Tourism levy charged at check-out. Cash and credit cards accepted.</li>
-            </ul>
-          </div>
-
-          {/* Airport Shuttle & Kids */}
-          <div className="bg-white rounded-2xl shadow-sm border border-ocean/5 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Plane className="h-5 w-5 text-ocean" />
-              <h3 className="font-serif text-lg font-bold text-ocean">Airport Shuttle & Kids</h3>
-            </div>
-            <ul className="space-y-2 text-sm text-ocean/70">
-              <li className="flex justify-between"><span>Adult shuttle (one-way)</span><span className="font-semibold text-ocean">VUV 2,000</span></li>
-              <li className="flex justify-between"><span>Child shuttle 2–12 yrs (one-way)</span><span className="font-semibold text-ocean">VUV 1,000</span></li>
-              <li className="flex items-start gap-2 mt-2">
-                <Baby className="h-4 w-4 text-ocean/50 mt-0.5 shrink-0" />
-                <span>Up to 2 children under 12 stay <strong className="text-ocean">free</strong> in parent&apos;s room using existing bedding</span>
-              </li>
-              <li className="text-ocean/40 text-xs mt-2">Contact property 72 hours before arrival to arrange transfers</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-6 text-center">
-          <Link href="/terms" className="text-ocean hover:text-ocean-light text-sm font-medium underline transition-colors">
-            View full Terms, Conditions & Privacy Policy →
-          </Link>
-        </div>
-      </div>
-
-      {/* Booking Form Modal */}
-      {showBookingForm && selectedRoom && (
-        <BookingFormModal
-          room={selectedRoom}
-          checkIn={checkIn}
-          checkOut={checkOut}
-          guests={guests}
-          onClose={() => {
-            setShowBookingForm(false)
-            setSelectedRoom(null)
-          }}
-        />
-      )}
-    </div>
-  )
-}
-
-// Booking Form Modal Component
-function BookingFormModal({
-  room,
-  checkIn,
-  checkOut,
-  guests,
-  onClose
-}: {
-  room: Room
-  checkIn: string
-  checkOut: string
-  guests: number
-  onClose: () => void
-}) {
-  const [formData, setFormData] = useState({
-    guestName: '',
-    guestEmail: '',
-    guestPhone: '',
-    specialRequests: ''
-  })
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [bookingResult, setBookingResult] = useState<{ reference: string; totalPrice: number } | null>(null)
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-
+  const handleBooking = async () => {
+    if (!selectedRoom || !bookingData.name || !bookingData.email) return
+    setSubmitting(true)
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          checkIn,
-          checkOut,
+          room_id: selectedRoom.id,
+          check_in: checkIn,
+          check_out: checkOut,
           guests,
-          roomId: room.id,
-          ...formData
-        })
+          guest_name: bookingData.name,
+          guest_email: bookingData.email,
+          guest_phone: bookingData.phone,
+          special_requests: bookingData.requests,
+          total_price: calculateTotal(selectedRoom),
+        }),
       })
-
       const data = await response.json()
-      
-      if (data.error) {
-        alert('Error: ' + data.error)
-        return
+      if (data.booking) {
+        setBookingSuccess(data.booking.id)
+        setShowBookingForm(false)
       }
-
-      setBookingResult(data)
-      setSuccess(true)
     } catch (error) {
-      console.error('Error creating booking:', error)
-      alert('Failed to create booking. Please try again.')
+      console.error('Booking error:', error)
     } finally {
-      setLoading(false)
+      setSubmitting(false)
     }
   }
 
-  if (success && bookingResult) {
+  if (bookingSuccess) {
     return (
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-green-light/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h3 className="font-serif text-xl font-bold text-ocean mb-2">Booking Confirmed!</h3>
-            <p className="text-ocean/60 mb-4">
-              Your booking request has been submitted. You will receive a confirmation email shortly.
-            </p>
-            <div className="text-left bg-ocean/5 rounded-xl p-4 mb-4">
-              <p className="text-ocean"><strong>Reference:</strong> {bookingResult.reference}</p>
-              <p className="text-ocean"><strong>Room:</strong> {room.name}</p>
-              <p className="text-ocean"><strong>Dates:</strong> {new Date(checkIn).toLocaleDateString()} - {new Date(checkOut).toLocaleDateString()}</p>
-              <p className="text-ocean"><strong>Guests:</strong> {guests}</p>
-              <p className="text-ocean"><strong>Total:</strong> {formatVatu(bookingResult.totalPrice)}</p>
-            </div>
-            <button
-              onClick={onClose}
-              className="w-full bg-ocean text-white py-2 px-4 rounded-xl hover:bg-ocean-light font-medium transition-colors"
-            >
-              Close
-            </button>
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+          <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Check className="w-10 h-10 text-emerald-600" />
           </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Booking Confirmed!</h1>
+          <p className="text-gray-600 mb-6">Your reservation at E&apos;Nauwi Beach Resort has been confirmed. Check your email for details.</p>
+          <p className="text-sm text-gray-500 mb-6">Booking Reference: <span className="font-mono font-bold">ENW-{bookingSuccess.slice(0, 8).toUpperCase()}</span></p>
+          <Link href="/" className="block w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
+            Back to Home
+          </Link>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-serif text-xl font-bold text-ocean">Complete Your Booking</h3>
-          <button
-            onClick={onClose}
-            className="text-ocean/30 hover:text-ocean transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section with Image Slider */}
+      <div className="relative h-[50vh] min-h-[400px]">
+        <ImageSlider images={heroImages} />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
+        
+        {/* Header */}
+        <div className="absolute top-0 left-0 right-0 p-4 sm:p-6">
+          <Link href="/" className="inline-flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium bg-black/20 px-4 py-2 rounded-full backdrop-blur-sm transition">
+            <ArrowLeft className="w-4 h-4" />
+            Back to E&apos;Nauwi Beach Resort
+          </Link>
         </div>
 
-        {/* Booking Summary */}
-        <div className="bg-ocean/5 rounded-xl p-4 mb-6">
-          <h4 className="font-serif font-semibold text-ocean mb-2">{room.name}</h4>
-          <p className="text-ocean/60 text-sm mb-2">{new Date(checkIn).toLocaleDateString()} - {new Date(checkOut).toLocaleDateString()}</p>
-          <p className="text-ocean/60 text-sm mb-2">{guests} guest{guests > 1 ? 's' : ''} • {getDaysBetween(checkIn, checkOut)} night{getDaysBetween(checkIn, checkOut) > 1 ? 's' : ''}</p>
-          <p className="text-xl font-bold text-ocean">{formatVatu(room.price_vt * getDaysBetween(checkIn, checkOut))}</p>
+        {/* Hero Content */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex">
+                {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />)}
+              </div>
+              <span className="text-white/80 text-sm">Beachfront Resort</span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-bold text-white mb-2">E&apos;Nauwi Beach Resort</h1>
+            <p className="text-white/80 text-lg">Malekula Island, Vanuatu • Lagoon Beachfront</p>
+          </div>
         </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-ocean/70 mb-1">Full Name *</label>
-            <input
-              type="text"
-              required
-              value={formData.guestName}
-              onChange={(e) => setFormData({ ...formData, guestName: e.target.value })}
-              className="w-full px-3 py-2 border border-ocean/10 rounded-xl focus:ring-2 focus:ring-ocean/20 focus:border-ocean/30 transition-all text-ocean"
-              placeholder="Enter your full name"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-ocean/70 mb-1">Email Address *</label>
-            <input
-              type="email"
-              required
-              value={formData.guestEmail}
-              onChange={(e) => setFormData({ ...formData, guestEmail: e.target.value })}
-              className="w-full px-3 py-2 border border-ocean/10 rounded-xl focus:ring-2 focus:ring-ocean/20 focus:border-ocean/30 transition-all text-ocean"
-              placeholder="your.email@example.com"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-ocean/70 mb-1">Phone Number</label>
-            <input
-              type="tel"
-              value={formData.guestPhone}
-              onChange={(e) => setFormData({ ...formData, guestPhone: e.target.value })}
-              className="w-full px-3 py-2 border border-ocean/10 rounded-xl focus:ring-2 focus:ring-ocean/20 focus:border-ocean/30 transition-all text-ocean"
-              placeholder="+678 123 4567"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-ocean/70 mb-1">Special Requests</label>
-            <textarea
-              value={formData.specialRequests}
-              onChange={(e) => setFormData({ ...formData, specialRequests: e.target.value })}
-              className="w-full px-3 py-2 border border-ocean/10 rounded-xl focus:ring-2 focus:ring-ocean/20 focus:border-ocean/30 transition-all text-ocean resize-none"
-              rows={3}
-              placeholder="Any special requests or preferences..."
-            />
-          </div>
-
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2 border border-ocean/10 text-ocean/70 rounded-xl hover:bg-ocean/5 font-medium transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 bg-gold text-ocean-dark py-2 px-4 rounded-xl hover:bg-gold-light disabled:bg-gold/30 font-semibold transition-colors shadow-lg shadow-gold/20"
-            >
-              {loading ? 'Booking...' : 'Confirm Booking'}
-            </button>
-          </div>
-        </form>
       </div>
+
+      {/* Search Bar - Floating */}
+      <div className="max-w-5xl mx-auto px-4 -mt-10 relative z-10">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Check-in</label>
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="date"
+                  value={checkIn}
+                  onChange={e => setCheckIn(e.target.value)}
+                  className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Check-out</label>
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="date"
+                  value={checkOut}
+                  onChange={e => setCheckOut(e.target.value)}
+                  min={checkIn}
+                  className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Guests</label>
+              <div className="relative">
+                <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <select
+                  value={guests}
+                  onChange={e => setGuests(Number(e.target.value))}
+                  className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition appearance-none bg-white"
+                >
+                  {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n} Guest{n > 1 ? 's' : ''}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="flex items-end">
+              <button
+                onClick={searchRooms}
+                disabled={loading}
+                className="w-full bg-blue-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {loading ? 'Searching...' : 'Search Rooms'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Results */}
+      <div className="max-w-7xl mx-auto px-4 py-10">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Available Rooms</h2>
+            <p className="text-gray-500">{calculateNights()} night{calculateNights() > 1 ? 's' : ''} • {rooms.length} room{rooms.length !== 1 ? 's' : ''} available</p>
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="text-center py-20">
+            <div className="animate-spin text-4xl mb-4">🏝️</div>
+            <p className="text-gray-500">Finding the perfect room for you...</p>
+          </div>
+        ) : rooms.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-2xl">
+            <div className="text-6xl mb-4">🏖️</div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">No rooms available</h3>
+            <p className="text-gray-500">Try different dates or fewer guests</p>
+          </div>
+        ) : (
+          <div className="grid gap-6">
+            {rooms.map(room => (
+              <div key={room.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="grid md:grid-cols-[400px_1fr] lg:grid-cols-[450px_1fr]">
+                  {/* Room Gallery */}
+                  <div className="p-4">
+                    <RoomGallery images={getRoomGallery(room)} />
+                  </div>
+
+                  {/* Room Details */}
+                  <div className="p-6 flex flex-col">
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3 className="text-xl font-bold text-gray-900 mb-1">{room.name}</h3>
+                          <p className="text-sm text-blue-600 font-medium">{room.tagline || 'Beachfront Location'}</p>
+                        </div>
+                        <div className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-lg text-sm font-bold">
+                          <Star className="w-3 h-3 fill-current" />
+                          9.2
+                        </div>
+                      </div>
+
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">{room.description}</p>
+
+                      {/* Amenities */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {room.amenities?.slice(0, 6).map((amenity, idx) => (
+                          <span key={idx} className="inline-flex items-center gap-1.5 text-xs text-gray-600 bg-gray-100 px-3 py-1.5 rounded-full">
+                            <Check className="w-3 h-3 text-green-600" />
+                            {amenity}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Room specs */}
+                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <span>👥 Up to {room.max_guests} guests</span>
+                        <span>🛏️ {room.bed_config || 'Queen bed'}</span>
+                      </div>
+                    </div>
+
+                    {/* Price & Book */}
+                    <div className="mt-4 pt-4 border-t border-gray-100 flex items-end justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500">{calculateNights()} night{calculateNights() > 1 ? 's' : ''}</p>
+                        <p className="text-3xl font-bold text-gray-900">{formatVatu(calculateTotal(room))}</p>
+                        <p className="text-xs text-gray-400">includes taxes & fees</p>
+                      </div>
+                      <button
+                        onClick={() => { setSelectedRoom(room); setShowBookingForm(true); }}
+                        className="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-700 transition"
+                      >
+                        Reserve
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Policies */}
+        <div className="mt-12 grid md:grid-cols-2 gap-6">
+          <div className="bg-white rounded-xl p-6 border border-gray-100">
+            <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+              🕐 Check-in & Check-out
+            </h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between"><span className="text-gray-600">Check-in</span><span className="font-semibold">2:00 PM</span></div>
+              <div className="flex justify-between"><span className="text-gray-600">Check-out</span><span className="font-semibold">10:00 AM</span></div>
+              <div className="flex justify-between"><span className="text-gray-600">Late check-out</span><span className="font-semibold">VUV 2,500/hr</span></div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl p-6 border border-gray-100">
+            <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+              ⚠️ Cancellation Policy
+            </h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-start gap-2"><span className="text-green-600">✓</span><span>14+ days before — Full refund</span></div>
+              <div className="flex items-start gap-2"><span className="text-yellow-600">!</span><span>7-14 days — 50% refund</span></div>
+              <div className="flex items-start gap-2"><span className="text-red-600">✕</span><span>Within 7 days — No refund</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Booking Form Modal */}
+      {showBookingForm && selectedRoom && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setShowBookingForm(false)}>
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+              <h3 className="text-xl font-bold">Complete Your Booking</h3>
+              <button onClick={() => setShowBookingForm(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-6">
+              {/* Room Summary */}
+              <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                <h4 className="font-semibold text-gray-900">{selectedRoom.name}</h4>
+                <p className="text-sm text-gray-500 mt-1">{checkIn} → {checkOut} • {calculateNights()} night{calculateNights() > 1 ? 's' : ''}</p>
+                <p className="text-xl font-bold text-gray-900 mt-2">{formatVatu(calculateTotal(selectedRoom))}</p>
+              </div>
+
+              {/* Form */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                  <input
+                    type="text"
+                    value={bookingData.name}
+                    onChange={e => setBookingData(prev => ({ ...prev, name: e.target.value }))}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+                    placeholder="John Smith"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                  <input
+                    type="email"
+                    value={bookingData.email}
+                    onChange={e => setBookingData(prev => ({ ...prev, email: e.target.value }))}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+                    placeholder="john@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                  <input
+                    type="tel"
+                    value={bookingData.phone}
+                    onChange={e => setBookingData(prev => ({ ...prev, phone: e.target.value }))}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+                    placeholder="+678 xxx xxxx"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Special Requests</label>
+                  <textarea
+                    value={bookingData.requests}
+                    onChange={e => setBookingData(prev => ({ ...prev, requests: e.target.value }))}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                    placeholder="Any special requests..."
+                  />
+                </div>
+              </div>
+
+              <button
+                onClick={handleBooking}
+                disabled={submitting || !bookingData.name || !bookingData.email}
+                className="w-full mt-6 bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50"
+              >
+                {submitting ? 'Processing...' : 'Confirm Booking'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
