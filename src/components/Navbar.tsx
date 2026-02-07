@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone } from "lucide-react";
+import Image from "next/image";
 
 const navLinks = [
   { href: "#home", label: "Home" },
@@ -55,17 +56,17 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo */}
-          <a href="#home" className="flex items-center gap-3 group">
-            <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
-                isScrolled
-                  ? "bg-ocean text-white"
-                  : "bg-white/20 backdrop-blur text-white border border-white/30"
-              }`}
-            >
-              <span className="font-serif text-lg font-bold">E</span>
+          <a href="#home" className="flex items-center gap-2 group">
+            <div className="relative w-12 h-12 sm:w-14 sm:h-14">
+              <Image
+                src="/logo-enauwi.png"
+                alt="E'Nauwi Beach Resort"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <span
                 className={`font-serif text-xl font-bold tracking-wide transition-colors duration-300 ${
                   isScrolled ? "text-ocean" : "text-white"

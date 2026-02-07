@@ -9,6 +9,7 @@ import {
   Instagram,
   ArrowUp,
 } from "lucide-react";
+import Image from "next/image";
 
 const footerLinks = [
   {
@@ -43,13 +44,23 @@ export default function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <a href="#home" className="inline-block mb-5">
-              <span className="font-serif text-2xl font-bold text-white">
-                E&apos;Nauwi
-              </span>
-              <span className="block text-[10px] uppercase tracking-[0.3em] text-gold-light font-medium">
-                Beach Resort
-              </span>
+            <a href="#home" className="inline-flex items-center gap-3 mb-5">
+              <div className="relative w-14 h-14">
+                <Image
+                  src="/logo-enauwi.png"
+                  alt="E'Nauwi Beach Resort"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <div>
+                <span className="font-serif text-xl font-bold text-white block">
+                  E&apos;Nauwi
+                </span>
+                <span className="text-[10px] uppercase tracking-[0.3em] text-gold-light font-medium">
+                  Beach Resort
+                </span>
+              </div>
             </a>
             <p className="text-white/40 text-sm leading-relaxed mb-6">
               A family-friendly island retreat set along a peaceful beachfront

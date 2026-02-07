@@ -207,7 +207,7 @@ export default function Accommodations() {
 
                 {/* CTA */}
                 <a
-                  href="#contact"
+                  href="/book"
                   className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${
                     room.popular
                       ? "bg-gold text-ocean-dark hover:bg-gold-light shadow-lg shadow-gold/20"

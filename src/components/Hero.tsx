@@ -10,8 +10,8 @@ export default function Hero() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
-          src="/images/resort/beach-resort-overview.jpg"
-          alt="E'Nauwi Beach Resort aerial view — beach with kayaks and bungalows on Malekula Island"
+          src="/images/resort/hero-resort-lagoon.jpg"
+          alt="E'Nauwi Beach Resort aerial view — crystal lagoon with kayaks and bungalows on Malekula Island"
           fill
           priority
           className="object-cover"
