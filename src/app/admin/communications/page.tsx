@@ -165,7 +165,7 @@ export default function CommunicationsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
       </div>
     )
   }
@@ -187,7 +187,7 @@ export default function CommunicationsPage() {
             onClick={() => setActiveTab('send')}
             className={`flex items-center gap-2 pb-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'send'
-                ? 'border-blue-600 text-blue-600'
+                ? 'border-teal-600 text-teal-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -198,7 +198,7 @@ export default function CommunicationsPage() {
             onClick={() => setActiveTab('templates')}
             className={`flex items-center gap-2 pb-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'templates'
-                ? 'border-blue-600 text-blue-600'
+                ? 'border-teal-600 text-teal-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -209,7 +209,7 @@ export default function CommunicationsPage() {
             onClick={() => setActiveTab('history')}
             className={`flex items-center gap-2 pb-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'history'
-                ? 'border-blue-600 text-blue-600'
+                ? 'border-teal-600 text-teal-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -238,7 +238,7 @@ export default function CommunicationsPage() {
                   placeholder="Search guests..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
                 />
               </div>
             </div>
@@ -250,7 +250,7 @@ export default function CommunicationsPage() {
                   type="checkbox"
                   checked={selectedGuests.size === filteredGuests.length && filteredGuests.length > 0}
                   onChange={handleSelectAll}
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
                 />
                 <span className="text-sm font-medium text-gray-700">Select All</span>
               </label>
@@ -264,7 +264,7 @@ export default function CommunicationsPage() {
                     type="checkbox"
                     checked={selectedGuests.has(guest.id)}
                     onChange={() => handleGuestToggle(guest.id)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">{guest.name}</p>
@@ -314,7 +314,7 @@ export default function CommunicationsPage() {
                     onClick={() => setChannel('sms')}
                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
                       channel === 'sms'
-                        ? 'bg-blue-50 border-blue-600 text-blue-600'
+                        ? 'bg-teal-50 border-teal-600 text-teal-600'
                         : 'border-gray-300 text-gray-700 hover:bg-gray-50'
                     }`}
                   >
@@ -325,7 +325,7 @@ export default function CommunicationsPage() {
                     onClick={() => setChannel('email')}
                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
                       channel === 'email'
-                        ? 'bg-blue-50 border-blue-600 text-blue-600'
+                        ? 'bg-teal-50 border-teal-600 text-teal-600'
                         : 'border-gray-300 text-gray-700 hover:bg-gray-50'
                     }`}
                   >
@@ -347,7 +347,7 @@ export default function CommunicationsPage() {
                         const template = templates.find((t) => t.id === e.target.value)
                         if (template) handleTemplateSelect(template)
                       }}
-                      className="w-full appearance-none px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10"
+                      className="w-full appearance-none px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 pr-10"
                     >
                       <option value="">Select a template...</option>
                       {templates
@@ -374,7 +374,7 @@ export default function CommunicationsPage() {
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
                     placeholder="Enter email subject..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                   />
                 </div>
               )}
@@ -389,7 +389,7 @@ export default function CommunicationsPage() {
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder={`Enter your ${channel === 'sms' ? 'SMS' : 'email'} message...`}
                   rows={5}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none"
                 />
                 {channel === 'sms' && (
                   <p className="text-xs text-gray-500 mt-1">
@@ -402,7 +402,7 @@ export default function CommunicationsPage() {
               <button
                 onClick={handleSendMessage}
                 disabled={sending || selectedGuests.size === 0 || !message.trim()}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {sending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -423,7 +423,7 @@ export default function CommunicationsPage() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900">Message Templates</h2>
-            <button className="flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+            <button className="flex items-center gap-2 px-3 py-1.5 text-sm text-teal-600 hover:bg-teal-50 rounded-lg transition-colors">
               <Plus className="h-4 w-4" />
               Add Template
             </button>
@@ -441,7 +441,7 @@ export default function CommunicationsPage() {
                           className={`px-2 py-0.5 text-xs font-medium rounded-full ${
                             template.channel === 'sms'
                               ? 'bg-purple-100 text-purple-700'
-                              : 'bg-blue-100 text-blue-700'
+                              : 'bg-teal-100 text-teal-700'
                           }`}
                         >
                           {template.channel.toUpperCase()}
@@ -461,7 +461,7 @@ export default function CommunicationsPage() {
                         handleTemplateSelect(template)
                         setActiveTab('send')
                       }}
-                      className="px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="px-3 py-1.5 text-sm text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
                     >
                       Use
                     </button>
@@ -514,7 +514,7 @@ export default function CommunicationsPage() {
                           className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full ${
                             log.channel === 'sms'
                               ? 'bg-purple-100 text-purple-700'
-                              : 'bg-blue-100 text-blue-700'
+                              : 'bg-teal-100 text-teal-700'
                           }`}
                         >
                           {log.channel === 'sms' ? (

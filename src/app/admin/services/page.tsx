@@ -181,7 +181,7 @@ export default function AdminServicesPage() {
       case 'pending':
         return 'bg-yellow-100 text-yellow-800'
       case 'confirmed':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-teal-100 text-blue-800'
       case 'delivered':
       case 'completed':
         return 'bg-green-100 text-green-800'
@@ -195,7 +195,7 @@ export default function AdminServicesPage() {
   const statusActionColor = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return 'bg-blue-600 hover:bg-blue-700 text-white'
+        return 'bg-teal-600 hover:bg-teal-700 text-white'
       case 'delivered':
       case 'completed':
         return 'bg-green-600 hover:bg-green-700 text-white'
@@ -246,7 +246,7 @@ export default function AdminServicesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
       </div>
     )
   }
@@ -268,7 +268,7 @@ export default function AdminServicesPage() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
           <div className="flex items-center justify-between mb-3">
             <p className="text-sm font-medium text-gray-500">Service Orders Today</p>
-            <div className="p-2 rounded-lg bg-blue-100 text-blue-600">
+            <div className="p-2 rounded-lg bg-teal-100 text-teal-600">
               <Package className="h-5 w-5" />
             </div>
           </div>
@@ -314,7 +314,7 @@ export default function AdminServicesPage() {
                 }}
                 className={`flex items-center gap-2 px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === tab.key
-                    ? 'border-blue-600 text-blue-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
                 }`}
               >
@@ -338,7 +338,7 @@ export default function AdminServicesPage() {
                     placeholder="Search by contact name, email, or phone..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                   />
                 </div>
                 <div className="relative">
@@ -347,7 +347,7 @@ export default function AdminServicesPage() {
                     <select
                       value={confStatusFilter}
                       onChange={(e) => setConfStatusFilter(e.target.value as ConferenceStatus)}
-                      className="pl-2 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent appearance-none bg-white"
+                      className="pl-2 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent appearance-none bg-white"
                     >
                       <option value="all">All Statuses</option>
                       <option value="pending">Pending</option>
@@ -416,7 +416,7 @@ export default function AdminServicesPage() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => setSelectedConference(booking)}
-                              className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              className="p-1.5 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
                               title="View details"
                             >
                               <Eye className="h-4 w-4" />
@@ -461,14 +461,14 @@ export default function AdminServicesPage() {
                     placeholder="Search by guest name, email, room, or service..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                   />
                 </div>
                 <div className="relative">
                   <select
                     value={orderCategoryFilter}
                     onChange={(e) => setOrderCategoryFilter(e.target.value)}
-                    className="pl-2 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent appearance-none bg-white"
+                    className="pl-2 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent appearance-none bg-white"
                   >
                     <option value="all">All Categories</option>
                     <option value="food_beverage">Food & Beverage</option>
@@ -482,7 +482,7 @@ export default function AdminServicesPage() {
                     <select
                       value={orderStatusFilter}
                       onChange={(e) => setOrderStatusFilter(e.target.value as OrderStatus)}
-                      className="pl-2 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent appearance-none bg-white"
+                      className="pl-2 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent appearance-none bg-white"
                     >
                       <option value="all">All Statuses</option>
                       <option value="pending">Pending</option>
@@ -548,7 +548,7 @@ export default function AdminServicesPage() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => setSelectedOrder(order)}
-                              className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              className="p-1.5 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
                               title="View details"
                             >
                               <Eye className="h-4 w-4" />
@@ -710,9 +710,9 @@ export default function AdminServicesPage() {
                 </div>
               )}
               {selectedConference.notes && (
-                <div className="bg-blue-50 rounded-lg p-4">
+                <div className="bg-teal-50 rounded-lg p-4">
                   <h4 className="text-sm font-semibold text-blue-800 mb-1">Notes</h4>
-                  <p className="text-sm text-blue-700">{selectedConference.notes}</p>
+                  <p className="text-sm text-teal-700">{selectedConference.notes}</p>
                 </div>
               )}
               <p className="text-xs text-gray-400">Booked on {formatDate(selectedConference.created_at)}</p>

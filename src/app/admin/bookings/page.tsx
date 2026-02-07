@@ -117,7 +117,7 @@ export default function AdminBookingsPage() {
       case 'pending':
         return 'bg-yellow-100 text-yellow-800'
       case 'confirmed':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-teal-100 text-blue-800'
       case 'checked_in':
         return 'bg-green-100 text-green-800'
       case 'checked_out':
@@ -132,7 +132,7 @@ export default function AdminBookingsPage() {
   const statusActionColor = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return 'bg-blue-600 hover:bg-blue-700 text-white'
+        return 'bg-teal-600 hover:bg-teal-700 text-white'
       case 'checked_in':
         return 'bg-green-600 hover:bg-green-700 text-white'
       case 'checked_out':
@@ -157,7 +157,7 @@ export default function AdminBookingsPage() {
               placeholder="Search by guest name, email, or room..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
             />
           </div>
 
@@ -168,7 +168,7 @@ export default function AdminBookingsPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as BookingStatus)}
-                className="pl-2 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent appearance-none bg-white"
+                className="pl-2 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent appearance-none bg-white"
               >
                 {STATUS_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -186,7 +186,7 @@ export default function AdminBookingsPage() {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         {loading ? (
           <div className="flex items-center justify-center h-48">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
           </div>
         ) : filteredBookings.length > 0 ? (
           <div className="overflow-x-auto">
@@ -240,7 +240,7 @@ export default function AdminBookingsPage() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => setSelectedBooking(booking)}
-                          className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-1.5 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
                           title="View details"
                         >
                           <Eye className="h-4 w-4" />
@@ -396,9 +396,9 @@ function BookingDetailModal({
 
           {/* Notes */}
           {booking.notes && (
-            <div className="bg-blue-50 rounded-lg p-4">
+            <div className="bg-teal-50 rounded-lg p-4">
               <h4 className="text-sm font-semibold text-blue-800 mb-1">Notes</h4>
-              <p className="text-sm text-blue-700">{booking.notes}</p>
+              <p className="text-sm text-teal-700">{booking.notes}</p>
             </div>
           )}
 

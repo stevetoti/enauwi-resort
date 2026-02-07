@@ -163,7 +163,7 @@ export default function StaffInvitePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
       </div>
     )
   }
@@ -218,7 +218,7 @@ export default function StaffInvitePage() {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                 placeholder="John Doe"
               />
             </div>
@@ -232,7 +232,7 @@ export default function StaffInvitePage() {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                 placeholder="john@example.com"
               />
             </div>
@@ -244,7 +244,7 @@ export default function StaffInvitePage() {
               <select
                 value={formData.role_id}
                 onChange={(e) => setFormData({ ...formData, role_id: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               >
                 <option value="">Select a role</option>
                 {roles.map((role) => (
@@ -262,7 +262,7 @@ export default function StaffInvitePage() {
               <select
                 value={formData.department}
                 onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               >
                 <option value="">Select department</option>
                 <option value="Front Desk">Front Desk</option>
@@ -278,7 +278,7 @@ export default function StaffInvitePage() {
             <button
               type="submit"
               disabled={sendingInvite}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors"
             >
               <Send className="h-4 w-4" />
               {sendingInvite ? 'Sending...' : 'Send Invitation'}
@@ -300,7 +300,7 @@ export default function StaffInvitePage() {
                 <div key={invitation.id} className="p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                      <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold">
                         {invitation.name.charAt(0).toUpperCase()}
                       </div>
                       <div>
@@ -330,7 +330,7 @@ export default function StaffInvitePage() {
                   <div className="mt-3 flex gap-2">
                     <button
                       onClick={() => handleResendInvite(invitation)}
-                      className="flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="flex items-center gap-1 px-3 py-1.5 text-sm text-teal-600 hover:bg-blue-50 rounded-lg transition-colors"
                     >
                       <RefreshCw className="h-3.5 w-3.5" />
                       Resend

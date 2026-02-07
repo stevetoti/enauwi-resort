@@ -23,7 +23,7 @@ import { Room } from '@/types'
 const getRoomColor = (room: Room) => {
   const name = room.name.toLowerCase()
   if (name.includes('beachfront') || name.includes('lagoon view')) {
-    return { bg: 'bg-blue-600', light: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200' }
+    return { bg: 'bg-teal-600', light: 'bg-teal-50', text: 'text-teal-600', border: 'border-blue-200' }
   } else if (name.includes('garden') || name.includes('back garden')) {
     return { bg: 'bg-emerald-600', light: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-200' }
   } else if (name.includes('deluxe') || name.includes('superior')) {
@@ -31,7 +31,7 @@ const getRoomColor = (room: Room) => {
   } else if (name.includes('family') || name.includes('suite')) {
     return { bg: 'bg-purple-600', light: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200' }
   }
-  return { bg: 'bg-blue-600', light: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200' }
+  return { bg: 'bg-teal-600', light: 'bg-teal-50', text: 'text-teal-600', border: 'border-blue-200' }
 }
 
 export default function AdminRoomsPage() {
@@ -79,7 +79,7 @@ export default function AdminRoomsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
       </div>
     )
   }
@@ -148,7 +148,7 @@ export default function AdminRoomsPage() {
                 {room.amenities.slice(0, 4).map((amenity, i) => (
                   <span
                     key={i}
-                    className="px-2 py-0.5 text-xs bg-blue-50 text-blue-700 rounded-full"
+                    className="px-2 py-0.5 text-xs bg-teal-50 text-teal-700 rounded-full"
                   >
                     {amenity}
                   </span>
@@ -388,7 +388,7 @@ function RoomEditModal({
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
             />
           </div>
 
@@ -398,7 +398,7 @@ function RoomEditModal({
               <select
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
               >
                 <option value="bungalow">Bungalow</option>
                 <option value="suite">Suite</option>
@@ -417,7 +417,7 @@ function RoomEditModal({
                 onChange={(e) =>
                   setFormData({ ...formData, max_guests: parseInt(e.target.value) })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
               />
             </div>
           </div>
@@ -434,7 +434,7 @@ function RoomEditModal({
               onChange={(e) =>
                 setFormData({ ...formData, price_vt: parseInt(e.target.value) })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
             />
           </div>
 
@@ -444,7 +444,7 @@ function RoomEditModal({
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
             />
           </div>
 
@@ -457,7 +457,7 @@ function RoomEditModal({
               value={formData.amenities}
               onChange={(e) => setFormData({ ...formData, amenities: e.target.value })}
               placeholder="WiFi, Beach Access, Ocean View"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
             />
           </div>
 
@@ -481,7 +481,7 @@ function RoomEditModal({
                       <Trash2 className="h-4 w-4 text-white" />
                     </button>
                     {idx === 0 && (
-                      <span className="absolute top-1 left-1 text-[9px] bg-blue-600 text-white px-1 rounded">
+                      <span className="absolute top-1 left-1 text-[9px] bg-teal-600 text-white px-1 rounded">
                         Main
                       </span>
                     )}
@@ -499,20 +499,20 @@ function RoomEditModal({
               onClick={() => fileInputRef.current?.click()}
               className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all ${
                 dragActive
-                  ? 'border-blue-500 bg-blue-50'
+                  ? 'border-teal-500 bg-teal-50'
                   : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
               }`}
             >
               {uploading ? (
-                <div className="flex items-center justify-center gap-2 text-blue-600">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                <div className="flex items-center justify-center gap-2 text-teal-600">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-teal-600"></div>
                   <span className="text-sm font-medium">Uploading...</span>
                 </div>
               ) : (
                 <>
                   <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
                   <p className="text-sm text-gray-600 mb-1">
-                    <span className="font-medium text-blue-600">Click to upload</span> or drag & drop
+                    <span className="font-medium text-teal-600">Click to upload</span> or drag & drop
                   </p>
                   <p className="text-xs text-gray-400">PNG, JPG, WebP up to 5MB</p>
                 </>
@@ -536,13 +536,13 @@ function RoomEditModal({
                     value={urlInput}
                     onChange={(e) => setUrlInput(e.target.value)}
                     placeholder="https://images.unsplash.com/photo-..."
-                    className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddUrl())}
                   />
                   <button
                     type="button"
                     onClick={handleAddUrl}
-                    className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700"
                   >
                     <Plus className="h-3 w-3" />
                   </button>
@@ -558,7 +558,7 @@ function RoomEditModal({
                 <button
                   type="button"
                   onClick={() => setShowUrlInput(true)}
-                  className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium"
+                  className="flex items-center gap-1 text-xs text-teal-600 hover:text-teal-700 font-medium"
                 >
                   <LinkIcon className="h-3 w-3" />
                   Or paste image URL
@@ -578,7 +578,7 @@ function RoomEditModal({
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg disabled:opacity-50"
             >
               <Save className="h-4 w-4" />
               {saving ? 'Saving...' : 'Save Changes'}

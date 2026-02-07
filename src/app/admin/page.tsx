@@ -149,9 +149,9 @@ export default function AdminDashboard() {
   const statusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800'
+        return 'bg-amber-100 text-amber-800'
       case 'confirmed':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-teal-100 text-teal-800'
       case 'checked_in':
         return 'bg-green-100 text-green-800'
       case 'checked_out':
@@ -166,7 +166,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
       </div>
     )
   }
@@ -220,8 +220,8 @@ export default function AdminDashboard() {
         </div>
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Users className="h-5 w-5 text-blue-600" />
+            <div className="p-2 bg-teal-100 rounded-lg">
+              <Users className="h-5 w-5 text-teal-600" />
             </div>
             <div>
               <p className="text-sm text-gray-500">Total Guests</p>
@@ -288,7 +288,7 @@ export default function AdminDashboard() {
           </div>
           <Link
             href="/admin/bookings"
-            className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+            className="text-sm text-teal-600 hover:text-teal-800 font-medium"
           >
             View All →
           </Link>
@@ -368,10 +368,10 @@ function StatCard({
   subtitle: string
 }) {
   const colorMap = {
-    blue: 'bg-blue-100 text-blue-600',
-    green: 'bg-green-100 text-green-600',
-    orange: 'bg-orange-100 text-orange-600',
-    purple: 'bg-purple-100 text-purple-600',
+    blue: 'bg-teal-100 text-teal-600',
+    green: 'bg-teal-100 text-teal-600',
+    orange: 'bg-amber-100 text-amber-600',
+    purple: 'bg-amber-100 text-amber-600',
   }
 
   return (

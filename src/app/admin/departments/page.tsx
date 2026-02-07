@@ -41,8 +41,8 @@ const RESORT_IMAGES = [
 ]
 
 const DEPARTMENT_COLORS = [
-  '#0D4F8B', '#17A2B8', '#40916C', '#E8941C', '#C77B0A',
-  '#854B06', '#093763', '#6366F1', '#EC4899', '#8B5CF6'
+  '#0D9488', '#0F766E', '#14B8A6', '#F59E0B', '#D97706',
+  '#854B06', '#115E59', '#059669', '#10B981', '#047857'
 ]
 
 export default function DepartmentsPage() {
@@ -113,7 +113,7 @@ export default function DepartmentsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
       </div>
     )
   }
@@ -129,15 +129,25 @@ export default function DepartmentsPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-blue-900/40" />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(15, 118, 110, 0.9) 0%, rgba(13, 148, 136, 0.7) 100%)' }} />
         <div className="absolute inset-0 flex items-center px-6 sm:px-8">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              Department Management
-            </h1>
-            <p className="text-blue-100 text-sm sm:text-base max-w-lg">
-              Organize your team into departments, manage announcements, and share important documents with the right people.
-            </p>
+          <div className="flex items-center gap-6">
+            <div className="hidden sm:block w-20 h-20 relative flex-shrink-0">
+              <Image
+                src="/logo-enauwi.png"
+                alt="E'Nauwi Resort"
+                fill
+                className="object-contain drop-shadow-lg"
+              />
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                Department Management
+              </h1>
+              <p className="text-teal-100 text-sm sm:text-base max-w-lg">
+                Organize your team into departments, manage announcements, and share important documents with the right people.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -152,13 +162,13 @@ export default function DepartmentsPage() {
               placeholder="Search departments..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
             />
           </div>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
         >
           <Plus className="h-4 w-4" />
           Create Department
@@ -169,8 +179,8 @@ export default function DepartmentsPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="bg-white rounded-lg p-4 border border-gray-200">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Building2 className="h-5 w-5 text-blue-600" />
+            <div className="p-2 bg-teal-100 rounded-lg">
+              <Building2 className="h-5 w-5 text-teal-600" />
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">{departments.length}</p>
@@ -180,8 +190,8 @@ export default function DepartmentsPage() {
         </div>
         <div className="bg-white rounded-lg p-4 border border-gray-200">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Users className="h-5 w-5 text-green-600" />
+            <div className="p-2 bg-teal-100 rounded-lg">
+              <Users className="h-5 w-5 text-teal-600" />
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">
@@ -206,8 +216,8 @@ export default function DepartmentsPage() {
         </div>
         <div className="bg-white rounded-lg p-4 border border-gray-200">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <FileText className="h-5 w-5 text-purple-600" />
+            <div className="p-2 bg-amber-100 rounded-lg">
+              <FileText className="h-5 w-5 text-amber-600" />
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">—</p>
@@ -300,7 +310,7 @@ export default function DepartmentsPage() {
                   <Users className="h-4 w-4" />
                   <span>{department.member_count || 0} members</span>
                 </div>
-                <div className="flex items-center gap-1 text-sm text-blue-600 group-hover:text-blue-700">
+                <div className="flex items-center gap-1 text-sm text-teal-600 group-hover:text-teal-700">
                   <span>View Details</span>
                   <ChevronRight className="h-4 w-4" />
                 </div>
@@ -430,7 +440,7 @@ function DepartmentModal({
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               placeholder="e.g., Front Desk"
             />
           </div>
@@ -442,7 +452,7 @@ function DepartmentModal({
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               rows={3}
               placeholder="Brief description of this department's responsibilities"
             />
@@ -459,7 +469,7 @@ function DepartmentModal({
                   type="button"
                   onClick={() => setFormData({ ...formData, color })}
                   className={`w-8 h-8 rounded-full transition-transform ${
-                    formData.color === color ? 'ring-2 ring-offset-2 ring-blue-500 scale-110' : ''
+                    formData.color === color ? 'ring-2 ring-offset-2 ring-teal-500 scale-110' : ''
                   }`}
                   style={{ backgroundColor: color }}
                 />
@@ -478,7 +488,7 @@ function DepartmentModal({
                   type="button"
                   onClick={() => setFormData({ ...formData, image_url: img })}
                   className={`relative h-16 rounded-lg overflow-hidden ${
-                    formData.image_url === img ? 'ring-2 ring-blue-500' : ''
+                    formData.image_url === img ? 'ring-2 ring-teal-500' : ''
                   }`}
                 >
                   <Image src={img} alt="" fill className="object-cover" />
@@ -498,7 +508,7 @@ function DepartmentModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Saving...' : department ? 'Save Changes' : 'Create Department'}
             </button>
@@ -586,7 +596,7 @@ function DepartmentDetailPanel({
                 onClick={() => setActiveTab(tab.key as typeof activeTab)}
                 className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === tab.key
-                    ? 'border-blue-600 text-blue-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
                 }`}
               >
@@ -617,7 +627,7 @@ function DepartmentDetailPanel({
                         className="rounded-full object-cover"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                      <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold">
                         {member.name.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -653,7 +663,7 @@ function DepartmentDetailPanel({
             <div className="space-y-3">
               <button
                 onClick={() => setShowAnnouncementModal(true)}
-                className="w-full flex items-center justify-center gap-2 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-400 hover:text-blue-600 transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-teal-400 hover:text-teal-600 transition-colors"
               >
                 <Plus className="h-4 w-4" />
                 New Announcement
@@ -712,7 +722,7 @@ function DepartmentDetailPanel({
             <div className="space-y-3">
               <button
                 onClick={() => setShowDocumentModal(true)}
-                className="w-full flex items-center justify-center gap-2 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-400 hover:text-blue-600 transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-teal-400 hover:text-teal-600 transition-colors"
               >
                 <Upload className="h-4 w-4" />
                 Add Document/Link
@@ -726,7 +736,7 @@ function DepartmentDetailPanel({
                   >
                     <div className="p-2 bg-gray-100 rounded-lg">
                       {doc.file_type === 'link' ? (
-                        <LinkIcon className="h-5 w-5 text-blue-600" />
+                        <LinkIcon className="h-5 w-5 text-teal-600" />
                       ) : (
                         <File className="h-5 w-5 text-gray-600" />
                       )}
@@ -741,7 +751,7 @@ function DepartmentDetailPanel({
                       href={doc.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-1 text-gray-400 hover:text-blue-600"
+                      className="p-1 text-gray-400 hover:text-teal-600"
                     >
                       <ExternalLink className="h-4 w-4" />
                     </a>
@@ -843,7 +853,7 @@ function AnnouncementModal({
               required
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
             />
           </div>
           <div>
@@ -852,7 +862,7 @@ function AnnouncementModal({
               required
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
               rows={4}
             />
           </div>
@@ -876,7 +886,7 @@ function AnnouncementModal({
                   type="checkbox"
                   checked={formData.pinned}
                   onChange={(e) => setFormData({ ...formData, pinned: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded"
+                  className="w-4 h-4 text-teal-600 border-gray-300 rounded"
                 />
                 <span className="text-sm text-gray-700">Pin</span>
               </label>
@@ -893,7 +903,7 @@ function AnnouncementModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50"
             >
               {loading ? 'Posting...' : 'Post'}
             </button>
@@ -957,7 +967,7 @@ function DocumentModal({
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
               placeholder="e.g., Employee Handbook"
             />
           </div>
@@ -968,7 +978,7 @@ function DocumentModal({
               required
               value={formData.url}
               onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
               placeholder="https://..."
             />
           </div>
@@ -1007,7 +1017,7 @@ function DocumentModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50"
             >
               {loading ? 'Adding...' : 'Add'}
             </button>

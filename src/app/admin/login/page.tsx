@@ -70,7 +70,7 @@ export default function AdminLoginPage() {
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center">
+          <div className="mx-auto h-16 w-16 bg-teal-600 rounded-full flex items-center justify-center">
             <Shield className="h-8 w-8 text-white" />
           </div>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
@@ -104,7 +104,7 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                   placeholder="admin@enauwi.com"
                 />
               </div>
@@ -124,7 +124,7 @@ export default function AdminLoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="pl-10 pr-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                   placeholder="Enter your password"
                 />
                 <button
@@ -140,7 +140,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-blue-400 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="flex items-center">
@@ -165,7 +165,7 @@ export default function AdminLoginPage() {
         <div className="text-center">
           <a
             href="/"
-            className="text-sm text-blue-600 hover:text-blue-800 underline"
+            className="text-sm text-teal-600 hover:text-blue-800 underline"
           >
             ← Back to main website
           </a>

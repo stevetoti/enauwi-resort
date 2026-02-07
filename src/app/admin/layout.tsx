@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   LayoutDashboard,
   Calendar,
@@ -105,7 +106,7 @@ export default function AdminLayout({
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600"></div>
           <p className="text-gray-500 text-sm">Loading admin portal...</p>
         </div>
       </div>
@@ -126,35 +127,41 @@ export default function AdminLayout({
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar - E'Nauwi Dark Teal */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 bg-blue-900 text-white transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 z-50 h-full w-64 text-white transform transition-transform duration-300 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
+        style={{ backgroundColor: '#0F766E' }}
       >
         {/* Logo */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-blue-800">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-teal-700">
           <Link href="/admin" className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Shield className="h-5 w-5 text-white" />
+            <div className="w-12 h-12 relative">
+              <Image
+                src="/logo-enauwi.png"
+                alt="E'Nauwi Resort"
+                fill
+                className="object-contain"
+              />
             </div>
             <div>
               <span className="font-bold text-lg">E&apos;Nauwi</span>
-              <span className="block text-[10px] uppercase tracking-widest text-blue-300">
-                Admin
+              <span className="block text-[10px] uppercase tracking-widest text-teal-200">
+                Admin Portal
               </span>
             </div>
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-blue-300 hover:text-white"
+            className="lg:hidden text-teal-200 hover:text-white"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="px-3 py-4 space-y-1">
+        <nav className="px-3 py-4 space-y-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
           {sidebarLinks.map((link) => {
             const isActive =
               pathname === link.href ||
@@ -168,14 +175,14 @@ export default function AdminLayout({
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-blue-800 text-white'
-                    : 'text-blue-200 hover:bg-blue-800/50 hover:text-white'
+                    ? 'bg-teal-800 text-white'
+                    : 'text-teal-100 hover:bg-teal-700 hover:text-white'
                 }`}
               >
                 <Icon className="h-5 w-5" />
                 <span>{link.label}</span>
                 {isActive && (
-                  <ChevronRight className="h-4 w-4 ml-auto" />
+                  <ChevronRight className="h-4 w-4 ml-auto text-amber-400" />
                 )}
               </Link>
             )
@@ -183,26 +190,26 @@ export default function AdminLayout({
         </nav>
 
         {/* User info / Logout */}
-        <div className="absolute bottom-0 left-0 right-0 px-3 py-4 border-t border-blue-800">
+        <div className="absolute bottom-0 left-0 right-0 px-3 py-4 border-t border-teal-700" style={{ backgroundColor: '#0F766E' }}>
           <div className="flex items-center gap-3 px-3 mb-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-sm font-bold">
+            <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-sm font-bold text-white">
               {user.name.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white truncate">{user.name}</p>
-              <p className="text-xs text-blue-300 truncate">{user.email}</p>
+              <p className="text-xs text-teal-200 truncate">{user.email}</p>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-3 py-2 text-sm text-blue-200 hover:bg-blue-800/50 hover:text-white rounded-lg transition-colors"
+            className="flex items-center gap-3 w-full px-3 py-2 text-sm text-teal-100 hover:bg-teal-700 hover:text-white rounded-lg transition-colors"
           >
             <LogOut className="h-4 w-4" />
             <span>Sign Out</span>
           </button>
           <Link
             href="/"
-            className="flex items-center gap-3 w-full px-3 py-2 mt-1 text-sm text-blue-200 hover:bg-blue-800/50 hover:text-white rounded-lg transition-colors"
+            className="flex items-center gap-3 w-full px-3 py-2 mt-1 text-sm text-teal-100 hover:bg-teal-700 hover:text-white rounded-lg transition-colors"
           >
             <span className="text-xs">←</span>
             <span>Back to Website</span>
@@ -228,6 +235,15 @@ export default function AdminLayout({
                   (l.href !== '/admin' && pathname.startsWith(l.href))
               )?.label || 'Admin'}
             </h1>
+          </div>
+          {/* Small logo in header on mobile */}
+          <div className="lg:hidden w-8 h-8 relative">
+            <Image
+              src="/logo-enauwi.png"
+              alt="E'Nauwi"
+              fill
+              className="object-contain"
+            />
           </div>
         </header>
 

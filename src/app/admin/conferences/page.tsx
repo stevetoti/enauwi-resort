@@ -91,7 +91,7 @@ export default function ConferencesPage() {
     const styles: Record<string, string> = {
       pending: 'bg-yellow-100 text-yellow-800',
       confirmed: 'bg-green-100 text-green-800',
-      completed: 'bg-blue-100 text-blue-800',
+      completed: 'bg-teal-100 text-blue-800',
       cancelled: 'bg-red-100 text-red-800',
     }
 
@@ -112,7 +112,7 @@ export default function ConferencesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
       </div>
     )
   }
@@ -131,8 +131,8 @@ export default function ConferencesPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Building2 className="h-5 w-5 text-blue-600" />
+            <div className="p-2 bg-teal-100 rounded-lg">
+              <Building2 className="h-5 w-5 text-teal-600" />
             </div>
             <div>
               <p className="text-sm text-gray-500">Total</p>
@@ -184,14 +184,14 @@ export default function ConferencesPage() {
             placeholder="Search by name or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
           />
         </div>
         <div className="relative">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-            className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+            className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white"
           >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
@@ -268,7 +268,7 @@ export default function ConferencesPage() {
                             setSelectedBooking(booking)
                             setShowModal(true)
                           }}
-                          className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-1.5 text-gray-500 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
                           title="View Details"
                         >
                           <Eye className="h-4 w-4" />
@@ -381,7 +381,7 @@ function ConferenceDetailsModal({
                     : booking.status === 'confirmed'
                     ? 'bg-green-100 text-green-800'
                     : booking.status === 'completed'
-                    ? 'bg-blue-100 text-blue-800'
+                    ? 'bg-teal-100 text-blue-800'
                     : 'bg-red-100 text-red-800'
                 }`}
               >
@@ -414,7 +414,7 @@ function ConferenceDetailsModal({
               <button
                 onClick={() => onUpdate({ status: 'completed' })}
                 disabled={updating}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors text-sm"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors text-sm"
               >
                 {updating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
                 Mark Complete
@@ -432,14 +432,14 @@ function ConferenceDetailsModal({
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Mail className="h-4 w-4 text-gray-400" />
-                <a href={`mailto:${booking.contact_email}`} className="text-blue-600 hover:underline">
+                <a href={`mailto:${booking.contact_email}`} className="text-teal-600 hover:underline">
                   {booking.contact_email}
                 </a>
               </div>
               {booking.contact_phone && (
                 <div className="flex items-center gap-2 text-sm">
                   <Phone className="h-4 w-4 text-gray-400" />
-                  <a href={`tel:${booking.contact_phone}`} className="text-blue-600 hover:underline">
+                  <a href={`tel:${booking.contact_phone}`} className="text-teal-600 hover:underline">
                     {booking.contact_phone}
                   </a>
                 </div>
@@ -478,7 +478,7 @@ function ConferenceDetailsModal({
               {!showPriceInput && (
                 <button
                   onClick={() => setShowPriceInput(true)}
-                  className="text-xs text-blue-600 hover:underline"
+                  className="text-xs text-teal-600 hover:underline"
                 >
                   {booking.total_price ? 'Edit' : 'Set Price'}
                 </button>
@@ -493,13 +493,13 @@ function ConferenceDetailsModal({
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     placeholder="Enter price in VT"
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                   />
                 </div>
                 <button
                   onClick={handleSetPrice}
                   disabled={updating}
-                  className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                  className="px-3 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors"
                 >
                   Save
                 </button>
@@ -537,12 +537,12 @@ function ConferenceDetailsModal({
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add notes about this booking..."
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none text-sm"
             />
             <button
               onClick={handleSaveNotes}
               disabled={updating || notes === booking.notes}
-              className="mt-2 flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="mt-2 flex items-center gap-1.5 px-3 py-1.5 text-sm text-teal-600 hover:bg-teal-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <MessageSquare className="h-4 w-4" />
               Save Notes

@@ -93,7 +93,7 @@ export default function AnnouncementsPage() {
     const styles: Record<Priority, string> = {
       urgent: 'bg-red-100 text-red-700',
       high: 'bg-orange-100 text-orange-700',
-      normal: 'bg-blue-100 text-blue-700',
+      normal: 'bg-teal-100 text-teal-700',
       low: 'bg-gray-100 text-gray-700',
     }
 
@@ -119,7 +119,7 @@ export default function AnnouncementsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
       </div>
     )
   }
@@ -139,7 +139,7 @@ export default function AnnouncementsPage() {
             setEditingAnnouncement(null)
             setShowModal(true)
           }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
         >
           <Plus className="h-4 w-4" />
           New Announcement
@@ -150,8 +150,8 @@ export default function AnnouncementsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Megaphone className="h-5 w-5 text-blue-600" />
+            <div className="p-2 bg-teal-100 rounded-lg">
+              <Megaphone className="h-5 w-5 text-teal-600" />
             </div>
             <div>
               <p className="text-sm text-gray-500">Total</p>
@@ -282,7 +282,7 @@ export default function AnnouncementsPage() {
                         setEditingAnnouncement(announcement)
                         setShowModal(true)
                       }}
-                      className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
                       title="Edit"
                     >
                       <Edit2 className="h-4 w-4" />
@@ -426,7 +426,7 @@ function AnnouncementModal({
               required
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               placeholder="Announcement title"
             />
           </div>
@@ -440,7 +440,7 @@ function AnnouncementModal({
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               rows={5}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none"
               placeholder="Write your announcement here..."
             />
           </div>
@@ -453,7 +453,7 @@ function AnnouncementModal({
               <select
                 value={formData.priority}
                 onChange={(e) => setFormData({ ...formData, priority: e.target.value as Priority })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               >
                 <option value="low">Low</option>
                 <option value="normal">Normal</option>
@@ -471,7 +471,7 @@ function AnnouncementModal({
                 value={formData.expires_at}
                 onChange={(e) => setFormData({ ...formData, expires_at: e.target.value })}
                 min={new Date().toISOString().split('T')[0]}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               />
             </div>
           </div>
@@ -482,7 +482,7 @@ function AnnouncementModal({
                 type="checkbox"
                 checked={formData.pinned}
                 onChange={(e) => setFormData({ ...formData, pinned: e.target.checked })}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
               />
               <span className="text-sm font-medium text-gray-700">Pin this announcement</span>
             </label>
@@ -502,7 +502,7 @@ function AnnouncementModal({
                     key={role.id}
                     className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm cursor-pointer transition-colors ${
                       formData.target_roles.includes(role.id)
-                        ? 'bg-blue-100 text-blue-700 border border-blue-300'
+                        ? 'bg-teal-100 text-teal-700 border border-blue-300'
                         : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'
                     }`}
                   >
@@ -530,7 +530,7 @@ function AnnouncementModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Saving...' : announcement ? 'Update' : 'Create'}
             </button>

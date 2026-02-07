@@ -99,7 +99,7 @@ export default function RolesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
       </div>
     )
   }
@@ -116,7 +116,7 @@ export default function RolesPage() {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
         >
           <Plus className="h-4 w-4" />
           Create Role
@@ -131,7 +131,7 @@ export default function RolesPage() {
           placeholder="Search roles..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
         />
       </div>
 
@@ -148,7 +148,7 @@ export default function RolesPage() {
                   <div className={`p-2.5 rounded-lg ${
                     role.is_system_role 
                       ? 'bg-purple-100 text-purple-600' 
-                      : 'bg-blue-100 text-blue-600'
+                      : 'bg-teal-100 text-teal-600'
                   }`}>
                     <Shield className="h-5 w-5" />
                   </div>
@@ -226,7 +226,7 @@ export default function RolesPage() {
                     return (
                       <span
                         key={area}
-                        className="px-2 py-0.5 text-xs bg-blue-50 text-blue-700 rounded-full"
+                        className="px-2 py-0.5 text-xs bg-teal-50 text-teal-700 rounded-full"
                       >
                         {area}
                       </span>
@@ -240,7 +240,7 @@ export default function RolesPage() {
                   setSelectedRole(role)
                   setShowEditModal(true)
                 }}
-                className="w-full mt-4 flex items-center justify-center gap-2 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                className="w-full mt-4 flex items-center justify-center gap-2 py-2 text-sm text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
               >
                 <span>Configure Permissions</span>
                 <ChevronRight className="h-4 w-4" />
@@ -396,7 +396,7 @@ function RoleModal({
               onClick={() => setActiveTab('general')}
               className={`py-3 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'general'
-                  ? 'border-blue-600 text-blue-600'
+                  ? 'border-teal-600 text-teal-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -406,7 +406,7 @@ function RoleModal({
               onClick={() => setActiveTab('permissions')}
               className={`py-3 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'permissions'
-                  ? 'border-blue-600 text-blue-600'
+                  ? 'border-teal-600 text-teal-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -436,7 +436,7 @@ function RoleModal({
                     disabled={role?.is_system_role}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                     placeholder="e.g., Front Desk Manager"
                   />
                 </div>
@@ -448,7 +448,7 @@ function RoleModal({
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     rows={3}
                     placeholder="Brief description of this role's responsibilities"
                   />
@@ -484,7 +484,7 @@ function RoleModal({
                             onClick={() => toggleAreaAll(area.key, area.actions)}
                             className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
                               allEnabled
-                                ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                                ? 'bg-teal-100 text-teal-700 hover:bg-blue-200'
                                 : someEnabled
                                 ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                 : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
@@ -505,7 +505,7 @@ function RoleModal({
                                 key={action.key}
                                 className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all ${
                                   isEnabled
-                                    ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-200'
+                                    ? 'bg-teal-100 text-teal-700 ring-2 ring-teal-200'
                                     : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
                                 }`}
                               >
@@ -518,7 +518,7 @@ function RoleModal({
                                 <Icon className="h-4 w-4" />
                                 <span className="text-sm font-medium">{action.label}</span>
                                 {isEnabled && (
-                                  <Check className="h-4 w-4 text-blue-600" />
+                                  <Check className="h-4 w-4 text-teal-600" />
                                 )}
                               </label>
                             )
@@ -544,7 +544,7 @@ function RoleModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Saving...' : role ? 'Save Changes' : 'Create Role'}
             </button>

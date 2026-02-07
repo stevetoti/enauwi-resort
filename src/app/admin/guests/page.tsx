@@ -88,7 +88,7 @@ export default function AdminGuestsPage() {
       case 'pending':
         return 'bg-yellow-100 text-yellow-800'
       case 'confirmed':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-teal-100 text-blue-800'
       case 'checked_in':
         return 'bg-green-100 text-green-800'
       case 'checked_out':
@@ -103,7 +103,7 @@ export default function AdminGuestsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
       </div>
     )
   }
@@ -119,7 +119,7 @@ export default function AdminGuestsPage() {
             placeholder="Search by name, email, or phone..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
           />
         </div>
       </div>
@@ -135,8 +135,8 @@ export default function AdminGuestsPage() {
                 onClick={() => viewGuestBookings(guest)}
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <span className="text-blue-600 font-bold text-sm">
+                  <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+                    <span className="text-teal-600 font-bold text-sm">
                       {guest.name
                         .split(' ')
                         .map((n) => n[0])
@@ -203,8 +203,8 @@ export default function AdminGuestsPage() {
             <div className="px-6 py-4 space-y-4">
               {/* Guest Info */}
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-blue-600 font-bold text-lg">
+                <div className="w-14 h-14 bg-teal-100 rounded-full flex items-center justify-center">
+                  <span className="text-teal-600 font-bold text-lg">
                     {selectedGuest.name
                       .split(' ')
                       .map((n) => n[0])
@@ -231,7 +231,7 @@ export default function AdminGuestsPage() {
 
                 {loadingBookings ? (
                   <div className="flex items-center justify-center h-20">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-teal-600"></div>
                   </div>
                 ) : guestBookings.length > 0 ? (
                   <div className="space-y-3">
@@ -256,7 +256,7 @@ export default function AdminGuestsPage() {
                           {formatDate(booking.check_in)} → {formatDate(booking.check_out)}
                         </p>
                         {booking.total_price && (
-                          <p className="text-sm font-semibold text-blue-600 mt-1">
+                          <p className="text-sm font-semibold text-teal-600 mt-1">
                             {formatVatu(booking.total_price)}
                           </p>
                         )}

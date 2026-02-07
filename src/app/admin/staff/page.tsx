@@ -114,7 +114,7 @@ export default function StaffManagementPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
       </div>
     )
   }
@@ -131,7 +131,7 @@ export default function StaffManagementPage() {
         </div>
         <button
           onClick={() => setShowInviteModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
         >
           <UserPlus className="h-4 w-4" />
           Invite Staff
@@ -147,14 +147,14 @@ export default function StaffManagementPage() {
             placeholder="Search by name, email, or department..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
           />
         </div>
         <div className="relative">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+            className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -182,7 +182,7 @@ export default function StaffManagementPage() {
                     className="w-14 h-14 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xl">
+                  <div className="w-14 h-14 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-xl">
                     {member.name.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -433,7 +433,7 @@ function InviteStaffModal({
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               placeholder="John Doe"
             />
           </div>
@@ -447,7 +447,7 @@ function InviteStaffModal({
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               placeholder="john@example.com"
             />
           </div>
@@ -459,7 +459,7 @@ function InviteStaffModal({
             <select
               value={formData.role_id}
               onChange={(e) => setFormData({ ...formData, role_id: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
             >
               <option value="">Select a role</option>
               {roles.map((role) => (
@@ -477,7 +477,7 @@ function InviteStaffModal({
             <select
               value={formData.department_id}
               onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
             >
               <option value="">Select department</option>
               {departments.filter(d => d.is_active).map((dept) => (
@@ -499,7 +499,7 @@ function InviteStaffModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Sending...' : 'Send Invitation'}
             </button>
@@ -583,7 +583,7 @@ function EditStaffModal({
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
             />
           </div>
 
@@ -596,7 +596,7 @@ function EditStaffModal({
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
             />
           </div>
 
@@ -608,7 +608,7 @@ function EditStaffModal({
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               placeholder="+678 1234567"
             />
           </div>
@@ -620,7 +620,7 @@ function EditStaffModal({
             <select
               value={formData.role_id}
               onChange={(e) => setFormData({ ...formData, role_id: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
             >
               <option value="">Select a role</option>
               {roles.map((role) => (
@@ -638,7 +638,7 @@ function EditStaffModal({
             <select
               value={formData.department_id}
               onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
             >
               <option value="">Select department</option>
               {departments.filter(d => d.is_active).map((dept) => (
@@ -660,7 +660,7 @@ function EditStaffModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Saving...' : 'Save Changes'}
             </button>
