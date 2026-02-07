@@ -19,6 +19,21 @@ import { createClientSupabase } from '@/lib/supabase'
 import { formatVatu } from '@/lib/utils'
 import { Room } from '@/types'
 
+// Room color coding based on type/category
+const getRoomColor = (room: Room) => {
+  const name = room.name.toLowerCase()
+  if (name.includes('beachfront') || name.includes('lagoon view')) {
+    return { bg: 'bg-blue-600', light: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200' }
+  } else if (name.includes('garden') || name.includes('back garden')) {
+    return { bg: 'bg-emerald-600', light: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-200' }
+  } else if (name.includes('deluxe') || name.includes('superior')) {
+    return { bg: 'bg-amber-600', light: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-200' }
+  } else if (name.includes('family') || name.includes('suite')) {
+    return { bg: 'bg-purple-600', light: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200' }
+  }
+  return { bg: 'bg-blue-600', light: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200' }
+}
+
 export default function AdminRoomsPage() {
   const [rooms, setRooms] = useState<Room[]>([])
   const [loading, setLoading] = useState(true)
@@ -73,13 +88,18 @@ export default function AdminRoomsPage() {
     <div className="space-y-6">
       {/* Room Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {rooms.map((room) => (
+        {rooms.map((room) => {
+          const roomColor = getRoomColor(room)
+          return (
           <div
             key={room.id}
-            className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+            className={`bg-white rounded-lg shadow-sm border-2 ${roomColor.border} overflow-hidden`}
           >
+            {/* Color bar at top */}
+            <div className={`h-1 ${roomColor.bg}`} />
+            
             {/* Image */}
-            <div className="h-48 bg-gradient-to-br from-blue-400 to-blue-600 relative">
+            <div className="h-48 bg-gradient-to-br from-gray-200 to-gray-300 relative">
               {room.images && room.images[0] ? (
                 <img
                   src={room.images[0]}
@@ -87,7 +107,7 @@ export default function AdminRoomsPage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-white">
+                <div className="flex items-center justify-center h-full text-gray-400">
                   <ImageIcon className="h-12 w-12" />
                 </div>
               )}
@@ -110,9 +130,9 @@ export default function AdminRoomsPage() {
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">{room.name}</h3>
-                  <p className="text-sm text-gray-500 capitalize">{room.type}</p>
+                  <p className={`text-sm ${roomColor.text} font-medium capitalize`}>{room.type}</p>
                 </div>
-                <p className="text-lg font-bold text-blue-600">{formatVatu(room.price_vt)}<span className="text-xs text-gray-400 font-normal">/night</span></p>
+                <p className={`text-lg font-bold ${roomColor.text}`}>{formatVatu(room.price_vt)}<span className="text-xs text-gray-400 font-normal">/night</span></p>
               </div>
 
               <p className="text-sm text-gray-600 mb-3 line-clamp-2">{room.description}</p>
@@ -150,7 +170,7 @@ export default function AdminRoomsPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setEditingRoom(room)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+                  className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium ${roomColor.text} ${roomColor.light} hover:opacity-80 rounded-lg transition-colors`}
                 >
                   <Edit2 className="h-4 w-4" />
                   Edit
@@ -173,7 +193,8 @@ export default function AdminRoomsPage() {
               </div>
             </div>
           </div>
-        ))}
+          )
+        })}
       </div>
 
       {rooms.length === 0 && (

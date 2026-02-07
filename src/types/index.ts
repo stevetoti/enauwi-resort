@@ -65,13 +65,205 @@ export interface Booking {
   room?: Room
 }
 
+// Role & Permissions Types
+export interface Permission {
+  view?: boolean
+  create?: boolean
+  edit?: boolean
+  delete?: boolean
+  invite?: boolean
+  approve?: boolean
+  reject?: boolean
+  reschedule?: boolean
+  send_sms?: boolean
+  send_email?: boolean
+  broadcast?: boolean
+  pin?: boolean
+  view_all?: boolean
+  export?: boolean
+  view_orders?: boolean
+  update_orders?: boolean
+  view_rooms?: boolean
+  update_cleaning?: boolean
+}
+
+export interface Permissions {
+  staff?: Permission
+  bookings?: Permission
+  guests?: Permission
+  rooms?: Permission
+  services?: Permission
+  conferences?: Permission
+  messages?: Permission
+  announcements?: Permission
+  attendance?: Permission
+  roles?: Permission
+  reports?: Permission
+  settings?: Permission
+  kitchen?: Permission
+  housekeeping?: Permission
+}
+
+export interface Role {
+  id: string
+  name: string
+  description?: string
+  permissions: Permissions
+  is_system_role: boolean
+  created_at: string
+  updated_at: string
+}
+
 export interface Staff {
   id: string
   email: string
-  password_hash: string
   name: string
   role: 'super_admin' | 'manager' | 'staff'
+  role_id?: string
+  department?: string
+  profile_photo?: string
+  phone?: string
+  status: 'active' | 'inactive' | 'pending'
+  invited_at?: string
+  invited_by?: string
+  first_login: boolean
+  last_login?: string
   created_at: string
+  updated_at: string
+  role_details?: Role
+}
+
+export interface StaffAttendance {
+  id: string
+  staff_id: string
+  date: string
+  clock_in?: string
+  clock_out?: string
+  hours_worked?: number
+  status: 'present' | 'absent' | 'late' | 'half_day' | 'leave'
+  notes?: string
+  created_at: string
+  updated_at: string
+  staff?: Staff
+}
+
+export interface Announcement {
+  id: string
+  title: string
+  content: string
+  author_id?: string
+  pinned: boolean
+  priority: 'low' | 'normal' | 'high' | 'urgent'
+  target_roles?: string[]
+  expires_at?: string
+  created_at: string
+  updated_at: string
+  author?: Staff
+  is_read?: boolean
+}
+
+export interface AnnouncementRead {
+  id: string
+  announcement_id: string
+  staff_id: string
+  read_at: string
+}
+
+export interface MessageLog {
+  id: string
+  recipient_id?: string
+  recipient_name?: string
+  recipient_contact: string
+  channel: 'sms' | 'email' | 'whatsapp'
+  message_type?: string
+  subject?: string
+  message: string
+  template_id?: string
+  sent_by?: string
+  sent_at: string
+  status: 'pending' | 'sent' | 'delivered' | 'failed' | 'bounced'
+  error_message?: string
+  metadata?: Record<string, unknown>
+  sender?: Staff
+}
+
+export interface MessageTemplate {
+  id: string
+  name: string
+  channel: 'sms' | 'email' | 'whatsapp'
+  subject?: string
+  content: string
+  variables: string[]
+  category?: string
+  is_active: boolean
+  created_by?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface StaffInvitation {
+  id: string
+  email: string
+  name: string
+  role_id?: string
+  department?: string
+  invitation_token: string
+  invited_by?: string
+  expires_at: string
+  accepted_at?: string
+  status: 'pending' | 'accepted' | 'expired' | 'cancelled'
+  created_at: string
+  role?: Role
+  inviter?: Staff
+}
+
+export interface RoomCleaningStatus {
+  id: string
+  room_id: string
+  date: string
+  status: 'pending' | 'in_progress' | 'cleaned' | 'inspected' | 'needs_maintenance'
+  assigned_to?: string
+  cleaned_by?: string
+  cleaned_at?: string
+  inspected_by?: string
+  inspected_at?: string
+  notes?: string
+  created_at: string
+  updated_at: string
+  room?: Room
+  assigned_staff?: Staff
+}
+
+export interface StaffTask {
+  id: string
+  title: string
+  description?: string
+  assigned_to?: string
+  assigned_by?: string
+  due_date?: string
+  due_time?: string
+  priority: 'low' | 'normal' | 'high' | 'urgent'
+  status: 'pending' | 'in_progress' | 'completed' | 'cancelled'
+  category?: string
+  completed_at?: string
+  created_at: string
+  updated_at: string
+  assignee?: Staff
+  assigner?: Staff
+}
+
+export interface StaffShift {
+  id: string
+  staff_id: string
+  date: string
+  start_time: string
+  end_time: string
+  shift_type: 'regular' | 'overtime' | 'on_call'
+  notes?: string
+  created_by?: string
+  created_at: string
+  updated_at: string
+  staff?: Staff
 }
 
 export interface RoomAvailability {
@@ -164,4 +356,22 @@ export interface ServiceOrder {
   updated_at: string
   service?: Service
   booking?: Booking
+}
+
+// Communication Hub Types
+export interface BroadcastMessage {
+  channel: 'sms' | 'email'
+  recipients: string[]
+  message: string
+  subject?: string
+  template_id?: string
+}
+
+export interface SendMessageRequest {
+  channel: 'sms' | 'email'
+  recipient: string
+  recipientName?: string
+  message: string
+  subject?: string
+  guestId?: string
 }
