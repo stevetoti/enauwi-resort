@@ -4,19 +4,15 @@ import { NextRequest, NextResponse } from 'next/server'
  * SMS Notification API via VanuConnect
  *
  * Sends SMS messages to guests using the VanuConnect SMS gateway.
- * Stephen is setting up the E'Nauwi VanuConnect account — API key incoming.
  *
- * VanuConnect API docs: https://vanuconnect.com/api  (assumed)
+ * VanuConnect API docs: https://vanuconnect.com/api-documentation/
  *
  * Environment variables:
- *   VANUCONNECT_API_KEY    — API key for VanuConnect
- *   VANUCONNECT_SENDER_ID  — Sender name/number (default: "ENauwi")
- *   VANUCONNECT_API_URL    — API endpoint (default: https://api.vanuconnect.com/v1/sms/send)
+ *   ENAUWI_VANUCONNECT_API_KEY — API key for E'Nauwi's VanuConnect account
  */
 
 const VANUCONNECT_API_KEY = process.env.ENAUWI_VANUCONNECT_API_KEY || process.env.VANUCONNECT_API_KEY
-const VANUCONNECT_SENDER_ID = process.env.VANUCONNECT_SENDER_ID || "ENauwi"
-const VANUCONNECT_API_URL = process.env.VANUCONNECT_API_URL || 'https://app.vanuconnect.com/api/v1/sms/send'
+const VANUCONNECT_API_URL = 'https://zqxcrvjsnunjuelmrydm.supabase.co/functions/v1/send-sms-api'
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,10 +35,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         configured: false,
-        message: 'VanuConnect API not yet configured. SMS queued for when integration is active.',
+        message: 'VanuConnect API not yet configured.',
         preview: {
           to: normalizedPhone,
-          sender: VANUCONNECT_SENDER_ID,
           body: message,
           chars: message.length,
           segments: Math.ceil(message.length / 160),
@@ -50,41 +45,38 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Send SMS via VanuConnect API
+    // Send SMS via VanuConnect API (correct endpoint and format)
     const smsResponse = await fetch(VANUCONNECT_API_URL, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${VANUCONNECT_API_KEY}`,
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
       },
       body: JSON.stringify({
-        to: normalizedPhone,
-        from: VANUCONNECT_SENDER_ID,
+        phone_number: normalizedPhone,
         message: message,
-        // VanuConnect may use different field names — adjust as needed:
-        // sender_id: VANUCONNECT_SENDER_ID,
-        // recipient: normalizedPhone,
-        // body: message,
+        channel: 'sms'
       })
     })
 
     const smsResult = await smsResponse.json()
 
-    if (!smsResponse.ok) {
+    if (!smsResponse.ok || smsResult.success === false) {
       console.error('[SMS/VanuConnect] API error:', smsResult)
       return NextResponse.json({
         success: false,
         error: smsResult.error || smsResult.message || 'VanuConnect API error',
         details: smsResult,
-      }, { status: smsResponse.status })
+      }, { status: smsResponse.status || 500 })
     }
 
-    console.log(`[SMS/VanuConnect] Sent to ${normalizedPhone}: ${smsResult.id || 'ok'}`)
+    console.log(`[SMS/VanuConnect] Sent to ${normalizedPhone}: ${smsResult.message_id || 'ok'}`)
 
     return NextResponse.json({
       success: true,
-      messageId: smsResult.id || smsResult.message_id,
+      messageId: smsResult.message_id,
+      creditsUsed: smsResult.credits_used,
+      creditsRemaining: smsResult.credits_remaining,
       details: smsResult,
     })
 
