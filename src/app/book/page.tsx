@@ -15,7 +15,7 @@ const heroImages = [
   '/images/resort/malili-rooms/queen-bed-artistic-opt-pro.jpg',
 ]
 
-// Room gallery images mapped by room slug
+// Room gallery images mapped by room slug - 8+ images each for rich browsing
 const roomGalleries: Record<string, string[]> = {
   '2br-deluxe': [
     '/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg',
@@ -23,13 +23,20 @@ const roomGalleries: Record<string, string[]> = {
     '/images/resort/malili-rooms/queen-bed-artistic-opt-pro.jpg',
     '/images/resort/malili-rooms/bedroom-1-opt-pro.jpg',
     '/images/resort/malili-rooms/bathroom-full-opt-pro.jpg',
+    '/images/resort/malili-rooms/living-kitchenette-opt-pro.jpg',
+    '/images/resort/malili-rooms/swan-towel-artistic-opt-pro.jpg',
+    '/images/resort/malili-rooms/tea-coffee-station-opt-pro.jpg',
+    '/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg',
   ],
   '2br-superior': [
     '/images/resort/malili-rooms/living-room-8-opt-pro.jpg',
     '/images/resort/malili-rooms/queen-bed-opt-pro.jpg',
     '/images/resort/malili-rooms/twin-bedroom-3-opt-pro.jpg',
+    '/images/resort/malili-rooms/living-room-7-opt-pro.jpg',
     '/images/resort/malili-rooms/bathroom-toiletries-opt-pro.jpg',
     '/images/resort/malili-rooms/amenities-tray-opt-pro.jpg',
+    '/images/resort/malili-rooms/welcome-sofa-view-opt-pro.jpg',
+    '/images/resort/malili-rooms/furniture-detail-opt-pro.jpg',
   ],
   '1br-deluxe': [
     '/images/resort/malili-rooms/living-room-5-opt-pro.jpg',
@@ -37,18 +44,57 @@ const roomGalleries: Record<string, string[]> = {
     '/images/resort/malili-rooms/living-kitchenette-opt-pro.jpg',
     '/images/resort/malili-rooms/swan-towel-artistic-opt-pro.jpg',
     '/images/resort/malili-rooms/bathroom-full-opt-pro.jpg',
+    '/images/resort/malili-rooms/living-room-4-opt-pro.jpg',
+    '/images/resort/malili-rooms/bamboo-lamp-detail-opt-pro.jpg',
+    '/images/resort/malili-rooms/beach-kayaks-opt-pro.jpg',
   ],
   '1br-superior': [
     '/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg',
     '/images/resort/malili-rooms/living-room-1-opt-pro.jpg',
     '/images/resort/malili-rooms/queen-bed-3-opt-pro.jpg',
+    '/images/resort/malili-rooms/living-room-2-opt-pro.jpg',
     '/images/resort/malili-rooms/amenities-tray-opt-pro.jpg',
     '/images/resort/malili-rooms/welcome-nawimba-opt-pro.jpg',
+    '/images/resort/malili-rooms/welcome-table-1-opt-pro.jpg',
+    '/images/resort/malili-rooms/bathroom-toiletries-opt-pro.jpg',
+  ],
+  'beachfront': [
+    '/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg',
+    '/images/resort/malili-rooms/living-room-3-opt-pro.jpg',
+    '/images/resort/malili-rooms/queen-bed-artistic-opt-pro.jpg',
+    '/images/resort/malili-rooms/bedroom-1-opt-pro.jpg',
+    '/images/resort/malili-rooms/bathroom-full-opt-pro.jpg',
+    '/images/resort/malili-rooms/swan-towel-artistic-opt-pro.jpg',
+    '/images/resort/malili-rooms/tea-coffee-station-opt-pro.jpg',
+    '/images/resort/malili-rooms/bungalow-patio-2-opt-pro.jpg',
+  ],
+  'lagoon': [
+    '/images/resort/malili-rooms/living-room-8-opt-pro.jpg',
+    '/images/resort/malili-rooms/living-room-6-opt-pro.jpg',
+    '/images/resort/malili-rooms/queen-bed-opt-pro.jpg',
+    '/images/resort/malili-rooms/twin-bedroom-3-opt-pro.jpg',
+    '/images/resort/malili-rooms/bathroom-toiletries-opt-pro.jpg',
+    '/images/resort/malili-rooms/welcome-sofa-view-opt-pro.jpg',
+    '/images/resort/malili-rooms/amenities-tray-opt-pro.jpg',
+    '/images/resort/malili-rooms/swan-towel-closeup-opt-pro.jpg',
+  ],
+  'garden': [
+    '/images/resort/malili-rooms/living-room-9-opt-pro.jpg',
+    '/images/resort/malili-rooms/living-room-1-opt-pro.jpg',
+    '/images/resort/malili-rooms/queen-bed-3-opt-pro.jpg',
+    '/images/resort/malili-rooms/bedroom-2-opt-pro.jpg',
+    '/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg',
+    '/images/resort/malili-rooms/welcome-table-2-opt-pro.jpg',
+    '/images/resort/malili-rooms/bathroom-full-opt-pro.jpg',
+    '/images/resort/malili-rooms/furniture-detail-opt-pro.jpg',
   ],
   'default': [
     '/images/resort/malili-rooms/living-room-1-opt-pro.jpg',
     '/images/resort/malili-rooms/queen-bed-opt-pro.jpg',
     '/images/resort/malili-rooms/bathroom-full-opt-pro.jpg',
+    '/images/resort/malili-rooms/living-room-3-opt-pro.jpg',
+    '/images/resort/malili-rooms/amenities-tray-opt-pro.jpg',
+    '/images/resort/malili-rooms/swan-towel-artistic-opt-pro.jpg',
   ],
 }
 
@@ -220,6 +266,18 @@ function BookingContent() {
 
   const getRoomGallery = (room: Room) => {
     const name = room.name.toLowerCase()
+    // Match Beachfront Deluxe rooms
+    if (name.includes('beachfront') && name.includes('deluxe') && name.includes('2')) return roomGalleries['2br-deluxe']
+    if (name.includes('beachfront') && name.includes('deluxe') && name.includes('1')) return roomGalleries['1br-deluxe']
+    if (name.includes('beachfront') && name.includes('deluxe')) return roomGalleries['beachfront']
+    // Match Lagoon View Superior rooms
+    if (name.includes('lagoon') && name.includes('superior') && name.includes('2')) return roomGalleries['2br-superior']
+    if (name.includes('lagoon') && name.includes('superior') && name.includes('1')) return roomGalleries['1br-superior']
+    if (name.includes('lagoon')) return roomGalleries['lagoon']
+    // Match Garden rooms
+    if (name.includes('garden') && name.includes('2')) return roomGalleries['garden']
+    if (name.includes('garden')) return roomGalleries['garden']
+    // Fallback patterns
     if (name.includes('2') && name.includes('deluxe')) return roomGalleries['2br-deluxe']
     if (name.includes('2') && name.includes('superior')) return roomGalleries['2br-superior']
     if (name.includes('1') && name.includes('deluxe')) return roomGalleries['1br-deluxe']
