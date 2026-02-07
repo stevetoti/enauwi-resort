@@ -79,6 +79,16 @@ const roomGalleries: Record<string, string[]> = {
   ],
 }
 
+// Room type colors
+const getRoomTypeColor = (name: string) => {
+  const n = name.toLowerCase()
+  if (n.includes('beachfront') && n.includes('deluxe')) return { bg: 'bg-blue-500', light: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-500', label: '🏖️ Beachfront Deluxe' }
+  if (n.includes('lagoon') && n.includes('superior')) return { bg: 'bg-teal-500', light: 'bg-teal-50', text: 'text-teal-600', border: 'border-teal-500', label: '🌊 Lagoon View' }
+  if (n.includes('garden') && n.includes('back')) return { bg: 'bg-emerald-500', light: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-500', label: '🌴 Back Garden' }
+  if (n.includes('garden')) return { bg: 'bg-green-500', light: 'bg-green-50', text: 'text-green-600', border: 'border-green-500', label: '🌿 Garden View' }
+  return { bg: 'bg-sky-500', light: 'bg-sky-50', text: 'text-sky-600', border: 'border-sky-500', label: '🏝️ Resort' }
+}
+
 // Guest reviews
 const reviews = [
   { name: 'Sarah M.', country: '🇦🇺 Australia', rating: 5, text: 'Absolutely magical! The lagoon views are breathtaking and staff made us feel like family.', date: 'Jan 2026' },
@@ -551,11 +561,15 @@ function BookingContent() {
               </div>
             ) : (
               <div className="grid gap-4">
-                {rooms.map(room => (
+                {rooms.map(room => {
+                  const roomColor = getRoomTypeColor(room.name)
+                  return (
                   <div key={room.id} ref={el => { roomRefs.current[room.id] = el }}
                     className={`bg-white rounded-2xl shadow-sm border overflow-hidden hover:shadow-md transition-all ${
                       highlightedRoom === room.id.toString() ? 'ring-2 ring-blue-500 ring-offset-2' : 'border-gray-100'
                     }`}>
+                    {/* Color bar on top */}
+                    <div className={`h-2 ${roomColor.bg}`} />
                     <div className="grid md:grid-cols-[380px_1fr]">
                       <div className="p-3">
                         <RoomGallery images={getRoomGallery(room)} />
@@ -564,10 +578,13 @@ function BookingContent() {
                         <div className="flex-1">
                           <div className="flex items-start justify-between mb-2">
                             <div>
+                              {/* Room type badge */}
+                              <span className={`inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full mb-1 ${roomColor.light} ${roomColor.text}`}>
+                                {roomColor.label}
+                              </span>
                               <h3 className="text-lg font-bold text-gray-900">{room.name}</h3>
-                              <p className="text-sm text-blue-600 font-medium">{room.tagline || 'Beachfront'}</p>
                             </div>
-                            <div className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold">
+                            <div className={`flex items-center gap-1 ${roomColor.bg} text-white px-2 py-1 rounded text-xs font-bold`}>
                               <Star className="w-3 h-3 fill-current" /> 9.2
                             </div>
                           </div>
@@ -591,14 +608,14 @@ function BookingContent() {
                             <p className="text-xs text-green-600 font-medium">10% less than booking sites!</p>
                           </div>
                           <button onClick={() => { setSelectedRoom(room); setShowBookingForm(true); }}
-                            className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:bg-blue-700 transition">
+                            className={`${roomColor.bg} text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition`}>
                             Reserve
                           </button>
                         </div>
                       </div>
                     </div>
                   </div>
-                ))}
+                )})}
               </div>
             )}
           </div>
