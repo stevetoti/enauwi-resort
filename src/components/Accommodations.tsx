@@ -26,7 +26,13 @@ const rooms = [
     name: "2BR Deluxe Bungalow",
     tagline: "Lagoon Beachfront",
     price: "12,000",
-    image: "/images/resort/resort-lagoon-kayak-sm.jpg",
+    image: "/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg",
+    gallery: [
+      "/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg",
+      "/images/resort/malili-rooms/living-room-3-opt-pro.jpg",
+      "/images/resort/malili-rooms/queen-bed-artistic-opt-pro.jpg",
+      "/images/resort/malili-rooms/bedroom-1-opt-pro.jpg",
+    ],
     description:
       "Facing the beach and tranquil lagoon, our two-bedroom lagoon beachfront suite bungalows offer a quiet, spacious retreat with refreshing breezes and breathtaking sunset views.",
     guests: "Up to 4 Guests",
@@ -37,7 +43,13 @@ const rooms = [
     name: "2BR Superior Bungalow",
     tagline: "Tropical Garden",
     price: "18,000",
-    image: "/images/resort/resort-buildings-aerial-sm.jpg",
+    image: "/images/resort/malili-rooms/living-room-8-opt-pro.jpg",
+    gallery: [
+      "/images/resort/malili-rooms/living-room-8-opt-pro.jpg",
+      "/images/resort/malili-rooms/queen-bed-opt-pro.jpg",
+      "/images/resort/malili-rooms/twin-bedroom-3-opt-pro.jpg",
+      "/images/resort/malili-rooms/bathroom-full-opt-pro.jpg",
+    ],
     description:
       "Set behind the lagoon beachfront bungalows, this two-bedroom suite is nestled among flowering gardens and local fruit trees, with gentle peek-through views of the beach.",
     guests: "Up to 4 Guests",
@@ -48,7 +60,13 @@ const rooms = [
     name: "Deluxe 1BR Bungalow",
     tagline: "Lagoon Beachfront",
     price: "25,000",
-    image: "/images/resort/beach-resort-overview-sm.jpg",
+    image: "/images/resort/malili-rooms/living-room-5-opt-pro.jpg",
+    gallery: [
+      "/images/resort/malili-rooms/living-room-5-opt-pro.jpg",
+      "/images/resort/malili-rooms/queen-bed-2-opt-pro.jpg",
+      "/images/resort/malili-rooms/living-kitchenette-opt-pro.jpg",
+      "/images/resort/malili-rooms/swan-towel-artistic-opt-pro.jpg",
+    ],
     description:
       "Set directly on the lagoon beachfront, this Deluxe Single Room features sweeping lagoon and island views, with kayaking just moments from your door.",
     guests: "Up to 2 Guests",
@@ -59,7 +77,13 @@ const rooms = [
     name: "Superior 1BR Bungalow",
     tagline: "Tropical Garden",
     price: "10,000",
-    image: "/images/resort/resort-coral-reef-sm.jpg",
+    image: "/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg",
+    gallery: [
+      "/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg",
+      "/images/resort/malili-rooms/living-room-1-opt-pro.jpg",
+      "/images/resort/malili-rooms/queen-bed-3-opt-pro.jpg",
+      "/images/resort/malili-rooms/amenities-tray-opt-pro.jpg",
+    ],
     description:
       "Our one-bedroom back-row bungalow is tucked among lush flowers, offering a peaceful and private retreat surrounded by natural beauty.",
     guests: "Up to 2 Guests",
