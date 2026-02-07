@@ -9,51 +9,51 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Brand colors from E'Nauwi logo
+        // Premium resort palette - sharp & professional
         ocean: {
-          DEFAULT: "#3CA6FD",  // Sky blue from logo text
-          light: "#5BB8FF",
-          dark: "#1E3A5F",     // Dark navy for backgrounds
-          50: "#EBF5FF",
-          100: "#D6EBFF",
-          200: "#ADD6FF",
-          300: "#85C2FF",
-          400: "#5CADFF",
-          500: "#3CA6FD",
-          600: "#2B8AD4",
-          700: "#1E6EAB",
-          800: "#145282",
-          900: "#0A3659",
+          DEFAULT: "#0D4F8B",  // Deep ocean blue - sharp & professional
+          light: "#1565A8",
+          dark: "#0A2942",     // Rich navy for backgrounds
+          50: "#E8F4FC",
+          100: "#C5E0F5",
+          200: "#8EC4ED",
+          300: "#57A8E5",
+          400: "#2088D4",
+          500: "#0D4F8B",
+          600: "#0B4377",
+          700: "#093763",
+          800: "#072B4F",
+          900: "#051F3B",
         },
         gold: {
-          DEFAULT: "#FEA64C",  // Orange from sunset
-          light: "#F2C94D",    // Yellow/gold from sunset
-          dark: "#E08A30",
-          50: "#FFF8EB",
-          100: "#FFEFD6",
-          200: "#FFDFAD",
-          300: "#FFCF85",
-          400: "#FFBF5C",
-          500: "#FEA64C",
-          600: "#E08A30",
-          700: "#C16E14",
-          800: "#A35200",
-          900: "#853600",
+          DEFAULT: "#E8941C",  // Rich sunset gold - vibrant
+          light: "#F5B041",    // Warm highlight
+          dark: "#C77B0A",
+          50: "#FEF7E8",
+          100: "#FCE9C4",
+          200: "#F9D68A",
+          300: "#F6C350",
+          400: "#F0AD26",
+          500: "#E8941C",
+          600: "#C77B0A",
+          700: "#A66308",
+          800: "#854B06",
+          900: "#643304",
         },
         cyan: {
-          DEFAULT: "#3CC9EC",  // Turquoise water from logo
-          light: "#5DDCFF",
-          dark: "#2BA8C7",
+          DEFAULT: "#17A2B8",  // Sharp teal
+          light: "#20C5DC",
+          dark: "#128293",
         },
         green: {
-          DEFAULT: "#669252",  // Palm tree green
-          light: "#7AAB64",
-          dark: "#3C581E",
+          DEFAULT: "#2D6A4F",  // Deep tropical green
+          light: "#40916C",
+          dark: "#1B4332",
         },
         sand: {
-          DEFAULT: "#F5F0E8",
-          dark: "#E8DFD0",
-          light: "#FAF8F4",
+          DEFAULT: "#FAF8F5",  // Clean off-white
+          dark: "#F0EBE3",
+          light: "#FFFFFF",
         },
       },
       fontFamily: {
