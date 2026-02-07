@@ -23,6 +23,7 @@ import Image from "next/image";
 
 const rooms = [
   {
+    id: "2br-deluxe",
     name: "2BR Deluxe Bungalow",
     tagline: "Lagoon Beachfront",
     price: "12,000",
@@ -40,6 +41,7 @@ const rooms = [
     popular: true,
   },
   {
+    id: "2br-superior",
     name: "2BR Superior Bungalow",
     tagline: "Tropical Garden",
     price: "18,000",
@@ -57,6 +59,7 @@ const rooms = [
     popular: false,
   },
   {
+    id: "1br-deluxe",
     name: "Deluxe 1BR Bungalow",
     tagline: "Lagoon Beachfront",
     price: "25,000",
@@ -74,6 +77,7 @@ const rooms = [
     popular: false,
   },
   {
+    id: "1br-superior",
     name: "Superior 1BR Bungalow",
     tagline: "Tropical Garden",
     price: "10,000",
@@ -231,7 +235,7 @@ export default function Accommodations() {
 
                 {/* CTA */}
                 <a
-                  href="/book"
+                  href={`/book?room=${room.id}`}
                   className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${
                     room.popular
                       ? "bg-gold text-ocean-dark hover:bg-gold-light shadow-lg shadow-gold/20"
