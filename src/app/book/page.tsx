@@ -318,6 +318,7 @@ function BookingContent() {
   const [highlightedRoom, setHighlightedRoom] = useState<string | null>(selectedRoomParam)
   const [selectedOccasion, setSelectedOccasion] = useState('none')
   const [selectedActivities, setSelectedActivities] = useState<string[]>([])
+  const [paymentMethod, setPaymentMethod] = useState<'property' | 'card'>('property')
   
   const roomRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
@@ -402,8 +403,9 @@ function BookingContent() {
           guest_name: bookingData.name,
           guest_email: bookingData.email,
           guest_phone: bookingData.phone,
-          special_requests: `${selectedOccasion !== 'none' ? `[${occasions.find(o => o.id === selectedOccasion)?.label}] ` : ''}${bookingData.requests}${selectedActivities.length > 0 ? ` | Activities: ${selectedActivities.join(', ')}` : ''}`,
+          special_requests: `${selectedOccasion !== 'none' ? `[${occasions.find(o => o.id === selectedOccasion)?.label}] ` : ''}${bookingData.requests}${selectedActivities.length > 0 ? ` | Activities: ${selectedActivities.join(', ')}` : ''} | Payment: ${paymentMethod === 'card' ? 'Credit Card' : 'Pay at Property'}`,
           total_price: calculateGrandTotal(selectedRoom),
+          payment_method: paymentMethod,
         }),
       })
       const data = await response.json()
@@ -609,7 +611,7 @@ function BookingContent() {
                           </div>
                           <button onClick={() => { setSelectedRoom(room); setShowBookingForm(true); }}
                             className={`${roomColor.bg} text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition`}>
-                            Reserve
+                            Book Room
                           </button>
                         </div>
                       </div>
@@ -746,6 +748,47 @@ function BookingContent() {
                 </div>
               </div>
 
+              {/* Payment Method Selection */}
+              <div className="mt-4">
+                <label className="block text-xs font-medium text-gray-700 mb-2">Payment Method *</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button type="button" onClick={() => setPaymentMethod('property')}
+                    className={`p-3 rounded-xl border-2 text-left transition ${
+                      paymentMethod === 'property' 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">🏨</span>
+                      <span className="font-semibold text-sm text-gray-900">Pay at Property</span>
+                    </div>
+                    <p className="text-xs text-gray-500">Pay when you arrive at the resort</p>
+                    {paymentMethod === 'property' && (
+                      <div className="mt-2 flex items-center gap-1 text-xs text-blue-600">
+                        <Check className="w-3 h-3" /> Selected
+                      </div>
+                    )}
+                  </button>
+                  <button type="button" onClick={() => setPaymentMethod('card')}
+                    className={`p-3 rounded-xl border-2 text-left transition ${
+                      paymentMethod === 'card' 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">💳</span>
+                      <span className="font-semibold text-sm text-gray-900">Credit Card</span>
+                    </div>
+                    <p className="text-xs text-gray-500">Secure online payment</p>
+                    {paymentMethod === 'card' && (
+                      <div className="mt-2 flex items-center gap-1 text-xs text-blue-600">
+                        <Check className="w-3 h-3" /> Selected
+                      </div>
+                    )}
+                  </button>
+                </div>
+              </div>
+
               {selectedOccasion !== 'none' && (
                 <div className="mt-3 p-3 bg-pink-50 rounded-xl flex items-center gap-2">
                   <Gift className="w-4 h-4 text-pink-500" />
@@ -755,11 +798,13 @@ function BookingContent() {
 
               <button onClick={handleBooking} disabled={submitting || !bookingData.name || !bookingData.email}
                 className="w-full mt-4 bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50">
-                {submitting ? 'Processing...' : 'Confirm Booking'}
+                {submitting ? 'Processing...' : paymentMethod === 'card' ? 'Pay & Book Room' : 'Confirm Booking'}
               </button>
               
               <p className="text-xs text-center text-gray-500 mt-3">
-                🔒 Your payment details are secure. Free cancellation up to 14 days before check-in.
+                {paymentMethod === 'card' 
+                  ? '🔒 Secure payment powered by Stripe. Free cancellation up to 14 days before check-in.'
+                  : '🏨 No payment required now. Pay when you check in at the resort.'}
               </p>
             </div>
           </div>
