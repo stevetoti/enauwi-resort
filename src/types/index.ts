@@ -33,6 +33,8 @@ export interface Room {
   images: string[]
   available: boolean
   created_at: string
+  tagline?: string
+  bed_config?: string
 }
 
 export interface Guest {

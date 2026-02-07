@@ -84,7 +84,7 @@ function HeroSlider() {
 }
 
 // Optimized room gallery
-function RoomGallery({ images, roomId }: { images: string[]; roomId?: string }) {
+function RoomGallery({ images }: { images: string[] }) {
   const [current, setCurrent] = useState(0)
   const [showLightbox, setShowLightbox] = useState(false)
 
@@ -371,7 +371,7 @@ function BookingContent() {
               >
                 <div className="grid md:grid-cols-[380px_1fr]">
                   <div className="p-3">
-                    <RoomGallery images={getRoomGallery(room)} roomId={room.id.toString()} />
+                    <RoomGallery images={getRoomGallery(room)} />
                   </div>
                   <div className="p-5 flex flex-col">
                     <div className="flex-1">
