@@ -6,82 +6,108 @@ import { X, ChevronLeft, ChevronRight, Camera, ZoomIn } from "lucide-react";
 import Image from "next/image";
 
 /**
- * GALLERY PHOTOS
- * ─────────────────────────────────────────────────────────────────
- * When the 22 professional drone/resort photos arrive from Dropbox:
- *
- * 1. Upload them to Supabase Storage:
- *      bucket: "gallery" (create it first)
- *      URL pattern: https://jfiqbifwueoyqtajbhed.supabase.co/storage/v1/object/public/gallery/FILENAME
- *
- * 2. Or upload to /public/gallery/ in this project and reference as:
- *      /gallery/drone-shot-1.jpg
- *
- * 3. Replace the Unsplash URLs below with the real URLs.
- *    Keep the same category/span structure.
- *
- * TIP: Use span "col-span-2 row-span-2" for hero/drone shots,
- *      "col-span-2" for wide shots, "" for standard squares.
- * ─────────────────────────────────────────────────────────────────
+ * GALLERY PHOTOS - Professional GroovyBanana Photography
  */
 const photos = [
   {
-    src: "/images/resort/resort-lagoon-aerial.jpg",
-    alt: "E'Nauwi Beach Resort aerial view — lagoon with kayaker and bungalows",
-    category: "Resort",
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-5.jpg",
+    alt: "Beach with kayaks and palm trees at E'Nauwi",
+    category: "Beach",
     span: "col-span-2 row-span-2",
   },
   {
-    src: "/images/resort/beach-kayaks-cove-sm.jpg",
-    alt: "Beach cove with colourful kayaks at E'Nauwi",
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-1.jpg",
+    alt: "Poolside tropical cocktails",
+    category: "Dining",
+    span: "",
+  },
+  {
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-2.jpg",
+    alt: "Resort pool and lounge area",
+    category: "Pool",
+    span: "",
+  },
+  {
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-3.jpg",
+    alt: "Tropical resort atmosphere",
+    category: "Resort",
+    span: "",
+  },
+  {
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-4.jpg",
+    alt: "Beach and ocean views",
+    category: "Beach",
+    span: "col-span-2",
+  },
+  {
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-6.jpg",
+    alt: "Crystal clear lagoon waters",
     category: "Beach",
     span: "",
   },
   {
-    src: "/images/resort/resort-buildings-aerial-sm.jpg",
-    alt: "Bungalows and resort buildings from above",
-    category: "Rooms",
-    span: "",
-  },
-  {
-    src: "/images/resort/resort-coral-reef-sm.jpg",
-    alt: "Resort buildings and coral reef lagoon",
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-7.jpg",
+    alt: "Resort grounds and palm trees",
     category: "Resort",
     span: "",
   },
   {
-    src: "/images/resort/lagoon-island-view.jpg",
-    alt: "Lagoon and island views from the resort",
-    category: "Island",
-    span: "col-span-2",
-  },
-  {
-    src: "/images/resort/wedding-beach-couple-sm.jpg",
-    alt: "Wedding couple on the beach at E'Nauwi",
-    category: "Events",
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-8.jpg",
+    alt: "Tropical paradise scenery",
+    category: "Beach",
     span: "",
   },
   {
-    src: "/images/resort/resort-lagoon-kayak-sm.jpg",
-    alt: "Kayaking on the lagoon at E'Nauwi Beach Resort",
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-9.jpg",
+    alt: "Resort amenities",
+    category: "Resort",
+    span: "",
+  },
+  {
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-10.jpg",
+    alt: "Resort dining experience",
+    category: "Dining",
+    span: "col-span-2",
+  },
+  {
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-11.jpg",
+    alt: "Tropical cocktails at the bar",
+    category: "Dining",
+    span: "",
+  },
+  {
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-12.jpg",
+    alt: "Beach activities at E'Nauwi",
     category: "Activities",
     span: "",
   },
   {
-    src: "/images/resort/private-island-sandbar-sm.jpg",
-    alt: "Private island sandbar with turquoise waters",
-    category: "Island",
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-15.jpg",
+    alt: "Poolside dessert",
+    category: "Dining",
     span: "",
   },
   {
-    src: "/images/resort/beach-resort-overview-sm.jpg",
-    alt: "Beach overview with kayaks and bungalows",
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-16.jpg",
+    alt: "Sunset views from resort",
+    category: "Resort",
+    span: "col-span-2",
+  },
+  {
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-20.jpg",
+    alt: "Beach and lagoon panorama",
     category: "Beach",
     span: "",
   },
   {
-    src: "/images/resort/beach-resort-overview.jpg",
-    alt: "E'Nauwi Beach Resort panoramic view — beach, kayaks and palm trees",
+    src: "/images/resort/gallery/E-nauwiBEachResort-GroovyBanana-print-21.jpg",
+    alt: "Resort pool area",
+    category: "Pool",
+    span: "",
+  },
+  {
+    src: "/images/resort/hero-resort-lagoon.jpg",
+    alt: "E'Nauwi Beach Resort panoramic view — lagoon with kayaks",
     category: "Resort",
     span: "col-span-2",
   },
