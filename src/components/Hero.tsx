@@ -100,13 +100,13 @@ export default function Hero() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <a
-              href="#contact"
+              href="/book"
               className="group relative px-10 py-4 bg-gold hover:bg-gold-light text-ocean-dark font-bold text-lg rounded-full transition-all duration-300 shadow-2xl shadow-gold/30 hover:shadow-gold/50 hover:scale-105"
             >
               <span className="relative z-10">Book Your Paradise</span>
             </a>
             <a
-              href="#about"
+              href="#accommodations"
               className="px-10 py-4 border-2 border-white/30 text-white rounded-full font-semibold hover:bg-white/10 hover:border-white/50 transition-all duration-300"
             >
               Explore Resort
