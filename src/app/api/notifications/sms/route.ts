@@ -14,8 +14,8 @@ import { NextRequest, NextResponse } from 'next/server'
  *   VANUCONNECT_API_URL    — API endpoint (default: https://api.vanuconnect.com/v1/sms/send)
  */
 
-const VANUCONNECT_API_KEY = process.env.VANUCONNECT_API_KEY
-const VANUCONNECT_SENDER_ID = process.env.VANUCONNECT_SENDER_ID || "E'Nauwi Resort"
+const VANUCONNECT_API_KEY = process.env.ENAUWI_VANUCONNECT_API_KEY || process.env.VANUCONNECT_API_KEY
+const VANUCONNECT_SENDER_ID = process.env.VANUCONNECT_SENDER_ID || "ENauwi"
 const VANUCONNECT_API_URL = process.env.VANUCONNECT_API_URL || 'https://app.vanuconnect.com/api/v1/sms/send'
 
 export async function POST(request: NextRequest) {
