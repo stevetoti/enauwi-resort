@@ -9,40 +9,46 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Brand colors from E'Nauwi logo
         ocean: {
-          DEFAULT: "#0A4B78",
-          light: "#0D5A91",
-          dark: "#083D63",
-          50: "#E6F0F8",
-          100: "#B3D4EA",
-          200: "#80B8DC",
-          300: "#4D9CCE",
-          400: "#2680C0",
-          500: "#0A4B78",
-          600: "#083D63",
-          700: "#062F4E",
-          800: "#042139",
-          900: "#021324",
+          DEFAULT: "#3CA6FD",  // Sky blue from logo text
+          light: "#5BB8FF",
+          dark: "#1E3A5F",     // Dark navy for backgrounds
+          50: "#EBF5FF",
+          100: "#D6EBFF",
+          200: "#ADD6FF",
+          300: "#85C2FF",
+          400: "#5CADFF",
+          500: "#3CA6FD",
+          600: "#2B8AD4",
+          700: "#1E6EAB",
+          800: "#145282",
+          900: "#0A3659",
         },
         gold: {
-          DEFAULT: "#D4A853",
-          light: "#E0BD7A",
-          dark: "#B8903F",
-          50: "#FBF6EC",
-          100: "#F4E5C6",
-          200: "#EDD4A0",
-          300: "#E6C37A",
-          400: "#DFB254",
-          500: "#D4A853",
-          600: "#B8903F",
-          700: "#9C782B",
-          800: "#806017",
-          900: "#644803",
+          DEFAULT: "#FEA64C",  // Orange from sunset
+          light: "#F2C94D",    // Yellow/gold from sunset
+          dark: "#E08A30",
+          50: "#FFF8EB",
+          100: "#FFEFD6",
+          200: "#FFDFAD",
+          300: "#FFCF85",
+          400: "#FFBF5C",
+          500: "#FEA64C",
+          600: "#E08A30",
+          700: "#C16E14",
+          800: "#A35200",
+          900: "#853600",
+        },
+        cyan: {
+          DEFAULT: "#3CC9EC",  // Turquoise water from logo
+          light: "#5DDCFF",
+          dark: "#2BA8C7",
         },
         green: {
-          DEFAULT: "#2E7D32",
-          light: "#4CAF50",
-          dark: "#1B5E20",
+          DEFAULT: "#669252",  // Palm tree green
+          light: "#7AAB64",
+          dark: "#3C581E",
         },
         sand: {
           DEFAULT: "#F5F0E8",
