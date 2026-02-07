@@ -9,16 +9,16 @@ export async function POST(request: NextRequest) {
     const supabase = createServiceSupabase()
     const bookingData: BookingFormData = await request.json()
 
-    const {
-      checkIn,
-      checkOut,
-      guests,
-      roomId,
-      guestName,
-      guestEmail,
-      guestPhone,
-      specialRequests
-    } = bookingData
+    // Support both camelCase and snake_case field names
+    const checkIn = bookingData.checkIn || bookingData.check_in
+    const checkOut = bookingData.checkOut || bookingData.check_out
+    const guests = bookingData.guests
+    const roomId = bookingData.roomId || bookingData.room_id
+    const guestName = bookingData.guestName || bookingData.guest_name
+    const guestEmail = bookingData.guestEmail || bookingData.guest_email
+    const guestPhone = bookingData.guestPhone || bookingData.guest_phone
+    const specialRequests = bookingData.specialRequests || bookingData.special_requests
+    const paymentMethod = bookingData.payment_method || 'property'
 
     // Validate required fields
     if (!checkIn || !checkOut || !roomId || !guestName || !guestEmail) {

@@ -84,14 +84,23 @@ export interface RoomAvailability {
 }
 
 export interface BookingFormData {
-  checkIn: string
-  checkOut: string
+  checkIn?: string
+  checkOut?: string
+  check_in?: string
+  check_out?: string
   guests: number
-  roomId: string
-  guestName: string
-  guestEmail: string
-  guestPhone: string
+  roomId?: string
+  room_id?: string
+  guestName?: string
+  guestEmail?: string
+  guestPhone?: string
+  guest_name?: string
+  guest_email?: string
+  guest_phone?: string
   specialRequests?: string
+  special_requests?: string
+  payment_method?: string
+  total_price?: number
 }
 
 export interface AdminStats {
