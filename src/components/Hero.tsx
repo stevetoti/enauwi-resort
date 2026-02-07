@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronDown, MapPin, Star } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 
 export default function Hero() {
@@ -46,31 +46,13 @@ export default function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 sm:px-6">
+      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 sm:px-6 pt-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.3 }}
           className="max-w-5xl"
         >
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8"
-          >
-            <MapPin size={14} className="text-gold-light" />
-            <span className="text-white/90 text-sm font-medium tracking-wide">
-              Malekula Island, Vanuatu
-            </span>
-            <span className="w-px h-3 bg-white/30" />
-            <div className="flex gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={10} className="text-gold fill-gold" />
-              ))}
-            </div>
-          </motion.div>
 
           {/* Heading */}
           <motion.p

@@ -8,10 +8,8 @@ import Image from "next/image";
 const navLinks = [
   { href: "#home", label: "Home" },
   { href: "#about", label: "About" },
-  { href: "#accommodations", label: "Accommodations" },
-  { href: "#features", label: "Features" },
+  { href: "#accommodations", label: "Rooms" },
   { href: "#activities", label: "Activities" },
-  { href: "/services", label: "Services" },
   { href: "#gallery", label: "Gallery" },
   { href: "#location", label: "Location" },
   { href: "#contact", label: "Contact" },
@@ -56,7 +54,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo */}
-          <a href="#home" className="flex items-center gap-2 group">
+          <a href="#home" className="flex items-center gap-2 group shrink-0">
             <div className="relative w-12 h-12 sm:w-14 sm:h-14">
               <Image
                 src="/logo-enauwi.png"
@@ -66,22 +64,13 @@ export default function Navbar() {
                 priority
               />
             </div>
-            <div className="hidden sm:block">
-              <span
-                className={`font-serif text-xl font-bold tracking-wide transition-colors duration-300 ${
-                  isScrolled ? "text-ocean" : "text-white"
-                }`}
-              >
-                E&apos;Nauwi
-              </span>
-              <span
-                className={`block text-[10px] uppercase tracking-[0.25em] font-medium transition-colors duration-300 ${
-                  isScrolled ? "text-gold" : "text-gold-light"
-                }`}
-              >
-                Beach Resort
-              </span>
-            </div>
+            <span
+              className={`hidden sm:block font-serif text-xl font-bold tracking-wide transition-colors duration-300 ${
+                isScrolled ? "text-ocean" : "text-white"
+              }`}
+            >
+              E&apos;Nauwi
+            </span>
           </a>
 
           {/* Desktop Nav */}
@@ -127,7 +116,7 @@ export default function Navbar() {
             </a>
             <a
               href="/book"
-              className={`hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
+              className={`hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 ${
                 isScrolled
                   ? "bg-ocean text-white hover:bg-ocean-light shadow-lg shadow-ocean/20"
                   : "bg-white/20 backdrop-blur text-white border border-white/30 hover:bg-white/30"
