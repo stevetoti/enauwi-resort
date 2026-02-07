@@ -121,24 +121,25 @@ export default function MenuPage() {
     setSubmitting(false);
   }
 
+  // Order Success Screen - Mobile Optimized
   if (orderSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
-          <div className="text-6xl mb-4">✅</div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Order Submitted!</h1>
-          <p className="text-gray-600 mb-6">Your order has been sent to our kitchen.</p>
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl shadow-xl p-8 max-w-sm w-full text-center">
+          <div className="text-7xl mb-4 animate-bounce">✅</div>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">Order Sent!</h1>
+          <p className="text-gray-600 mb-8">Your order is on its way to the kitchen</p>
           <Link 
             href={`/order/${orderSuccess}`}
-            className="block w-full bg-sky-600 text-white py-3 rounded-xl font-semibold hover:bg-sky-700 transition mb-4"
+            className="block w-full bg-sky-600 text-white py-4 rounded-2xl font-semibold text-lg hover:bg-sky-700 transition mb-4"
           >
-            Track Your Order 📍
+            Track Order 📍
           </Link>
           <button 
             onClick={() => setOrderSuccess(null)}
-            className="text-sky-600 hover:underline"
+            className="w-full text-sky-600 py-3 font-semibold hover:underline"
           >
-            Order More
+            Order More Food
           </button>
         </div>
       </div>
@@ -146,141 +147,226 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
+    <div className="min-h-screen bg-gray-50 pb-24">
+      {/* Mobile Header */}
       <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-xl font-bold text-sky-800">
-            🏝️ E&apos;Nauwi
+        <div className="px-4 py-4 flex justify-between items-center">
+          <Link href="/" className="flex items-center gap-2">
+            <span className="text-2xl">🏝️</span>
+            <span className="font-bold text-sky-800">E&apos;Nauwi</span>
           </Link>
-          <button 
-            onClick={() => setShowCart(true)}
-            className="relative bg-sky-600 text-white px-4 py-2 rounded-full font-semibold"
-          >
-            🛒 Cart
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center">
-                {cartCount}
-              </span>
-            )}
-          </button>
+          <div className="text-sm text-gray-500">
+            Room Service
+          </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">Restaurant Menu</h1>
-        <p className="text-gray-600 mb-8">Fresh local flavors delivered to your room or enjoy at our restaurant</p>
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-sky-600 to-sky-700 text-white px-4 py-6">
+        <h1 className="text-2xl font-bold mb-1">Restaurant Menu</h1>
+        <p className="text-sky-100 text-sm">Fresh local flavors • Delivered to your room</p>
+      </div>
 
+      {/* Menu Content */}
+      <main className="px-4 py-6">
         {loading ? (
-          <div className="text-center py-12">Loading menu...</div>
+          <div className="text-center py-12">
+            <div className="animate-spin text-4xl mb-4">🍽️</div>
+            <p className="text-gray-500">Loading menu...</p>
+          </div>
         ) : (
           categories.map(category => (
-            <section key={category.id} className="mb-10">
-              <h2 className="text-2xl font-bold text-sky-800 mb-4">{category.name}</h2>
-              <div className="grid gap-4">
+            <section key={category.id} className="mb-8">
+              <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                {category.name === 'Breakfast' && '🌅'}
+                {category.name === 'Main Courses' && '🍛'}
+                {category.name === 'Drinks' && '🥤'}
+                {category.name === 'Desserts' && '🍨'}
+                {category.name}
+              </h2>
+              <div className="space-y-3">
                 {menuItems
                   .filter(item => item.category_id === category.id)
-                  .map(item => (
-                    <div key={item.id} className="bg-white rounded-xl shadow-md p-4 flex justify-between items-center">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-800">
-                          {item.name}
-                          {item.is_vegetarian && <span className="ml-2 text-green-600">🌱</span>}
-                        </h3>
-                        <p className="text-sm text-gray-500">{item.description}</p>
-                        <p className="text-xs text-gray-400 mt-1">⏱️ {item.prep_time_mins} mins</p>
+                  .map(item => {
+                    const inCart = cart.find(c => c.id === item.id);
+                    return (
+                      <div 
+                        key={item.id} 
+                        className="bg-white rounded-2xl shadow-sm p-4 active:scale-[0.98] transition"
+                      >
+                        <div className="flex justify-between items-start gap-3">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-800 text-lg">
+                              {item.name}
+                              {item.is_vegetarian && <span className="ml-2 text-green-600">🌱</span>}
+                            </h3>
+                            <p className="text-sm text-gray-500 mt-1 line-clamp-2">{item.description}</p>
+                            <div className="flex items-center gap-3 mt-2">
+                              <span className="font-bold text-sky-700 text-lg">{item.price.toLocaleString()} VT</span>
+                              <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                                ⏱️ {item.prep_time_mins}min
+                              </span>
+                            </div>
+                          </div>
+                          
+                          {/* Add/Remove Buttons */}
+                          <div className="flex flex-col items-center">
+                            {inCart ? (
+                              <div className="flex items-center gap-2 bg-sky-50 rounded-full p-1">
+                                <button
+                                  onClick={() => removeFromCart(item.id)}
+                                  className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-lg font-bold text-gray-600 active:bg-gray-100"
+                                >
+                                  −
+                                </button>
+                                <span className="w-6 text-center font-bold text-sky-800">{inCart.quantity}</span>
+                                <button
+                                  onClick={() => addToCart(item)}
+                                  className="w-10 h-10 bg-sky-600 rounded-full shadow-sm flex items-center justify-center text-lg font-bold text-white active:bg-sky-700"
+                                >
+                                  +
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => addToCart(item)}
+                                className="w-12 h-12 bg-sky-600 rounded-full shadow-md flex items-center justify-center text-xl font-bold text-white active:bg-sky-700 transition"
+                              >
+                                +
+                              </button>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-right ml-4">
-                        <p className="font-bold text-sky-800 mb-2">{item.price.toLocaleString()} VT</p>
-                        <button
-                          onClick={() => addToCart(item)}
-                          className="bg-sky-600 text-white px-4 py-1.5 rounded-full text-sm font-semibold hover:bg-sky-700 transition"
-                        >
-                          Add +
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
               </div>
             </section>
           ))
         )}
       </main>
 
-      {showCart && (
-        <div className="fixed inset-0 z-50">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setShowCart(false)} />
-          <div className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-xl overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Your Order</h2>
-                <button onClick={() => setShowCart(false)} className="text-2xl">✕</button>
-              </div>
+      {/* Fixed Bottom Cart Bar */}
+      {cartCount > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4 z-50">
+          <button
+            onClick={() => setShowCart(true)}
+            className="w-full bg-sky-600 text-white py-4 rounded-2xl font-semibold text-lg flex items-center justify-between px-6 active:bg-sky-700 transition"
+          >
+            <span className="flex items-center gap-2">
+              <span className="bg-white text-sky-600 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">
+                {cartCount}
+              </span>
+              <span>View Cart</span>
+            </span>
+            <span>{cartTotal.toLocaleString()} VT</span>
+          </button>
+        </div>
+      )}
 
+      {/* Full Screen Cart Modal */}
+      {showCart && (
+        <div className="fixed inset-0 z-50 bg-white">
+          {/* Cart Header */}
+          <div className="sticky top-0 bg-white border-b px-4 py-4 flex items-center justify-between">
+            <button 
+              onClick={() => setShowCart(false)} 
+              className="text-sky-600 font-semibold text-lg"
+            >
+              ← Back
+            </button>
+            <h2 className="text-lg font-bold">Your Order</h2>
+            <div className="w-16" />
+          </div>
+
+          <div className="overflow-y-auto" style={{ height: 'calc(100vh - 180px)' }}>
+            <div className="p-4">
+              {/* Cart Items */}
               {cart.length === 0 ? (
                 <p className="text-gray-500 text-center py-8">Your cart is empty</p>
               ) : (
-                <>
+                <div className="space-y-4 mb-6">
                   {cart.map(item => (
-                    <div key={item.id} className="flex justify-between items-center py-3 border-b">
-                      <div>
-                        <p className="font-semibold">{item.name}</p>
-                        <p className="text-sm text-gray-500">{item.price.toLocaleString()} VT × {item.quantity}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button onClick={() => removeFromCart(item.id)} className="w-8 h-8 bg-gray-200 rounded-full">-</button>
-                        <span>{item.quantity}</span>
-                        <button onClick={() => addToCart(item)} className="w-8 h-8 bg-sky-600 text-white rounded-full">+</button>
+                    <div key={item.id} className="bg-gray-50 rounded-2xl p-4">
+                      <div className="flex justify-between items-center">
+                        <div className="flex-1">
+                          <p className="font-semibold text-gray-800">{item.name}</p>
+                          <p className="text-sky-700 font-bold">{(item.price * item.quantity).toLocaleString()} VT</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <button 
+                            onClick={() => removeFromCart(item.id)} 
+                            className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-xl active:bg-gray-100"
+                          >
+                            −
+                          </button>
+                          <span className="font-bold text-lg w-6 text-center">{item.quantity}</span>
+                          <button 
+                            onClick={() => addToCart(item)} 
+                            className="w-10 h-10 bg-sky-600 text-white rounded-full shadow-sm flex items-center justify-center text-xl active:bg-sky-700"
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
 
-                  <div className="mt-6 pt-4 border-t">
-                    <div className="flex justify-between text-xl font-bold mb-6">
-                      <span>Total</span>
-                      <span>{cartTotal.toLocaleString()} VT</span>
-                    </div>
-
-                    <input
-                      type="text"
-                      placeholder="Your Name *"
-                      value={guestName}
-                      onChange={e => setGuestName(e.target.value)}
-                      className="w-full border rounded-lg px-4 py-2 mb-3"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Room Number *"
-                      value={roomNumber}
-                      onChange={e => setRoomNumber(e.target.value)}
-                      className="w-full border rounded-lg px-4 py-2 mb-3"
-                    />
-                    <input
-                      type="tel"
-                      placeholder="Phone (optional)"
-                      value={phone}
-                      onChange={e => setPhone(e.target.value)}
-                      className="w-full border rounded-lg px-4 py-2 mb-3"
-                    />
-                    <textarea
-                      placeholder="Special instructions..."
-                      value={instructions}
-                      onChange={e => setInstructions(e.target.value)}
-                      className="w-full border rounded-lg px-4 py-2 mb-4"
-                      rows={2}
-                    />
-
-                    <button
-                      onClick={submitOrder}
-                      disabled={submitting}
-                      className="w-full bg-sky-600 text-white py-3 rounded-xl font-semibold hover:bg-sky-700 transition disabled:opacity-50"
-                    >
-                      {submitting ? 'Submitting...' : 'Submit Order 🍽️'}
-                    </button>
-                  </div>
-                </>
+              {/* Guest Details Form */}
+              {cart.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="font-bold text-gray-700">Your Details</h3>
+                  <input
+                    type="text"
+                    placeholder="Your Name *"
+                    value={guestName}
+                    onChange={e => setGuestName(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-lg focus:border-sky-500 focus:outline-none"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Room Number *"
+                    value={roomNumber}
+                    onChange={e => setRoomNumber(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-lg focus:border-sky-500 focus:outline-none"
+                  />
+                  <input
+                    type="tel"
+                    placeholder="Phone (optional)"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-lg focus:border-sky-500 focus:outline-none"
+                  />
+                  <textarea
+                    placeholder="Special requests (allergies, etc.)"
+                    value={instructions}
+                    onChange={e => setInstructions(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-lg focus:border-sky-500 focus:outline-none"
+                    rows={2}
+                  />
+                </div>
               )}
             </div>
           </div>
+
+          {/* Fixed Bottom Checkout */}
+          {cart.length > 0 && (
+            <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-gray-600">Total</span>
+                <span className="text-2xl font-bold text-sky-800">{cartTotal.toLocaleString()} VT</span>
+              </div>
+              <button
+                onClick={submitOrder}
+                disabled={submitting || !guestName || !roomNumber}
+                className="w-full bg-green-600 text-white py-4 rounded-2xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed active:bg-green-700 transition"
+              >
+                {submitting ? 'Sending...' : 'Send Order 🍽️'}
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
