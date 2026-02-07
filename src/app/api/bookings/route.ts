@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
         check_out: checkOut,
         num_guests: guests,
         total_price: totalPrice,
-        special_requests: specialRequests,
+        special_requests: specialRequests ? `${specialRequests} | Payment: ${paymentMethod === 'card' ? 'Credit Card' : 'Pay at Property'}` : `Payment: ${paymentMethod === 'card' ? 'Credit Card' : 'Pay at Property'}`,
         status: 'pending'
       })
       .select('*')
