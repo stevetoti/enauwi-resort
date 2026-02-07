@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { 
   Calendar, Users, ChevronLeft, ChevronRight, Check, Star, ArrowLeft, X,
-  MessageCircle, Sun, Cloud, Gift, Heart, Cake, Sparkles, Clock, Shield,
+  MessageCircle, Sun, Gift, Heart, Cake, Sparkles, Clock, Shield,
   Percent, Phone, Waves, Camera, Fish, MapPin, Plus, Minus
 } from 'lucide-react'
 import { Room } from '@/types'
@@ -105,7 +105,7 @@ const occasions = [
 ]
 
 // Weather data (simulated - would connect to real API)
-function WeatherWidget({ date }: { date: string }) {
+function WeatherWidget() {
   const [weather] = useState({ temp: 28, condition: 'Sunny', humidity: 75 })
   return (
     <div className="flex items-center gap-2 text-sm bg-gradient-to-r from-sky-500 to-blue-500 text-white px-3 py-1.5 rounded-full">
@@ -439,7 +439,7 @@ function BookingContent() {
           <Link href="/" className="inline-flex items-center gap-2 text-white/90 hover:text-white text-sm bg-black/20 px-4 py-2 rounded-full backdrop-blur-sm">
             <ArrowLeft className="w-4 h-4" /> Back to E&apos;Nauwi
           </Link>
-          <WeatherWidget date={checkIn} />
+          <WeatherWidget />
         </div>
         <div className="absolute bottom-0 left-0 right-0 p-6">
           <div className="max-w-7xl mx-auto">
