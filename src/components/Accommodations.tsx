@@ -24,9 +24,9 @@ import Image from "next/image";
 const rooms = [
   {
     id: "2br-deluxe",
-    name: "2BR Deluxe Bungalow",
+    name: "Beachfront Deluxe 2 Bedroom",
     tagline: "Lagoon Beachfront",
-    price: "12,000",
+    price: "30,000",
     image: "/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg",
     gallery: [
       "/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg",
@@ -42,9 +42,9 @@ const rooms = [
   },
   {
     id: "2br-superior",
-    name: "2BR Superior Bungalow",
-    tagline: "Tropical Garden",
-    price: "18,000",
+    name: "Lagoon View Superior 2 Bedroom",
+    tagline: "Lagoon View",
+    price: "27,000",
     image: "/images/resort/malili-rooms/living-room-8-opt-pro.jpg",
     gallery: [
       "/images/resort/malili-rooms/living-room-8-opt-pro.jpg",
@@ -60,7 +60,7 @@ const rooms = [
   },
   {
     id: "1br-deluxe",
-    name: "Deluxe 1BR Bungalow",
+    name: "Beachfront Deluxe 1 Bedroom",
     tagline: "Lagoon Beachfront",
     price: "25,000",
     image: "/images/resort/malili-rooms/living-room-5-opt-pro.jpg",
@@ -78,9 +78,9 @@ const rooms = [
   },
   {
     id: "1br-superior",
-    name: "Superior 1BR Bungalow",
-    tagline: "Tropical Garden",
-    price: "10,000",
+    name: "Lagoon View Superior 1 Bedroom",
+    tagline: "Lagoon View",
+    price: "22,000",
     image: "/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg",
     gallery: [
       "/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg",
