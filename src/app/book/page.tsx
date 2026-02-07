@@ -6,8 +6,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { 
   Calendar, Users, ChevronLeft, ChevronRight, Check, Star, ArrowLeft, X,
-  MessageCircle, Sun, Gift, Heart, Cake, Sparkles, Clock, Shield,
-  Percent, Phone, Waves, Camera, Fish, MapPin, Plus, Minus
+  MessageCircle, Sun, Gift, Heart, Cake, Sparkles,
+  Waves, Camera, Fish, MapPin, Plus, Minus
 } from 'lucide-react'
 import { Room } from '@/types'
 import { formatVatu, getDaysBetween } from '@/lib/utils'
@@ -147,7 +147,7 @@ function LiveViewers() {
   )
 }
 
-// Countdown timer for special offer
+// Modern countdown timer
 function CountdownTimer() {
   const [time, setTime] = useState({ hours: 2, minutes: 0, seconds: 0 })
   useEffect(() => {
@@ -167,10 +167,18 @@ function CountdownTimer() {
     return () => clearInterval(interval)
   }, [])
   return (
-    <div className="flex items-center gap-1 font-mono text-sm">
-      <span className="bg-gray-900 text-white px-1.5 py-0.5 rounded">{String(time.hours).padStart(2, '0')}</span>:
-      <span className="bg-gray-900 text-white px-1.5 py-0.5 rounded">{String(time.minutes).padStart(2, '0')}</span>:
-      <span className="bg-gray-900 text-white px-1.5 py-0.5 rounded">{String(time.seconds).padStart(2, '0')}</span>
+    <div className="flex items-center gap-1">
+      <div className="flex flex-col items-center">
+        <span className="bg-amber-500 text-slate-900 font-bold text-sm px-2 py-1 rounded-md min-w-[32px] text-center">{String(time.hours).padStart(2, '0')}</span>
+      </div>
+      <span className="text-amber-400 font-bold">:</span>
+      <div className="flex flex-col items-center">
+        <span className="bg-amber-500 text-slate-900 font-bold text-sm px-2 py-1 rounded-md min-w-[32px] text-center">{String(time.minutes).padStart(2, '0')}</span>
+      </div>
+      <span className="text-amber-400 font-bold">:</span>
+      <div className="flex flex-col items-center">
+        <span className="bg-amber-500 text-slate-900 font-bold text-sm px-2 py-1 rounded-md min-w-[32px] text-center">{String(time.seconds).padStart(2, '0')}</span>
+      </div>
     </div>
   )
 }
@@ -465,35 +473,20 @@ function BookingContent() {
         </div>
       </div>
 
-      {/* Book Direct Benefits Banner */}
-      <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-3 px-4">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-sm">
-          <div className="flex items-center gap-2">
-            <Percent className="w-4 h-4" />
-            <span><strong>10% OFF</strong> vs booking sites</span>
+      {/* Modern Timer Banner */}
+      <div className="bg-gradient-to-r from-slate-900 to-slate-800 py-3 px-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center">
+              <Gift className="w-4 h-4 text-amber-400" />
+            </div>
+            <span className="text-white/90 text-sm font-medium">Free airport transfer</span>
           </div>
+          <div className="hidden sm:block w-px h-6 bg-white/20" />
           <div className="flex items-center gap-2">
-            <Gift className="w-4 h-4" />
-            <span>Free welcome drink</span>
+            <span className="text-white/60 text-xs uppercase tracking-wide">Ends in</span>
+            <CountdownTimer />
           </div>
-          <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4" />
-            <span>Free cancellation 14+ days</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4" />
-            <span>Direct resort support</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Special Offer Timer */}
-      <div className="bg-amber-50 border-b border-amber-200 py-2 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-3 text-sm">
-          <Clock className="w-4 h-4 text-amber-600" />
-          <span className="text-amber-800">Book in the next</span>
-          <CountdownTimer />
-          <span className="text-amber-800">for <strong>free airport transfer</strong>!</span>
         </div>
       </div>
 
