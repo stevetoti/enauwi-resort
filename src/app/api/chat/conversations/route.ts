@@ -115,14 +115,14 @@ export async function POST(request: NextRequest) {
         .from('team_conversations')
         .select(`
           id,
-          conversation_participants!inner(staff_id)
+          team_conversation_participants!inner(staff_id)
         `)
         .eq('type', 'direct')
         .eq('is_active', true)
 
       // Check if there's an existing direct chat with these exact participants
       for (const conv of existing || []) {
-        const participantStaffIds = (conv.conversation_participants as { staff_id: string }[]).map(p => p.staff_id)
+        const participantStaffIds = (conv.team_conversation_participants as { staff_id: string }[]).map(p => p.staff_id)
         if (participantStaffIds.length === 2 && 
             participant_ids.every((id: string) => participantStaffIds.includes(id))) {
           // Return existing conversation
