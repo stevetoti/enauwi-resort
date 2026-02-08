@@ -116,7 +116,28 @@ export default function StaffPortalPage() {
         return
       }
 
-      const staffInfo = JSON.parse(staffData)
+      let staffInfo = JSON.parse(staffData)
+      
+      // Always refresh staff data from server to get latest department_id
+      try {
+        const refreshRes = await fetch(`/api/staff/${staffInfo.id}`)
+        if (refreshRes.ok) {
+          const freshData = await refreshRes.json()
+          // Merge fresh data with existing (keep permissions from login)
+          staffInfo = {
+            ...staffInfo,
+            department: freshData.department,
+            department_id: freshData.department_id,
+            position: freshData.position,
+            profile_photo: freshData.profile_photo,
+            phone: freshData.phone,
+          }
+          localStorage.setItem('staff', JSON.stringify(staffInfo))
+        }
+      } catch (e) {
+        console.error('Failed to refresh staff data:', e)
+      }
+      
       setStaff(staffInfo)
 
       const today = new Date().toISOString().split('T')[0]
