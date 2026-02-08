@@ -92,7 +92,9 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    return NextResponse.json(result)
+    return NextResponse.json(result, {
+      headers: { 'Cache-Control': 'private, max-age=3' }
+    })
   } catch (error) {
     console.error('Error fetching conversations:', error)
     return NextResponse.json({ error: 'Failed to fetch conversations' }, { status: 500 })

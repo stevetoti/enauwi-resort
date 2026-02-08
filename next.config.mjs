@@ -13,6 +13,16 @@ const nextConfig = {
         pathname: '/storage/**',
       },
     ],
+    // Optimize image loading
+    minimumCacheTTL: 60,
+  },
+  // Enable experimental features for faster builds
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
+  // Optimize production builds
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
   },
 };
 
