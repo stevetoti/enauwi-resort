@@ -20,6 +20,7 @@ import {
   Building2,
   Megaphone,
   Settings,
+  Video,
 } from 'lucide-react'
 // Map sidebar items to their required permission keys
 const sidebarLinks = [
@@ -34,6 +35,7 @@ const sidebarLinks = [
   { href: '/admin/communications', label: 'Communications', icon: MessageSquare, permission: 'communications' },
   { href: '/admin/conferences', label: 'Conferences', icon: Settings, permission: 'conferences' },
   { href: '/admin/announcements', label: 'Announcements', icon: Megaphone, permission: 'announcements' },
+  { href: '/admin/videos', label: 'Videos', icon: Video, permission: 'announcements' },
 ]
 
 // Check if user has permission to view a module

@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
-
   LogIn,
   LogOut,
   Megaphone,
@@ -30,6 +29,9 @@ import {
   ChevronRight,
   Bell,
   Menu,
+  Play,
+  Star,
+  Globe,
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 
@@ -94,6 +96,7 @@ export default function StaffPortalPage() {
   const [department, setDepartment] = useState<Department | null>(null)
   const [departmentDocs, setDepartmentDocs] = useState<DepartmentDocument[]>([])
   const [departmentAnnouncements, setDepartmentAnnouncements] = useState<Announcement[]>([])
+  const [videos, setVideos] = useState<{ id: string; title: string; description?: string; video_url: string; video_type: string; thumbnail_url?: string; category: string; is_company_wide: boolean; department?: { name: string }; view_count: number; is_featured: boolean; created_at: string; is_watched?: boolean }[]>([])
   const [companyAnnouncements, setCompanyAnnouncements] = useState<Announcement[]>([])
   const [todayAttendance, setTodayAttendance] = useState<Attendance | null>(null)
   const [attendanceHistory, setAttendanceHistory] = useState<Attendance[]>([])
@@ -101,9 +104,10 @@ export default function StaffPortalPage() {
   const [loading, setLoading] = useState(true)
   const [clockingIn, setClockingIn] = useState(false)
   const [clockingOut, setClockingOut] = useState(false)
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'department' | 'announcements' | 'attendance' | 'settings'>('dashboard')
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'department' | 'announcements' | 'videos' | 'attendance' | 'settings'>('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null)
+  const [selectedVideo, setSelectedVideo] = useState<{ id: string; title: string; description?: string; video_url: string; video_type: string; thumbnail_url?: string } | null>(null)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const photoInputRef = useRef<HTMLInputElement>(null)
 
@@ -170,6 +174,17 @@ export default function StaffPortalPage() {
       if (announcementsRes.ok) {
         const announcementsData = await announcementsRes.json()
         setCompanyAnnouncements(announcementsData)
+      }
+
+      // Fetch videos (company-wide + department-specific)
+      const videosRes = await fetch(`/api/videos?staff_id=${staffInfo.id}`)
+      if (videosRes.ok) {
+        const videosData = await videosRes.json()
+        // Filter to show company-wide OR user's department videos
+        const filtered = videosData.filter((v: { is_company_wide: boolean; department_id?: string }) => 
+          v.is_company_wide || v.department_id === staffInfo.department_id
+        )
+        setVideos(filtered)
       }
 
       // Fetch department info
@@ -327,6 +342,7 @@ export default function StaffPortalPage() {
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'department', label: 'My Department', icon: Building2 },
     { id: 'announcements', label: 'Announcements', icon: Megaphone, badge: companyAnnouncements.filter(a => !a.is_read).length },
+    { id: 'videos', label: 'Videos', icon: Video, badge: videos.filter(v => !v.is_watched).length },
     { id: 'attendance', label: 'Attendance', icon: History },
     { id: 'settings', label: 'Settings', icon: Settings },
   ]
@@ -701,6 +717,84 @@ export default function StaffPortalPage() {
             </div>
           )}
 
+          {/* Videos Tab */}
+          {activeTab === 'videos' && (
+            <div className="space-y-6">
+              {/* Featured Videos */}
+              {videos.filter(v => v.is_featured).length > 0 && (
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"><Star className="h-5 w-5 text-amber-500" /> Featured</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {videos.filter(v => v.is_featured).map((video) => (
+                      <div key={video.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group" onClick={() => setSelectedVideo(video)}>
+                        <div className="relative aspect-video bg-gray-900">
+                          {video.thumbnail_url ? (
+                            <Image src={video.thumbnail_url} alt={video.title} fill className="object-cover" />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-teal-600 to-teal-800">
+                              <Video className="h-12 w-12 text-white/50" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <div className="p-4 bg-white/20 backdrop-blur rounded-full"><Play className="h-8 w-8 text-white" fill="white" /></div>
+                          </div>
+                          <div className="absolute top-2 left-2 px-2 py-1 bg-amber-500 text-white text-xs font-medium rounded-full flex items-center gap-1"><Star className="h-3 w-3" /> Featured</div>
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-semibold text-gray-900">{video.title}</h3>
+                          {video.description && <p className="text-sm text-gray-500 line-clamp-2 mt-1">{video.description}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* All Videos */}
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"><Video className="h-5 w-5 text-teal-600" /> All Videos</h2>
+                {videos.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {videos.filter(v => !v.is_featured).map((video) => (
+                      <div key={video.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group" onClick={() => setSelectedVideo(video)}>
+                        <div className="relative aspect-video bg-gray-900">
+                          {video.thumbnail_url ? (
+                            <Image src={video.thumbnail_url} alt={video.title} fill className="object-cover" />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-900">
+                              <Video className="h-10 w-10 text-gray-600" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <div className="p-3 bg-white/20 backdrop-blur rounded-full"><Play className="h-6 w-6 text-white" fill="white" /></div>
+                          </div>
+                          {video.is_watched && <div className="absolute top-2 right-2 px-2 py-0.5 bg-green-500 text-white text-xs rounded-full">Watched</div>}
+                        </div>
+                        <div className="p-3">
+                          <div className="flex items-center gap-2 mb-1">
+                            {video.is_company_wide ? (
+                              <span className="px-1.5 py-0.5 text-xs bg-teal-100 text-teal-700 rounded flex items-center gap-0.5"><Globe className="h-3 w-3" />All</span>
+                            ) : video.department && (
+                              <span className="px-1.5 py-0.5 text-xs bg-blue-100 text-blue-700 rounded">{video.department.name}</span>
+                            )}
+                          </div>
+                          <h3 className="font-medium text-gray-900 line-clamp-1">{video.title}</h3>
+                          <p className="text-xs text-gray-400 mt-1">{video.view_count} views</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                    <Video className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900">No Videos Yet</h3>
+                    <p className="text-gray-500 mt-2">Check back later for training videos and updates.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Attendance Tab */}
           {activeTab === 'attendance' && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -904,6 +998,35 @@ export default function StaffPortalPage() {
               <button onClick={() => setSelectedAnnouncement(null)} className="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition-colors">
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Video Player Modal */}
+      {selectedVideo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90" onClick={() => setSelectedVideo(null)}>
+          <div className="max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-end mb-2">
+              <button onClick={() => setSelectedVideo(null)} className="p-2 text-white/70 hover:text-white"><X className="h-6 w-6" /></button>
+            </div>
+            <div className="aspect-video bg-black rounded-xl overflow-hidden">
+              {selectedVideo.video_type === 'upload' ? (
+                <video src={selectedVideo.video_url} controls autoPlay className="w-full h-full" />
+              ) : selectedVideo.video_type === 'youtube' ? (
+                <iframe 
+                  src={`https://www.youtube.com/embed/${selectedVideo.video_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/)?.[1] || ''}`} 
+                  className="w-full h-full" 
+                  allow="autoplay; fullscreen" 
+                  allowFullScreen 
+                />
+              ) : (
+                <iframe src={selectedVideo.video_url} className="w-full h-full" allow="autoplay; fullscreen" allowFullScreen />
+              )}
+            </div>
+            <div className="mt-4 text-white">
+              <h2 className="text-xl font-bold">{selectedVideo.title}</h2>
+              {selectedVideo.description && <p className="text-white/70 mt-2">{selectedVideo.description}</p>}
             </div>
           </div>
         </div>
