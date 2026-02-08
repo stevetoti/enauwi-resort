@@ -17,7 +17,7 @@ export async function POST() {
     for (const dept of departments || []) {
       // Check if department chat already exists
       const { data: existing } = await supabaseAdmin
-        .from('conversations')
+        .from('team_conversations')
         .select('id')
         .eq('type', 'department')
         .eq('department_id', dept.id)
@@ -28,7 +28,7 @@ export async function POST() {
 
       // Create department chat
       const { data: conv, error: convError } = await supabaseAdmin
-        .from('conversations')
+        .from('team_conversations')
         .insert({
           type: 'department',
           name: `${dept.name} Team`,
@@ -58,11 +58,11 @@ export async function POST() {
         }))
 
         await supabaseAdmin
-          .from('conversation_participants')
+          .from('team_conversation_participants')
           .insert(participants)
 
         // Add welcome message
-        await supabaseAdmin.from('messages').insert({
+        await supabaseAdmin.from('team_messages').insert({
           conversation_id: conv.id,
           content: `Welcome to ${dept.name} Team chat! This is a space for team communication.`,
           message_type: 'system'

@@ -13,7 +13,7 @@ export async function GET(
     const before = searchParams.get('before') // cursor for pagination
 
     let query = supabaseAdmin
-      .from('messages')
+      .from('team_messages')
       .select(`
         *,
         sender:sender_id(id, name, profile_photo)
@@ -55,7 +55,7 @@ export async function POST(
 
     // Verify sender is a participant
     const { data: participant } = await supabaseAdmin
-      .from('conversation_participants')
+      .from('team_conversation_participants')
       .select('id')
       .eq('conversation_id', id)
       .eq('staff_id', sender_id)
@@ -67,7 +67,7 @@ export async function POST(
 
     // Create message
     const { data: message, error } = await supabaseAdmin
-      .from('messages')
+      .from('team_messages')
       .insert({
         conversation_id: id,
         sender_id,
@@ -85,13 +85,13 @@ export async function POST(
 
     // Update conversation's updated_at
     await supabaseAdmin
-      .from('conversations')
+      .from('team_conversations')
       .update({ updated_at: new Date().toISOString() })
       .eq('id', id)
 
     // Update sender's last_read_at
     await supabaseAdmin
-      .from('conversation_participants')
+      .from('team_conversation_participants')
       .update({ last_read_at: new Date().toISOString() })
       .eq('conversation_id', id)
       .eq('staff_id', sender_id)

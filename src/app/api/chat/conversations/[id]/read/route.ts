@@ -16,7 +16,7 @@ export async function POST(
     }
 
     const { data, error } = await supabaseAdmin
-      .from('conversation_participants')
+      .from('team_conversation_participants')
       .update({ last_read_at: new Date().toISOString() })
       .eq('conversation_id', id)
       .eq('staff_id', staff_id)

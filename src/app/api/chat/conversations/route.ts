@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
 
     // Get all conversations where staff is a participant
     const { data: participations, error: partError } = await supabaseAdmin
-      .from('conversation_participants')
+      .from('team_conversation_participants')
       .select('conversation_id, last_read_at, is_muted, role')
       .eq('staff_id', staffId)
 
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     // Get conversations with details
     const { data: conversations, error: convError } = await supabaseAdmin
-      .from('conversations')
+      .from('team_conversations')
       .select(`
         *,
         department:departments(id, name),
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 
     // Get participants for each conversation
     const { data: allParticipants } = await supabaseAdmin
-      .from('conversation_participants')
+      .from('team_conversation_participants')
       .select(`
         conversation_id,
         staff:staff_id(id, name, profile_photo, status)
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
 
     // Get last message for each conversation
     const { data: lastMessages } = await supabaseAdmin
-      .from('messages')
+      .from('team_messages')
       .select('conversation_id, content, message_type, created_at, sender:sender_id(name)')
       .in('conversation_id', conversationIds)
       .eq('is_deleted', false)
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
     // For direct chats, check if conversation already exists
     if (type === 'direct' && participant_ids?.length === 2) {
       const { data: existing } = await supabaseAdmin
-        .from('conversations')
+        .from('team_conversations')
         .select(`
           id,
           conversation_participants!inner(staff_id)
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
             participant_ids.every((id: string) => participantStaffIds.includes(id))) {
           // Return existing conversation
           const { data: fullConv } = await supabaseAdmin
-            .from('conversations')
+            .from('team_conversations')
             .select('*')
             .eq('id', conv.id)
             .single()
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
 
     // Create conversation
     const { data: conversation, error: convError } = await supabaseAdmin
-      .from('conversations')
+      .from('team_conversations')
       .insert({
         type,
         name: type === 'direct' ? null : name,
@@ -158,14 +158,14 @@ export async function POST(request: NextRequest) {
     }))
 
     const { error: partError } = await supabaseAdmin
-      .from('conversation_participants')
+      .from('team_conversation_participants')
       .insert(participants)
 
     if (partError) throw partError
 
     // Add system message for group/department creation
     if (type !== 'direct') {
-      await supabaseAdmin.from('messages').insert({
+      await supabaseAdmin.from('team_messages').insert({
         conversation_id: conversation.id,
         sender_id: created_by,
         content: type === 'department' ? 'Department chat created' : `Group "${name}" created`,

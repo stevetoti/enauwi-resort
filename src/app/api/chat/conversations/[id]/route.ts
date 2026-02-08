@@ -10,7 +10,7 @@ export async function GET(
     const { id } = await params
 
     const { data, error } = await supabaseAdmin
-      .from('conversations')
+      .from('team_conversations')
       .select(`
         *,
         department:departments(id, name),
@@ -51,7 +51,7 @@ export async function PATCH(
       if (avatar_url !== undefined) updates.avatar_url = avatar_url
 
       await supabaseAdmin
-        .from('conversations')
+        .from('team_conversations')
         .update(updates)
         .eq('id', id)
     }
@@ -65,7 +65,7 @@ export async function PATCH(
       }))
 
       await supabaseAdmin
-        .from('conversation_participants')
+        .from('team_conversation_participants')
         .upsert(newParticipants, { onConflict: 'conversation_id,staff_id' })
 
       // System message
@@ -76,7 +76,7 @@ export async function PATCH(
           .in('id', add_participants)
 
         const names = addedStaff?.map(s => s.name).join(', ')
-        await supabaseAdmin.from('messages').insert({
+        await supabaseAdmin.from('team_messages').insert({
           conversation_id: id,
           sender_id: staff_id,
           content: `Added ${names} to the group`,
@@ -88,7 +88,7 @@ export async function PATCH(
     // Remove participants
     if (remove_participants && remove_participants.length > 0) {
       await supabaseAdmin
-        .from('conversation_participants')
+        .from('team_conversation_participants')
         .delete()
         .eq('conversation_id', id)
         .in('staff_id', remove_participants)
@@ -101,7 +101,7 @@ export async function PATCH(
           .in('id', remove_participants)
 
         const names = removedStaff?.map(s => s.name).join(', ')
-        await supabaseAdmin.from('messages').insert({
+        await supabaseAdmin.from('team_messages').insert({
           conversation_id: id,
           sender_id: staff_id,
           content: `Removed ${names} from the group`,
@@ -112,7 +112,7 @@ export async function PATCH(
 
     // Return updated conversation
     const { data, error } = await supabaseAdmin
-      .from('conversations')
+      .from('team_conversations')
       .select(`
         *,
         participants:conversation_participants(staff_id, role, staff:staff_id(id, name, profile_photo))
@@ -143,13 +143,13 @@ export async function DELETE(
     if (deleteAll) {
       // Admin delete - deactivate conversation
       await supabaseAdmin
-        .from('conversations')
+        .from('team_conversations')
         .update({ is_active: false })
         .eq('id', id)
     } else if (staffId) {
       // Leave conversation
       await supabaseAdmin
-        .from('conversation_participants')
+        .from('team_conversation_participants')
         .delete()
         .eq('conversation_id', id)
         .eq('staff_id', staffId)
@@ -162,7 +162,7 @@ export async function DELETE(
         .single()
 
       if (staff) {
-        await supabaseAdmin.from('messages').insert({
+        await supabaseAdmin.from('team_messages').insert({
           conversation_id: id,
           sender_id: staffId,
           content: `${staff.name} left the group`,
