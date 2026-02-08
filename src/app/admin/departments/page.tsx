@@ -381,7 +381,54 @@ function DepartmentModal({
     color: department?.color || DEPARTMENT_COLORS[0],
   })
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
+  const [imageMode, setImageMode] = useState<'preset' | 'custom'>(
+    department?.image_url && !RESORT_IMAGES.includes(department.image_url) ? 'custom' : 'preset'
+  )
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please upload an image file')
+      return
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image must be smaller than 5MB')
+      return
+    }
+
+    setUploading(true)
+    setError('')
+
+    try {
+      const formDataUpload = new FormData()
+      formDataUpload.append('file', file)
+      formDataUpload.append('bucket', 'departments')
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formDataUpload,
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to upload image')
+      }
+
+      setFormData({ ...formData, image_url: data.url })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to upload image')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -481,20 +528,87 @@ function DepartmentModal({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Cover Image
             </label>
-            <div className="grid grid-cols-4 gap-2">
-              {RESORT_IMAGES.map((img) => (
-                <button
-                  key={img}
-                  type="button"
-                  onClick={() => setFormData({ ...formData, image_url: img })}
-                  className={`relative h-16 rounded-lg overflow-hidden ${
-                    formData.image_url === img ? 'ring-2 ring-teal-500' : ''
-                  }`}
-                >
-                  <Image src={img} alt="" fill className="object-cover" />
-                </button>
-              ))}
+            
+            {/* Image Mode Toggle */}
+            <div className="flex gap-2 mb-3">
+              <button
+                type="button"
+                onClick={() => setImageMode('preset')}
+                className={`flex-1 py-2 px-3 text-sm font-medium rounded-lg transition-colors ${
+                  imageMode === 'preset'
+                    ? 'bg-teal-100 text-teal-700 border-2 border-teal-500'
+                    : 'bg-gray-100 text-gray-600 border-2 border-transparent hover:bg-gray-200'
+                }`}
+              >
+                Preset Images
+              </button>
+              <button
+                type="button"
+                onClick={() => setImageMode('custom')}
+                className={`flex-1 py-2 px-3 text-sm font-medium rounded-lg transition-colors ${
+                  imageMode === 'custom'
+                    ? 'bg-teal-100 text-teal-700 border-2 border-teal-500'
+                    : 'bg-gray-100 text-gray-600 border-2 border-transparent hover:bg-gray-200'
+                }`}
+              >
+                Upload Custom
+              </button>
             </div>
+
+            {imageMode === 'preset' ? (
+              <div className="grid grid-cols-4 gap-2">
+                {RESORT_IMAGES.map((img) => (
+                  <button
+                    key={img}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, image_url: img })}
+                    className={`relative h-16 rounded-lg overflow-hidden ${
+                      formData.image_url === img ? 'ring-2 ring-teal-500' : ''
+                    }`}
+                  >
+                    <Image src={img} alt="" fill className="object-cover" />
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {/* Current Image Preview */}
+                {formData.image_url && !RESORT_IMAGES.includes(formData.image_url) && (
+                  <div className="relative h-32 rounded-lg overflow-hidden bg-gray-100">
+                    <Image src={formData.image_url} alt="Custom cover" fill className="object-cover" />
+                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                      <span className="text-white text-sm font-medium">Current Image</span>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Upload Button */}
+                <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-teal-400 hover:bg-teal-50/50 transition-colors">
+                  <div className="flex flex-col items-center justify-center">
+                    {uploading ? (
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-teal-600"></div>
+                    ) : (
+                      <>
+                        <Upload className="h-6 w-6 text-gray-400 mb-1" />
+                        <span className="text-sm text-gray-500">
+                          Click to upload an image
+                        </span>
+                        <span className="text-xs text-gray-400 mt-0.5">
+                          PNG, JPG up to 5MB
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            )}
           </div>
 
           <div className="flex gap-3 pt-4">
@@ -507,7 +621,7 @@ function DepartmentModal({
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || uploading}
               className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Saving...' : department ? 'Save Changes' : 'Create Department'}

@@ -528,11 +528,58 @@ function EditStaffModal({
     name: staff.name,
     email: staff.email,
     role_id: staff.role_id || '',
-    department_id: (staff as StaffWithAttendance & { department_id?: string }).department_id || '',
+    department_id: staff.department_id || '',
     phone: staff.phone || '',
+    date_of_birth: staff.date_of_birth || '',
+    address: staff.address || '',
+    emergency_contact_name: staff.emergency_contact_name || '',
+    emergency_contact_phone: staff.emergency_contact_phone || '',
+    profile_photo: staff.profile_photo || '',
   })
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      setError('Please upload an image file')
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image must be smaller than 5MB')
+      return
+    }
+
+    setUploading(true)
+    setError('')
+
+    try {
+      const formDataUpload = new FormData()
+      formDataUpload.append('file', file)
+      formDataUpload.append('bucket', 'staff-photos')
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formDataUpload,
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to upload photo')
+      }
+
+      setFormData({ ...formData, profile_photo: data.url })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to upload photo')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -562,94 +609,194 @@ function EditStaffModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">Edit Staff Member</h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
               {error}
             </div>
           )}
 
+          {/* Profile Photo */}
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              {formData.profile_photo ? (
+                <img
+                  src={formData.profile_photo}
+                  alt={formData.name}
+                  className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-2xl border-2 border-gray-200">
+                  {formData.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+            </div>
+            <div>
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                {uploading ? (
+                  <span>Uploading...</span>
+                ) : (
+                  <>
+                    <span>Change Photo</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      disabled={uploading}
+                      className="hidden"
+                    />
+                  </>
+                )}
+              </label>
+              <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 5MB</p>
+            </div>
+          </div>
+
+          {/* Basic Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Full Name *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email Address *
+              </label>
+              <input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Phone
+              </label>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                placeholder="+678 1234567"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                value={formData.date_of_birth}
+                onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              />
+            </div>
+          </div>
+
+          {/* Address */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Full Name *
+              Address
             </label>
-            <input
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            <textarea
+              value={formData.address}
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              rows={2}
+              placeholder="Home address"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address *
-            </label>
-            <input
-              type="email"
-              required
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-            />
+          {/* Role & Department */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Role
+              </label>
+              <select
+                value={formData.role_id}
+                onChange={(e) => setFormData({ ...formData, role_id: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              >
+                <option value="">Select a role</option>
+                {roles.map((role) => (
+                  <option key={role.id} value={role.id}>
+                    {role.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Department
+              </label>
+              <select
+                value={formData.department_id}
+                onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              >
+                <option value="">Select department</option>
+                {departments.filter(d => d.is_active).map((dept) => (
+                  <option key={dept.id} value={dept.id}>
+                    {dept.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Phone
-            </label>
-            <input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-              placeholder="+678 1234567"
-            />
+          {/* Emergency Contact */}
+          <div className="border-t border-gray-200 pt-4">
+            <h3 className="text-sm font-medium text-gray-900 mb-3">Emergency Contact</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Contact Name
+                </label>
+                <input
+                  type="text"
+                  value={formData.emergency_contact_name}
+                  onChange={(e) => setFormData({ ...formData, emergency_contact_name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                  placeholder="Emergency contact name"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Contact Phone
+                </label>
+                <input
+                  type="tel"
+                  value={formData.emergency_contact_phone}
+                  onChange={(e) => setFormData({ ...formData, emergency_contact_phone: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                  placeholder="+678 1234567"
+                />
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Role
-            </label>
-            <select
-              value={formData.role_id}
-              onChange={(e) => setFormData({ ...formData, role_id: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-            >
-              <option value="">Select a role</option>
-              {roles.map((role) => (
-                <option key={role.id} value={role.id}>
-                  {role.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Department
-            </label>
-            <select
-              value={formData.department_id}
-              onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-            >
-              <option value="">Select department</option>
-              {departments.filter(d => d.is_active).map((dept) => (
-                <option key={dept.id} value={dept.id}>
-                  {dept.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3 pt-4 border-t border-gray-200">
             <button
               type="button"
               onClick={onClose}
@@ -659,7 +806,7 @@ function EditStaffModal({
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || uploading}
               className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Saving...' : 'Save Changes'}

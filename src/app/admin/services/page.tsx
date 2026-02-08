@@ -14,6 +14,9 @@ import {
   UtensilsCrossed,
   Waves,
   Truck,
+  Edit2,
+  Trash2,
+  Plus,
 } from 'lucide-react'
 import { createClientSupabase } from '@/lib/supabase'
 import { formatVatu, formatDate } from '@/lib/utils'
@@ -69,6 +72,11 @@ export default function AdminServicesPage() {
   const [selectedConference, setSelectedConference] = useState<ConferenceBooking | null>(null)
   const [selectedOrder, setSelectedOrder] = useState<ServiceOrder | null>(null)
   const [updatingStatus, setUpdatingStatus] = useState(false)
+  
+  // Service edit/delete
+  const [selectedService, setSelectedService] = useState<Service | null>(null)
+  const [showServiceModal, setShowServiceModal] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null)
 
   const supabase = createClientSupabase()
 
@@ -204,6 +212,29 @@ export default function AdminServicesPage() {
       default:
         return 'bg-gray-600 hover:bg-gray-700 text-white'
     }
+  }
+
+  const handleDeleteService = async (serviceId: string) => {
+    try {
+      const { error } = await supabase
+        .from('services')
+        .delete()
+        .eq('id', serviceId)
+
+      if (error) throw error
+      
+      await fetchData()
+      setShowDeleteConfirm(null)
+    } catch (error) {
+      console.error('Error deleting service:', error)
+      alert('Failed to delete service')
+    }
+  }
+
+  const handleServiceSaved = () => {
+    setShowServiceModal(false)
+    setSelectedService(null)
+    fetchData()
   }
 
   // Summary stats
@@ -583,6 +614,20 @@ export default function AdminServicesPage() {
         {/* Service Catalog Tab */}
         {activeTab === 'catalog' && (
           <div className="p-6">
+            {/* Add Service Button */}
+            <div className="flex justify-end mb-6">
+              <button
+                onClick={() => {
+                  setSelectedService(null)
+                  setShowServiceModal(true)
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add Service
+              </button>
+            </div>
+
             {Object.entries(CATEGORY_LABELS).map(([catKey, catLabel]) => {
               const catServices = services.filter((s) => s.category === catKey)
               if (catServices.length === 0) return null
@@ -598,13 +643,34 @@ export default function AdminServicesPage() {
                     {catServices.map((service) => (
                       <div
                         key={service.id}
-                        className={`border rounded-lg p-4 ${
+                        className={`border rounded-lg p-4 relative group ${
                           service.available
                             ? 'border-gray-200 bg-white'
                             : 'border-red-200 bg-red-50'
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-2">
+                        {/* Edit/Delete Buttons */}
+                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => {
+                              setSelectedService(service)
+                              setShowServiceModal(true)
+                            }}
+                            className="p-1.5 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
+                            title="Edit service"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => setShowDeleteConfirm(service.id)}
+                            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Delete service"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+
+                        <div className="flex items-start justify-between mb-2 pr-16">
                           <h4 className="text-sm font-medium text-gray-900">{service.name}</h4>
                           {service.is_placeholder_price && (
                             <span className="text-[10px] bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded font-medium">
@@ -650,6 +716,29 @@ export default function AdminServicesPage() {
                         )}
                         {service.notes && (
                           <p className="text-[10px] text-gray-400 mt-2 italic">{service.notes}</p>
+                        )}
+
+                        {/* Delete Confirmation */}
+                        {showDeleteConfirm === service.id && (
+                          <div className="absolute inset-0 bg-white/95 rounded-lg flex flex-col items-center justify-center p-4">
+                            <p className="text-sm text-gray-700 mb-3 text-center">
+                              Delete <strong>{service.name}</strong>?
+                            </p>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => setShowDeleteConfirm(null)}
+                                className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={() => handleDeleteService(service.id)}
+                                className="px-3 py-1.5 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
                         )}
                       </div>
                     ))}
@@ -806,6 +895,251 @@ export default function AdminServicesPage() {
           </div>
         </div>
       )}
+
+      {/* Service Edit/Create Modal */}
+      {showServiceModal && (
+        <ServiceModal
+          service={selectedService}
+          onClose={() => {
+            setShowServiceModal(false)
+            setSelectedService(null)
+          }}
+          onSuccess={handleServiceSaved}
+        />
+      )}
+    </div>
+  )
+}
+
+// Service Edit/Create Modal Component
+function ServiceModal({
+  service,
+  onClose,
+  onSuccess,
+}: {
+  service: Service | null
+  onClose: () => void
+  onSuccess: () => void
+}) {
+  const [formData, setFormData] = useState({
+    name: service?.name || '',
+    description: service?.description || '',
+    category: service?.category || 'other_services',
+    unit_price: service?.unit_price?.toString() || '0',
+    price_unit: service?.price_unit || 'per item',
+    is_placeholder_price: service?.is_placeholder_price || false,
+    available: service?.available ?? true,
+    amenities: service?.amenities?.join(', ') || '',
+    notes: service?.notes || '',
+    sort_order: service?.sort_order?.toString() || '0',
+  })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const supabase = createClientSupabase()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+
+    try {
+      const dataToSave = {
+        name: formData.name,
+        description: formData.description,
+        category: formData.category,
+        unit_price: parseInt(formData.unit_price) || 0,
+        price_unit: formData.price_unit,
+        is_placeholder_price: formData.is_placeholder_price,
+        available: formData.available,
+        amenities: formData.amenities
+          ? formData.amenities.split(',').map((a) => a.trim()).filter(Boolean)
+          : null,
+        notes: formData.notes || null,
+        sort_order: parseInt(formData.sort_order) || 0,
+      }
+
+      if (service) {
+        // Update existing service
+        const { error: updateError } = await supabase
+          .from('services')
+          .update(dataToSave)
+          .eq('id', service.id)
+
+        if (updateError) throw updateError
+      } else {
+        // Create new service
+        const { error: insertError } = await supabase
+          .from('services')
+          .insert(dataToSave)
+
+        if (insertError) throw insertError
+      }
+
+      onSuccess()
+    } catch (err) {
+      console.error('Error saving service:', err)
+      setError(err instanceof Error ? err.message : 'Failed to save service')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+      <div className="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-gray-900">
+            {service ? 'Edit Service' : 'Add New Service'}
+          </h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+              {error}
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Service Name *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              placeholder="e.g., Airport Transfer"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Description
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              rows={3}
+              placeholder="Describe the service"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Category *
+            </label>
+            <select
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value as 'conference' | 'food_beverage' | 'activities' | 'other_services' })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+            >
+              <option value="conference">Conference</option>
+              <option value="food_beverage">Food & Beverage</option>
+              <option value="activities">Activities</option>
+              <option value="other_services">Other Services</option>
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Price (VT)
+              </label>
+              <input
+                type="number"
+                value={formData.unit_price}
+                onChange={(e) => setFormData({ ...formData, unit_price: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                min="0"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Price Unit
+              </label>
+              <input
+                type="text"
+                value={formData.price_unit}
+                onChange={(e) => setFormData({ ...formData, price_unit: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                placeholder="per item, per hour, etc."
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Amenities/Features (comma-separated)
+            </label>
+            <input
+              type="text"
+              value={formData.amenities}
+              onChange={(e) => setFormData({ ...formData, amenities: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              placeholder="WiFi, Projector, Whiteboard"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Notes (internal)
+            </label>
+            <input
+              type="text"
+              value={formData.notes}
+              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              placeholder="Internal notes about this service"
+            />
+          </div>
+
+          <div className="flex items-center gap-6">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.available}
+                onChange={(e) => setFormData({ ...formData, available: e.target.checked })}
+                className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+              />
+              <span className="text-sm text-gray-700">Available</span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.is_placeholder_price}
+                onChange={(e) => setFormData({ ...formData, is_placeholder_price: e.target.checked })}
+                className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+              />
+              <span className="text-sm text-gray-700">Placeholder Price</span>
+            </label>
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors"
+            >
+              {loading ? 'Saving...' : service ? 'Save Changes' : 'Add Service'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

@@ -121,8 +121,13 @@ export interface Staff {
   role: 'super_admin' | 'manager' | 'staff'
   role_id?: string
   department?: string
+  department_id?: string
   profile_photo?: string
   phone?: string
+  date_of_birth?: string
+  address?: string
+  emergency_contact_name?: string
+  emergency_contact_phone?: string
   status: 'active' | 'inactive' | 'pending'
   invited_at?: string
   invited_by?: string

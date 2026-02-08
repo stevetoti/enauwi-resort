@@ -14,34 +14,40 @@ import {
   AlertCircle,
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
-import { StaffInvitation, Role } from '@/types'
+import { StaffInvitation, Role, Department } from '@/types'
 
 export default function StaffInvitePage() {
   const [invitations, setInvitations] = useState<StaffInvitation[]>([])
   const [roles, setRoles] = useState<Role[]>([])
+  const [departments, setDepartments] = useState<Department[]>([])
   const [loading, setLoading] = useState(true)
   const [sendingInvite, setSendingInvite] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     role_id: '',
-    department: '',
+    department_id: '',
   })
   const [formError, setFormError] = useState('')
   const [formSuccess, setFormSuccess] = useState('')
 
   const fetchData = useCallback(async () => {
     try {
-      const [invitationsRes, rolesRes] = await Promise.all([
+      // First, ensure roles exist (auto-seeds if needed)
+      const rolesRes = await fetch('/api/roles/seed')
+      const rolesData = await rolesRes.json()
+
+      const [invitationsRes, departmentsRes] = await Promise.all([
         fetch('/api/staff/invitations'),
-        fetch('/api/roles'),
+        fetch('/api/departments'),
       ])
 
       const invitationsData = await invitationsRes.json()
-      const rolesData = await rolesRes.json()
+      const departmentsData = await departmentsRes.json()
 
       setInvitations(invitationsData)
-      setRoles(rolesData)
+      setRoles(rolesData.roles || [])
+      setDepartments(departmentsData)
     } catch (error) {
       console.error('Error fetching data:', error)
     } finally {
@@ -73,7 +79,7 @@ export default function StaffInvitePage() {
       }
 
       setFormSuccess(`Invitation sent to ${formData.email}`)
-      setFormData({ name: '', email: '', role_id: '', department: '' })
+      setFormData({ name: '', email: '', role_id: '', department_id: '' })
       fetchData()
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Something went wrong')
@@ -260,18 +266,16 @@ export default function StaffInvitePage() {
                 Department
               </label>
               <select
-                value={formData.department}
-                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                value={formData.department_id}
+                onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               >
                 <option value="">Select department</option>
-                <option value="Front Desk">Front Desk</option>
-                <option value="Housekeeping">Housekeeping</option>
-                <option value="Kitchen">Kitchen</option>
-                <option value="Restaurant">Restaurant</option>
-                <option value="Maintenance">Maintenance</option>
-                <option value="Security">Security</option>
-                <option value="Management">Management</option>
+                {departments.filter(d => d.is_active).map((dept) => (
+                  <option key={dept.id} value={dept.id}>
+                    {dept.name}
+                  </option>
+                ))}
               </select>
             </div>
 

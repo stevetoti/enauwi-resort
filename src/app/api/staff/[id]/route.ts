@@ -39,7 +39,19 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await request.json()
-    const { name, role_id, department, department_id, phone, profile_photo, status } = body
+    const { 
+      name, 
+      role_id, 
+      department, 
+      department_id, 
+      phone, 
+      profile_photo, 
+      status,
+      date_of_birth,
+      address,
+      emergency_contact_name,
+      emergency_contact_phone
+    } = body
 
     const updateData: Record<string, unknown> = {}
     if (name !== undefined) updateData.name = name
@@ -49,6 +61,10 @@ export async function PATCH(
     if (phone !== undefined) updateData.phone = phone
     if (profile_photo !== undefined) updateData.profile_photo = profile_photo
     if (status !== undefined) updateData.status = status
+    if (date_of_birth !== undefined) updateData.date_of_birth = date_of_birth
+    if (address !== undefined) updateData.address = address
+    if (emergency_contact_name !== undefined) updateData.emergency_contact_name = emergency_contact_name
+    if (emergency_contact_phone !== undefined) updateData.emergency_contact_phone = emergency_contact_phone
 
     // If department_id is provided, also update the department name
     if (department_id) {
