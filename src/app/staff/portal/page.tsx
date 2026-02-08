@@ -93,6 +93,7 @@ export default function StaffPortalPage() {
   const [staff, setStaff] = useState<Staff | null>(null)
   const [department, setDepartment] = useState<Department | null>(null)
   const [departmentDocs, setDepartmentDocs] = useState<DepartmentDocument[]>([])
+  const [departmentAnnouncements, setDepartmentAnnouncements] = useState<Announcement[]>([])
   const [companyAnnouncements, setCompanyAnnouncements] = useState<Announcement[]>([])
   const [todayAttendance, setTodayAttendance] = useState<Attendance | null>(null)
   const [attendanceHistory, setAttendanceHistory] = useState<Attendance[]>([])
@@ -183,6 +184,12 @@ export default function StaffPortalPage() {
         if (docsRes.ok) {
           const docsData = await docsRes.json()
           setDepartmentDocs(docsData)
+        }
+
+        const deptAnnRes = await fetch(`/api/departments/${staffInfo.department_id}/announcements`)
+        if (deptAnnRes.ok) {
+          const deptAnnData = await deptAnnRes.json()
+          setDepartmentAnnouncements(deptAnnData)
         }
 
         const teamRes = await fetch(`/api/staff?department_id=${staffInfo.department_id}`)
@@ -568,12 +575,46 @@ export default function StaffPortalPage() {
                     </div>
                   </div>
 
-                  {/* SOPs */}
-                  {departmentDocs.length > 0 && (
-                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                      <div className="px-5 py-4 border-b border-gray-100">
-                        <h2 className="font-semibold text-gray-900 flex items-center gap-2"><BookOpen className="h-5 w-5 text-teal-600" /> SOPs & Guidelines</h2>
+                  {/* Department Announcements */}
+                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="px-5 py-4 border-b border-gray-100">
+                      <h2 className="font-semibold text-gray-900 flex items-center gap-2"><Megaphone className="h-5 w-5 text-purple-600" /> Department Announcements</h2>
+                    </div>
+                    {departmentAnnouncements.length > 0 ? (
+                      <div className="divide-y divide-gray-100">
+                        {departmentAnnouncements.map((ann) => (
+                          <div key={ann.id} className="p-5 hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedAnnouncement(ann)}>
+                            <div className="flex items-start gap-3">
+                              <div className={`p-2 rounded-lg ${ann.priority === 'urgent' ? 'bg-red-100' : ann.pinned ? 'bg-purple-100' : 'bg-gray-100'}`}>
+                                {ann.pinned ? <Pin className="h-4 w-4 text-purple-600" /> : <Megaphone className="h-4 w-4 text-gray-600" />}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <h3 className="font-medium text-gray-900 truncate">{ann.title}</h3>
+                                  {ann.priority === 'urgent' && <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full">Urgent</span>}
+                                </div>
+                                <p className="text-sm text-gray-500 mt-1 line-clamp-2">{ann.content}</p>
+                                <p className="text-xs text-gray-400 mt-2">{formatDate(ann.created_at)}</p>
+                              </div>
+                              <Eye className="h-4 w-4 text-gray-400" />
+                            </div>
+                          </div>
+                        ))}
                       </div>
+                    ) : (
+                      <div className="p-8 text-center text-gray-500">
+                        <Megaphone className="h-10 w-10 text-gray-300 mx-auto mb-2" />
+                        <p>No department announcements yet</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* SOPs & Documents */}
+                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="px-5 py-4 border-b border-gray-100">
+                      <h2 className="font-semibold text-gray-900 flex items-center gap-2"><BookOpen className="h-5 w-5 text-teal-600" /> SOPs & Guidelines</h2>
+                    </div>
+                    {departmentDocs.length > 0 ? (
                       <div className="divide-y divide-gray-100">
                         {departmentDocs.map((doc) => (
                           <div key={doc.id} className="p-5">
@@ -600,8 +641,13 @@ export default function StaffPortalPage() {
                           </div>
                         ))}
                       </div>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="p-8 text-center text-gray-500">
+                        <BookOpen className="h-10 w-10 text-gray-300 mx-auto mb-2" />
+                        <p>No SOPs or guidelines yet</p>
+                      </div>
+                    )}
+                  </div>
                 </>
               ) : (
                 <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
