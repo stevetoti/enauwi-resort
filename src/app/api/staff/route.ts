@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET all staff members
 export async function GET(request: NextRequest) {
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if email already exists
-    const { data: existing } = await supabase
+    const { data: existing } = await supabaseAdmin
       .from('staff')
       .select('id')
       .eq('email', email)
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Staff member with this email already exists' }, { status: 400 })
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('staff')
       .insert({
         email,

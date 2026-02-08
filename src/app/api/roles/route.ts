@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET all roles
 export async function GET() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('roles')
       .select('*')
       .order('is_system_role', { ascending: false })
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if role name already exists
-    const { data: existing } = await supabase
+    const { data: existing } = await supabaseAdmin
       .from('roles')
       .select('id')
       .eq('name', name)
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'A role with this name already exists' }, { status: 400 })
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('roles')
       .insert({
         name,

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 const DEFAULT_ROLES = [
   {
@@ -79,7 +79,7 @@ const DEFAULT_ROLES = [
 export async function POST() {
   try {
     // Check if roles already exist
-    const { data: existingRoles, error: checkError } = await supabase
+    const { data: existingRoles, error: checkError } = await supabaseAdmin
       .from('roles')
       .select('id')
       .limit(1)
@@ -95,7 +95,7 @@ export async function POST() {
     }
 
     // Insert default roles
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('roles')
       .insert(DEFAULT_ROLES)
       .select()
@@ -119,7 +119,7 @@ export async function POST() {
 // GET - Check if roles exist and seed if needed
 export async function GET() {
   try {
-    const { data: existingRoles, error: checkError } = await supabase
+    const { data: existingRoles, error: checkError } = await supabaseAdmin
       .from('roles')
       .select('*')
       .order('name')
@@ -128,7 +128,7 @@ export async function GET() {
 
     if (!existingRoles || existingRoles.length === 0) {
       // Auto-seed if no roles exist
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('roles')
         .insert(DEFAULT_ROLES)
         .select()

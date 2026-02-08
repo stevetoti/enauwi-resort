@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
-const VANUCONNECT_SMS_API = 'https://zqxcrvjsnunjuelmrydm.supabase.co/functions/v1/send-sms-api'
+const VANUCONNECT_SMS_API = 'https://zqxcrvjsnunjuelmrydm.supabaseAdmin.co/functions/v1/send-sms-api'
 
 // GET message logs
 export async function GET(request: NextRequest) {

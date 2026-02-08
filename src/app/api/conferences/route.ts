@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET all conference bookings
 export async function GET(request: NextRequest) {
@@ -59,7 +59,7 @@ export async function PATCH(request: NextRequest) {
     if (start_time !== undefined) updateData.start_time = start_time
     if (end_time !== undefined) updateData.end_time = end_time
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('conference_bookings')
       .update(updateData)
       .eq('id', id)

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // POST mark announcement as read
 export async function POST(
@@ -15,7 +15,7 @@ export async function POST(
       return NextResponse.json({ error: 'Staff ID is required' }, { status: 400 })
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('announcement_reads')
       .upsert({
         announcement_id,

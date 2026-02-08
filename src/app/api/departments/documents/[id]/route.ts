@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // PATCH update document
 export async function PATCH(
@@ -10,7 +10,7 @@ export async function PATCH(
     const { id } = await params
     const body = await request.json()
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('department_documents')
       .update(body)
       .eq('id', id)
@@ -34,7 +34,7 @@ export async function DELETE(
   try {
     const { id } = await params
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('department_documents')
       .delete()
       .eq('id', id)

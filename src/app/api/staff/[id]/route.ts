@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET single staff member
 export async function GET(
@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { id } = await params
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('staff')
       .select(`
         *,
@@ -92,7 +92,7 @@ export async function PATCH(
 
     // If department_id is provided, also update the department name
     if (department_id) {
-      const { data: dept } = await supabase
+      const { data: dept } = await supabaseAdmin
         .from('departments')
         .select('name')
         .eq('id', department_id)
@@ -102,7 +102,7 @@ export async function PATCH(
       }
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('staff')
       .update(updateData)
       .eq('id', id)
@@ -130,7 +130,7 @@ export async function DELETE(
   try {
     const { id } = await params
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('staff')
       .delete()
       .eq('id', id)

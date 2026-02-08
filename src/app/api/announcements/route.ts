@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET all announcements
 export async function GET(request: NextRequest) {
@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const staffId = searchParams.get('staffId')
     const includeExpired = searchParams.get('includeExpired') === 'true'
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('announcements')
       .select(`
         *,
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     // If staffId is provided, add read status
     if (staffId && announcements) {
-      const { data: reads } = await supabase
+      const { data: reads } = await supabaseAdminAdmin
         .from('announcement_reads')
         .select('announcement_id')
         .eq('staff_id', staffId)
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdminAdmin
       .from('announcements')
       .insert({
         title,

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET single announcement
 export async function GET(
@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { id } = await params
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('announcements')
       .select(`
         *,
@@ -49,7 +49,7 @@ export async function PATCH(
     if (target_roles !== undefined) updateData.target_roles = target_roles
     if (expires_at !== undefined) updateData.expires_at = expires_at
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('announcements')
       .update(updateData)
       .eq('id', id)
@@ -76,7 +76,7 @@ export async function DELETE(
   try {
     const { id } = await params
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('announcements')
       .delete()
       .eq('id', id)

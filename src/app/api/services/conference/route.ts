@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // POST /api/services/conference - Create a conference booking inquiry
 export async function POST(request: NextRequest) {
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     let totalPrice = 0
 
     // Get the matching conference service for price lookup
-    const { data: confService } = await supabase
+    const { data: confService } = await supabaseAdmin
       .from('services')
       .select('*')
       .eq('category', 'conference')
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     const serviceId = confService?.id || null
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('conference_bookings')
       .insert({
         service_id: serviceId,
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
 // GET /api/services/conference - Get conference bookings (admin)
 export async function GET() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('conference_bookings')
       .select('*, service:services(*)')
       .order('created_at', { ascending: false })

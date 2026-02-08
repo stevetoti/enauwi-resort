@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET single invitation
 export async function GET(
@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { id } = await params
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('staff_invitations')
       .select(`
         *,
@@ -46,7 +46,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Status is required' }, { status: 400 })
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('staff_invitations')
       .update({ status })
       .eq('id', id)
@@ -71,7 +71,7 @@ export async function DELETE(
     const { id } = await params
 
     // First update status to cancelled
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('staff_invitations')
       .update({ status: 'cancelled' })
       .eq('id', id)

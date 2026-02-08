@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // POST mark announcement as read
 export async function POST(request: NextRequest) {
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Announcement ID and staff ID are required' }, { status: 400 })
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('announcement_reads')
       .upsert({
         announcement_id,
@@ -40,7 +40,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Announcement ID and staff ID are required' }, { status: 400 })
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('announcement_reads')
       .delete()
       .eq('announcement_id', announcement_id)

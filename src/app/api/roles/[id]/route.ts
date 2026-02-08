@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET single role
 export async function GET(
@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { id } = await params
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('roles')
       .select('*')
       .eq('id', id)
@@ -22,7 +22,7 @@ export async function GET(
     }
 
     // Get count of staff with this role
-    const { count } = await supabase
+    const { count } = await supabaseAdmin
       .from('staff')
       .select('*', { count: 'exact', head: true })
       .eq('role_id', id)
@@ -48,7 +48,7 @@ export async function PATCH(
     const { name, description, permissions } = body
 
     // Check if this is a system role
-    const { data: existingRole } = await supabase
+    const { data: existingRole } = await supabaseAdmin
       .from('roles')
       .select('is_system_role')
       .eq('id', id)
@@ -63,7 +63,7 @@ export async function PATCH(
 
     // Check if name is taken by another role
     if (name) {
-      const { data: existing } = await supabase
+      const { data: existing } = await supabaseAdmin
         .from('roles')
         .select('id')
         .eq('name', name)
@@ -80,7 +80,7 @@ export async function PATCH(
     if (description !== undefined) updateData.description = description
     if (permissions !== undefined) updateData.permissions = permissions
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('roles')
       .update(updateData)
       .eq('id', id)
@@ -105,7 +105,7 @@ export async function DELETE(
     const { id } = await params
 
     // Check if this is a system role
-    const { data: role } = await supabase
+    const { data: role } = await supabaseAdmin
       .from('roles')
       .select('is_system_role')
       .eq('id', id)
@@ -119,7 +119,7 @@ export async function DELETE(
     }
 
     // Check if role has members
-    const { count } = await supabase
+    const { count } = await supabaseAdmin
       .from('staff')
       .select('*', { count: 'exact', head: true })
       .eq('role_id', id)
@@ -131,7 +131,7 @@ export async function DELETE(
       )
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('roles')
       .delete()
       .eq('id', id)

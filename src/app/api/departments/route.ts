@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET all departments with member counts
 export async function GET() {
   try {
     // Get departments
-    const { data: departments, error } = await supabase
+    const { data: departments, error } = await supabaseAdmin
       .from('departments')
       .select('*')
       .order('name', { ascending: true })
@@ -15,7 +15,7 @@ export async function GET() {
     // Get member counts for each department
     const departmentsWithCounts = await Promise.all(
       departments.map(async (dept) => {
-        const { count } = await supabase
+        const { count } = await supabaseAdmin
           .from('staff')
           .select('*', { count: 'exact', head: true })
           .eq('department_id', dept.id)
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if department name already exists
-    const { data: existing } = await supabase
+    const { data: existing } = await supabaseAdmin
       .from('departments')
       .select('id')
       .eq('name', name)
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'A department with this name already exists' }, { status: 400 })
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('departments')
       .insert({
         name,

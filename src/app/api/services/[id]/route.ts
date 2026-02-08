@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET single service
 export async function GET(
@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { id } = await params
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('services')
       .select('*')
       .eq('id', id)
@@ -52,7 +52,7 @@ export async function PATCH(
 
     updateData.updated_at = new Date().toISOString()
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('services')
       .update(updateData)
       .eq('id', id)
@@ -77,7 +77,7 @@ export async function DELETE(
     const { id } = await params
 
     // Check if service is used in any orders or conference bookings
-    const { data: orders } = await supabase
+    const { data: orders } = await supabaseAdmin
       .from('service_orders')
       .select('id')
       .eq('service_id', id)
@@ -90,7 +90,7 @@ export async function DELETE(
       )
     }
 
-    const { data: conferences } = await supabase
+    const { data: conferences } = await supabaseAdmin
       .from('conference_bookings')
       .select('id')
       .eq('service_id', id)
@@ -103,7 +103,7 @@ export async function DELETE(
       )
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('services')
       .delete()
       .eq('id', id)

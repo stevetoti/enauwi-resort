@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET attendance records
 export async function GET(request: NextRequest) {
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     const now = new Date().toISOString()
 
     // Get existing record for today
-    const { data: existing } = await supabase
+    const { data: existing } = await supabaseAdmin
       .from('staff_attendance')
       .select('*')
       .eq('staff_id', staff_id)
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Create or update attendance record
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('staff_attendance')
         .upsert({
           staff_id,
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       const clockOut = new Date(now)
       const hoursWorked = (clockOut.getTime() - clockIn.getTime()) / (1000 * 60 * 60)
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('staff_attendance')
         .update({
           clock_out: now,

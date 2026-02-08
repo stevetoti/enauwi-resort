@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET department documents
 export async function GET(
@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { id } = await params
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('department_documents')
       .select('*, uploader:staff(id, name)')
       .eq('department_id', id)
@@ -39,7 +39,7 @@ export async function POST(
       return NextResponse.json({ error: 'Name and URL are required' }, { status: 400 })
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('department_documents')
       .insert({
         department_id: id,

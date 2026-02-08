@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // POST /api/services/orders - Create a service order
 export async function POST(request: NextRequest) {
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch the service to get pricing
-    const { data: service, error: serviceError } = await supabase
+    const { data: service, error: serviceError } = await supabaseAdmin
       .from('services')
       .select('*')
       .eq('id', serviceId)
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     const unitPrice = service.unit_price
     const totalPrice = unitPrice * qty
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('service_orders')
       .insert({
         booking_id: bookingId || null,
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 // GET /api/services/orders - Get service orders
 export async function GET() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('service_orders')
       .select('*, service:services(*)')
       .order('created_at', { ascending: false })

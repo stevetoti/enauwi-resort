@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET single department with members, announcements, and documents
 export async function GET(
@@ -10,7 +10,7 @@ export async function GET(
     const { id } = await params
 
     // Get department
-    const { data: department, error: deptError } = await supabase
+    const { data: department, error: deptError } = await supabaseAdmin
       .from('departments')
       .select('*')
       .eq('id', id)
@@ -23,14 +23,14 @@ export async function GET(
     }
 
     // Get members
-    const { data: members } = await supabase
+    const { data: members } = await supabaseAdmin
       .from('staff')
       .select('id, name, email, role, profile_photo, status')
       .eq('department_id', id)
       .order('name')
 
     // Get announcements
-    const { data: announcements } = await supabase
+    const { data: announcements } = await supabaseAdmin
       .from('department_announcements')
       .select('*, author:staff(id, name)')
       .eq('department_id', id)
@@ -38,7 +38,7 @@ export async function GET(
       .order('created_at', { ascending: false })
 
     // Get documents
-    const { data: documents } = await supabase
+    const { data: documents } = await supabaseAdmin
       .from('department_documents')
       .select('*, uploader:staff(id, name)')
       .eq('department_id', id)
@@ -68,7 +68,7 @@ export async function PATCH(
 
     // Check if name is taken by another department
     if (name) {
-      const { data: existing } = await supabase
+      const { data: existing } = await supabaseAdmin
         .from('departments')
         .select('id')
         .eq('name', name)
@@ -87,7 +87,7 @@ export async function PATCH(
     if (color !== undefined) updateData.color = color
     if (is_active !== undefined) updateData.is_active = is_active
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('departments')
       .update(updateData)
       .eq('id', id)
@@ -112,7 +112,7 @@ export async function DELETE(
     const { id } = await params
 
     // Check if department has members
-    const { count } = await supabase
+    const { count } = await supabaseAdmin
       .from('staff')
       .select('*', { count: 'exact', head: true })
       .eq('department_id', id)
@@ -124,7 +124,7 @@ export async function DELETE(
       )
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('departments')
       .delete()
       .eq('id', id)

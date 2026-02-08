@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Find invitation by token
-    const { data: invitation, error } = await supabase
+    const { data: invitation, error } = await supabaseAdmin
       .from('staff_invitations')
       .select(`
         *,
