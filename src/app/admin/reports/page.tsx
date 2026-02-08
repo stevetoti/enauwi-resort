@@ -7,14 +7,9 @@ import {
   TrendingUp,
   BedDouble,
   DollarSign,
-  Users,
   Download,
-  Calendar,
-  PieChart as PieChartIcon,
 } from 'lucide-react'
 import {
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -177,7 +172,6 @@ export default function ReportsPage() {
 
   // Monthly comparison
   const thisMonth = format(new Date(), 'yyyy-MM')
-  const lastMonth = format(subMonths(new Date(), 1), 'yyyy-MM')
   
   const thisMonthIncome = transactions
     .filter(t => t.date.startsWith(thisMonth) && t.type === 'income')
@@ -305,7 +299,7 @@ export default function ReportsPage() {
               <XAxis dataKey="date" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
               <Tooltip 
-                formatter={(value: number) => [`${value.toLocaleString()} VT`, '']}
+                formatter={(value) => [`${Number(value || 0).toLocaleString()} VT`, '']}
                 labelFormatter={(label) => `Date: ${label}`}
               />
               <Legend />
@@ -327,13 +321,13 @@ export default function ReportsPage() {
                 innerRadius={60}
                 outerRadius={100}
                 dataKey="value"
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
               >
                 {categoryChartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: number) => `${value.toLocaleString()} VT`} />
+              <Tooltip formatter={(value) => `${Number(value || 0).toLocaleString()} VT`} />
             </PieChart>
           </ResponsiveContainer>
         </div>

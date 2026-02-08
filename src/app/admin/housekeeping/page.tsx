@@ -7,16 +7,13 @@ import {
   BedDouble,
   AlertCircle,
   CheckCircle,
-  Clock,
-  User,
   Plus,
   X,
-  Filter,
   Calendar,
   Eye,
   RefreshCw,
 } from 'lucide-react'
-import { format, isToday, isTomorrow, addDays } from 'date-fns'
+import { format, addDays } from 'date-fns'
 
 interface Room {
   id: string
@@ -99,7 +96,7 @@ export default function HousekeepingPage() {
   const [checkoutsToday, setCheckoutsToday] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
   const [showTaskModal, setShowTaskModal] = useState(false)
-  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
+  const [, setSelectedRoom] = useState<Room | null>(null)
   const [statusFilter, setStatusFilter] = useState('all')
   const [dateFilter, setDateFilter] = useState(format(new Date(), 'yyyy-MM-dd'))
 

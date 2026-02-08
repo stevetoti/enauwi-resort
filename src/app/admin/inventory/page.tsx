@@ -9,7 +9,6 @@ import {
   ArrowDown,
   ArrowUp,
   Search,
-  Filter,
   X,
   Edit,
   Trash2,

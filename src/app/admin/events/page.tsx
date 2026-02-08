@@ -12,9 +12,6 @@ import {
   Edit,
   Trash2,
   Phone,
-  Mail,
-  Check,
-  AlertCircle,
 } from 'lucide-react'
 import { format, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth } from 'date-fns'
 
