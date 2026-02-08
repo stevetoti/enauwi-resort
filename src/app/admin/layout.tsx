@@ -175,13 +175,13 @@ export default function AdminLayout({
 
       {/* Sidebar - E'Nauwi Dark Teal */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 text-white transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 z-50 h-full w-64 text-white transform transition-transform duration-300 ease-in-out flex flex-col ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
         style={{ backgroundColor: '#0F766E' }}
       >
-        {/* Logo */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-teal-700">
+        {/* Logo - Fixed at top */}
+        <div className="flex-shrink-0 flex items-center justify-between px-4 py-4 border-b border-teal-700">
           <Link href="/admin" className="flex items-center gap-3">
             <div className="w-12 h-12 relative">
               <Image
@@ -206,8 +206,8 @@ export default function AdminLayout({
           </button>
         </div>
 
-        {/* Navigation - filtered by permissions */}
-        <nav className="px-3 py-4 space-y-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+        {/* Navigation - Scrollable middle section */}
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {sidebarLinks
             .filter((link) => hasPermission(user.permissions, link.permission))
             .map((link) => {
@@ -237,8 +237,8 @@ export default function AdminLayout({
             })}
         </nav>
 
-        {/* User info / Logout */}
-        <div className="absolute bottom-0 left-0 right-0 px-3 py-4 border-t border-teal-700" style={{ backgroundColor: '#0F766E' }}>
+        {/* User info / Logout - Fixed at bottom */}
+        <div className="flex-shrink-0 px-3 py-4 border-t border-teal-700" style={{ backgroundColor: '#0F766E' }}>
           <div className="flex items-center gap-3 px-3 mb-3">
             {user.profile_photo ? (
               <Image
