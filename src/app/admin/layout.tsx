@@ -22,6 +22,12 @@ import {
   Megaphone,
   Settings,
   Video,
+  Wallet,
+  UtensilsCrossed,
+  CalendarCheck,
+  Package,
+  Sparkles,
+  BarChart3,
 } from 'lucide-react'
 // Map sidebar items to their required permission keys
 const sidebarLinks = [
@@ -29,6 +35,12 @@ const sidebarLinks = [
   { href: '/admin/bookings', label: 'Bookings', icon: Calendar, permission: 'bookings' },
   { href: '/admin/rooms', label: 'Rooms', icon: BedDouble, permission: 'rooms' },
   { href: '/admin/guests', label: 'Guests', icon: Users, permission: 'guests' },
+  { href: '/admin/finance', label: 'Finance', icon: Wallet, permission: 'dashboard' },
+  { href: '/admin/pos', label: 'Restaurant POS', icon: UtensilsCrossed, permission: 'dashboard' },
+  { href: '/admin/events', label: 'Events', icon: CalendarCheck, permission: 'dashboard' },
+  { href: '/admin/inventory', label: 'Inventory', icon: Package, permission: 'dashboard' },
+  { href: '/admin/housekeeping', label: 'Housekeeping', icon: Sparkles, permission: 'dashboard' },
+  { href: '/admin/reports', label: 'Reports', icon: BarChart3, permission: 'dashboard' },
   { href: '/admin/services', label: 'Services', icon: ConciergeBell, permission: 'services' },
   { href: '/admin/staff', label: 'Staff', icon: UserCog, permission: 'staff' },
   { href: '/admin/departments', label: 'Departments', icon: Building2, permission: 'departments' },

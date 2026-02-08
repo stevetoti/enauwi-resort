@@ -13,6 +13,7 @@
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.93.3",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.29.2",
     "lucide-react": "^0.563.0",
     "next": "14.2.35",
@@ -21,6 +22,7 @@
     "playwright": "^1.58.1",
     "react": "^18",
     "react-dom": "^18",
+    "recharts": "^3.7.0",
     "resend": "^6.9.1",
     "swr": "^2.4.0",
     "tailwind-merge": "^3.4.0"
