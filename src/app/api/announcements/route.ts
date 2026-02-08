@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     // If staffId is provided, add read status
     if (staffId && announcements) {
-      const { data: reads } = await supabaseAdminAdmin
+      const { data: reads } = await supabaseAdmin
         .from('announcement_reads')
         .select('announcement_id')
         .eq('staff_id', staffId)
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
     }
 
-    const { data, error } = await supabaseAdminAdmin
+    const { data, error } = await supabaseAdmin
       .from('announcements')
       .insert({
         title,

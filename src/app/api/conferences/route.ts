@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('conference_bookings')
       .select(`
         *,

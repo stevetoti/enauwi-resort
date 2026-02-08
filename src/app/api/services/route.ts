@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const category = searchParams.get('category')
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('services')
       .select('*')
       .eq('available', true)

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 
-const VANUCONNECT_SMS_API = 'https://zqxcrvjsnunjuelmrydm.supabaseAdmin.co/functions/v1/send-sms-api'
+const VANUCONNECT_SMS_API = 'https://zqxcrvjsnunjuelmrydm.supabase.co/functions/v1/send-sms-api'
 
 // GET message logs
 export async function GET(request: NextRequest) {
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get('endDate')
     const limit = parseInt(searchParams.get('limit') || '100')
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('message_logs')
       .select(`
         *,
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Log the message
-        await supabase
+        await supabaseAdmin
           .from('message_logs')
           .insert({
             recipient_id: guest_id,
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
         results.push({ recipient, success: false, error: errorMessage })
 
         // Log failed attempt
-        await supabase
+        await supabaseAdmin
           .from('message_logs')
           .insert({
             recipient_id: guest_id,

@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status')
     const roleId = searchParams.get('roleId')
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('staff')
       .select(`
         *,

@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const channel = searchParams.get('channel')
     const category = searchParams.get('category')
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('message_templates')
       .select('*')
       .eq('is_active', true)

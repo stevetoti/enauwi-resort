@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     // Check if expired
     if (new Date(invitation.expires_at) < new Date()) {
       // Mark as expired
-      await supabase
+      await supabaseAdmin
         .from('staff_invitations')
         .update({ status: 'expired' })
         .eq('id', invitation.id)

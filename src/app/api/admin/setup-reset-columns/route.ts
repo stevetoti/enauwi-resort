@@ -14,7 +14,7 @@ export async function POST() {
     const supabase = createClient(supabaseUrl, serviceRoleKey)
 
     // Add reset_token and reset_token_expires columns if they don't exist
-    const { error } = await supabaseAdmin.rpc('exec_sql', {
+    const { error } = await supabase.rpc('exec_sql', {
       sql: `
         DO $$ 
         BEGIN

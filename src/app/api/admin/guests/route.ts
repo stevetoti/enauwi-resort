@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search')
     const limit = parseInt(searchParams.get('limit') || '100')
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('guests')
       .select('*')
       .order('created_at', { ascending: false })
