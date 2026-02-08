@@ -22,7 +22,6 @@ import {
   X,
   Upload,
   User,
-  MapPin,
   Shield,
   Briefcase,
   CreditCard,
@@ -1176,7 +1175,7 @@ function EditStaffModal({
                   <label className="block text-sm font-medium text-gray-700 mb-1">Employment Type</label>
                   <select
                     value={formData.employment_type}
-                    onChange={(e) => setFormData({ ...formData, employment_type: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, employment_type: e.target.value as 'full-time' | 'part-time' | 'contract' | 'casual' })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                   >
                     <option value="full-time">Full-time</option>
@@ -1228,7 +1227,7 @@ function EditStaffModal({
                     <label className="block text-sm font-medium text-gray-700 mb-1">Frequency</label>
                     <select
                       value={formData.salary_frequency}
-                      onChange={(e) => setFormData({ ...formData, salary_frequency: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, salary_frequency: e.target.value as 'hourly' | 'weekly' | 'fortnightly' | 'monthly' })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     >
                       <option value="hourly">Hourly</option>

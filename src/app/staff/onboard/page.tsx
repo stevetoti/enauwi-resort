@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import {
   User,
-  Mail,
   Phone,
   Calendar,
   MapPin,
@@ -15,7 +14,6 @@ import {
   Upload,
   Eye,
   EyeOff,
-  Building,
   Globe,
   ChevronRight,
   ChevronLeft,
