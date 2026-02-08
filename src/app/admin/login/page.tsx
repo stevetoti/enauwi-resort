@@ -35,8 +35,20 @@ export default function AdminLoginPage() {
       // Store staff info in localStorage for session management
       localStorage.setItem('staff', JSON.stringify(data.staff))
       
-      // Redirect to admin dashboard
-      router.push('/admin')
+      // Check if user is admin or regular staff
+      const permissions = data.staff.permissions || {}
+      const isAdmin = permissions.staff?.view || 
+                     permissions.roles?.view || 
+                     permissions.bookings?.view ||
+                     permissions.rooms?.edit ||
+                     permissions.guests?.edit
+      
+      // Redirect based on role
+      if (isAdmin) {
+        router.push('/admin')
+      } else {
+        router.push('/staff/portal')
+      }
     } catch (error) {
       console.error('Login error:', error)
       setError('An unexpected error occurred')

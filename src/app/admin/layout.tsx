@@ -89,10 +89,25 @@ export default function AdminLayout({
           return
         }
 
+        const permissions = staff.permissions || {}
+        
+        // Check if user is an admin (has access to admin-level features)
+        const isAdmin = permissions.staff?.view || 
+                       permissions.roles?.view || 
+                       permissions.bookings?.view ||
+                       permissions.rooms?.edit ||
+                       permissions.guests?.edit
+        
+        // If not admin, redirect to staff portal
+        if (!isAdmin) {
+          router.push('/staff/portal')
+          return
+        }
+
         setUser({ 
           email: staff.email, 
           name: staff.name,
-          permissions: staff.permissions || {}
+          permissions: permissions
         })
       } catch {
         localStorage.removeItem('staff')
