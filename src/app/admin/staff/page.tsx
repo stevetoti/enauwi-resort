@@ -23,10 +23,23 @@ interface StaffWithAttendance extends Staff {
   department_details?: Department
 }
 
+interface PendingInvitation {
+  id: string
+  name: string
+  email: string
+  role_id: string
+  department: string
+  status: string
+  created_at: string
+  expires_at: string
+  role?: { name: string }
+}
+
 export default function StaffManagementPage() {
   const [staff, setStaff] = useState<StaffWithAttendance[]>([])
   const [roles, setRoles] = useState<Role[]>([])
   const [departments, setDepartments] = useState<Department[]>([])
+  const [pendingInvitations, setPendingInvitations] = useState<PendingInvitation[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
@@ -86,6 +99,17 @@ export default function StaffManagementPage() {
         }
       } catch (error) {
         console.error('Error fetching departments:', error)
+      }
+
+      // Fetch pending invitations
+      try {
+        const invitesRes = await fetch('/api/staff/invitations')
+        const invitesData = await invitesRes.json()
+        if (Array.isArray(invitesData)) {
+          setPendingInvitations(invitesData.filter((i: PendingInvitation) => i.status === 'pending'))
+        }
+      } catch (error) {
+        console.error('Error fetching invitations:', error)
       }
     } finally {
       setLoading(false)
@@ -185,6 +209,38 @@ export default function StaffManagementPage() {
           <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
         </div>
       </div>
+
+      {/* Pending Invitations */}
+      {pendingInvitations.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <h2 className="font-semibold text-amber-800 mb-3 flex items-center gap-2">
+            <Mail className="h-4 w-4" />
+            Pending Invitations ({pendingInvitations.length})
+          </h2>
+          <div className="space-y-2">
+            {pendingInvitations.map((invite) => (
+              <div key={invite.id} className="flex items-center justify-between bg-white rounded-lg p-3 border border-amber-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold">
+                    {invite.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{invite.name}</p>
+                    <p className="text-sm text-gray-500">{invite.email}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-amber-600">{invite.role?.name || 'Staff'}</p>
+                  <p className="text-xs text-gray-400">{invite.department}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-amber-600 mt-3">
+            Invited staff will appear here until they complete onboarding
+          </p>
+        </div>
+      )}
 
       {/* Staff Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
