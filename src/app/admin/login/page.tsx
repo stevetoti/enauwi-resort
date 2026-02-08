@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Shield, Mail, Lock, Eye, EyeOff } from 'lucide-react'
-import { createClientSupabase } from '@/lib/supabase'
+import Image from 'next/image'
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('')
@@ -12,8 +12,6 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
-  
-  const supabase = createClientSupabase()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -21,40 +19,22 @@ export default function AdminLoginPage() {
     setError('')
 
     try {
-      // Sign in with Supabase Auth
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch('/api/auth/staff-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       })
 
-      if (signInError) {
-        if (signInError.message.includes('Invalid login credentials')) {
-          setError('Invalid email or password')
-        } else {
-          setError(signInError.message)
-        }
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Login failed')
         return
       }
 
-      if (!data.user) {
-        setError('Login failed')
-        return
-      }
-
-      // Verify user has staff access
-      const { data: staff, error: staffError } = await supabase
-        .from('staff')
-        .select('role')
-        .eq('email', email)
-        .single()
-
-      if (staffError || !staff) {
-        // Sign out if not a staff member
-        await supabase.auth.signOut()
-        setError('Access denied. This account is not authorized for admin access.')
-        return
-      }
-
+      // Store staff info in localStorage for session management
+      localStorage.setItem('staff', JSON.stringify(data.staff))
+      
       // Redirect to admin dashboard
       router.push('/admin')
     } catch (error) {
@@ -70,8 +50,14 @@ export default function AdminLoginPage() {
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 bg-teal-600 rounded-full flex items-center justify-center">
-            <Shield className="h-8 w-8 text-white" />
+          <div className="mx-auto h-20 w-20 rounded-full overflow-hidden bg-white shadow-md">
+            <Image
+              src="/logo-enauwi.png"
+              alt="E'Nauwi Beach Resort"
+              width={80}
+              height={80}
+              className="object-cover"
+            />
           </div>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             Admin Portal
