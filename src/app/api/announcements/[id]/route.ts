@@ -39,15 +39,18 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await request.json()
-    const { title, content, pinned, priority, target_roles, expires_at } = body
+    const { title, content, pinned, priority, target_roles, expires_at, hero_image, attachments, links } = body
 
-    const updateData: Record<string, unknown> = {}
+    const updateData: Record<string, unknown> = { updated_at: new Date().toISOString() }
     if (title !== undefined) updateData.title = title
     if (content !== undefined) updateData.content = content
     if (pinned !== undefined) updateData.pinned = pinned
     if (priority !== undefined) updateData.priority = priority
     if (target_roles !== undefined) updateData.target_roles = target_roles
     if (expires_at !== undefined) updateData.expires_at = expires_at
+    if (hero_image !== undefined) updateData.hero_image = hero_image
+    if (attachments !== undefined) updateData.attachments = attachments
+    if (links !== undefined) updateData.links = links
 
     const { data, error } = await supabaseAdmin
       .from('announcements')

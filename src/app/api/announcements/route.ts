@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { title, content, author_id, pinned, priority, target_roles, expires_at } = body
+    const { title, content, author_id, pinned, priority, target_roles, expires_at, hero_image, attachments, links } = body
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
@@ -70,6 +70,9 @@ export async function POST(request: NextRequest) {
         priority: priority || 'normal',
         target_roles: target_roles || [],
         expires_at,
+        hero_image: hero_image || null,
+        attachments: attachments || [],
+        links: links || [],
       })
       .select(`
         *,

@@ -22,14 +22,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      return NextResponse.json({ error: 'Only image files are allowed' }, { status: 400 })
+    // Validate file type - allow images, documents, and videos
+    const allowedTypes = [
+      'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+      'application/pdf',
+      'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'video/mp4', 'video/webm', 'video/quicktime'
+    ]
+    
+    if (!allowedTypes.includes(file.type) && !file.type.startsWith('image/')) {
+      return NextResponse.json({ error: 'File type not allowed. Supported: images, PDF, Word, Excel, PowerPoint, videos' }, { status: 400 })
     }
 
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: 'File size must be less than 5MB' }, { status: 400 })
+    // Validate file size - 50MB for videos, 10MB for others
+    const maxSize = file.type.startsWith('video/') ? 50 * 1024 * 1024 : 10 * 1024 * 1024
+    if (file.size > maxSize) {
+      return NextResponse.json({ error: `File size must be less than ${file.type.startsWith('video/') ? '50MB' : '10MB'}` }, { status: 400 })
     }
 
     // Generate unique filename
