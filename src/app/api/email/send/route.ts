@@ -169,6 +169,43 @@ function staffInvitationHTML(data: { name: string; roleName: string; department:
 </html>`
 }
 
+function passwordResetHTML(data: { name: string; resetUrl: string }) {
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f5f0e8;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+<div style="max-width:600px;margin:0 auto;background:#ffffff;">
+  <div style="background:linear-gradient(135deg,#0A4B78,#0D5A91);padding:40px 30px;text-align:center;">
+    <h1 style="color:#D4A853;font-size:28px;margin:0;font-family:Georgia,serif;">E'Nauwi Beach Resort</h1>
+    <p style="color:#ffffff;opacity:0.8;margin:8px 0 0;font-size:13px;letter-spacing:2px;text-transform:uppercase;">Password Reset</p>
+  </div>
+  <div style="padding:30px;">
+    <h2 style="color:#0A4B78;font-size:22px;margin:0 0 8px;">Hello, ${data.name}!</h2>
+    <p style="color:#666;line-height:1.6;">We received a request to reset your password for your E'Nauwi Beach Resort staff account.</p>
+    
+    <p style="color:#666;line-height:1.6;">Click the button below to set a new password:</p>
+    
+    <div style="margin:30px 0;text-align:center;">
+      <a href="${data.resetUrl}" style="display:inline-block;background:#D4A853;color:#0A4B78;padding:16px 40px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;">Reset Password</a>
+    </div>
+    
+    <p style="color:#888;font-size:13px;">This link expires in 1 hour. If you didn't request a password reset, please ignore this email.</p>
+    
+    <p style="color:#888;font-size:13px;margin-top:20px;">Or copy and paste this link into your browser:</p>
+    <p style="color:#0A4B78;font-size:12px;word-break:break-all;background:#f8fafc;padding:12px;border-radius:4px;">${data.resetUrl}</p>
+    
+    <p style="color:#D4A853;font-family:Georgia,serif;font-size:16px;margin-top:24px;">— The E'Nauwi Team</p>
+  </div>
+  <div style="background:#083D63;padding:24px 30px;text-align:center;">
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South West Bay, Malekula Island, Vanuatu</p>
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:4px 0 0;">📞 +678 22170 · ✉ info@enauwiresort.vu</p>
+  </div>
+</div>
+</body>
+</html>`
+}
+
 function conciergeEmailHTML(data: { guestName: string; subject: string; body: string }) {
   return `
 <!DOCTYPE html>
@@ -313,6 +350,17 @@ export async function POST(request: NextRequest) {
           to: data.email,
           subject: `You're Invited to Join E'Nauwi Beach Resort Team`,
           html: staffInvitationHTML(data),
+        })
+        results.push({ id: result.data?.id, error: result.error?.message })
+        break
+      }
+
+      case 'password_reset': {
+        const result = await resend.emails.send({
+          from: FROM_NOREPLY,
+          to: data.email,
+          subject: `Reset Your Password | E'Nauwi Beach Resort`,
+          html: passwordResetHTML(data),
         })
         results.push({ id: result.data?.id, error: result.error?.message })
         break
