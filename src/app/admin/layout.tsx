@@ -21,8 +21,6 @@ import {
   Megaphone,
   Settings,
 } from 'lucide-react'
-import { createClientSupabase } from '@/lib/supabase'
-
 const sidebarLinks = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/bookings', label: 'Bookings', icon: Calendar },
@@ -48,8 +46,6 @@ export default function AdminLayout({
   const router = useRouter()
   const pathname = usePathname()
 
-  const supabase = createClientSupabase()
-
   // Skip auth check for login, forgot-password, and reset-password pages
   const isAuthPage = pathname === '/admin/login' || 
                      pathname === '/admin/forgot-password' || 
@@ -61,30 +57,27 @@ export default function AdminLayout({
       return
     }
 
-    const checkAuth = async () => {
+    const checkAuth = () => {
       try {
-        const { data: { user: authUser } } = await supabase.auth.getUser()
-
-        if (!authUser) {
+        // Check localStorage for staff session
+        const staffData = localStorage.getItem('staff')
+        
+        if (!staffData) {
           router.push('/admin/login')
           return
         }
 
-        // Check staff table
-        const { data: staff } = await supabase
-          .from('staff')
-          .select('name, email, role')
-          .eq('email', authUser.email)
-          .single()
-
-        if (!staff) {
-          await supabase.auth.signOut()
+        const staff = JSON.parse(staffData)
+        
+        if (!staff || !staff.email) {
+          localStorage.removeItem('staff')
           router.push('/admin/login')
           return
         }
 
         setUser({ email: staff.email, name: staff.name })
       } catch {
+        localStorage.removeItem('staff')
         router.push('/admin/login')
       } finally {
         setLoading(false)
@@ -92,10 +85,9 @@ export default function AdminLayout({
     }
 
     checkAuth()
-  }, [isAuthPage, router, supabase])
+  }, [isAuthPage, router])
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
+  const handleLogout = () => {
     localStorage.removeItem('staff')
     router.push('/admin/login')
   }
