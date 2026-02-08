@@ -800,62 +800,110 @@ export default function StaffPortalPage() {
         </main>
       </div>
 
-      {/* Announcement Modal */}
+      {/* Modern Announcement Modal */}
       {selectedAnnouncement && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            {selectedAnnouncement.hero_image && (
-              <div className="relative h-56">
-                <Image src={selectedAnnouncement.hero_image} alt={selectedAnnouncement.title} fill className="object-cover rounded-t-2xl" />
-                <button onClick={() => setSelectedAnnouncement(null)} className="absolute top-4 right-4 p-2 bg-black/50 text-white rounded-full hover:bg-black/70">
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-            )}
-            <div className="p-6">
-              {!selectedAnnouncement.hero_image && (
-                <div className="flex justify-end mb-4">
-                  <button onClick={() => setSelectedAnnouncement(null)} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full">
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedAnnouncement(null)}>
+          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+            {/* Header with gradient */}
+            <div className={`relative ${selectedAnnouncement.hero_image ? 'h-64' : 'h-32'}`}>
+              {selectedAnnouncement.hero_image ? (
+                <Image src={selectedAnnouncement.hero_image} alt={selectedAnnouncement.title} fill className="object-cover" />
+              ) : (
+                <div className={`absolute inset-0 ${selectedAnnouncement.priority === 'urgent' ? 'bg-gradient-to-br from-red-500 via-red-600 to-orange-500' : selectedAnnouncement.pinned ? 'bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-600' : 'bg-gradient-to-br from-teal-500 via-teal-600 to-cyan-600'}`} />
               )}
-              <div className="flex items-center gap-2 flex-wrap mb-3">
-                {selectedAnnouncement.pinned && <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full">Pinned</span>}
-                {selectedAnnouncement.priority === 'urgent' && <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full">Urgent</span>}
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900">{selectedAnnouncement.title}</h2>
-              <div className="flex items-center gap-3 mt-2 text-sm text-gray-500">
-                <span>{formatDate(selectedAnnouncement.created_at)}</span>
-                {selectedAnnouncement.author && <span>by {selectedAnnouncement.author.name}</span>}
-              </div>
-              <div className="mt-6 text-gray-700 whitespace-pre-wrap leading-relaxed">{selectedAnnouncement.content}</div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
               
+              {/* Close button */}
+              <button onClick={() => setSelectedAnnouncement(null)} className="absolute top-4 right-4 p-2.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-full transition-all hover:scale-110">
+                <X className="h-5 w-5" />
+              </button>
+              
+              {/* Badges */}
+              <div className="absolute top-4 left-4 flex items-center gap-2">
+                {selectedAnnouncement.pinned && (
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
+                    <Pin className="h-3.5 w-3.5" /> Pinned
+                  </span>
+                )}
+                {selectedAnnouncement.priority === 'urgent' && (
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/80 backdrop-blur-sm text-white text-xs font-medium rounded-full animate-pulse">
+                    🔥 Urgent
+                  </span>
+                )}
+              </div>
+              
+              {/* Title overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <h2 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">{selectedAnnouncement.title}</h2>
+                <div className="flex items-center gap-3 mt-2 text-white/80 text-sm">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="h-4 w-4" />
+                    {new Date(selectedAnnouncement.created_at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
+                  {selectedAnnouncement.author && (
+                    <span className="flex items-center gap-1.5">
+                      <Users className="h-4 w-4" />
+                      {selectedAnnouncement.author.name}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {/* Content */}
+            <div className="p-6 overflow-y-auto max-h-[50vh]">
+              <div className="prose prose-gray max-w-none">
+                <p className="text-gray-700 whitespace-pre-wrap leading-relaxed text-base">{selectedAnnouncement.content}</p>
+              </div>
+              
+              {/* Attachments */}
               {selectedAnnouncement.attachments && selectedAnnouncement.attachments.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-3">Attachments</h4>
-                  <div className="flex flex-wrap gap-2">
+                <div className="mt-8">
+                  <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-4">
+                    <FileText className="h-4 w-4 text-teal-600" />
+                    Attachments ({selectedAnnouncement.attachments.length})
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {selectedAnnouncement.attachments.map((att, idx) => (
-                      <a key={idx} href={att.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700">
-                        <FileText className="h-4 w-4" /> {att.name}
+                      <a key={idx} href={att.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors group">
+                        <div className="p-2 bg-teal-100 rounded-lg group-hover:bg-teal-200 transition-colors">
+                          <FileText className="h-5 w-5 text-teal-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-900 truncate">{att.name}</p>
+                          <p className="text-xs text-gray-500">Click to view</p>
+                        </div>
+                        <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-teal-600" />
                       </a>
                     ))}
                   </div>
                 </div>
               )}
 
+              {/* Links */}
               {selectedAnnouncement.links && selectedAnnouncement.links.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-3">Links</h4>
+                <div className="mt-6">
+                  <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-4">
+                    <ExternalLink className="h-4 w-4 text-blue-600" />
+                    Related Links ({selectedAnnouncement.links.length})
+                  </h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedAnnouncement.links.map((link, idx) => (
-                      <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg text-sm text-blue-700">
-                        <ExternalLink className="h-4 w-4" /> {link.title}
+                      <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl text-sm font-medium transition-all hover:scale-105">
+                        <ExternalLink className="h-4 w-4" />
+                        {link.title}
                       </a>
                     ))}
                   </div>
                 </div>
               )}
+            </div>
+            
+            {/* Footer */}
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
+              <button onClick={() => setSelectedAnnouncement(null)} className="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition-colors">
+                Close
+              </button>
             </div>
           </div>
         </div>

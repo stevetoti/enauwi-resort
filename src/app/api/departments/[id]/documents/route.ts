@@ -33,10 +33,15 @@ export async function POST(
   try {
     const { id } = await params
     const body = await request.json()
-    const { name, description, url, file_type, file_size, category, uploaded_by } = body
+    const { name, description, url, file_type, file_size, category, uploaded_by, hero_image, attachments, links } = body
 
-    if (!name || !url) {
-      return NextResponse.json({ error: 'Name and URL are required' }, { status: 400 })
+    if (!name) {
+      return NextResponse.json({ error: 'Name is required' }, { status: 400 })
+    }
+
+    // URL is optional if there are attachments
+    if (!url && (!attachments || attachments.length === 0)) {
+      return NextResponse.json({ error: 'Either URL or attachments are required' }, { status: 400 })
     }
 
     const { data, error } = await supabaseAdmin
@@ -45,11 +50,14 @@ export async function POST(
         department_id: id,
         name,
         description,
-        url,
-        file_type: file_type || 'link',
+        url: url || '',
+        file_type: file_type || 'document',
         file_size,
         category: category || 'General',
-        uploaded_by
+        uploaded_by,
+        hero_image,
+        attachments: attachments || [],
+        links: links || []
       })
       .select('*, uploader:staff(id, name)')
       .single()
