@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     // Find staff member by email
     const { data: staff, error: staffError } = await supabase
       .from('staff')
-      .select('id, email, name, role, role_id, status, password_hash, profile_photo')
+      .select('id, email, name, role, role_id, status, password_hash, profile_photo, department, department_id, position, phone')
       .eq('email', email.toLowerCase())
       .single()
 
@@ -68,6 +68,10 @@ export async function POST(request: NextRequest) {
         role: staff.role,
         role_id: staff.role_id,
         profile_photo: staff.profile_photo,
+        department: staff.department,
+        department_id: staff.department_id,
+        position: staff.position,
+        phone: staff.phone,
         permissions: permissions,
       }
     })
