@@ -125,9 +125,20 @@ export interface Staff {
   profile_photo?: string
   phone?: string
   date_of_birth?: string
+  gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say'
+  nationality?: string
   address?: string
   emergency_contact_name?: string
   emergency_contact_phone?: string
+  date_employed?: string
+  employment_type?: 'full-time' | 'part-time' | 'contract' | 'casual'
+  salary?: number
+  salary_frequency?: 'hourly' | 'weekly' | 'fortnightly' | 'monthly'
+  bank_name?: string
+  bank_account_number?: string
+  tax_id?: string
+  contract_end_date?: string
+  notes?: string
   status: 'active' | 'inactive' | 'pending'
   invited_at?: string
   invited_by?: string
@@ -136,6 +147,7 @@ export interface Staff {
   created_at: string
   updated_at: string
   role_details?: Role
+  department_details?: Department
 }
 
 export interface StaffAttendance {

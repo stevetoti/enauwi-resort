@@ -8,6 +8,8 @@ export async function POST(request: NextRequest) {
       token,
       phone,
       date_of_birth,
+      gender,
+      nationality,
       address,
       emergency_contact_name,
       emergency_contact_phone,
@@ -64,12 +66,16 @@ export async function POST(request: NextRequest) {
         name: invitation.name,
         role_id: invitation.role_id,
         department: invitation.department,
-        phone,
+        phone: phone || null,
         date_of_birth: date_of_birth || null,
+        gender: gender || null,
+        nationality: nationality || null,
         address: address || null,
         emergency_contact_name: emergency_contact_name || null,
         emergency_contact_phone: emergency_contact_phone || null,
         profile_photo: profile_photo || null,
+        date_employed: new Date().toISOString().split('T')[0], // Set date employed to today
+        employment_type: 'full-time', // Default employment type
         status: 'active',
         role: 'staff', // default legacy role
         first_login: false,
