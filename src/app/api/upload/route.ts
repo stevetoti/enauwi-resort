@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
+// Handle OPTIONS for CORS preflight
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  })
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Use service role key for storage operations (has full access)
@@ -59,7 +71,7 @@ export async function POST(request: NextRequest) {
     if (!bucketExists) {
       const { error: createError } = await supabaseAdmin.storage.createBucket(bucketName, {
         public: true,
-        fileSizeLimit: 5242880, // 5MB
+        fileSizeLimit: 52428800, // 50MB
       })
       if (createError && !createError.message.includes('already exists')) {
         console.error('Error creating bucket:', createError)
