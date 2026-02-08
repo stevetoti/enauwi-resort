@@ -39,33 +39,54 @@ export default function StaffManagementPage() {
     try {
       const today = new Date().toISOString().split('T')[0]
 
-      // Fetch staff
-      const staffRes = await fetch('/api/staff')
-      const staffData = await staffRes.json()
+      // Fetch staff (handle errors gracefully)
+      try {
+        const staffRes = await fetch('/api/staff')
+        const staffData = await staffRes.json()
+        
+        if (Array.isArray(staffData)) {
+          // Fetch today's attendance
+          try {
+            const attendanceRes = await fetch(`/api/attendance?date=${today}`)
+            const attendanceData = await attendanceRes.json()
+            
+            // Merge attendance with staff
+            const staffWithAttendance = staffData.map((s: Staff) => ({
+              ...s,
+              todayAttendance: Array.isArray(attendanceData) 
+                ? attendanceData.find((a: StaffAttendance) => a.staff_id === s.id)
+                : undefined,
+            }))
+            setStaff(staffWithAttendance)
+          } catch {
+            setStaff(staffData)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching staff:', error)
+      }
 
-      // Fetch today's attendance
-      const attendanceRes = await fetch(`/api/attendance?date=${today}`)
-      const attendanceData = await attendanceRes.json()
+      // Fetch roles (independent of staff)
+      try {
+        const rolesRes = await fetch('/api/roles')
+        const rolesData = await rolesRes.json()
+        if (Array.isArray(rolesData)) {
+          setRoles(rolesData)
+        }
+      } catch (error) {
+        console.error('Error fetching roles:', error)
+      }
 
-      // Merge attendance with staff
-      const staffWithAttendance = staffData.map((s: Staff) => ({
-        ...s,
-        todayAttendance: attendanceData.find((a: StaffAttendance) => a.staff_id === s.id),
-      }))
-
-      setStaff(staffWithAttendance)
-
-      // Fetch roles
-      const rolesRes = await fetch('/api/roles')
-      const rolesData = await rolesRes.json()
-      setRoles(rolesData)
-
-      // Fetch departments
-      const deptRes = await fetch('/api/departments')
-      const deptData = await deptRes.json()
-      setDepartments(deptData)
-    } catch (error) {
-      console.error('Error fetching data:', error)
+      // Fetch departments (independent of staff)
+      try {
+        const deptRes = await fetch('/api/departments')
+        const deptData = await deptRes.json()
+        if (Array.isArray(deptData)) {
+          setDepartments(deptData)
+        }
+      } catch (error) {
+        console.error('Error fetching departments:', error)
+      }
     } finally {
       setLoading(false)
     }
