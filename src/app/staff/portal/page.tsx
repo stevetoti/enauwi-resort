@@ -32,6 +32,7 @@ import {
   Play,
   Star,
   Globe,
+  MessageCircle,
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 
@@ -342,6 +343,7 @@ export default function StaffPortalPage() {
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'department', label: 'My Department', icon: Building2 },
     { id: 'announcements', label: 'Announcements', icon: Megaphone, badge: companyAnnouncements.filter(a => !a.is_read).length },
+    { id: 'chat', label: 'Team Chat', icon: MessageCircle, href: '/staff/chat' },
     { id: 'videos', label: 'Videos', icon: Video, badge: videos.filter(v => !v.is_watched).length },
     { id: 'attendance', label: 'Attendance', icon: History },
     { id: 'settings', label: 'Settings', icon: Settings },
@@ -379,21 +381,33 @@ export default function StaffPortalPage() {
         {/* Navigation */}
         <nav className="p-3 space-y-1">
           {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => { setActiveTab(item.id as typeof activeTab); setSidebarOpen(false) }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                activeTab === item.id ? 'bg-teal-800 text-white' : 'text-teal-100 hover:bg-teal-600'
-              }`}
-            >
-              <item.icon className="h-5 w-5" />
-              <span className="flex-1 text-left">{item.label}</span>
-              {item.badge ? (
-                <span className="px-2 py-0.5 text-xs bg-red-500 text-white rounded-full">{item.badge}</span>
-              ) : activeTab === item.id ? (
-                <ChevronRight className="h-4 w-4 text-amber-400" />
-              ) : null}
-            </button>
+            item.href ? (
+              <Link
+                key={item.id}
+                href={item.href}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-teal-100 hover:bg-teal-600"
+              >
+                <item.icon className="h-5 w-5" />
+                <span className="flex-1 text-left">{item.label}</span>
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <button
+                key={item.id}
+                onClick={() => { setActiveTab(item.id as typeof activeTab); setSidebarOpen(false) }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  activeTab === item.id ? 'bg-teal-800 text-white' : 'text-teal-100 hover:bg-teal-600'
+                }`}
+              >
+                <item.icon className="h-5 w-5" />
+                <span className="flex-1 text-left">{item.label}</span>
+                {item.badge ? (
+                  <span className="px-2 py-0.5 text-xs bg-red-500 text-white rounded-full">{item.badge}</span>
+                ) : activeTab === item.id ? (
+                  <ChevronRight className="h-4 w-4 text-amber-400" />
+                ) : null}
+              </button>
+            )
           ))}
         </nav>
 
