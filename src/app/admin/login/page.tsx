@@ -139,11 +139,13 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <div className="text-xs text-gray-500 space-y-1">
-              <p>Default super admin account:</p>
-              <p className="font-mono">admin@enauwi.com / Admin2026!</p>
-            </div>
+          <div className="mt-4 text-center">
+            <a
+              href="/admin/forgot-password"
+              className="text-sm text-teal-600 hover:text-teal-800"
+            >
+              Forgot your password?
+            </a>
           </div>
         </div>
 
@@ -151,7 +153,7 @@ export default function AdminLoginPage() {
         <div className="text-center">
           <a
             href="/"
-            className="text-sm text-teal-600 hover:text-blue-800 underline"
+            className="text-sm text-teal-600 hover:text-teal-800 underline"
           >
             ← Back to main website
           </a>
