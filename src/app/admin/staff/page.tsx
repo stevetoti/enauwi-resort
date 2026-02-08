@@ -26,6 +26,7 @@ import {
   Briefcase,
   CreditCard,
   AlertCircle,
+  RefreshCw,
 } from 'lucide-react'
 import { Staff, Role, StaffAttendance, Department } from '@/types'
 
@@ -59,6 +60,7 @@ export default function StaffManagementPage() {
   const [showViewModal, setShowViewModal] = useState(false)
   const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null)
   const [actionMenuId, setActionMenuId] = useState<string | null>(null)
+  const [resendingId, setResendingId] = useState<string | null>(null)
 
   const fetchData = useCallback(async () => {
     try {
@@ -161,6 +163,30 @@ export default function StaffManagementPage() {
     setActionMenuId(null)
   }
 
+  const handleResendInvitation = async (invitationId: string) => {
+    setResendingId(invitationId)
+    try {
+      const res = await fetch(`/api/staff/invitations/${invitationId}/resend`, {
+        method: 'POST',
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to resend invitation')
+      }
+
+      // Refresh data to show updated expiry
+      fetchData()
+      alert('Invitation resent successfully!')
+    } catch (error) {
+      console.error('Error resending invitation:', error)
+      alert(error instanceof Error ? error.message : 'Failed to resend invitation')
+    } finally {
+      setResendingId(null)
+    }
+  }
+
   const isOnline = (attendance?: StaffAttendance) => {
     if (!attendance?.clock_in) return false
     if (attendance?.clock_out) return false
@@ -229,23 +255,40 @@ export default function StaffManagementPage() {
             Pending Invitations ({pendingInvitations.length})
           </h2>
           <div className="space-y-2">
-            {pendingInvitations.map((invite) => (
-              <div key={invite.id} className="flex items-center justify-between bg-white rounded-lg p-3 border border-amber-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold">
-                    {invite.name.charAt(0).toUpperCase()}
+            {pendingInvitations.map((invite) => {
+              const isExpired = new Date(invite.expires_at) < new Date()
+              return (
+                <div key={invite.id} className="flex items-center justify-between bg-white rounded-lg p-3 border border-amber-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold">
+                      {invite.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{invite.name}</p>
+                      <p className="text-sm text-gray-500">{invite.email}</p>
+                      {isExpired && (
+                        <p className="text-xs text-red-500 font-medium">Invitation expired</p>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-900">{invite.name}</p>
-                    <p className="text-sm text-gray-500">{invite.email}</p>
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-amber-600">{invite.role?.name || 'Staff'}</p>
+                      <p className="text-xs text-gray-400">{invite.department}</p>
+                    </div>
+                    <button
+                      onClick={() => handleResendInvitation(invite.id)}
+                      disabled={resendingId === invite.id}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Resend invitation"
+                    >
+                      <RefreshCw className={`h-4 w-4 ${resendingId === invite.id ? 'animate-spin' : ''}`} />
+                      {resendingId === invite.id ? 'Sending...' : 'Resend'}
+                    </button>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-amber-600">{invite.role?.name || 'Staff'}</p>
-                  <p className="text-xs text-gray-400">{invite.department}</p>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
           <p className="text-xs text-amber-600 mt-3">
             Invited staff will appear here until they complete onboarding
