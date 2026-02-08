@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 
 export async function POST(request: NextRequest) {
   try {
+    // Use service role key for storage operations (has full access)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    
+    if (!supabaseUrl || !serviceRoleKey) {
+      console.error('Supabase credentials not configured')
+      return NextResponse.json({ error: 'Storage service not configured' }, { status: 500 })
+    }
+
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
+
     const formData = await request.formData()
     const file = formData.get('file') as File
     const bucket = formData.get('bucket') as string || 'uploads'
@@ -30,22 +41,41 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
+    // Ensure bucket exists (create if not)
+    const bucketName = 'enauwi-assets'
+    const { data: buckets } = await supabaseAdmin.storage.listBuckets()
+    const bucketExists = buckets?.some(b => b.name === bucketName)
+    
+    if (!bucketExists) {
+      const { error: createError } = await supabaseAdmin.storage.createBucket(bucketName, {
+        public: true,
+        fileSizeLimit: 5242880, // 5MB
+      })
+      if (createError && !createError.message.includes('already exists')) {
+        console.error('Error creating bucket:', createError)
+      }
+    }
+
     // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
-      .from('enauwi-assets')
+    const { data, error } = await supabaseAdmin.storage
+      .from(bucketName)
       .upload(path, buffer, {
         contentType: file.type,
-        upsert: false,
+        upsert: true, // Allow overwrite
       })
 
     if (error) {
       console.error('Supabase upload error:', error)
-      throw error
+      // Return specific error message
+      return NextResponse.json({ 
+        error: error.message || 'Storage upload failed',
+        details: error
+      }, { status: 500 })
     }
 
     // Get public URL
-    const { data: urlData } = supabase.storage
-      .from('enauwi-assets')
+    const { data: urlData } = supabaseAdmin.storage
+      .from(bucketName)
       .getPublicUrl(path)
 
     return NextResponse.json({ 
@@ -55,7 +85,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Upload error:', error)
     return NextResponse.json(
-      { error: 'Failed to upload file' },
+      { error: error instanceof Error ? error.message : 'Failed to upload file' },
       { status: 500 }
     )
   }
