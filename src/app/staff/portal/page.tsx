@@ -310,8 +310,8 @@ export default function StaffPortalPage() {
         <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* Sidebar */}
-      <aside className={`fixed top-0 left-0 z-50 h-full w-64 bg-teal-700 text-white transform transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+      {/* Sidebar - Clean without overlays */}
+      <aside className={`fixed top-0 left-0 z-50 h-full w-64 text-white transform transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`} style={{ backgroundColor: '#0F766E' }}>
         {/* Logo & User */}
         <div className="p-4 border-b border-teal-600">
           <div className="flex items-center gap-3">

@@ -415,6 +415,9 @@ export interface DepartmentAnnouncement {
   content: string
   priority: 'low' | 'normal' | 'high' | 'urgent'
   pinned: boolean
+  hero_image?: string
+  attachments?: { name: string; url: string; type: string }[]
+  links?: { title: string; url: string }[]
   created_by?: string
   expires_at?: string
   created_at: string
@@ -432,6 +435,9 @@ export interface DepartmentDocument {
   file_type?: string
   file_size?: number
   category?: string
+  hero_image?: string
+  attachments?: { name: string; url: string; type: string }[]
+  links?: { title: string; url: string }[]
   uploaded_by?: string
   created_at: string
   updated_at: string
