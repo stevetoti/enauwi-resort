@@ -17,6 +17,7 @@ import {
   ConciergeBell,
   UserCog,
   MessageSquare,
+  MessageCircle,
   Building2,
   Megaphone,
   Settings,
@@ -36,6 +37,7 @@ const sidebarLinks = [
   { href: '/admin/conferences', label: 'Conferences', icon: Settings, permission: 'conferences' },
   { href: '/admin/announcements', label: 'Announcements', icon: Megaphone, permission: 'announcements' },
   { href: '/admin/videos', label: 'Videos', icon: Video, permission: 'announcements' },
+  { href: '/staff/chat', label: 'Team Chat', icon: MessageCircle, permission: 'dashboard' },
 ]
 
 // Check if user has permission to view a module
@@ -48,6 +50,7 @@ function hasPermission(permissions: Record<string, { view?: boolean }>, key: str
 interface StaffUser {
   email: string
   name: string
+  profile_photo?: string
   permissions: Record<string, { view?: boolean; edit?: boolean; create?: boolean; delete?: boolean }>
 }
 
@@ -109,6 +112,7 @@ export default function AdminLayout({
         setUser({ 
           email: staff.email, 
           name: staff.name,
+          profile_photo: staff.profile_photo,
           permissions: permissions
         })
       } catch {
@@ -224,9 +228,19 @@ export default function AdminLayout({
         {/* User info / Logout */}
         <div className="absolute bottom-0 left-0 right-0 px-3 py-4 border-t border-teal-700" style={{ backgroundColor: '#0F766E' }}>
           <div className="flex items-center gap-3 px-3 mb-3">
-            <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-sm font-bold text-white">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
+            {user.profile_photo ? (
+              <Image
+                src={user.profile_photo}
+                alt={user.name}
+                width={32}
+                height={32}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-sm font-bold text-white">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white truncate">{user.name}</p>
               <p className="text-xs text-teal-200 truncate">{user.email}</p>
