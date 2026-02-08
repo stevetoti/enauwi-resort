@@ -21,19 +21,33 @@ import {
   Megaphone,
   Settings,
 } from 'lucide-react'
+// Map sidebar items to their required permission keys
 const sidebarLinks = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/bookings', label: 'Bookings', icon: Calendar },
-  { href: '/admin/rooms', label: 'Rooms', icon: BedDouble },
-  { href: '/admin/guests', label: 'Guests', icon: Users },
-  { href: '/admin/services', label: 'Services', icon: ConciergeBell },
-  { href: '/admin/staff', label: 'Staff', icon: UserCog },
-  { href: '/admin/departments', label: 'Departments', icon: Building2 },
-  { href: '/admin/roles', label: 'Roles', icon: Shield },
-  { href: '/admin/communications', label: 'Communications', icon: MessageSquare },
-  { href: '/admin/conferences', label: 'Conferences', icon: Settings },
-  { href: '/admin/announcements', label: 'Announcements', icon: Megaphone },
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, permission: 'dashboard' },
+  { href: '/admin/bookings', label: 'Bookings', icon: Calendar, permission: 'bookings' },
+  { href: '/admin/rooms', label: 'Rooms', icon: BedDouble, permission: 'rooms' },
+  { href: '/admin/guests', label: 'Guests', icon: Users, permission: 'guests' },
+  { href: '/admin/services', label: 'Services', icon: ConciergeBell, permission: 'services' },
+  { href: '/admin/staff', label: 'Staff', icon: UserCog, permission: 'staff' },
+  { href: '/admin/departments', label: 'Departments', icon: Building2, permission: 'departments' },
+  { href: '/admin/roles', label: 'Roles', icon: Shield, permission: 'roles' },
+  { href: '/admin/communications', label: 'Communications', icon: MessageSquare, permission: 'communications' },
+  { href: '/admin/conferences', label: 'Conferences', icon: Settings, permission: 'conferences' },
+  { href: '/admin/announcements', label: 'Announcements', icon: Megaphone, permission: 'announcements' },
 ]
+
+// Check if user has permission to view a module
+function hasPermission(permissions: Record<string, { view?: boolean }>, key: string): boolean {
+  if (!permissions) return false
+  const perm = permissions[key]
+  return perm?.view === true
+}
+
+interface StaffUser {
+  email: string
+  name: string
+  permissions: Record<string, { view?: boolean; edit?: boolean; create?: boolean; delete?: boolean }>
+}
 
 export default function AdminLayout({
   children,
@@ -42,7 +56,7 @@ export default function AdminLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<{ email: string; name: string } | null>(null)
+  const [user, setUser] = useState<StaffUser | null>(null)
   const router = useRouter()
   const pathname = usePathname()
 
@@ -75,7 +89,11 @@ export default function AdminLayout({
           return
         }
 
-        setUser({ email: staff.email, name: staff.name })
+        setUser({ 
+          email: staff.email, 
+          name: staff.name,
+          permissions: staff.permissions || {}
+        })
       } catch {
         localStorage.removeItem('staff')
         router.push('/admin/login')
@@ -155,33 +173,35 @@ export default function AdminLayout({
           </button>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation - filtered by permissions */}
         <nav className="px-3 py-4 space-y-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-          {sidebarLinks.map((link) => {
-            const isActive =
-              pathname === link.href ||
-              (link.href !== '/admin' && pathname.startsWith(link.href))
-            const Icon = link.icon
+          {sidebarLinks
+            .filter((link) => hasPermission(user.permissions, link.permission))
+            .map((link) => {
+              const isActive =
+                pathname === link.href ||
+                (link.href !== '/admin' && pathname.startsWith(link.href))
+              const Icon = link.icon
 
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-teal-800 text-white'
-                    : 'text-teal-100 hover:bg-teal-700 hover:text-white'
-                }`}
-              >
-                <Icon className="h-5 w-5" />
-                <span>{link.label}</span>
-                {isActive && (
-                  <ChevronRight className="h-4 w-4 ml-auto text-amber-400" />
-                )}
-              </Link>
-            )
-          })}
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-teal-800 text-white'
+                      : 'text-teal-100 hover:bg-teal-700 hover:text-white'
+                  }`}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span>{link.label}</span>
+                  {isActive && (
+                    <ChevronRight className="h-4 w-4 ml-auto text-amber-400" />
+                  )}
+                </Link>
+              )
+            })}
         </nav>
 
         {/* User info / Logout */}

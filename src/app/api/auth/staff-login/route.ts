@@ -44,6 +44,20 @@ export async function POST(request: NextRequest) {
       .update({ last_login: new Date().toISOString() })
       .eq('id', staff.id)
 
+    // Fetch role permissions
+    let permissions = {}
+    if (staff.role_id) {
+      const { data: role } = await supabase
+        .from('roles')
+        .select('name, permissions')
+        .eq('id', staff.role_id)
+        .single()
+      
+      if (role) {
+        permissions = role.permissions || {}
+      }
+    }
+
     // Return staff info (without password)
     return NextResponse.json({
       success: true,
@@ -54,6 +68,7 @@ export async function POST(request: NextRequest) {
         role: staff.role,
         role_id: staff.role_id,
         profile_photo: staff.profile_photo,
+        permissions: permissions,
       }
     })
   } catch (error) {
