@@ -50,11 +50,13 @@ export default function AdminLayout({
 
   const supabase = createClientSupabase()
 
-  // Skip auth check for login page
-  const isLoginPage = pathname === '/admin/login'
+  // Skip auth check for login, forgot-password, and reset-password pages
+  const isAuthPage = pathname === '/admin/login' || 
+                     pathname === '/admin/forgot-password' || 
+                     pathname === '/admin/reset-password'
 
   useEffect(() => {
-    if (isLoginPage) {
+    if (isAuthPage) {
       setLoading(false)
       return
     }
@@ -90,15 +92,16 @@ export default function AdminLayout({
     }
 
     checkAuth()
-  }, [isLoginPage, router, supabase])
+  }, [isAuthPage, router, supabase])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
+    localStorage.removeItem('staff')
     router.push('/admin/login')
   }
 
-  // Login page renders without admin layout
-  if (isLoginPage) {
+  // Auth pages render without admin layout
+  if (isAuthPage) {
     return <>{children}</>
   }
 
