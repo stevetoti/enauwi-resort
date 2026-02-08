@@ -128,6 +128,47 @@ function contactAutoReplyHTML(name: string) {
 </html>`
 }
 
+function staffInvitationHTML(data: { name: string; roleName: string; department: string; inviteUrl: string }) {
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f5f0e8;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+<div style="max-width:600px;margin:0 auto;background:#ffffff;">
+  <div style="background:linear-gradient(135deg,#0A4B78,#0D5A91);padding:40px 30px;text-align:center;">
+    <h1 style="color:#D4A853;font-size:28px;margin:0;font-family:Georgia,serif;">E'Nauwi Beach Resort</h1>
+    <p style="color:#ffffff;opacity:0.8;margin:8px 0 0;font-size:13px;letter-spacing:2px;text-transform:uppercase;">Staff Invitation</p>
+  </div>
+  <div style="padding:30px;">
+    <h2 style="color:#0A4B78;font-size:22px;margin:0 0 8px;">Welkam, ${data.name}!</h2>
+    <p style="color:#666;line-height:1.6;">You have been invited to join the E'Nauwi Beach Resort team.</p>
+    
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin:24px 0;">
+      <table style="width:100%;border-collapse:collapse;">
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Position</td><td style="padding:8px 0;color:#0A4B78;font-weight:bold;text-align:right;font-size:14px;">${data.roleName}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Department</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${data.department || 'General'}</td></tr>
+      </table>
+    </div>
+    
+    <p style="color:#666;line-height:1.6;">Click the button below to complete your onboarding and set up your staff account:</p>
+    
+    <div style="margin:30px 0;text-align:center;">
+      <a href="${data.inviteUrl}" style="display:inline-block;background:#D4A853;color:#0A4B78;padding:16px 40px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;">Complete Onboarding</a>
+    </div>
+    
+    <p style="color:#888;font-size:13px;">This invitation expires in 7 days. If you didn't expect this invitation, please ignore this email.</p>
+    
+    <p style="color:#D4A853;font-family:Georgia,serif;font-size:16px;margin-top:24px;">— The E'Nauwi Team</p>
+  </div>
+  <div style="background:#083D63;padding:24px 30px;text-align:center;">
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South West Bay, Malekula Island, Vanuatu</p>
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:4px 0 0;">📞 +678 22170 · ✉ info@enauwiresort.vu</p>
+  </div>
+</div>
+</body>
+</html>`
+}
+
 function conciergeEmailHTML(data: { guestName: string; subject: string; body: string }) {
   return `
 <!DOCTYPE html>
@@ -261,6 +302,17 @@ export async function POST(request: NextRequest) {
           to: data.guestEmail,
           subject: data.subject || `Info from E'Nauwi Beach Resort`,
           html: conciergeEmailHTML(data),
+        })
+        results.push({ id: result.data?.id, error: result.error?.message })
+        break
+      }
+
+      case 'staff_invitation': {
+        const result = await resend.emails.send({
+          from: FROM_NOREPLY,
+          to: data.email,
+          subject: `You're Invited to Join E'Nauwi Beach Resort Team`,
+          html: staffInvitationHTML(data),
         })
         results.push({ id: result.data?.id, error: result.error?.message })
         break
