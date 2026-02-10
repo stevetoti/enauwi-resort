@@ -88,7 +88,7 @@ export default function Hero() {
             <span className="text-white/60 text-base">
               A peaceful beachfront retreat with lagoon views and warm island hospitality
               <br className="hidden sm:block" />
-              on Malekula Island, Vanuatu.
+              on Efate Island, Vanuatu.
             </span>
           </motion.p>
 

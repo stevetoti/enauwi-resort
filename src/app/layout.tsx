@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "E'Nauwi Beach Resort | Family-Friendly Island Retreat in Malekula, Vanuatu",
+  title: "E'Nauwi Beach Resort | Family-Friendly Island Retreat in Efate, Vanuatu",
   description:
-    "E'Nauwi Beach Resort is a family-friendly island retreat on Malekula Island, Vanuatu. Comfortable beachfront bungalows, calm lagoon waters, kayaking, snorkeling, and genuine island hospitality await families, couples, and groups.",
+    "E'Nauwi Beach Resort is a family-friendly island retreat on Efate Island, Vanuatu. Comfortable beachfront bungalows, calm lagoon waters, kayaking, snorkeling, and genuine island hospitality await families, couples, and groups.",
   keywords:
-    "Vanuatu resort, Malekula Island, beach resort, family-friendly accommodation, Pacific Islands, island retreat, snorkeling, kayaking, lagoon, Melanesian hospitality",
+    "Vanuatu resort, Efate Island, beach resort, family-friendly accommodation, Pacific Islands, island retreat, snorkeling, kayaking, lagoon, Melanesian hospitality",
   openGraph: {
-    title: "E'Nauwi Beach Resort | Malekula Island, Vanuatu",
+    title: "E'Nauwi Beach Resort | Efate Island, Vanuatu",
     description:
-      "A family-friendly island retreat with calm lagoon waters and beautiful island views on Malekula.",
+      "A family-friendly island retreat with calm lagoon waters and beautiful island views on Efate.",
     images: [
       "/images/resort/beach-resort-overview.jpg",
     ],

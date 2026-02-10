@@ -468,7 +468,7 @@ function BookingContent() {
               <span className="text-white/80 text-sm ml-1">9.4/10 · 127 reviews</span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-bold text-white">E&apos;Nauwi Beach Resort</h1>
-            <p className="text-white/80">Malekula Island, Vanuatu</p>
+            <p className="text-white/80">Efate Island, Vanuatu</p>
           </div>
         </div>
       </div>

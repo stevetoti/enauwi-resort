@@ -39,7 +39,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; icon: React.ReactNode; de
   activities: {
     label: 'Activities & Adventures',
     icon: <Waves className="h-6 w-6" />,
-    description: 'Explore the beauty of Malekula Island with our curated activities and excursions.',
+    description: 'Explore the beauty of Efate Island with our curated activities and excursions.',
   },
   other_services: {
     label: 'Guest Services',
@@ -110,7 +110,7 @@ export default function ServicesPage() {
           </h1>
           <p className="text-ocean-100 text-lg max-w-2xl">
             From conference facilities to island adventures, we offer everything
-            you need for an exceptional stay on Malekula Island.
+            you need for an exceptional stay on Efate Island.
           </p>
         </div>
       </div>

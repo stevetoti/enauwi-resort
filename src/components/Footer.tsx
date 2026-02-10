@@ -110,7 +110,7 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin size={16} className="text-gold/60 mt-0.5 shrink-0" />
                 <span className="text-white/40 text-sm">
-                  South West Bay, Malekula Island,
+                  South West Bay, Efate Island,
                   <br />
                   Malampa Province, Vanuatu
                 </span>

@@ -56,7 +56,7 @@ function bookingConfirmationHTML(data: {
   
   <!-- Footer -->
   <div style="background:#083D63;padding:24px 30px;text-align:center;">
-    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South West Bay, Malekula Island, Vanuatu</p>
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South West Bay, Efate Island, Vanuatu</p>
     <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:4px 0 0;">📞 +678 22170 · ✉ info@enauwiresort.vu</p>
   </div>
 </div>
@@ -115,12 +115,12 @@ function contactAutoReplyHTML(name: string) {
     <ul style="color:#666;line-height:1.8;">
       <li>📞 Call us at <strong>+678 22170</strong></li>
       <li>🌐 Chat with our AI concierge on our website</li>
-      <li>📍 Visit us at South West Bay, Malekula Island, Vanuatu</li>
+      <li>📍 Visit us at South West Bay, Efate Island, Vanuatu</li>
     </ul>
     <p style="color:#D4A853;font-family:Georgia,serif;font-size:16px;margin-top:24px;">— The E'Nauwi Team</p>
   </div>
   <div style="background:#083D63;padding:24px 30px;text-align:center;">
-    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South West Bay, Malekula Island, Vanuatu</p>
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South West Bay, Efate Island, Vanuatu</p>
     <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:4px 0 0;">📞 +678 22170 · ✉ info@enauwiresort.vu</p>
   </div>
 </div>
@@ -161,7 +161,7 @@ function staffInvitationHTML(data: { name: string; roleName: string; department:
     <p style="color:#D4A853;font-family:Georgia,serif;font-size:16px;margin-top:24px;">— The E'Nauwi Team</p>
   </div>
   <div style="background:#083D63;padding:24px 30px;text-align:center;">
-    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South West Bay, Malekula Island, Vanuatu</p>
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South West Bay, Efate Island, Vanuatu</p>
     <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:4px 0 0;">📞 +678 22170 · ✉ info@enauwiresort.vu</p>
   </div>
 </div>
@@ -198,7 +198,7 @@ function passwordResetHTML(data: { name: string; resetUrl: string }) {
     <p style="color:#D4A853;font-family:Georgia,serif;font-size:16px;margin-top:24px;">— The E'Nauwi Team</p>
   </div>
   <div style="background:#083D63;padding:24px 30px;text-align:center;">
-    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South West Bay, Malekula Island, Vanuatu</p>
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South West Bay, Efate Island, Vanuatu</p>
     <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:4px 0 0;">📞 +678 22170 · ✉ info@enauwiresort.vu</p>
   </div>
 </div>
@@ -227,7 +227,7 @@ function conciergeEmailHTML(data: { guestName: string; subject: string; body: st
     <p style="color:#D4A853;font-family:Georgia,serif;font-size:16px;margin-top:24px;">— Your E'Nauwi Concierge</p>
   </div>
   <div style="background:#083D63;padding:24px 30px;text-align:center;">
-    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South West Bay, Malekula Island, Vanuatu</p>
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South West Bay, Efate Island, Vanuatu</p>
   </div>
 </div>
 </body>

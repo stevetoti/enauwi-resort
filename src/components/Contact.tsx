@@ -39,7 +39,7 @@ const contactInfo = [
   {
     icon: MapPin,
     label: "Location",
-    value: "South West Bay, Malekula Island, Malampa Province, Vanuatu",
+    value: "South West Bay, Efate Island, Malampa Province, Vanuatu",
     href: null,
   },
   {
@@ -180,7 +180,7 @@ export default function Contact() {
             {/* Map */}
             <div className="rounded-2xl overflow-hidden border border-white/10 h-56">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14890.41413074!2d167.42!3d-16.47!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6e8c8d1f18f1b1b1%3A0x1!2sSouth%20West%20Bay%2C%20Malekula!5e0!3m2!1sen!2svu!4v1700000000000!5m2!1sen!2svu"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14890.41413074!2d167.42!3d-16.47!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6e8c8d1f18f1b1b1%3A0x1!2sSouth%20West%20Bay%2C%20Efate!5e0!3m2!1sen!2svu!4v1700000000000!5m2!1sen!2svu"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

@@ -193,7 +193,7 @@ export default function Activities() {
             </div>
             <h3 className="font-serif text-2xl sm:text-3xl font-bold text-ocean mb-3">
               Explore{" "}
-              <span className="text-gold-gradient">Malekula Island</span>
+              <span className="text-gold-gradient">Efate Island</span>
             </h3>
             <p className="text-ocean/60 text-base max-w-2xl mx-auto">
               Guided excursions and island experiences available through the resort.

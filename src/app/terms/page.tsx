@@ -14,7 +14,7 @@ export default function TermsPage() {
             Back to E&apos;Nauwi Beach Resort
           </Link>
           <h1 className="font-serif text-4xl font-bold mb-4">Terms, Conditions &amp; Policies</h1>
-          <p className="text-ocean-100 text-lg">E&apos;Nauwi Beach Resort — Malekula Island, Vanuatu</p>
+          <p className="text-ocean-100 text-lg">E&apos;Nauwi Beach Resort — Efate Island, Vanuatu</p>
         </div>
       </div>
 

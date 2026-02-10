@@ -68,7 +68,7 @@ export async function GET() {
        .fontSize(12)
        .font('Helvetica')
        .text(
-         "Welcome to E'Nauwi Beach Resort, your tropical sanctuary on the pristine shores of Malekula Island, Vanuatu. We are honored to have you as our guest.",
+         "Welcome to E'Nauwi Beach Resort, your tropical sanctuary on the pristine shores of Efate Island, Vanuatu. We are honored to have you as our guest.",
          60, 310, { width: contentWidth, align: 'center', lineGap: 8 }
        );
     
@@ -112,7 +112,7 @@ export async function GET() {
     sectionHeader("Weather & Safety");
     
     doc.fillColor(RICH_GOLD).fontSize(18).font('Helvetica-Bold')
-       .text("Malekula Island Weather", 60, 100);
+       .text("Efate Island Weather", 60, 100);
     
     doc.fillColor(DARK_TEXT).fontSize(11).font('Helvetica');
     const weatherItems = [
@@ -250,10 +250,10 @@ export async function GET() {
 
     // ==================== PAGE 5: LOCAL ATTRACTIONS ====================
     doc.addPage();
-    sectionHeader("Explore Malekula Island");
+    sectionHeader("Explore Efate Island");
     
     doc.fillColor(DARK_TEXT).fontSize(11).font('Helvetica')
-       .text("Malekula is the second-largest island in Vanuatu, known for rich cultural heritage and stunning natural beauty.", 60, 95, { width: contentWidth, lineGap: 6 });
+       .text("Efate is the second-largest island in Vanuatu, known for rich cultural heritage and stunning natural beauty.", 60, 95, { width: contentWidth, lineGap: 6 });
     
     const attractions = [
       { name: "Small Nambas Village", desc: "Traditional village life with authentic customs preserved for centuries." },
@@ -332,7 +332,7 @@ export async function GET() {
     doc.fillColor('#ffffff').fontSize(16).font('Helvetica-Bold')
        .text("Thank you for choosing E'Nauwi Beach Resort!", 60, pageHeight - 65, { width: contentWidth, align: 'center' });
     doc.fillColor(RICH_GOLD).fontSize(12).font('Helvetica')
-       .text("We wish you a wonderful stay on Malekula Island", 60, pageHeight - 40, { width: contentWidth, align: 'center' });
+       .text("We wish you a wonderful stay on Efate Island", 60, pageHeight - 40, { width: contentWidth, align: 'center' });
 
     doc.end();
 
