@@ -11,7 +11,7 @@ export default function Hero() {
       <div className="absolute inset-0">
         <Image
           src="/images/resort/hero-resort-lagoon.jpg"
-          alt="E'Nauwi Beach Resort aerial view — crystal lagoon with kayaks and bungalows on Malekula Island"
+          alt="E'Nauwi Beach Resort aerial view — crystal lagoon with kayaks and bungalows on Efate Island"
           fill
           priority
           className="object-cover"

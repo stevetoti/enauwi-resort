@@ -35,7 +35,7 @@ export const activities: Activity[] = [
       '/images/resort/resort-coral-reef-sm.jpg',
       '/images/resort/lagoon-island-view-sm.jpg',
     ],
-    description: `Dive into the warm waters of Malekula and explore one of the most pristine and untouched reef systems in the South Pacific. Our snorkeling and diving excursion takes you to handpicked sites along the coastline, where you'll encounter an explosion of colour — from soft corals swaying in the current to schools of tropical fish, sea turtles, reef sharks, and the occasional manta ray.\n\nWhether you're a first-time snorkeler or a certified diver, our experienced local guides will ensure a safe and unforgettable underwater adventure. Equipment is provided, and our guides know every secret reef and channel along the coast.`,
+    description: `Dive into the warm waters of Efate and explore one of the most pristine and untouched reef systems in the South Pacific. Our snorkeling and diving excursion takes you to handpicked sites along the coastline, where you'll encounter an explosion of colour — from soft corals swaying in the current to schools of tropical fish, sea turtles, reef sharks, and the occasional manta ray.\n\nWhether you're a first-time snorkeler or a certified diver, our experienced local guides will ensure a safe and unforgettable underwater adventure. Equipment is provided, and our guides know every secret reef and channel along the coast.`,
     whatToExpect: [
       'Boat ride to pristine reef sites along the coast',
       'Guided snorkel or dive with experienced local guides',
@@ -70,7 +70,7 @@ export const activities: Activity[] = [
       '/images/resort/private-island-sandbar-sm.jpg',
       '/images/resort/resort-buildings-aerial-sm.jpg',
     ],
-    description: `Malekula is one of the cultural heartlands of Vanuatu, home to some of the most ancient living traditions in the Pacific. On this immersive half-day tour, you'll visit a traditional kastom village where the old ways are still practised daily.\n\nWitness ceremonial dances, learn about ancestral customs and taboos, watch master craftsmen at work, and hear the stories that have been passed down through generations. You'll also see the famous Vanuatu sand drawings — a UNESCO-recognised art form unique to this region.`,
+    description: `Efate is one of the cultural heartlands of Vanuatu, home to some of the most ancient living traditions in the Pacific. On this immersive half-day tour, you'll visit a traditional kastom village where the old ways are still practised daily.\n\nWitness ceremonial dances, learn about ancestral customs and taboos, watch master craftsmen at work, and hear the stories that have been passed down through generations. You'll also see the famous Vanuatu sand drawings — a UNESCO-recognised art form unique to this region.`,
     whatToExpect: [
       'Welcome ceremony with village chiefs',
       'Traditional dance and music performances',
@@ -106,7 +106,7 @@ export const activities: Activity[] = [
       '/images/resort/beach-kayaks-cove-sm.jpg',
       '/images/resort/resort-lagoon-kayak-sm.jpg',
     ],
-    description: `Embark on an unforgettable full-day adventure exploring the stunning islands surrounding Malekula. Our island hopping excursion takes you by boat to neighbouring islands and secluded beaches that few tourists ever see.\n\nYou'll discover hidden coves with turquoise water, explore sea caves carved by centuries of waves, snorkel over shallow reefs, and enjoy a beach barbecue lunch on a deserted island. This is the ultimate Pacific island experience.`,
+    description: `Just minutes from the resort by kayak, four beautiful sandy beach islands await your discovery. These pristine islets offer perfect snorkeling, private beach picnics, and the ultimate castaway experience.\n\nFor a full-day adventure, our island hopping excursion takes you further afield by boat to explore hidden coves with turquoise water, sea caves carved by centuries of waves, and secluded beaches that few tourists ever see. Enjoy a beach barbecue lunch on a deserted island — this is the ultimate Pacific island experience.`,
     whatToExpect: [
       'Scenic boat cruise along the coastline',
       'Visit 2–3 neighbouring islands',
@@ -142,7 +142,7 @@ export const activities: Activity[] = [
       '/images/resort/resort-coral-reef-sm.jpg',
       '/images/resort/private-island-sandbar-sm.jpg',
     ],
-    description: `The deep waters off Malekula are a sport fisher's paradise. Rich currents bring big game fish close to shore, and our experienced local fishing guides know exactly where to find them.\n\nWhether you're after the thrill of hooking a marlin or the satisfaction of landing a yellowfin tuna, our fishing charters offer an authentic Pacific fishing experience. We practice catch-and-release for billfish and offer to prepare your catch for dinner at the resort.`,
+    description: `The deep waters off Efate are a sport fisher's paradise. Rich currents bring big game fish close to shore, and our experienced local fishing guides know exactly where to find them.\n\nWhether you're after the thrill of hooking a marlin or the satisfaction of landing a yellowfin tuna, our fishing charters offer an authentic Pacific fishing experience. We practice catch-and-release for billfish and offer to prepare your catch for dinner at the resort.`,
     whatToExpect: [
       'Deep-sea fishing trip with experienced local captain',
       'Target species: marlin, tuna, mahi-mahi, wahoo',
@@ -177,7 +177,7 @@ export const activities: Activity[] = [
       '/images/resort/beach-kayaks-cove-sm.jpg',
       '/images/resort/private-island-sandbar-sm.jpg',
     ],
-    description: `Malekula's interior is a world of dense tropical rainforest, towering banyan trees, hidden waterfalls, and incredible biodiversity. This guided nature trek takes you deep into the jungle along ancient trails used by locals for centuries.\n\nYour guide — a local bushman with encyclopedic knowledge of the forest — will point out medicinal plants, rare birds, and fascinating insects along the way. The highlight is reaching a secluded waterfall where you can swim in the cool, pristine water.`,
+    description: `Efate's interior is a world of dense tropical rainforest, towering banyan trees, hidden waterfalls, and incredible biodiversity. This guided nature trek takes you deep into the jungle along ancient trails used by locals for centuries.\n\nYour guide — a local bushman with encyclopedic knowledge of the forest — will point out medicinal plants, rare birds, and fascinating insects along the way. The highlight is reaching a secluded waterfall where you can swim in the cool, pristine water.`,
     whatToExpect: [
       'Guided trek on ancient forest trails',
       'Learn about medicinal plants and local ecology',
@@ -319,7 +319,7 @@ export const activities: Activity[] = [
       '/images/resort/resort-lagoon-kayak-sm.jpg',
       '/images/resort/beach-resort-overview-sm.jpg',
     ],
-    description: `The waters around Malekula are home to several species of sea turtle, including green turtles and hawksbills. This gentle, eco-friendly excursion takes you to known turtle habitats where you can observe these ancient creatures feeding, resting, and swimming in their natural environment.\n\nOur guides work with local conservation efforts to ensure minimal disturbance to the turtles. During nesting season (November–February), there's also a chance to witness turtles coming ashore to lay eggs — a truly magical experience.`,
+    description: `The waters around Efate are home to several species of sea turtle, including green turtles and hawksbills. This gentle, eco-friendly excursion takes you to known turtle habitats where you can observe these ancient creatures feeding, resting, and swimming in their natural environment.\n\nOur guides work with local conservation efforts to ensure minimal disturbance to the turtles. During nesting season (November–February), there's also a chance to witness turtles coming ashore to lay eggs — a truly magical experience.`,
     whatToExpect: [
       'Boat or shore-based turtle observation',
       'Learn about sea turtle biology and conservation',
@@ -390,7 +390,7 @@ export const activities: Activity[] = [
       '/images/resort/private-island-sandbar-sm.jpg',
       '/images/resort/beach-kayaks-cove-sm.jpg',
     ],
-    description: `There's no better way to end a day in paradise than paddling along Malekula's stunning coastline as the sun sinks into the Pacific. Our sunset kayaking excursion takes you along calm waters, through mangrove channels, and past rocky headlands painted gold by the setting sun.\n\nSingle and tandem kayaks are available, and no experience is needed. Your guide will lead the way, pointing out marine life in the clear shallows and sharing stories about the coastline. Stop at a secluded beach for refreshments before paddling back under the stars.`,
+    description: `There's no better way to end a day in paradise than paddling through the calm lagoon as the sun sinks into the Pacific. Kayak out to one of the four sandy beach islands just minutes from the resort, or explore the coastline as rocky headlands glow gold in the sunset light.\n\nSingle and tandem kayaks are available, and no experience is needed. Your guide will lead the way, pointing out marine life in the clear shallows and sharing stories about the islands. Stop at a secluded beach for refreshments before paddling back under the stars.`,
     whatToExpect: [
       'Guided kayak tour along the coastline',
       'Paddle through mangrove channels',

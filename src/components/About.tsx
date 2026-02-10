@@ -17,7 +17,7 @@ const highlights = [
     icon: Ship,
     title: "Kayaking & Snorkeling",
     description:
-      "Glide across the glass-calm lagoon by kayak, paddle out to our private island, or slip beneath the surface to discover coral gardens alive with tropical fish and sea turtles.",
+      "Glide across the glass-calm lagoon by kayak and explore four beautiful sandy beach islands just minutes from the resort. Slip beneath the surface to discover coral gardens alive with tropical fish and sea turtles.",
     image: "/images/resort/beach-kayaks-cove-sm.jpg",
   },
   {
@@ -129,7 +129,7 @@ export default function About() {
             <p className="text-ocean/70 leading-relaxed text-lg">
               Spend your mornings floating in a lagoon so still it mirrors the
               sky. Cool off in our pool beneath swaying coconut palms. Paddle a
-              kayak to our private island for an afternoon of snorkelling. Then
+              kayak to one of four pristine sandy islands for an afternoon of snorkelling. Then
               settle into the restaurant as the sun dips behind the islands
               and the aroma of freshly grilled seafood fills the evening air.
             </p>
