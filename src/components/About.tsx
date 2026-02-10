@@ -17,7 +17,7 @@ const highlights = [
     icon: Ship,
     title: "Kayaking & Snorkeling",
     description:
-      "Glide across the glass-calm lagoon by kayak and explore four beautiful sandy beach islands just minutes from the resort. Slip beneath the surface to discover coral gardens alive with tropical fish and sea turtles.",
+      "Glide across the glass-calm lagoon by kayak and explore four beautiful sandy beach islands just minutes from the resort. Slip beneath the surface to discover coral gardens alive with tropical fish, sea turtles, and our resident dugongs — three gentle giants who call our lagoon home.",
     image: "/images/resort/beach-kayaks-cove-sm.jpg",
   },
   {
