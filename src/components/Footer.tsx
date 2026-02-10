@@ -64,7 +64,7 @@ export default function Footer() {
             </a>
             <p className="text-white/40 text-sm leading-relaxed mb-6">
               A family-friendly island retreat set along a peaceful beachfront
-              with calm lagoon waters and beautiful island views on Malekula
+              with calm lagoon waters and beautiful island views on Efate
               Island, Vanuatu.
             </p>
             <div className="flex gap-3">

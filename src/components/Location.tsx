@@ -66,7 +66,7 @@ export default function Location() {
             className="section-subheading"
           >
             Getting to E&apos;Nauwi Beach Resort is part of the adventure. Located on
-            the stunning island of Malekula, Vanuatu&apos;s second largest island.
+            the stunning island of Efate, home to Vanuatu&apos;s capital Port Vila.
           </motion.p>
         </div>
 
