@@ -28,6 +28,7 @@ import {
   Package,
   Sparkles,
   BarChart3,
+  Bot,
 } from 'lucide-react'
 // Map sidebar items to their required permission keys
 const sidebarLinks = [
@@ -49,6 +50,7 @@ const sidebarLinks = [
   { href: '/admin/conferences', label: 'Conferences', icon: Settings, permission: 'conferences' },
   { href: '/admin/announcements', label: 'Announcements', icon: Megaphone, permission: 'announcements' },
   { href: '/admin/videos', label: 'Videos', icon: Video, permission: 'announcements' },
+  { href: '/admin/knowledge', label: 'AI Knowledge', icon: Bot, permission: 'dashboard' },
   { href: '/staff/chat', label: 'Team Chat', icon: MessageCircle, permission: 'dashboard' },
 ]
 
