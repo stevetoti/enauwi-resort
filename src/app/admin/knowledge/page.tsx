@@ -157,20 +157,18 @@ export default function KnowledgeBasePage() {
   const fetchKnowledge = useCallback(async () => {
     setLoading(true)
     try {
-      const { data, error } = await supabase
-        .from('knowledge_base')
-        .select('*')
-        .order('category')
+      const response = await fetch('/api/admin/knowledge')
+      const result = await response.json()
       
-      if (error) throw error
-      setEntries(data || [])
+      if (!result.success) throw new Error(result.message)
+      setEntries(result.entries || [])
     } catch (error) {
       console.error('Error fetching knowledge base:', error)
       setMessage({ type: 'error', text: 'Failed to load knowledge base' })
     } finally {
       setLoading(false)
     }
-  }, [supabase])
+  }, [])
 
   useEffect(() => {
     fetchKnowledge()
@@ -179,12 +177,14 @@ export default function KnowledgeBasePage() {
   const saveEntry = async (entry: KnowledgeEntry) => {
     setSaving(true)
     try {
-      const { error } = await supabase
-        .from('knowledge_base')
-        .update({ content: entry.content, updated_at: new Date().toISOString() })
-        .eq('id', entry.id)
+      const response = await fetch('/api/admin/knowledge', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: entry.id, content: entry.content }),
+      })
+      const result = await response.json()
       
-      if (error) throw error
+      if (!result.success) throw new Error(result.message)
       setMessage({ type: 'success', text: 'Entry saved successfully' })
       setEditingEntry(null)
       fetchKnowledge()
@@ -200,11 +200,14 @@ export default function KnowledgeBasePage() {
     if (!newEntry.content.trim()) return
     setSaving(true)
     try {
-      const { error } = await supabase
-        .from('knowledge_base')
-        .insert([{ category: newEntry.category, content: newEntry.content }])
+      const response = await fetch('/api/admin/knowledge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: newEntry.category, content: newEntry.content }),
+      })
+      const result = await response.json()
       
-      if (error) throw error
+      if (!result.success) throw new Error(result.message)
       setMessage({ type: 'success', text: 'Entry added successfully' })
       setNewEntry({ category: 'general', content: '' })
       setShowAddForm(false)
@@ -220,12 +223,12 @@ export default function KnowledgeBasePage() {
   const deleteEntry = async (id: string) => {
     if (!confirm('Are you sure you want to delete this entry?')) return
     try {
-      const { error } = await supabase
-        .from('knowledge_base')
-        .delete()
-        .eq('id', id)
+      const response = await fetch(`/api/admin/knowledge?id=${id}`, {
+        method: 'DELETE',
+      })
+      const result = await response.json()
       
-      if (error) throw error
+      if (!result.success) throw new Error(result.message)
       setMessage({ type: 'success', text: 'Entry deleted' })
       fetchKnowledge()
     } catch (error) {
@@ -248,22 +251,25 @@ export default function KnowledgeBasePage() {
         `${r.name} (${r.type}) - ${r.price.toLocaleString()} VT/night - ${r.description}. Sleeps up to ${r.maxGuests} guests. Beds: ${r.beds}.`
       ).join('\n\n')
 
-      // Update or insert rooms knowledge entry
-      const { data: existing } = await supabase
-        .from('knowledge_base')
-        .select('id')
-        .eq('category', 'rooms_pricing')
-        .single()
+      // Check if rooms_pricing entry exists
+      const getResponse = await fetch('/api/admin/knowledge')
+      const getResult = await getResponse.json()
+      const existing = getResult.entries?.find((e: KnowledgeEntry) => e.category === 'rooms_pricing')
 
       if (existing) {
-        await supabase
-          .from('knowledge_base')
-          .update({ content: roomContent, updated_at: new Date().toISOString() })
-          .eq('id', existing.id)
+        // Update existing
+        await fetch('/api/admin/knowledge', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: existing.id, content: roomContent }),
+        })
       } else {
-        await supabase
-          .from('knowledge_base')
-          .insert([{ category: 'rooms_pricing', content: roomContent }])
+        // Insert new
+        await fetch('/api/admin/knowledge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ category: 'rooms_pricing', content: roomContent }),
+        })
       }
 
       setMessage({ type: 'success', text: 'Room information saved! Click "Sync to Voice Agent" to update the voice assistant.' })
