@@ -103,8 +103,84 @@ export default function KnowledgeBasePage() {
   const [checkInTime, setCheckInTime] = useState('2:00 PM')
   const [checkOutTime, setCheckOutTime] = useState('10:00 AM')
   const [frontDeskHours, setFrontDeskHours] = useState('Mon-Sun 8:00 AM - 5:00 PM')
+  const [settingsLoaded, setSettingsLoaded] = useState(false) // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const supabase = createClientSupabase()
+
+  // Load voice settings from database
+  const loadVoiceSettings = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('key, value')
+        .in('key', ['voice_greeting', 'contact_phone', 'contact_email', 'check_in_time', 'check_out_time', 'front_desk_hours'])
+      
+      if (error) throw error
+      
+      if (data) {
+        data.forEach(setting => {
+          switch (setting.key) {
+            case 'voice_greeting': setVoiceGreeting(setting.value); break
+            case 'contact_phone': setContactPhone(setting.value); break
+            case 'contact_email': setContactEmail(setting.value); break
+            case 'check_in_time': setCheckInTime(setting.value); break
+            case 'check_out_time': setCheckOutTime(setting.value); break
+            case 'front_desk_hours': setFrontDeskHours(setting.value); break
+          }
+        })
+      }
+      setSettingsLoaded(true)
+    } catch (error) {
+      console.error('Error loading voice settings:', error)
+      setSettingsLoaded(true)
+    }
+  }, [supabase])
+
+  // Save voice settings to database
+  const saveVoiceSettings = async () => {
+    const settings = [
+      { key: 'voice_greeting', value: voiceGreeting },
+      { key: 'contact_phone', value: contactPhone },
+      { key: 'contact_email', value: contactEmail },
+      { key: 'check_in_time', value: checkInTime },
+      { key: 'check_out_time', value: checkOutTime },
+      { key: 'front_desk_hours', value: frontDeskHours },
+    ]
+    
+    for (const setting of settings) {
+      // Check if setting exists
+      const { data: existing } = await supabase
+        .from('site_settings')
+        .select('id')
+        .eq('key', setting.key)
+        .single()
+      
+      if (existing) {
+        // Update existing
+        const { error } = await supabase
+          .from('site_settings')
+          .update({ value: setting.value, updated_at: new Date().toISOString() })
+          .eq('key', setting.key)
+        if (error) {
+          console.error('Error updating setting:', setting.key, error)
+          throw error
+        }
+      } else {
+        // Insert new
+        const { error } = await supabase
+          .from('site_settings')
+          .insert({ key: setting.key, value: setting.value })
+        if (error) {
+          console.error('Error inserting setting:', setting.key, error)
+          throw error
+        }
+      }
+    }
+  }
+
+  useEffect(() => {
+    loadVoiceSettings()
+  }, [loadVoiceSettings])
 
   const fetchKnowledge = useCallback(async () => {
     setLoading(true)
@@ -230,6 +306,9 @@ export default function KnowledgeBasePage() {
   const syncToVoiceAgent = async () => {
     setSyncing(true)
     try {
+      // First save settings to database
+      await saveVoiceSettings()
+      
       // Build the voice agent prompt with current data
       const roomsPrompt = rooms.map(r => 
         `${rooms.indexOf(r) + 1}. ${r.name} - ${r.price.toLocaleString()} VT/night - ${r.type}, sleeps up to ${r.maxGuests} guests, ${r.beds}`
