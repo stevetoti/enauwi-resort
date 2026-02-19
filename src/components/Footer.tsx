@@ -68,15 +68,22 @@ export default function Footer() {
               Island, Vanuatu.
             </p>
             <div className="flex gap-3">
-              {[Facebook, Instagram].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-gold-light hover:bg-white/10 hover:border-gold/30 transition-all duration-300"
-                >
-                  <Icon size={16} />
-                </a>
-              ))}
+              <a
+                href="https://www.facebook.com/EnauwiBeachResort"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-gold-light hover:bg-white/10 hover:border-gold/30 transition-all duration-300"
+              >
+                <Facebook size={16} />
+              </a>
+              <a
+                href="https://www.instagram.com/enauwibeachresort"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-gold-light hover:bg-white/10 hover:border-gold/30 transition-all duration-300"
+              >
+                <Instagram size={16} />
+              </a>
             </div>
           </div>
 

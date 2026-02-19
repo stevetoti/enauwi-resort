@@ -53,6 +53,8 @@ const sidebarLinks = [
   { href: '/admin/videos', label: 'Videos', icon: Video, permission: 'announcements' },
   { href: '/admin/knowledge', label: 'AI Knowledge', icon: Bot, permission: 'dashboard' },
   { href: '/admin/social/calendar', label: 'Social Media', icon: Share2, permission: 'dashboard' },
+  { href: '/admin/settings/branding', label: 'Branding', icon: Settings, permission: 'dashboard' },
+  { href: '/admin/settings/seo', label: 'SEO Settings', icon: Settings, permission: 'dashboard' },
   { href: '/staff/chat', label: 'Team Chat', icon: MessageCircle, permission: 'dashboard' },
 ]
 
