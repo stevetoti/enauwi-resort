@@ -480,7 +480,7 @@ function BookingContent() {
             <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center">
               <Gift className="w-4 h-4 text-amber-400" />
             </div>
-            <span className="text-white/90 text-sm font-medium">Free airport transfer</span>
+            <span className="text-white/90 text-sm font-medium">Book direct & save 10%</span>
           </div>
           <div className="hidden sm:block w-px h-6 bg-white/20" />
           <div className="flex items-center gap-2">

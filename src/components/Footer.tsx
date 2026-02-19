@@ -110,9 +110,9 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin size={16} className="text-gold/60 mt-0.5 shrink-0" />
                 <span className="text-white/40 text-sm">
-                  South West Bay, Efate Island,
+                  South East Efate,
                   <br />
-                  Malampa Province, Vanuatu
+                  SHEFA Province, Vanuatu
                 </span>
               </li>
               <li className="flex items-center gap-3">
@@ -122,7 +122,7 @@ export default function Footer() {
               <li className="flex items-center gap-3">
                 <Mail size={16} className="text-gold/60 shrink-0" />
                 <span className="text-white/40 text-sm">
-                  gm@enauwibeachresort.com
+                  reservation@enauwibeachresort.com
                 </span>
               </li>
             </ul>

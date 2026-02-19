@@ -33,13 +33,13 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "gm@enauwibeachresort.com",
-    href: "mailto:gm@enauwibeachresort.com",
+    value: "reservation@enauwibeachresort.com",
+    href: "mailto:reservation@enauwibeachresort.com",
   },
   {
     icon: MapPin,
     label: "Location",
-    value: "South West Bay, Efate Island, Malampa Province, Vanuatu",
+    value: "South East Efate, SHEFA Province, Vanuatu",
     href: null,
   },
   {

@@ -30,7 +30,7 @@ const resortActivities = [
     title: "Kayaking & Snorkeling",
     description:
       "Explore the lagoon by kayak and enjoy a gentle, relaxing way to experience the ocean. Ideal for sunny days and quiet moments on the water.",
-    image: "/images/resort/beach-kayaks-cove-sm.jpg",
+    image: "/images/new/kayak-snorkeling.jpg",
     tag: "Water Sports",
   },
   {
@@ -38,7 +38,7 @@ const resortActivities = [
     title: "Restaurant",
     description:
       "Our restaurant offers uninterrupted views toward the island and the still lagoon, with gentle, relaxing music creating a calm and enjoyable dining atmosphere.",
-    image: "/images/resort/resort-coral-reef-sm.jpg",
+    image: "/images/new/restaurant-seafood.jpg",
     tag: "Dining",
   },
   {
@@ -46,7 +46,7 @@ const resortActivities = [
     title: "Bar",
     description:
       "Unwind with tropical cocktails and cold drinks at our on-site bar, perfectly positioned near the pool and beach for the ultimate island refreshment.",
-    image: "/images/resort/resort-lagoon-aerial-sm.jpg",
+    image: "/images/new/bar-cocktails.jpg",
     tag: "Dining",
   },
   {

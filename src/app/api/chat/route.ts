@@ -9,11 +9,11 @@ const openai = new OpenAI({
 // ─── Shared resort knowledge (injected into every language prompt) ──────────
 const RESORT_KNOWLEDGE = `
 RESORT: E'Nauwi Beach Resort
-LOCATION: South West Bay, Efate Island, Malampa Province, Vanuatu
+LOCATION: South East Efate, SHEFA Province, Vanuatu
 WEBSITE: https://enauwibeachresort.com
 
 ABOUT US:
-Tucked along a quiet stretch of Efate's South West Bay, E'Nauwi Beach Resort is where warm sand, calm lagoon waters, and genuine Melanesian hospitality come together. This is not a place that tries to impress — it's a place that lets you breathe, reconnect, and remember what matters. Ideal for families, couples, and groups seeking comfort, good food, and genuine island hospitality.
+Tucked along a quiet stretch of South East Efate, E'Nauwi Beach Resort is where warm sand, calm lagoon waters, and genuine Melanesian hospitality come together. This is not a place that tries to impress — it's a place that lets you breathe, reconnect, and remember what matters. Ideal for families, couples, and groups seeking comfort, good food, and genuine island hospitality.
 
 PROPERTY HIGHLIGHTS:
 • Beachfront location with lagoon and island views
@@ -28,11 +28,11 @@ PROPERTY HIGHLIGHTS:
 GUEST EXPERIENCE:
 Spend mornings floating in a lagoon so still it mirrors the sky. Cool off in the pool beneath swaying coconut palms. Paddle a kayak to the private island for an afternoon of snorkelling. Then settle into the restaurant as the sun dips behind the islands and the aroma of freshly grilled seafood fills the evening air. Whether it's a family holiday, a romantic escape, or a group getaway, E'Nauwi wraps every guest in the kind of warmth you only find on a Melanesian island.
 
-ROOM TYPES (4 room types):
-1. 2BR Deluxe Bungalow (Lagoon Beachfront) — Step outside and the lagoon is right there — turquoise, still, and stretching toward the islands on the horizon. This spacious two-bedroom bungalow sits front-row on the beachfront, where warm trade-wind breezes drift through the living area and every evening brings a sunset you'll want to photograph twice. Sleeps up to 4 guests.
-2. 2BR Superior Bungalow (Garden) — Tucked just behind the beachfront row, this two-bedroom retreat is wrapped in the colour and fragrance of Vanuatu's tropical gardens — flowering hibiscus, local mango and papaya trees, and the soft sound of the ocean filtering through the leaves. The beach is a short stroll away, but your private garden world feels miles from anywhere. Sleeps up to 4 guests.
-3. Deluxe 1BR Bungalow (Lagoon Beachfront) — For couples and solo travellers who want the lagoon all to themselves. This intimate one-bedroom bungalow opens directly onto the beachfront with sweeping views across the water to the outer islands. Grab a kayak from the shore, snorkel at your doorstep, or simply settle into the quiet with a good book and the sound of gentle waves. Sleeps up to 2 guests.
-4. Superior 1BR Bungalow (Garden) — Escape to your own private sanctuary, nestled among fragrant tropical flowers and swaying palms. This charming one-bedroom bungalow offers a peaceful retreat surrounded by Vanuatu's lush natural beauty — the perfect hideaway to recharge after a day of island adventure. Sleeps up to 2 guests.
+ROOM TYPES & RATES (4 room types):
+1. 2BR Deluxe Bungalow (Lagoon Beachfront) — VT 30,000/night — Step outside and the lagoon is right there — turquoise, still, and stretching toward the islands on the horizon. This spacious two-bedroom bungalow sits front-row on the beachfront, where warm trade-wind breezes drift through the living area and every evening brings a sunset you'll want to photograph twice. Sleeps up to 4 guests. Beds: 1 Queen bed + 2 Single beds.
+2. 2BR Superior Bungalow (Lagoon View) — VT 27,000/night — Tucked just behind the beachfront row, this two-bedroom retreat is wrapped in the colour and fragrance of Vanuatu's tropical gardens — flowering hibiscus, local mango and papaya trees, and the soft sound of the ocean filtering through the leaves. The beach is a short stroll away, but your private garden world feels miles from anywhere. Sleeps up to 4 guests. Beds: 1 Queen bed + 2 Single beds.
+3. Deluxe 1BR Bungalow (Lagoon Beachfront) — VT 25,000/night — For couples and solo travellers who want the lagoon all to themselves. This intimate one-bedroom bungalow opens directly onto the beachfront with sweeping views across the water to the outer islands. Grab a kayak from the shore, snorkel at your doorstep, or simply settle into the quiet with a good book and the sound of gentle waves. Sleeps up to 2 guests. Beds: 1 Queen bed.
+4. Superior 1BR Bungalow (Lagoon View) — VT 22,000/night — Escape to your own private sanctuary, nestled among fragrant tropical flowers and swaying palms. This charming one-bedroom bungalow offers a peaceful retreat surrounded by Vanuatu's lush natural beauty — the perfect hideaway to recharge after a day of island adventure. Sleeps up to 2 guests. Beds: 1 Queen bed.
 
 ALL ROOM FEATURES (every room includes):
 • Towels provided
@@ -44,8 +44,7 @@ ALL ROOM FEATURES (every room includes):
 • Telephone
 • Mini Fridge
 • Toiletries
-• Cutlery
-• Tea/Coffee Station
+• Tea/Coffee facilities
 
 GENERAL RESORT FEATURES:
 • Bar — tropical cocktails & cold drinks
@@ -62,11 +61,15 @@ GENERAL RESORT FEATURES:
 • Kids Club — supervised fun for little ones
 • On-site Restaurant — fresh island cuisine daily
 • Outdoor Swimming Pool — surrounded by coconut palms
+• Massage Hut — relaxing island spa treatments
 
 CONFERENCE & EVENTS:
-Swap the boardroom for an island breeze. Our fully equipped conference space is ideal for corporate retreats, planning workshops, and team-building events — with full-day catering, modern AV, and scenery that sparks fresh thinking:
+Swap the boardroom for an island breeze. Our fully equipped conference space is ideal for corporate retreats, planning workshops, and team-building events — with modern AV and scenery that sparks fresh thinking.
+
+Note: Conference room hire does NOT include meals. Catering packages are available separately.
+
+Conference room amenities:
 • High-speed Wi-Fi
-• Full-day catering: Morning Tea, Lunch, Afternoon Tea & Dinner (buffet)
 • Water Bottles
 • Private enclosed space
 • Portable air coolers
@@ -133,10 +136,9 @@ FRONT DESK:
 • If arriving after 5:00 PM, contact property in advance
 
 GETTING HERE:
-1. Fly to Port Vila (VLI) — Bauerfield International Airport
-2. Connecting domestic flight to Norsup Airport (NUS) on Efate — Air Vanuatu
-3. Resort provides airport transfer from Norsup (surcharges apply — see shuttle fees above)
-Alternative: Charter boat from Luganville (Santo) to South West Bay
+1. Fly to Port Vila (VLI) — Bauerfield International Airport on Efate Island
+2. Resort provides airport transfer from Port Vila (surcharges apply — see shuttle fees above)
+3. Contact property 72 hours before arrival to arrange pick-up
 
 CONTACT:
 • Phone: +678 22170
@@ -269,9 +271,8 @@ KAKAI (DINING):
 • Fres seafood mo tropical kakai
 
 OLSEM WANEM BLONG KAM:
-1. Flae go long Port Vila (VLI)
-2. Tekem smol plen go long Norsup Airport (NUS) long Efate — Air Vanuatu
-3. Resort bae i pikim yu long Norsup (VUV 2,000 blong bigman, VUV 1,000 blong pikinini)
+1. Flae go long Port Vila (VLI) — Bauerfield International Airport long Efate
+2. Resort bae i pikim yu long airport (VUV 2,000 blong bigman, VUV 1,000 blong pikinini)
    Yu mas kontaktem resort 72 hours bifo!
 
 CONTACT:

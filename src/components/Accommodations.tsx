@@ -17,7 +17,6 @@ import {
   ChevronUp,
   Shirt,
   Fan,
-  UtensilsCrossed,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -37,7 +36,7 @@ const rooms = [
     description:
       "Facing the beach and tranquil lagoon, our two-bedroom lagoon beachfront suite bungalows offer a quiet, spacious retreat with refreshing breezes and breathtaking sunset views.",
     guests: "Up to 4 Guests",
-    bed: "2 Bedrooms",
+    bed: "1 Queen + 2 Single beds",
     popular: true,
   },
   {
@@ -55,7 +54,7 @@ const rooms = [
     description:
       "Set behind the lagoon beachfront bungalows, this two-bedroom suite is nestled among flowering gardens and local fruit trees, with gentle peek-through views of the beach.",
     guests: "Up to 4 Guests",
-    bed: "2 Bedrooms",
+    bed: "1 Queen + 2 Single beds",
     popular: false,
   },
   {
@@ -106,8 +105,7 @@ const allRoomFeatures = [
   { icon: Phone, label: "Telephone" },
   { icon: Refrigerator, label: "Mini Fridge" },
   { icon: Bath, label: "Toiletries" },
-  { icon: UtensilsCrossed, label: "Cutlery" },
-  { icon: Coffee, label: "Tea/Coffee Station" },
+  { icon: Coffee, label: "Tea/Coffee facilities" },
 ];
 
 export default function Accommodations() {

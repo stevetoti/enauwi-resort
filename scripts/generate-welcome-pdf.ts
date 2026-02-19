@@ -25,7 +25,7 @@ async function generatePDF() {
       Title: "E'Nauwi Beach Resort - Welcome Guide",
       Author: "E'Nauwi Beach Resort",
       Subject: 'Guest Welcome Guide',
-      Keywords: 'Vanuatu, Malekula, Beach Resort, Welcome Guide',
+      Keywords: 'Vanuatu, Efate, Beach Resort, Welcome Guide',
     },
   });
 
@@ -75,7 +75,7 @@ async function generatePDF() {
      .fontSize(14)
      .font('Helvetica')
      .text(
-       "Welcome to E'Nauwi Beach Resort, your tropical sanctuary on the pristine shores of Malekula Island, Vanuatu. " +
+       "Welcome to E'Nauwi Beach Resort, your tropical sanctuary on the pristine shores of Efate Island, Vanuatu. " +
        "We are honored to have you as our guest and are committed to making your stay unforgettable.",
        50, 330, { width: contentWidth, align: 'center', lineGap: 6 }
      );
@@ -145,7 +145,7 @@ async function generatePDF() {
   doc.fillColor(RICH_GOLD)
      .fontSize(18)
      .font('Helvetica-Bold')
-     .text("☀️ Malekula Island Weather", 50, 90);
+     .text("☀️ Efate Island Weather", 50, 90);
   
   doc.fillColor(DARK_TEXT)
      .fontSize(12)
@@ -352,7 +352,7 @@ async function generatePDF() {
     },
     {
       title: "🏝️ Island Tours",
-      desc: "Discover Malekula's hidden gems with our guided island tours. Visit traditional villages, waterfalls, and pristine beaches. Half-day and full-day options available."
+      desc: "Discover Efate's hidden gems with our guided island tours. Visit traditional villages, waterfalls, and pristine beaches. Half-day and full-day options available."
     },
     {
       title: "🎭 Cultural Experiences",
@@ -407,13 +407,13 @@ async function generatePDF() {
   doc.fillColor('#ffffff')
      .fontSize(24)
      .font('Helvetica-Bold')
-     .text("Explore Malekula Island", 50, 20, { width: contentWidth, align: 'center' });
+     .text("Explore Efate Island", 50, 20, { width: contentWidth, align: 'center' });
   
   doc.fillColor(DARK_TEXT)
      .fontSize(12)
      .font('Helvetica')
      .text(
-       "Malekula is the second-largest island in Vanuatu, known for its rich cultural heritage and stunning natural beauty. " +
+       "Efate is the main island of Vanuatu, known for its rich cultural heritage and stunning natural beauty. " +
        "Here are some must-see attractions:",
        50, 80, { width: contentWidth, lineGap: 4 }
      );
@@ -437,7 +437,7 @@ async function generatePDF() {
     },
     {
       name: "Local Markets",
-      desc: "Visit Lakatoro or Norsup markets for fresh produce, handicrafts, and authentic local experiences."
+      desc: "Visit Port Vila markets for fresh produce, handicrafts, and authentic local experiences."
     },
     {
       name: "Jungle Walks & Waterfalls",
@@ -509,7 +509,7 @@ async function generatePDF() {
      .font('Helvetica')
      .text("Phone: +678 22170", 70, 130)
      .text("Email: gm@enauwibeachresort.com", 70, 150)
-     .text("Location: Malekula Island, Vanuatu", 70, 170);
+     .text("Location: Efate Island, Vanuatu", 70, 170);
   
   // Reception hours
   doc.fillColor(RICH_GOLD)
@@ -536,7 +536,7 @@ async function generatePDF() {
     { name: "Vanuatu Police", number: "111" },
     { name: "Ambulance/Medical", number: "112" },
     { name: "Fire Services", number: "113" },
-    { name: "Norsup Hospital", number: "+678 48551" },
+    { name: "Vila Central Hospital", number: "+678 22100" },
     { name: "Australian Embassy", number: "+678 22777" },
     { name: "New Zealand Embassy", number: "+678 22933" },
   ];
@@ -564,7 +564,7 @@ async function generatePDF() {
      .font('Helvetica')
      .text(
        "• First aid kit available at reception\n" +
-       "• Nearest hospital: Norsup Hospital (approximately 30 minutes by car)\n" +
+       "• Nearest hospital: Vila Central Hospital (approximately 30 minutes by car)\n" +
        "• Please inform us of any medical conditions or allergies\n" +
        "• Travel insurance with medical evacuation coverage is strongly recommended",
        60, 555, { width: contentWidth - 20, lineGap: 4 }
@@ -581,7 +581,7 @@ async function generatePDF() {
   doc.fillColor(RICH_GOLD)
      .fontSize(14)
      .font('Helvetica')
-     .text("We wish you a wonderful stay on Malekula Island", 50, pageHeight - 50, { width: contentWidth, align: 'center' });
+     .text("We wish you a wonderful stay on Efate Island", 50, pageHeight - 50, { width: contentWidth, align: 'center' });
 
   // End document
   doc.end();

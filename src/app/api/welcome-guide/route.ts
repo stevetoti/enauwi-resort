@@ -259,7 +259,7 @@ export async function GET() {
       { name: "Small Nambas Village", desc: "Traditional village life with authentic customs preserved for centuries." },
       { name: "Big Nambas Territory", desc: "Remote highlands to meet the legendary Big Nambas people." },
       { name: "Maskelyne Islands", desc: "Day trip for pristine beaches and excellent snorkeling." },
-      { name: "Local Markets", desc: "Lakatoro or Norsup for produce, handicrafts, and local experiences." },
+      { name: "Local Markets", desc: "Port Vila markets for produce, handicrafts, and local experiences." },
       { name: "Jungle Waterfalls", desc: "Trek through rainforest to hidden waterfalls and wildlife." },
     ];
     
@@ -315,7 +315,7 @@ export async function GET() {
       ["Vanuatu Police:", "111"],
       ["Ambulance/Medical:", "112"],
       ["Fire Services:", "113"],
-      ["Norsup Hospital:", "+678 48551"],
+      ["Vila Central Hospital:", "+678 22100"],
       ["Australian Embassy:", "+678 22777"],
       ["NZ Embassy:", "+678 22933"],
     ];

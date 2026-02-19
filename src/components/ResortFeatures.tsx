@@ -19,7 +19,6 @@ import {
   Waves,
   Projector,
   Mic,
-  Coffee,
   Droplets,
   PenTool,
   Candy,
@@ -43,11 +42,11 @@ const resortFeatures = [
   { icon: Users, label: "Kids Club", detail: "Supervised fun for little ones" },
   { icon: UtensilsCrossed, label: "On-site Restaurant", detail: "Fresh island cuisine daily" },
   { icon: Waves, label: "Swimming Pool", detail: "Surrounded by coconut palms" },
+  { icon: Star, label: "Massage Hut", detail: "Relaxing island spa treatments" },
 ];
 
 const conferenceFeatures = [
   { icon: Wifi, label: "High-speed Wi-Fi" },
-  { icon: Coffee, label: "Full-day catering", detail: "Morning tea, lunch, afternoon tea & dinner buffet" },
   { icon: Droplets, label: "Water Bottles" },
   { icon: Star, label: "Private enclosed space" },
   { icon: Wind, label: "Portable air coolers" },
@@ -56,7 +55,7 @@ const conferenceFeatures = [
   { icon: Mic, label: "PA System" },
   { icon: PenTool, label: "Whiteboard & markers" },
   { icon: Projector, label: "Projector & screen" },
-  { icon: Tv, label: "Large TV screen" },
+  { icon: Tv, label: "TV Screen" },
 ];
 
 export default function ResortFeatures() {
@@ -146,8 +145,9 @@ export default function ResortFeatures() {
             <p className="text-white/50 text-sm max-w-2xl mx-auto">
               Swap the boardroom for an island breeze. Our fully equipped
               conference space is ideal for corporate retreats, planning
-              workshops, and team-building events — with full-day catering,
-              modern AV, and the kind of scenery that sparks fresh thinking.
+              workshops, and team-building events — with modern AV equipment
+              and the kind of scenery that sparks fresh thinking. Catering
+              available separately.
             </p>
           </div>
 
@@ -158,12 +158,7 @@ export default function ResortFeatures() {
                 className="flex items-center gap-2 text-white/60 text-sm bg-white/5 rounded-xl p-3 border border-white/5"
               >
                 <feature.icon size={16} className="text-gold/60 shrink-0" />
-                <span>
-                  {feature.label}
-                  {feature.detail && (
-                    <span className="text-white/30 text-xs ml-1">({feature.detail})</span>
-                  )}
-                </span>
+                <span>{feature.label}</span>
               </div>
             ))}
           </div>

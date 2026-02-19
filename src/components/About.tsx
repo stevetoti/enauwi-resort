@@ -18,14 +18,14 @@ const highlights = [
     title: "Kayaking & Snorkeling",
     description:
       "Glide across the glass-calm lagoon by kayak and explore four beautiful sandy beach islands just minutes from the resort. Slip beneath the surface to discover coral gardens alive with tropical fish, sea turtles, and our resident dugongs — three gentle giants who call our lagoon home.",
-    image: "/images/resort/beach-kayaks-cove-sm.jpg",
+    image: "/images/new/kayak-snorkeling.jpg",
   },
   {
     icon: UtensilsCrossed,
     title: "Open-Air Restaurant & Bar",
     description:
       "Dine under the palms with the lagoon stretching out before you. Fresh island seafood, tropical flavours, and a well-stocked bar — all set to the gentle rhythm of live background music.",
-    image: "/images/resort/resort-coral-reef-sm.jpg",
+    image: "/images/new/restaurant-seafood.jpg",
   },
 ];
 

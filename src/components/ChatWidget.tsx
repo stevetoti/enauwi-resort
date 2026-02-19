@@ -52,26 +52,33 @@ const quickReplies = [
 
 // Room data for rendering cards
 const roomData: Record<string, { name: string; image: string; price: string; description: string; amenities: string[] }> = {
-  'oceanfront bungalow': {
-    name: 'Oceanfront Bungalow',
-    image: '/images/resort/resort-lagoon-kayak-sm.jpg',
-    price: '12,000 VT',
-    description: 'Private deck with ocean views, direct beach access',
-    amenities: ['🏖️ Beach Access', '📶 WiFi', '❄️ AC'],
+  '2br deluxe': {
+    name: '2BR Deluxe Beachfront',
+    image: '/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg',
+    price: '30,000 VT',
+    description: 'Lagoon beachfront with 1 Queen + 2 Single beds',
+    amenities: ['🏖️ Beachfront', '👥 4 Guests', '❄️ AC'],
   },
-  'tropical garden suite': {
-    name: 'Tropical Garden Suite',
-    image: '/images/resort/resort-buildings-aerial-sm.jpg',
-    price: '18,000 VT',
-    description: 'Spacious suite with garden views and kitchenette',
-    amenities: ['🌿 Garden View', '🍳 Kitchen', '📶 WiFi'],
+  '2br superior': {
+    name: '2BR Superior Lagoon View',
+    image: '/images/resort/malili-rooms/living-room-8-opt-pro.jpg',
+    price: '27,000 VT',
+    description: 'Lagoon view with 1 Queen + 2 Single beds',
+    amenities: ['🌊 Lagoon View', '👥 4 Guests', '❄️ AC'],
   },
-  'premium beachfront villa': {
-    name: 'Premium Beachfront Villa',
-    image: '/images/resort/beach-resort-overview-sm.jpg',
+  '1br deluxe': {
+    name: '1BR Deluxe Beachfront',
+    image: '/images/resort/malili-rooms/living-room-5-opt-pro.jpg',
     price: '25,000 VT',
-    description: 'Private pool, full kitchen, panoramic ocean views',
-    amenities: ['🏊 Pool', '🌊 Ocean View', '🍳 Kitchen'],
+    description: 'Lagoon beachfront with Queen bed',
+    amenities: ['🏖️ Beachfront', '👥 2 Guests', '❄️ AC'],
+  },
+  '1br superior': {
+    name: '1BR Superior Lagoon View',
+    image: '/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg',
+    price: '22,000 VT',
+    description: 'Lagoon view with Queen bed',
+    amenities: ['🌊 Lagoon View', '👥 2 Guests', '❄️ AC'],
   },
 }
 
@@ -103,14 +110,30 @@ function detectRoomMentions(text: string): string[] {
     }
   }
   // Also detect by price patterns
-  if (lower.includes('12,000') || lower.includes('12000') || lower.includes('bungalow')) {
-    if (!rooms.includes('oceanfront bungalow')) rooms.push('oceanfront bungalow')
+  if (lower.includes('30,000') || lower.includes('30000')) {
+    if (!rooms.includes('2br deluxe')) rooms.push('2br deluxe')
   }
-  if (lower.includes('18,000') || lower.includes('18000') || lower.includes('garden suite')) {
-    if (!rooms.includes('tropical garden suite')) rooms.push('tropical garden suite')
+  if (lower.includes('27,000') || lower.includes('27000')) {
+    if (!rooms.includes('2br superior')) rooms.push('2br superior')
   }
-  if (lower.includes('25,000') || lower.includes('25000') || lower.includes('villa') || lower.includes('premium')) {
-    if (!rooms.includes('premium beachfront villa')) rooms.push('premium beachfront villa')
+  if (lower.includes('25,000') || lower.includes('25000')) {
+    if (!rooms.includes('1br deluxe')) rooms.push('1br deluxe')
+  }
+  if (lower.includes('22,000') || lower.includes('22000')) {
+    if (!rooms.includes('1br superior')) rooms.push('1br superior')
+  }
+  // Detect by room type keywords
+  if (lower.includes('2 bedroom') || lower.includes('two bedroom') || lower.includes('2br')) {
+    if (!rooms.includes('2br deluxe')) rooms.push('2br deluxe')
+    if (!rooms.includes('2br superior')) rooms.push('2br superior')
+  }
+  if (lower.includes('1 bedroom') || lower.includes('one bedroom') || lower.includes('1br')) {
+    if (!rooms.includes('1br deluxe')) rooms.push('1br deluxe')
+    if (!rooms.includes('1br superior')) rooms.push('1br superior')
+  }
+  if (lower.includes('beachfront') && lower.includes('deluxe')) {
+    if (!rooms.includes('2br deluxe')) rooms.push('2br deluxe')
+    if (!rooms.includes('1br deluxe')) rooms.push('1br deluxe')
   }
   return rooms
 }

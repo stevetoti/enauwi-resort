@@ -35,7 +35,7 @@ export const activities: Activity[] = [
       '/images/resort/resort-coral-reef-sm.jpg',
       '/images/resort/lagoon-island-view-sm.jpg',
     ],
-    description: `Dive into the warm waters of Efate and explore one of the most pristine reef systems in the South Pacific. Our snorkeling and diving excursion takes you to handpicked sites where you'll encounter schools of tropical fish, sea turtles, reef sharks, and the occasional manta ray.\n\nA highlight of our lagoon is the three resident dugongs (sea cows) who roam and guard these waters — a rare and magical encounter. Whether you're a first-time snorkeler or certified diver, our experienced local guides will ensure an unforgettable underwater adventure.`,
+    description: `Dive into the warm waters of Efate and explore one of the most pristine reef systems in the South Pacific. Our snorkeling and diving excursion takes you to handpicked sites where you'll encounter schools of tropical fish, sea turtles, and the occasional manta ray.\n\nA highlight of our lagoon is the three resident dugongs (sea cows) who roam and guard these waters — a rare and magical encounter. Whether you're a first-time snorkeler or certified diver, our experienced local guides will ensure an unforgettable underwater adventure.`,
     whatToExpect: [
       'Boat ride to pristine reef sites along the coast',
       'Guided snorkel or dive with experienced local guides',

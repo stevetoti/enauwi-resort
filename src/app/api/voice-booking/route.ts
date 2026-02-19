@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
   
   <div style="background: #0a5e44; padding: 15px; text-align: center;">
     <p style="color: white; margin: 0; font-size: 12px;">📞 +678 22170 | ✉️ info@enauwiresort.vu</p>
-    <p style="color: #a8e6cf; margin: 5px 0 0; font-size: 11px;">South West Bay, Efate Island, Vanuatu</p>
+    <p style="color: #a8e6cf; margin: 5px 0 0; font-size: 11px;">South East Efate, Vanuatu</p>
   </div>
 </div>`
 

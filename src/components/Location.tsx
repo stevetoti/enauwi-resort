@@ -7,16 +7,16 @@ import { Plane, Car, MapPin, Clock, Phone, Info } from "lucide-react";
 const steps = [
   {
     icon: Plane,
-    title: "Fly to Norsup Airport (NUS)",
+    title: "Fly to Port Vila (VLI)",
     description:
-      "Regular domestic flights from Port Vila (VLI) operate daily on Air Vanuatu and Unity Airlines. Flight time approximately 1 hour.",
-    highlight: "Daily flights from Port Vila",
+      "International and domestic flights arrive at Bauerfield International Airport in Port Vila, the capital of Vanuatu on Efate Island.",
+    highlight: "Direct flights from Australia & NZ",
   },
   {
     icon: Car,
-    title: "15-Minute Resort Transfer",
+    title: "Scenic Drive to the Resort",
     description:
-      "Our shuttle service meets arriving flights — sit back and enjoy the scenic coastal drive to the resort through lush tropical countryside. Contact us 72 hours prior to arrange pick-up.",
+      "Our shuttle service can pick you up from the airport — enjoy the scenic coastal drive through lush tropical countryside. Contact us 72 hours prior to arrange pick-up.",
     highlight: "VUV 2,000/adult · VUV 1,000/child",
   },
   {
@@ -122,7 +122,7 @@ export default function Location() {
             className="lg:col-span-3 rounded-3xl overflow-hidden shadow-2xl shadow-ocean/10 border border-ocean/10"
           >
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d248044.26007689458!2d167.4!3d-16.1!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6e85efcdb6b27e2f%3A0x6a3e86a0a72c1b0!2sEfate!5e0!3m2!1sen!2svu!4v1700000000000!5m2!1sen!2svu"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d248044.26007689458!2d168.3!3d-17.7!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6e7318b1f7e5d5f7%3A0x4036d85c7e5c0f0!2sEfate%2C%20Vanuatu!5e0!3m2!1sen!2svu!4v1700000000000!5m2!1sen!2svu"
               width="100%"
               height="450"
               style={{ border: 0 }}
@@ -151,9 +151,9 @@ export default function Location() {
                   <div>
                     <p className="font-medium text-ocean">Address</p>
                     <p className="text-ocean/60 text-sm">
-                      South West Bay, Efate Island,
+                      Efate Island,
                       <br />
-                      Malampa Province, Vanuatu
+                      Shefa Province, Vanuatu
                     </p>
                   </div>
                 </div>
@@ -162,20 +162,20 @@ export default function Location() {
                   <div>
                     <p className="font-medium text-ocean">Nearest Airport</p>
                     <p className="text-ocean/60 text-sm">
-                      Norsup Airport (NUS)
+                      Bauerfield International (VLI)
                       <br />
-                      15 minutes by road
+                      Port Vila, Efate Island
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Clock size={18} className="text-gold mt-0.5 shrink-0" />
                   <div>
-                    <p className="font-medium text-ocean">From Port Vila</p>
+                    <p className="font-medium text-ocean">Getting Here</p>
                     <p className="text-ocean/60 text-sm">
-                      ~1 hour flight (Air Vanuatu)
+                      Direct flights from Australia, NZ,
                       <br />
-                      Daily departures available
+                      Fiji & regional destinations
                     </p>
                   </div>
                 </div>
@@ -199,9 +199,9 @@ export default function Location() {
                 Travel Tips
               </h4>
               <ul className="space-y-2 text-ocean/60 text-sm">
-                <li>• Book domestic flights in advance during peak season (Jun-Oct)</li>
+                <li>• Book flights in advance during peak season (Jun-Oct)</li>
                 <li>• Australian & NZ citizens: 30-day visa-free entry</li>
-                <li>• Currency: Vanuatu Vatu (VT) — ATMs available in Norsup</li>
+                <li>• Currency: Vanuatu Vatu (VT) — ATMs in Port Vila</li>
                 <li>• Best time to visit: April to October (dry season)</li>
               </ul>
             </div>
