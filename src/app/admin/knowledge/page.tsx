@@ -20,7 +20,7 @@ import {
   Utensils,
   Activity,
 } from 'lucide-react'
-import { createClientSupabase } from '@/lib/supabase'
+// API routes are used instead of direct Supabase calls
 
 interface KnowledgeEntry {
   id: string
@@ -105,7 +105,7 @@ export default function KnowledgeBasePage() {
   const [frontDeskHours, setFrontDeskHours] = useState('Mon-Sun 8:00 AM - 5:00 PM')
   const [settingsLoaded, setSettingsLoaded] = useState(false) // eslint-disable-line @typescript-eslint/no-unused-vars
 
-  const supabase = createClientSupabase()
+  // API routes are used instead of direct Supabase calls to bypass RLS
 
   // Load voice settings from API
   const loadVoiceSettings = useCallback(async () => {
