@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Calendar,
   ArrowUpRight,
@@ -13,10 +14,24 @@ import {
   TrendingUp,
   ConciergeBell,
   Package,
+  Plus,
+  MessageSquare,
+  Share2,
+  FileText,
+  ChevronRight,
 } from 'lucide-react'
 import { createClientSupabase } from '@/lib/supabase'
 import { formatVatu, formatDate } from '@/lib/utils'
 import { Booking, Room } from '@/types'
+import { 
+  StatCard, 
+  Card, 
+  PageTransition, 
+  EmptyState, 
+  Badge,
+  LoadingGrid,
+  QuickAction,
+} from '@/components/ui'
 
 interface DashboardStats {
   totalBookings: number
@@ -48,8 +63,22 @@ export default function AdminDashboard() {
   })
   const [recentBookings, setRecentBookings] = useState<(Booking & { room?: Room })[]>([])
   const [loading, setLoading] = useState(true)
+  const [userName, setUserName] = useState('Admin')
 
   const supabase = createClientSupabase()
+
+  useEffect(() => {
+    // Get user name from localStorage
+    try {
+      const staffData = localStorage.getItem('staff')
+      if (staffData) {
+        const staff = JSON.parse(staffData)
+        if (staff.name) setUserName(staff.name)
+      }
+    } catch {
+      // ignore
+    }
+  }, [])
 
   const fetchDashboardData = useCallback(async () => {
     try {
@@ -134,7 +163,7 @@ export default function AdminDashboard() {
         pendingConferences: confBookings?.length || 0,
       })
 
-      setRecentBookings(allBookings.slice(0, 10))
+      setRecentBookings(allBookings.slice(0, 8))
     } catch (error) {
       console.error('Error fetching dashboard data:', error)
     } finally {
@@ -149,38 +178,78 @@ export default function AdminDashboard() {
   const statusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-amber-100 text-amber-800'
+        return 'warning'
       case 'confirmed':
-        return 'bg-teal-100 text-teal-800'
+        return 'info'
       case 'checked_in':
-        return 'bg-green-100 text-green-800'
+        return 'success'
       case 'checked_out':
-        return 'bg-gray-100 text-gray-800'
+        return 'default'
       case 'cancelled':
-        return 'bg-red-100 text-red-800'
+        return 'danger'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'default'
     }
   }
 
+  // Time-based greeting
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour < 12) return { text: 'Good morning', emoji: '☀️' }
+    if (hour < 17) return { text: 'Good afternoon', emoji: '🌤️' }
+    return { text: 'Good evening', emoji: '🌙' }
+  }
+
+  const greeting = getGreeting()
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
-      </div>
+      <PageTransition className="space-y-6">
+        <div className="h-16 bg-gray-100 rounded-2xl animate-pulse" />
+        <LoadingGrid count={4} />
+        <LoadingGrid count={3} />
+      </PageTransition>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <PageTransition className="space-y-6">
+      {/* Welcome Section */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            {greeting.text}, {userName.split(' ')[0]} {greeting.emoji}
+          </h1>
+          <p className="text-gray-500 mt-1">
+            Here&apos;s what&apos;s happening at E&apos;Nauwi Beach Resort today
+          </p>
+        </div>
+        
+        {/* Quick Actions */}
+        <div className="flex gap-2">
+          <Link
+            href="/admin/bookings"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-500 text-white rounded-xl font-medium text-sm hover:from-teal-700 hover:to-teal-600 transition-all shadow-md hover:shadow-lg"
+          >
+            <Plus className="h-4 w-4" />
+            New Booking
+          </Link>
+        </div>
+      </motion.div>
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Total Bookings"
           value={stats.totalBookings.toString()}
           icon={<Calendar className="h-5 w-5" />}
-          color="blue"
+          color="teal"
           subtitle={`${stats.pendingBookings} pending`}
+          delay={0}
         />
         <StatCard
           title="Today's Check-ins"
@@ -188,13 +257,15 @@ export default function AdminDashboard() {
           icon={<ArrowUpRight className="h-5 w-5" />}
           color="green"
           subtitle="Arriving today"
+          delay={0.1}
         />
         <StatCard
           title="Today's Check-outs"
           value={stats.todayCheckOuts.toString()}
           icon={<ArrowDownRight className="h-5 w-5" />}
-          color="orange"
+          color="amber"
           subtitle="Departing today"
+          delay={0.2}
         />
         <StatCard
           title="Occupancy Rate"
@@ -202,186 +273,286 @@ export default function AdminDashboard() {
           icon={<BedDouble className="h-5 w-5" />}
           color="purple"
           subtitle={`${stats.totalRooms} rooms total`}
+          delay={0.3}
         />
       </div>
 
+      {/* Quick Actions Bar */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
+        <Card className="p-4">
+          <p className="text-sm font-medium text-gray-500 mb-3">Quick Actions</p>
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
+            <QuickAction
+              icon={<Calendar className="h-5 w-5" />}
+              label="Bookings"
+              href="/admin/bookings"
+              color="teal"
+            />
+            <QuickAction
+              icon={<BedDouble className="h-5 w-5" />}
+              label="Rooms"
+              href="/admin/rooms"
+              color="amber"
+            />
+            <QuickAction
+              icon={<Users className="h-5 w-5" />}
+              label="Guests"
+              href="/admin/guests"
+              color="blue"
+            />
+            <QuickAction
+              icon={<Share2 className="h-5 w-5" />}
+              label="Social"
+              href="/admin/social/calendar"
+              color="purple"
+            />
+            <QuickAction
+              icon={<MessageSquare className="h-5 w-5" />}
+              label="Chat"
+              href="/staff/chat"
+              color="teal"
+            />
+            <QuickAction
+              icon={<ConciergeBell className="h-5 w-5" />}
+              label="Services"
+              href="/admin/services"
+              color="amber"
+            />
+            <QuickAction
+              icon={<FileText className="h-5 w-5" />}
+              label="Reports"
+              href="/admin/reports"
+              color="blue"
+            />
+            <QuickAction
+              icon={<DollarSign className="h-5 w-5" />}
+              label="Finance"
+              href="/admin/finance"
+              color="purple"
+            />
+          </div>
+        </Card>
+      </motion.div>
+
       {/* Secondary Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <DollarSign className="h-5 w-5 text-green-600" />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          whileHover={{ scale: 1.01 }}
+        >
+          <Card className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-gradient-to-br from-green-100 to-emerald-50 rounded-xl">
+                <DollarSign className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Total Revenue</p>
+                <p className="text-xl font-bold text-gray-900">{formatVatu(stats.totalRevenue)}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-500">Total Revenue</p>
-              <p className="text-xl font-bold text-gray-900">{formatVatu(stats.totalRevenue)}</p>
+          </Card>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          whileHover={{ scale: 1.01 }}
+        >
+          <Card className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-gradient-to-br from-teal-100 to-teal-50 rounded-xl">
+                <Users className="h-5 w-5 text-teal-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Total Guests</p>
+                <p className="text-xl font-bold text-gray-900">{stats.totalGuests}</p>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-teal-100 rounded-lg">
-              <Users className="h-5 w-5 text-teal-600" />
+          </Card>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          whileHover={{ scale: 1.01 }}
+        >
+          <Card className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-gradient-to-br from-yellow-100 to-amber-50 rounded-xl">
+                <Clock className="h-5 w-5 text-yellow-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Pending Bookings</p>
+                <p className="text-xl font-bold text-gray-900">{stats.pendingBookings}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-500">Total Guests</p>
-              <p className="text-xl font-bold text-gray-900">{stats.totalGuests}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <Clock className="h-5 w-5 text-yellow-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Pending Bookings</p>
-              <p className="text-xl font-bold text-gray-900">{stats.pendingBookings}</p>
-            </div>
-          </div>
-        </div>
+          </Card>
+        </motion.div>
       </div>
 
       {/* Service Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Package className="h-5 w-5 text-purple-600" />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          whileHover={{ scale: 1.01 }}
+        >
+          <Card className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-gradient-to-br from-purple-100 to-purple-50 rounded-xl">
+                <Package className="h-5 w-5 text-purple-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Service Orders Today</p>
+                <p className="text-xl font-bold text-gray-900">{stats.serviceOrdersToday}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-500">Service Orders Today</p>
-              <p className="text-xl font-bold text-gray-900">{stats.serviceOrdersToday}</p>
+          </Card>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
+          whileHover={{ scale: 1.01 }}
+        >
+          <Card className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-xl">
+                <ConciergeBell className="h-5 w-5 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Service Revenue Today</p>
+                <p className="text-xl font-bold text-gray-900">{formatVatu(stats.serviceRevenueToday)}</p>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-100 rounded-lg">
-              <ConciergeBell className="h-5 w-5 text-emerald-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Service Revenue Today</p>
-              <p className="text-xl font-bold text-gray-900">{formatVatu(stats.serviceRevenueToday)}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-          <Link href="/admin/services" className="flex items-center gap-3">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Calendar className="h-5 w-5 text-orange-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Pending Conferences</p>
-              <p className="text-xl font-bold text-gray-900">{stats.pendingConferences}</p>
-            </div>
+          </Card>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0 }}
+          whileHover={{ scale: 1.01 }}
+        >
+          <Link href="/admin/conferences">
+            <Card className="p-5 cursor-pointer">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-gradient-to-br from-orange-100 to-orange-50 rounded-xl">
+                  <Calendar className="h-5 w-5 text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Pending Conferences</p>
+                  <p className="text-xl font-bold text-gray-900">{stats.pendingConferences}</p>
+                </div>
+              </div>
+            </Card>
           </Link>
-        </div>
+        </motion.div>
       </div>
 
       {/* Recent Bookings */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-gray-500" />
-            <h2 className="text-lg font-semibold text-gray-900">Recent Bookings</h2>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.1 }}
+      >
+        <Card className="overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+            <div className="flex items-center gap-2">
+              <div className="p-2 bg-teal-100 rounded-lg">
+                <TrendingUp className="h-4 w-4 text-teal-600" />
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900">Recent Bookings</h2>
+            </div>
+            <Link
+              href="/admin/bookings"
+              className="inline-flex items-center gap-1 text-sm text-teal-600 hover:text-teal-800 font-medium transition-colors"
+            >
+              View All
+              <ChevronRight className="h-4 w-4" />
+            </Link>
           </div>
-          <Link
-            href="/admin/bookings"
-            className="text-sm text-teal-600 hover:text-teal-800 font-medium"
-          >
-            View All →
-          </Link>
-        </div>
 
-        {recentBookings.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <th className="px-6 py-3">Guest</th>
-                  <th className="px-6 py-3">Room</th>
-                  <th className="px-6 py-3">Check-in</th>
-                  <th className="px-6 py-3">Check-out</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Total</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {recentBookings.map((booking) => (
-                  <tr key={booking.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{booking.guest_name}</p>
-                        <p className="text-xs text-gray-500">{booking.guest_email}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      {booking.room?.name || 'N/A'}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      {formatDate(booking.check_in)}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      {formatDate(booking.check_out)}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColor(
-                          booking.status
-                        )}`}
+          <AnimatePresence mode="wait">
+            {recentBookings.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50/50">
+                      <th className="px-6 py-3">Guest</th>
+                      <th className="px-6 py-3">Room</th>
+                      <th className="px-6 py-3">Check-in</th>
+                      <th className="px-6 py-3">Check-out</th>
+                      <th className="px-6 py-3">Status</th>
+                      <th className="px-6 py-3">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {recentBookings.map((booking, index) => (
+                      <motion.tr
+                        key={booking.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="hover:bg-gray-50/50 transition-colors"
                       >
-                        {booking.status.replace('_', ' ')}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                      {booking.total_price ? formatVatu(booking.total_price) : '—'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="px-6 py-12 text-center text-gray-500">
-            <Calendar className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-            <p className="text-lg font-medium">No bookings yet</p>
-            <p className="text-sm mt-1">Bookings will appear here once guests start booking.</p>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-function StatCard({
-  title,
-  value,
-  icon,
-  color,
-  subtitle,
-}: {
-  title: string
-  value: string
-  icon: React.ReactNode
-  color: 'blue' | 'green' | 'orange' | 'purple'
-  subtitle: string
-}) {
-  const colorMap = {
-    blue: 'bg-teal-100 text-teal-600',
-    green: 'bg-teal-100 text-teal-600',
-    orange: 'bg-amber-100 text-amber-600',
-    purple: 'bg-amber-100 text-amber-600',
-  }
-
-  return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-sm font-medium text-gray-500">{title}</p>
-        <div className={`p-2 rounded-lg ${colorMap[color]}`}>{icon}</div>
-      </div>
-      <p className="text-2xl font-bold text-gray-900">{value}</p>
-      <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
-    </div>
+                        <td className="px-6 py-4">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">{booking.guest_name}</p>
+                            <p className="text-xs text-gray-500">{booking.guest_email}</p>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-700">
+                          {booking.room?.name || 'N/A'}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-700">
+                          {formatDate(booking.check_in)}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-700">
+                          {formatDate(booking.check_out)}
+                        </td>
+                        <td className="px-6 py-4">
+                          <Badge variant={statusColor(booking.status) as 'success' | 'warning' | 'danger' | 'info' | 'default'}>
+                            {booking.status.replace('_', ' ')}
+                          </Badge>
+                        </td>
+                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                          {booking.total_price ? formatVatu(booking.total_price) : '—'}
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <EmptyState
+                icon={<Calendar className="h-8 w-8" />}
+                title="No bookings yet"
+                description="Bookings will appear here once guests start booking."
+                action={
+                  <Link
+                    href="/admin/bookings"
+                    className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 font-medium"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Create first booking
+                  </Link>
+                }
+              />
+            )}
+          </AnimatePresence>
+        </Card>
+      </motion.div>
+    </PageTransition>
   )
 }

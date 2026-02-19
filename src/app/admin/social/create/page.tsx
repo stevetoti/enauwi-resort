@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft,
   Sparkles,
@@ -12,19 +13,21 @@ import {
   Hash,
   Save,
   Eye,
-  Loader2,
   Globe,
   Wand2,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  X,
+  Plus,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { toast, Toaster } from 'sonner'
+import { Card, Button, PageTransition } from '@/components/ui'
 
 const PLATFORMS = [
   { id: 'facebook', name: 'Facebook', icon: Facebook, color: '#1877F2' },
   { id: 'instagram', name: 'Instagram', icon: Instagram, color: '#E4405F' },
-  { id: 'twitter', name: 'X (Twitter)', icon: () => <span className="font-bold">𝕏</span>, color: '#000000' }
+  { id: 'twitter', name: 'X (Twitter)', icon: () => <span className="font-bold text-sm">𝕏</span>, color: '#000000' }
 ]
 
 const POST_TYPES = [
@@ -43,11 +46,11 @@ const LANGUAGES = [
 ]
 
 const SUGGESTED_TIMES = [
-  { time: '09:00', label: 'Morning (9 AM)' },
-  { time: '12:00', label: 'Midday (12 PM)' },
-  { time: '15:00', label: 'Afternoon (3 PM)' },
-  { time: '18:00', label: 'Evening (6 PM)' },
-  { time: '20:00', label: 'Night (8 PM)' }
+  { time: '09:00', label: 'Morning (9 AM)', icon: '🌅' },
+  { time: '12:00', label: 'Midday (12 PM)', icon: '☀️' },
+  { time: '15:00', label: 'Afternoon (3 PM)', icon: '🌤️' },
+  { time: '18:00', label: 'Evening (6 PM)', icon: '🌅' },
+  { time: '20:00', label: 'Night (8 PM)', icon: '🌙' }
 ]
 
 export default function CreatePostPage() {
@@ -123,7 +126,6 @@ export default function CreatePostPage() {
       if (data.posts && data.posts.length > 0) {
         const post = data.posts[0]
         
-        // Set content based on language
         if (aiLanguage === 'en') {
           setContent(post.content)
         } else if (aiLanguage === 'bis') {
@@ -132,12 +134,10 @@ export default function CreatePostPage() {
           setContentFrench(post.content)
         }
         
-        // Set hashtags
         if (post.hashtags && post.hashtags.length > 0) {
           setHashtags(post.hashtags)
         }
         
-        // Set suggested time if provided
         if (post.suggestedTime) {
           const suggestedHour = post.suggestedTime.match(/(\d{1,2})/)?.[1]
           if (suggestedHour) {
@@ -247,7 +247,7 @@ export default function CreatePostPage() {
           : 'Post scheduled successfully'
       )
       
-      router.push('/admin/social')
+      router.push('/admin/social/calendar')
     } catch {
       toast.error('Failed to save post')
     } finally {
@@ -260,390 +260,485 @@ export default function CreatePostPage() {
   const isOverTwitterLimit = selectedPlatforms.includes('twitter') && characterCount > twitterLimit
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 p-4 md:p-6">
+    <PageTransition className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 -m-4 sm:-m-6 p-4 md:p-6">
       <Toaster position="top-right" richColors />
       
       {/* Header */}
-      <div className="mb-6">
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6"
+      >
         <Link 
-          href="/admin/social" 
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+          href="/admin/social/calendar" 
+          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Dashboard
+          Back to Calendar
         </Link>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Create New Post</h1>
-            <p className="text-gray-600">Compose and schedule your social media content</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Create New Post</h1>
+            <p className="text-gray-500 mt-1">Compose and schedule your social media content</p>
           </div>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setShowAiPanel(!showAiPanel)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all shadow-sm ${
               showAiPanel 
-                ? 'bg-purple-600 text-white' 
-                : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-purple-200' 
+                : 'bg-white text-purple-700 hover:bg-purple-50 border border-purple-200'
             }`}
           >
             <Sparkles className="w-5 h-5" />
             AI Assistant
-          </button>
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content Area */}
         <div className="lg:col-span-2 space-y-6">
           {/* AI Panel */}
-          {showAiPanel && (
-            <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200">
-              <h3 className="font-semibold text-purple-900 mb-4 flex items-center gap-2">
-                <Wand2 className="w-5 h-5" />
-                AI Content Generator
+          <AnimatePresence>
+            {showAiPanel && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card className="overflow-hidden border-purple-100">
+                  <div className="bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 p-6">
+                    <h3 className="font-semibold text-purple-900 mb-4 flex items-center gap-2">
+                      <motion.div
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        <Wand2 className="w-5 h-5" />
+                      </motion.div>
+                      AI Content Generator
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Post Type</label>
+                        <select
+                          value={postType}
+                          onChange={(e) => setPostType(e.target.value)}
+                          className="w-full rounded-xl border-gray-200 bg-white focus:border-purple-500 focus:ring-purple-500/20 transition-all"
+                        >
+                          {POST_TYPES.map(type => (
+                            <option key={type.id} value={type.id}>
+                              {type.emoji} {type.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                        <select
+                          value={aiLanguage}
+                          onChange={(e) => setAiLanguage(e.target.value as 'en' | 'bis' | 'fr')}
+                          className="w-full rounded-xl border-gray-200 bg-white focus:border-purple-500 focus:ring-purple-500/20 transition-all"
+                        >
+                          {LANGUAGES.map(lang => (
+                            <option key={lang.code} value={lang.code}>
+                              {lang.flag} {lang.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Optimize For</label>
+                        <select
+                          value={aiPlatform}
+                          onChange={(e) => setAiPlatform(e.target.value as 'facebook' | 'instagram' | 'all')}
+                          className="w-full rounded-xl border-gray-200 bg-white focus:border-purple-500 focus:ring-purple-500/20 transition-all"
+                        >
+                          <option value="all">All Platforms</option>
+                          <option value="facebook">Facebook</option>
+                          <option value="instagram">Instagram</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Custom Instructions (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={customPrompt}
+                        onChange={(e) => setCustomPrompt(e.target.value)}
+                        placeholder="e.g., Focus on diving activities, mention special offer..."
+                        className="w-full rounded-xl border-gray-200 bg-white focus:border-purple-500 focus:ring-purple-500/20 transition-all"
+                      />
+                    </div>
+
+                    <Button
+                      onClick={generateContent}
+                      loading={generating}
+                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                      icon={<Sparkles className="w-5 h-5" />}
+                    >
+                      Generate Content
+                    </Button>
+                  </div>
+                </Card>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Content Editor */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <Card className="p-6">
+              <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Globe className="w-4 h-4 text-blue-600" />
+                </div>
+                Post Content
               </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                {/* Post Type */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Post Type</label>
-                  <select
-                    value={postType}
-                    onChange={(e) => setPostType(e.target.value)}
-                    className="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500"
-                  >
-                    {POST_TYPES.map(type => (
-                      <option key={type.id} value={type.id}>
-                        {type.emoji} {type.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
 
-                {/* Language */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
-                  <select
-                    value={aiLanguage}
-                    onChange={(e) => setAiLanguage(e.target.value as 'en' | 'bis' | 'fr')}
-                    className="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500"
-                  >
-                    {LANGUAGES.map(lang => (
-                      <option key={lang.code} value={lang.code}>
-                        {lang.flag} {lang.name}
-                      </option>
-                    ))}
-                  </select>
+              {/* English Content */}
+              <div className="mb-5">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <span className="text-base">🇬🇧</span> English (Primary)
+                  </label>
+                  <span className={`text-sm font-medium ${isOverTwitterLimit ? 'text-red-600' : 'text-gray-400'}`}>
+                    {characterCount} characters
+                    {selectedPlatforms.includes('twitter') && ` / ${twitterLimit}`}
+                  </span>
                 </div>
-
-                {/* Platform */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Optimize For</label>
-                  <select
-                    value={aiPlatform}
-                    onChange={(e) => setAiPlatform(e.target.value as 'facebook' | 'instagram' | 'all')}
-                    className="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                <textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  rows={5}
+                  placeholder="Write your post content here... Use emojis to make it engaging! 🌴🏝️"
+                  className={`w-full rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white focus:border-teal-500 focus:ring-teal-500/20 transition-all resize-none ${
+                    isOverTwitterLimit ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' : ''
+                  }`}
+                />
+                {isOverTwitterLimit && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-sm text-red-600 mt-2 flex items-center gap-1"
                   >
-                    <option value="all">All Platforms</option>
-                    <option value="facebook">Facebook</option>
-                    <option value="instagram">Instagram</option>
-                  </select>
-                </div>
+                    <AlertCircle className="w-4 h-4" />
+                    Content exceeds Twitter character limit
+                  </motion.p>
+                )}
               </div>
 
-              {/* Custom Prompt */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Custom Instructions (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={customPrompt}
-                  onChange={(e) => setCustomPrompt(e.target.value)}
-                  placeholder="e.g., Focus on diving activities, mention special offer..."
-                  className="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+              {/* Bislama Content */}
+              <div className="mb-5">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <span className="text-base">🇻🇺</span> Bislama (Optional)
+                  </label>
+                  <button
+                    onClick={() => translateContent('bis')}
+                    disabled={generating || !content}
+                    className="text-sm text-purple-600 hover:text-purple-800 flex items-center gap-1 disabled:opacity-50 transition-colors"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    Auto-translate
+                  </button>
+                </div>
+                <textarea
+                  value={contentBislama}
+                  onChange={(e) => setContentBislama(e.target.value)}
+                  rows={3}
+                  placeholder="Optional Bislama version..."
+                  className="w-full rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white focus:border-teal-500 focus:ring-teal-500/20 transition-all resize-none"
                 />
               </div>
 
-              <button
-                onClick={generateContent}
-                disabled={generating}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 transition-all"
-              >
-                {generating ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5" />
-                    Generate Content
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-
-          {/* Content Editor */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Globe className="w-5 h-5 text-blue-600" />
-              Post Content
-            </h3>
-
-            {/* English Content */}
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium text-gray-700">
-                  🇬🇧 English (Primary)
-                </label>
-                <span className={`text-sm ${isOverTwitterLimit ? 'text-red-600' : 'text-gray-500'}`}>
-                  {characterCount} characters
-                  {selectedPlatforms.includes('twitter') && ` / ${twitterLimit}`}
-                </span>
+              {/* French Content */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <span className="text-base">🇫🇷</span> French (Optional)
+                  </label>
+                  <button
+                    onClick={() => translateContent('fr')}
+                    disabled={generating || !content}
+                    className="text-sm text-purple-600 hover:text-purple-800 flex items-center gap-1 disabled:opacity-50 transition-colors"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    Auto-translate
+                  </button>
+                </div>
+                <textarea
+                  value={contentFrench}
+                  onChange={(e) => setContentFrench(e.target.value)}
+                  rows={3}
+                  placeholder="Version française optionnelle..."
+                  className="w-full rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white focus:border-teal-500 focus:ring-teal-500/20 transition-all resize-none"
+                />
               </div>
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                rows={5}
-                placeholder="Write your post content here... Use emojis to make it engaging! 🌴🏝️"
-                className={`w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 ${
-                  isOverTwitterLimit ? 'border-red-500' : ''
-                }`}
-              />
-              {isOverTwitterLimit && (
-                <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4" />
-                  Content exceeds Twitter character limit
-                </p>
-              )}
-            </div>
-
-            {/* Bislama Content */}
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium text-gray-700">
-                  🇻🇺 Bislama (Optional)
-                </label>
-                <button
-                  onClick={() => translateContent('bis')}
-                  disabled={generating || !content}
-                  className="text-sm text-purple-600 hover:text-purple-800 flex items-center gap-1 disabled:opacity-50"
-                >
-                  <Sparkles className="w-3 h-3" />
-                  Auto-translate
-                </button>
-              </div>
-              <textarea
-                value={contentBislama}
-                onChange={(e) => setContentBislama(e.target.value)}
-                rows={3}
-                placeholder="Optional Bislama version..."
-                className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* French Content */}
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium text-gray-700">
-                  🇫🇷 French (Optional)
-                </label>
-                <button
-                  onClick={() => translateContent('fr')}
-                  disabled={generating || !content}
-                  className="text-sm text-purple-600 hover:text-purple-800 flex items-center gap-1 disabled:opacity-50"
-                >
-                  <Sparkles className="w-3 h-3" />
-                  Auto-translate
-                </button>
-              </div>
-              <textarea
-                value={contentFrench}
-                onChange={(e) => setContentFrench(e.target.value)}
-                rows={3}
-                placeholder="Version française optionnelle..."
-                className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div>
-          </div>
+            </Card>
+          </motion.div>
 
           {/* Hashtags */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Hash className="w-5 h-5 text-blue-600" />
-              Hashtags
-            </h3>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="p-6">
+              <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <div className="p-2 bg-teal-100 rounded-lg">
+                  <Hash className="w-4 h-4 text-teal-600" />
+                </div>
+                Hashtags
+              </h3>
 
-            <div className="flex gap-2 mb-3">
-              <input
-                type="text"
-                value={hashtagInput}
-                onChange={(e) => setHashtagInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addHashtag())}
-                placeholder="Add hashtag..."
-                className="flex-1 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-              />
-              <button
-                onClick={addHashtag}
-                className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
-              >
-                Add
-              </button>
-            </div>
+              <div className="flex gap-2 mb-4">
+                <input
+                  type="text"
+                  value={hashtagInput}
+                  onChange={(e) => setHashtagInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addHashtag())}
+                  placeholder="Add hashtag..."
+                  className="flex-1 rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white focus:border-teal-500 focus:ring-teal-500/20 transition-all"
+                />
+                <Button onClick={addHashtag} variant="secondary" icon={<Plus className="w-4 h-4" />}>
+                  Add
+                </Button>
+              </div>
 
-            <div className="flex flex-wrap gap-2">
-              {hashtags.map(tag => (
-                <span
-                  key={tag}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-                >
-                  #{tag}
-                  <button
-                    onClick={() => removeHashtag(tag)}
-                    className="text-blue-600 hover:text-blue-900"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-              {hashtags.length === 0 && (
-                <p className="text-gray-500 text-sm">No hashtags added yet</p>
-              )}
-            </div>
-          </div>
+              <div className="flex flex-wrap gap-2">
+                <AnimatePresence mode="popLayout">
+                  {hashtags.map(tag => (
+                    <motion.span
+                      key={tag}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-teal-50 to-blue-50 text-teal-700 rounded-full text-sm font-medium border border-teal-100"
+                    >
+                      #{tag}
+                      <button
+                        onClick={() => removeHashtag(tag)}
+                        className="text-teal-500 hover:text-teal-700 transition-colors"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </motion.span>
+                  ))}
+                </AnimatePresence>
+                {hashtags.length === 0 && (
+                  <p className="text-gray-400 text-sm">No hashtags added yet</p>
+                )}
+              </div>
+            </Card>
+          </motion.div>
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Platforms */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Publish To</h3>
-            <div className="space-y-3">
-              {PLATFORMS.map(platform => (
-                <label
-                  key={platform.id}
-                  className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                    selectedPlatforms.includes(platform.id)
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedPlatforms.includes(platform.id)}
-                    onChange={() => togglePlatform(platform.id)}
-                    className="sr-only"
-                  />
-                  <div 
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-white"
-                    style={{ backgroundColor: platform.color }}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <Card className="p-6">
+              <h3 className="font-semibold text-gray-900 mb-4">Publish To</h3>
+              <div className="space-y-3">
+                {PLATFORMS.map(platform => (
+                  <motion.label
+                    key={platform.id}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    className={`flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                      selectedPlatforms.includes(platform.id)
+                        ? 'border-teal-500 bg-teal-50/50 shadow-sm'
+                        : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50/50'
+                    }`}
                   >
-                    <platform.icon className="w-5 h-5" />
-                  </div>
-                  <span className="font-medium text-gray-900">{platform.name}</span>
-                  {selectedPlatforms.includes(platform.id) && (
-                    <CheckCircle className="w-5 h-5 text-blue-600 ml-auto" />
-                  )}
-                </label>
-              ))}
-            </div>
-          </div>
+                    <input
+                      type="checkbox"
+                      checked={selectedPlatforms.includes(platform.id)}
+                      onChange={() => togglePlatform(platform.id)}
+                      className="sr-only"
+                    />
+                    <div 
+                      className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-md"
+                      style={{ backgroundColor: platform.color }}
+                    >
+                      <platform.icon className="w-5 h-5" />
+                    </div>
+                    <span className="font-medium text-gray-900">{platform.name}</span>
+                    <AnimatePresence>
+                      {selectedPlatforms.includes(platform.id) && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0 }}
+                          className="ml-auto"
+                        >
+                          <CheckCircle className="w-5 h-5 text-teal-600" />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.label>
+                ))}
+              </div>
+            </Card>
+          </motion.div>
 
           {/* Scheduling */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-blue-600" />
-              Schedule
-            </h3>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                <input
-                  type="date"
-                  value={scheduledDate}
-                  onChange={(e) => setScheduledDate(e.target.value)}
-                  min={format(new Date(), 'yyyy-MM-dd')}
-                  className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                <select
-                  value={scheduledTime}
-                  onChange={(e) => setScheduledTime(e.target.value)}
-                  className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                >
-                  <option value="">Select time...</option>
-                  {SUGGESTED_TIMES.map(t => (
-                    <option key={t.time} value={t.time}>{t.label}</option>
-                  ))}
-                </select>
-              </div>
-
-              {scheduledDate && scheduledTime && (
-                <div className="p-3 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-blue-800">
-                    Scheduled for: <strong>{format(new Date(`${scheduledDate}T${scheduledTime}`), 'PPP')} at {scheduledTime}</strong>
-                  </p>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="p-6">
+              <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Calendar className="w-4 h-4 text-blue-600" />
                 </div>
-              )}
-            </div>
-          </div>
+                Schedule
+              </h3>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                  <input
+                    type="date"
+                    value={scheduledDate}
+                    onChange={(e) => setScheduledDate(e.target.value)}
+                    min={format(new Date(), 'yyyy-MM-dd')}
+                    className="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500/20 transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                  <div className="grid grid-cols-5 gap-1.5">
+                    {SUGGESTED_TIMES.map(t => (
+                      <motion.button
+                        key={t.time}
+                        type="button"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setScheduledTime(t.time)}
+                        className={`p-2 rounded-lg text-center transition-all ${
+                          scheduledTime === t.time
+                            ? 'bg-teal-100 text-teal-700 ring-2 ring-teal-500/30'
+                            : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                        }`}
+                        title={t.label}
+                      >
+                        <span className="text-lg">{t.icon}</span>
+                        <span className="block text-xs mt-0.5">{t.time}</span>
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+
+                <AnimatePresence>
+                  {scheduledDate && scheduledTime && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="p-3 bg-gradient-to-r from-teal-50 to-blue-50 rounded-xl border border-teal-100"
+                    >
+                      <p className="text-sm text-teal-800 flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4" />
+                        <span>
+                          <strong>{format(new Date(`${scheduledDate}T${scheduledTime}`), 'PPP')}</strong> at <strong>{scheduledTime}</strong>
+                        </span>
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </Card>
+          </motion.div>
 
           {/* Post Type */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Post Type</h3>
-            <select
-              value={postType}
-              onChange={(e) => setPostType(e.target.value)}
-              className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-            >
-              {POST_TYPES.map(type => (
-                <option key={type.id} value={type.id}>
-                  {type.emoji} {type.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card className="p-6">
+              <h3 className="font-semibold text-gray-900 mb-4">Post Type</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {POST_TYPES.map(type => (
+                  <motion.button
+                    key={type.id}
+                    type="button"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setPostType(type.id)}
+                    className={`p-3 rounded-xl text-left transition-all ${
+                      postType === type.id
+                        ? 'bg-teal-100 text-teal-800 ring-2 ring-teal-500/30'
+                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    <span className="text-xl mb-1 block">{type.emoji}</span>
+                    <span className="text-sm font-medium">{type.label}</span>
+                  </motion.button>
+                ))}
+              </div>
+            </Card>
+          </motion.div>
 
           {/* Actions */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-3">
-            <button
-              onClick={() => savePost('scheduled')}
-              disabled={saving || !content || !scheduledDate || !scheduledTime}
-              className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white font-medium py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {saving ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <Calendar className="w-5 h-5" />
-              )}
-              Schedule Post
-            </button>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <Card className="p-6 space-y-3">
+              <Button
+                onClick={() => savePost('scheduled')}
+                disabled={saving || !content || !scheduledDate || !scheduledTime}
+                loading={saving}
+                className="w-full"
+                icon={<Calendar className="w-5 h-5" />}
+              >
+                Schedule Post
+              </Button>
 
-            <button
-              onClick={() => savePost('review')}
-              disabled={saving || !content}
-              className="w-full flex items-center justify-center gap-2 bg-orange-600 text-white font-medium py-3 rounded-lg hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <Eye className="w-5 h-5" />
-              Send for Review
-            </button>
+              <Button
+                onClick={() => savePost('review')}
+                disabled={saving || !content}
+                variant="secondary"
+                className="w-full bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
+                icon={<Eye className="w-5 h-5" />}
+              >
+                Send for Review
+              </Button>
 
-            <button
-              onClick={() => savePost('draft')}
-              disabled={saving || !content}
-              className="w-full flex items-center justify-center gap-2 bg-gray-100 text-gray-700 font-medium py-3 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <Save className="w-5 h-5" />
-              Save as Draft
-            </button>
-          </div>
+              <Button
+                onClick={() => savePost('draft')}
+                disabled={saving || !content}
+                variant="ghost"
+                className="w-full"
+                icon={<Save className="w-5 h-5" />}
+              >
+                Save as Draft
+              </Button>
+            </Card>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </PageTransition>
   )
 }
