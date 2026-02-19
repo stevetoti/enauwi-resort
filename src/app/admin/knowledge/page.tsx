@@ -107,74 +107,46 @@ export default function KnowledgeBasePage() {
 
   const supabase = createClientSupabase()
 
-  // Load voice settings from database
+  // Load voice settings from API
   const loadVoiceSettings = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from('site_settings')
-        .select('key, value')
-        .in('key', ['voice_greeting', 'contact_phone', 'contact_email', 'check_in_time', 'check_out_time', 'front_desk_hours'])
+      const response = await fetch('/api/admin/voice-settings')
+      const result = await response.json()
       
-      if (error) throw error
-      
-      if (data) {
-        data.forEach(setting => {
-          switch (setting.key) {
-            case 'voice_greeting': setVoiceGreeting(setting.value); break
-            case 'contact_phone': setContactPhone(setting.value); break
-            case 'contact_email': setContactEmail(setting.value); break
-            case 'check_in_time': setCheckInTime(setting.value); break
-            case 'check_out_time': setCheckOutTime(setting.value); break
-            case 'front_desk_hours': setFrontDeskHours(setting.value); break
-          }
-        })
+      if (result.success && result.settings) {
+        const s = result.settings
+        if (s.voice_greeting) setVoiceGreeting(s.voice_greeting)
+        if (s.contact_phone) setContactPhone(s.contact_phone)
+        if (s.contact_email) setContactEmail(s.contact_email)
+        if (s.check_in_time) setCheckInTime(s.check_in_time)
+        if (s.check_out_time) setCheckOutTime(s.check_out_time)
+        if (s.front_desk_hours) setFrontDeskHours(s.front_desk_hours)
       }
       setSettingsLoaded(true)
     } catch (error) {
       console.error('Error loading voice settings:', error)
       setSettingsLoaded(true)
     }
-  }, [supabase])
+  }, [])
 
-  // Save voice settings to database
+  // Save voice settings via API
   const saveVoiceSettings = async () => {
-    const settings = [
-      { key: 'voice_greeting', value: voiceGreeting },
-      { key: 'contact_phone', value: contactPhone },
-      { key: 'contact_email', value: contactEmail },
-      { key: 'check_in_time', value: checkInTime },
-      { key: 'check_out_time', value: checkOutTime },
-      { key: 'front_desk_hours', value: frontDeskHours },
-    ]
+    const response = await fetch('/api/admin/voice-settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        voice_greeting: voiceGreeting,
+        contact_phone: contactPhone,
+        contact_email: contactEmail,
+        check_in_time: checkInTime,
+        check_out_time: checkOutTime,
+        front_desk_hours: frontDeskHours,
+      }),
+    })
     
-    for (const setting of settings) {
-      // Check if setting exists
-      const { data: existing } = await supabase
-        .from('site_settings')
-        .select('id')
-        .eq('key', setting.key)
-        .single()
-      
-      if (existing) {
-        // Update existing
-        const { error } = await supabase
-          .from('site_settings')
-          .update({ value: setting.value, updated_at: new Date().toISOString() })
-          .eq('key', setting.key)
-        if (error) {
-          console.error('Error updating setting:', setting.key, error)
-          throw error
-        }
-      } else {
-        // Insert new
-        const { error } = await supabase
-          .from('site_settings')
-          .insert({ key: setting.key, value: setting.value })
-        if (error) {
-          console.error('Error inserting setting:', setting.key, error)
-          throw error
-        }
-      }
+    const result = await response.json()
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to save settings')
     }
   }
 
