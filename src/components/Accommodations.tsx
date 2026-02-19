@@ -72,7 +72,7 @@ const rooms = [
     description:
       "Set directly on the lagoon beachfront, this Deluxe Single Room features sweeping lagoon and island views, with kayaking just moments from your door.",
     guests: "Up to 2 Guests",
-    bed: "1 Bedroom",
+    bed: "1 Queen bed",
     popular: false,
   },
   {
@@ -90,7 +90,7 @@ const rooms = [
     description:
       "Our one-bedroom back-row bungalow is tucked among lush flowers, offering a peaceful and private retreat surrounded by natural beauty.",
     guests: "Up to 2 Guests",
-    bed: "1 Bedroom",
+    bed: "1 Queen bed",
     popular: false,
   },
 ];

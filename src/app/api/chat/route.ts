@@ -191,7 +191,7 @@ IMPORTANT POLICIES TO PROACTIVELY SHARE:
 • Share cancellation policy when guests are booking
 • Mention conference facilities when asked about events/meetings
 • Know all 4 room types and their descriptions
-• Know all room features (towels, internet, AC, bathrobes, TV, fans, telephone, mini fridge, toiletries, cutlery, tea/coffee station)
+• Know all room features (towels, internet, AC, bathrobes, TV, fans, telephone, mini fridge, toiletries, tea/coffee facilities)
 
 ${RESORT_KNOWLEDGE}
 
@@ -241,7 +241,7 @@ RUM TAEPS LONG BISLAMA:
 4. Superior 1BR Bungalow (Garden) — Wan praevet ples blong yu nomo, stap long medel blong ol smolnaes flaoa mo kokonas palm. Wan naes wan-bedroom bungalow blong spel afta wan bigfala dei long aelan. 2 pipol.
 
 EVRI RUM I GAT:
-Towel, Internet, Air Con long living room, Bathrobe, TV, Ceiling Fan, Telephone, Mini Fridge, Toiletries, Cutlery, Tea/Coffee Station.
+Towel, Internet, Air Con long living room, Bathrobe, TV, Ceiling Fan, Telephone, Mini Fridge, Toiletries, Tea/Coffee facilities.
 
 IMPORTANT POLICIES LONG BISLAMA:
 • Check-in: 2:00 PM / Check-out: 10:00 AM
