@@ -186,7 +186,7 @@ export default function Location() {
                     <p className="text-ocean/60 text-sm">
                       <a href="tel:+67822170" className="hover:text-ocean transition-colors">+678 22170</a>
                       <br />
-                      <a href="mailto:gm@enauwibeachresort.com" className="hover:text-ocean transition-colors">gm@enauwibeachresort.com</a>
+                      <a href="mailto:reservation@enauwibeachresort.com" className="hover:text-ocean transition-colors">reservation@enauwibeachresort.com</a>
                     </p>
                   </div>
                 </div>

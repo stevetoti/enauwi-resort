@@ -78,7 +78,7 @@ Conference room amenities:
 • PA System
 • Whiteboard & markers
 • Projector & screen
-• Large TV screen
+• TV Screen
 Contact marketing@enauwibeachresort.com for conference bookings and pricing.
 
 CHECK-IN / CHECK-OUT:
