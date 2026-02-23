@@ -36,3 +36,9 @@ supabase/.temp/
 
 # Original high-res resort photos (too large for git)
 public/images/resort/originals/
+.env
+.env.*
+.env.local
+.env.production
+.env.development
+*.key

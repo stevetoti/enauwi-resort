@@ -16,9 +16,9 @@ async function sendEmail(to: string, subject: string, html: string) {
     const resend = new Resend(process.env.RESEND_API_KEY)
     await resend.emails.send({
       from: 'E\'Nauwi Beach Resort <noreply@totiroom.pacificwavedigital.com>',
-      replyTo: 'info@enauwiresort.vu',
+      replyTo: 'reservation@enauwibeachresort.com',
       to: [to],
-      cc: ['steve@pacificwavedigital.com'],
+      cc: ['steve@pacificwavedigital.com', 'reservation@enauwibeachresort.com'],
       subject,
       html,
     })
@@ -27,6 +27,54 @@ async function sendEmail(to: string, subject: string, html: string) {
     console.error('Email send error:', err)
     return false
   }
+}
+
+// Room mapping with correct UUID IDs from database
+const ROOMS = {
+  'beachfront-deluxe-2': {
+    id: '05e09a4e-aa78-41a0-a8ce-de9e45710e44',
+    name: 'Beachfront Deluxe 2 Bedroom',
+    price: 30000,
+    maxGuests: 4
+  },
+  'lagoon-view-2': {
+    id: '302109a1-b014-4ce7-b5af-bb0a303fe544',
+    name: 'Lagoon View Superior 2 Bedroom',
+    price: 27000,
+    maxGuests: 4
+  },
+  'beachfront-deluxe-1': {
+    id: '6f314c7c-d38d-4ed6-bcb6-f83f2bc375a3',
+    name: 'Beachfront Deluxe 1 Bedroom',
+    price: 25000,
+    maxGuests: 2
+  },
+  'lagoon-view-1': {
+    id: '9b37897c-b1ad-40ed-a516-949c1963d487',
+    name: 'Lagoon View Superior 1 Bedroom',
+    price: 22000,
+    maxGuests: 2
+  },
+  'garden-view-2': {
+    id: 'f82af187-8b17-4d22-902e-f149e4abe7cc',
+    name: 'Back Garden View 2 Bedroom',
+    price: 23000,
+    maxGuests: 4
+  }
+}
+
+function matchRoom(roomType: string) {
+  const type = (roomType || '').toLowerCase()
+  
+  // Match by keywords
+  if (type.includes('beachfront') && type.includes('2')) return ROOMS['beachfront-deluxe-2']
+  if (type.includes('beachfront') || type.includes('deluxe')) return ROOMS['beachfront-deluxe-1']
+  if (type.includes('lagoon') && type.includes('2')) return ROOMS['lagoon-view-2']
+  if (type.includes('lagoon') || type.includes('superior')) return ROOMS['lagoon-view-1']
+  if (type.includes('garden') || type.includes('back')) return ROOMS['garden-view-2']
+  
+  // Default to cheapest option
+  return ROOMS['lagoon-view-1']
 }
 
 export async function POST(request: NextRequest) {
@@ -52,18 +100,8 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Map room type to room_id and price
-    const roomMap: Record<string, { id: number; name: string; price: number }> = {
-      'bungalow': { id: 1, name: 'Oceanfront Bungalow', price: 12000 },
-      'oceanfront': { id: 1, name: 'Oceanfront Bungalow', price: 12000 },
-      'suite': { id: 2, name: 'Tropical Garden Suite', price: 18000 },
-      'garden': { id: 2, name: 'Tropical Garden Suite', price: 18000 },
-      'villa': { id: 3, name: 'Premium Beachfront Villa', price: 25000 },
-      'premium': { id: 3, name: 'Premium Beachfront Villa', price: 25000 },
-    }
-
-    const roomKey = (room_type || 'bungalow').toLowerCase()
-    const room = roomMap[roomKey] || roomMap['bungalow']
+    // Match room by type
+    const room = matchRoom(room_type || '')
 
     // Calculate nights and total
     let nights = 1
@@ -84,10 +122,10 @@ export async function POST(request: NextRequest) {
         check_in: check_in_date || new Date().toISOString().split('T')[0],
         check_out: check_out_date || new Date(Date.now() + 86400000).toISOString().split('T')[0],
         room_id: room.id,
-        guests: num_guests || 2,
+        num_guests: num_guests || 2,
         total_price: totalPrice,
         status: 'pending',
-        special_requests: special_requests || '',
+        special_requests: `Voice call booking. ${special_requests || ''}`.trim(),
       })
       .select()
       .single()
@@ -97,43 +135,61 @@ export async function POST(request: NextRequest) {
       // Still continue to notify even if DB fails
     }
 
-    const bookingRef = booking?.id ? `ENW-${String(booking.id).padStart(4, '0')}` : `ENW-${Date.now().toString().slice(-6)}`
+    // Generate reference - use UUID prefix if we have booking ID
+    const bookingRef = booking?.id 
+      ? `ENW-${booking.id.slice(0, 8).toUpperCase()}` 
+      : `ENW-${Date.now().toString().slice(-6)}`
 
-    // Send confirmation email
+    // Format dates for email
+    const checkInFormatted = check_in_date 
+      ? new Date(check_in_date).toLocaleDateString('en-US', { dateStyle: 'long' })
+      : 'To be confirmed'
+    const checkOutFormatted = check_out_date 
+      ? new Date(check_out_date).toLocaleDateString('en-US', { dateStyle: 'long' })
+      : 'To be confirmed'
+
+    // Send confirmation email with brand colors
     const emailHtml = `
-<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-  <div style="background: linear-gradient(135deg, #0e7a5a, #0a5e44); padding: 30px; text-align: center;">
-    <h1 style="color: white; margin: 0; font-size: 24px;">🌴 E'Nauwi Beach Resort</h1>
-    <p style="color: #a8e6cf; margin: 8px 0 0; font-size: 14px;">Booking Confirmation</p>
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f5f0e8;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+<div style="max-width:600px;margin:0 auto;background:#ffffff;">
+  <div style="background:linear-gradient(135deg,#0A4B78,#0D5A91);padding:40px 30px;text-align:center;">
+    <h1 style="color:#D4A853;font-size:28px;margin:0;font-family:Georgia,serif;">E'Nauwi Beach Resort</h1>
+    <p style="color:#ffffff;opacity:0.8;margin:8px 0 0;font-size:13px;letter-spacing:2px;text-transform:uppercase;">Booking Confirmation</p>
   </div>
   
-  <div style="padding: 30px; background: #fff;">
-    <p style="font-size: 16px;">Welkam, <strong>${guest_name}</strong>!</p>
-    <p style="font-size: 15px;">Thank you for booking with E'Nauwi Beach Resort. Here are your details:</p>
+  <div style="padding:30px;">
+    <h2 style="color:#0A4B78;font-size:22px;margin:0 0 8px;">Welkam, ${guest_name}!</h2>
+    <p style="color:#666;line-height:1.6;margin:0 0 24px;">Thank you for your voice booking with E'Nauwi Beach Resort. Our team will confirm your reservation shortly.</p>
     
-    <div style="background: #f0faf5; padding: 20px; border-radius: 8px; border-left: 4px solid #0e7a5a; margin: 20px 0;">
-      <p style="margin: 5px 0;"><strong>📋 Booking Reference:</strong> ${bookingRef}</p>
-      <p style="margin: 5px 0;"><strong>🏠 Room:</strong> ${room.name}</p>
-      <p style="margin: 5px 0;"><strong>📅 Check-in:</strong> ${check_in_date || 'To be confirmed'}</p>
-      <p style="margin: 5px 0;"><strong>📅 Check-out:</strong> ${check_out_date || 'To be confirmed'}</p>
-      <p style="margin: 5px 0;"><strong>👥 Guests:</strong> ${num_guests || 2}</p>
-      <p style="margin: 5px 0;"><strong>🌙 Nights:</strong> ${nights}</p>
-      <p style="margin: 5px 0;"><strong>💰 Total:</strong> ${totalPrice.toLocaleString()} VT (~$${Math.round(totalPrice / 120)} USD)</p>
-      ${special_requests ? `<p style="margin: 5px 0;"><strong>📝 Special Requests:</strong> ${special_requests}</p>` : ''}
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:24px;">
+      <h3 style="color:#0A4B78;font-size:16px;margin:0 0 16px;border-bottom:2px solid #D4A853;padding-bottom:8px;">Booking Details</h3>
+      <table style="width:100%;border-collapse:collapse;">
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Reference</td><td style="padding:8px 0;color:#0A4B78;font-weight:bold;text-align:right;font-size:14px;">${bookingRef}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Room</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${room.name}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Check-in</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${checkInFormatted}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Check-out</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${checkOutFormatted}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Guests</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${num_guests || 2}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Nights</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${nights}</td></tr>
+        ${special_requests ? `<tr><td style="padding:8px 0;color:#888;font-size:14px;">Notes</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${special_requests}</td></tr>` : ''}
+        <tr style="border-top:2px solid #D4A853;"><td style="padding:12px 0;color:#0A4B78;font-weight:bold;font-size:16px;">Total</td><td style="padding:12px 0;color:#0A4B78;font-weight:bold;text-align:right;font-size:16px;">${totalPrice.toLocaleString()} VT (~$${Math.round(totalPrice / 120)} USD)</td></tr>
+      </table>
     </div>
     
-    <p style="font-size: 15px;">Our team will confirm your booking shortly. For any questions, call us at <strong>+678 22170</strong>.</p>
-    
-    <p style="font-size: 15px;">We look forward to welcoming you to paradise! 🏝️</p>
-    
-    <p style="margin-top: 25px;">Tangkyu tumas,<br><strong>E'Nauwi Beach Resort Team</strong></p>
+    <p style="color:#666;line-height:1.6;font-size:14px;">📞 Questions? Call us at <strong>+678 22170</strong></p>
+    <p style="color:#666;line-height:1.6;font-size:14px;">We look forward to welcoming you to paradise! 🏝️</p>
+    <p style="color:#D4A853;font-family:Georgia,serif;font-size:16px;margin-top:24px;">Tangkyu tumas,<br>— The E'Nauwi Team</p>
   </div>
   
-  <div style="background: #0a5e44; padding: 15px; text-align: center;">
-    <p style="color: white; margin: 0; font-size: 12px;">📞 +678 22170 | ✉️ info@enauwiresort.vu</p>
-    <p style="color: #a8e6cf; margin: 5px 0 0; font-size: 11px;">South East Efate, Vanuatu</p>
+  <div style="background:#083D63;padding:24px 30px;text-align:center;">
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South East Efate, Vanuatu</p>
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:4px 0 0;">📞 +678 22170 · ✉ reservation@enauwibeachresort.com</p>
   </div>
-</div>`
+</div>
+</body>
+</html>`
 
     const emailSent = await sendEmail(
       guest_email,

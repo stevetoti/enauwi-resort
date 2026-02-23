@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { toast, Toaster } from 'sonner'
 
 interface BrandingData {
@@ -16,8 +15,8 @@ const defaultBranding: BrandingData = {
   siteName: "E'Nauwi Beach Resort",
   logo: null,
   favicon: null,
-  primaryColor: '#0E7490',
-  accentColor: '#F59E0B',
+  primaryColor: '#0A4B78',
+  accentColor: '#D4A853',
 }
 
 export default function BrandingPage() {
@@ -32,13 +31,10 @@ export default function BrandingPage() {
 
   async function loadBranding() {
     try {
-      const { data } = await supabase
-        .from('site_settings')
-        .select('value')
-        .eq('key', 'branding')
-        .single()
-      if (data?.value) {
-        setBranding({ ...defaultBranding, ...data.value })
+      const response = await fetch('/api/admin/settings?key=branding')
+      const result = await response.json()
+      if (result.data?.value) {
+        setBranding({ ...defaultBranding, ...result.data.value })
       }
     } catch (error) {
       console.error('Error loading branding:', error)
@@ -53,16 +49,26 @@ export default function BrandingPage() {
 
     setUploading(field)
     try {
-      const fileName = `${field}-${Date.now()}.${file.name.split('.').pop()}`
-      const { error } = await supabase.storage.from('branding').upload(fileName, file, { upsert: true })
-      if (error) throw error
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('bucket', `branding/${field}`)
 
-      const { data: { publicUrl } } = supabase.storage.from('branding').getPublicUrl(fileName)
-      setBranding(prev => ({ ...prev, [field]: publicUrl }))
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Upload failed')
+      }
+
+      const { url } = await response.json()
+      setBranding(prev => ({ ...prev, [field]: url }))
       toast.success(`${field === 'logo' ? 'Logo' : 'Favicon'} uploaded!`)
     } catch (error) {
       console.error('Upload error:', error)
-      toast.error('Upload failed')
+      toast.error('Upload failed. Please try again.')
     } finally {
       setUploading(null)
     }
@@ -71,14 +77,17 @@ export default function BrandingPage() {
   async function saveBranding() {
     setSaving(true)
     try {
-      const { error } = await supabase
-        .from('site_settings')
-        .upsert({ key: 'branding', value: branding, updated_at: new Date().toISOString() }, { onConflict: 'key' })
-      if (error) throw error
-      toast.success('Settings saved!')
+      const response = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: 'branding', value: branding })
+      })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error)
+      toast.success('Branding settings saved!')
     } catch (error) {
       console.error('Save error:', error)
-      toast.error('Failed to save')
+      toast.error('Failed to save settings')
     } finally {
       setSaving(false)
     }
