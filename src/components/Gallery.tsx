@@ -126,7 +126,7 @@ export default function Gallery() {
     setLightboxIndex((i) => (i !== null ? (i + 1) % photos.length : null));
 
   return (
-    <section id="gallery" className="relative bg-ocean-dark overflow-hidden">
+    <section id="gallery" className="relative bg-gray-50 overflow-hidden">
       <div className="section-padding max-w-7xl mx-auto" ref={ref}>
         {/* Header */}
         <div className="text-center mb-16">
@@ -136,8 +136,8 @@ export default function Gallery() {
             transition={{ duration: 0.6 }}
             className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full mb-6"
           >
-            <Camera size={14} className="text-gold-light" />
-            <span className="text-white/70 text-sm font-medium uppercase tracking-wider">
+            <Camera size={14} className="text-gold" />
+            <span className="text-ocean/70 text-sm font-medium uppercase tracking-wider">
               Gallery
             </span>
           </motion.div>
@@ -146,17 +146,17 @@ export default function Gallery() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4"
+            className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-ocean-dark mb-4"
           >
             Capture the{" "}
-            <span className="text-gold-light">Beauty</span>
+            <span className="text-gold">Beauty</span>
           </motion.h2>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-white/60 text-lg max-w-2xl mx-auto"
+            className="text-gray-600 text-lg max-w-2xl mx-auto"
           >
             A glimpse of what awaits you at E&apos;Nauwi Beach Resort — where every
             moment is picture-perfect.
@@ -184,7 +184,7 @@ export default function Gallery() {
                 sizes="(max-width: 768px) 50vw, 25vw"
               />
               {/* Hover overlay - lighter for vibrant images */}
-              <div className="absolute inset-0 bg-ocean-dark/0 group-hover:bg-ocean-dark/30 transition-all duration-500 flex items-center justify-center">
+              <div className="absolute inset-0 bg-transparent group-hover:bg-black/20 transition-all duration-500 flex items-center justify-center">
                 <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 text-center">
                   <ZoomIn size={28} className="text-white mx-auto mb-2" />
                   <span className="text-white/80 text-xs font-medium uppercase tracking-wider">

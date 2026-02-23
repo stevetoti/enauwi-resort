@@ -147,7 +147,8 @@ export default function Activities() {
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/70 via-transparent to-transparent" />
+                  {/* Minimal gradient for text readability only */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
                   {/* Tag */}
                   <div className="absolute top-4 left-4">

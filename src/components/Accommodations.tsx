@@ -116,15 +116,15 @@ export default function Accommodations() {
   return (
     <section
       id="accommodations"
-      className="relative bg-ocean-dark overflow-hidden"
+      className="relative bg-white overflow-hidden"
     >
-      {/* Background texture */}
-      <div className="absolute inset-0 opacity-5">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-[0.02]">
         <div
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+              "radial-gradient(circle at 1px 1px, #1a3a4a 1px, transparent 0)",
             backgroundSize: "40px 40px",
           }}
         />
@@ -137,10 +137,10 @@ export default function Accommodations() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full mb-6"
+            className="inline-flex items-center gap-2 px-4 py-1.5 bg-ocean/10 rounded-full mb-6"
           >
-            <Bed size={14} className="text-gold-light" />
-            <span className="text-white/70 text-sm font-medium uppercase tracking-wider">
+            <Bed size={14} className="text-gold" />
+            <span className="text-ocean/70 text-sm font-medium uppercase tracking-wider">
               Accommodations
             </span>
           </motion.div>
@@ -149,17 +149,17 @@ export default function Accommodations() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4"
+            className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-ocean-dark mb-4"
           >
             Your Island{" "}
-            <span className="text-gold-light">Sanctuary</span>
+            <span className="text-gold">Sanctuary</span>
           </motion.h2>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-white/60 text-lg max-w-2xl mx-auto"
+            className="text-gray-600 text-lg max-w-2xl mx-auto"
           >
             Fall asleep to the rhythm of the lagoon in a beachfront bungalow, or
             wake to birdsong in a garden retreat wrapped in tropical flowers.
@@ -175,19 +175,19 @@ export default function Accommodations() {
               initial={{ opacity: 0, y: 50 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.3 + idx * 0.12 }}
-              className={`group relative bg-white/10 backdrop-blur-sm rounded-3xl overflow-hidden border transition-all duration-500 hover:bg-white/15 ${
+              className={`group relative bg-white rounded-3xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-2xl ${
                 room.popular
-                  ? "border-gold/40 ring-1 ring-gold/20"
-                  : "border-white/10 hover:border-white/20"
+                  ? "ring-2 ring-gold/40"
+                  : "border border-gray-100"
               }`}
             >
               {room.popular && (
-                <div className="absolute top-4 right-4 z-20 px-3 py-1 bg-gold text-ocean-dark text-xs font-bold uppercase tracking-wider rounded-full">
+                <div className="absolute top-4 right-4 z-20 px-3 py-1 bg-gold text-white text-xs font-bold uppercase tracking-wider rounded-full">
                   Most Popular
                 </div>
               )}
 
-              {/* Image */}
+              {/* Image - NO OVERLAY */}
               <div className="relative h-56 overflow-hidden">
                 <Image
                   src={room.image}
@@ -196,13 +196,14 @@ export default function Accommodations() {
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/60 via-transparent to-transparent" />
+                {/* Very subtle gradient for price readability only */}
+                <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/40 to-transparent" />
 
                 {/* Price overlay */}
                 <div className="absolute bottom-4 left-5">
-                  <div className="text-3xl font-serif font-bold text-white">
+                  <div className="text-3xl font-serif font-bold text-white drop-shadow-lg">
                     {room.price}{" "}
-                    <span className="text-sm font-sans font-normal text-white/60">
+                    <span className="text-sm font-sans font-normal text-white/80">
                       VT/night
                     </span>
                   </div>
@@ -211,18 +212,18 @@ export default function Accommodations() {
 
               {/* Content */}
               <div className="p-6">
-                <p className="text-gold-light text-xs uppercase tracking-widest mb-1 font-medium">
+                <p className="text-gold text-xs uppercase tracking-widest mb-1 font-medium">
                   {room.tagline}
                 </p>
-                <h3 className="font-serif text-2xl font-bold text-white mb-3">
+                <h3 className="font-serif text-2xl font-bold text-ocean-dark mb-3">
                   {room.name}
                 </h3>
-                <p className="text-white/50 text-sm leading-relaxed mb-5">
+                <p className="text-gray-600 text-sm leading-relaxed mb-5">
                   {room.description}
                 </p>
 
                 {/* Quick specs */}
-                <div className="flex items-center gap-4 text-white/40 text-xs mb-5">
+                <div className="flex items-center gap-4 text-gray-500 text-xs mb-5">
                   <span className="flex items-center gap-1">
                     <Users size={12} /> {room.guests}
                   </span>
@@ -236,8 +237,8 @@ export default function Accommodations() {
                   href={`/book?room=${room.id}`}
                   className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${
                     room.popular
-                      ? "bg-gold text-ocean-dark hover:bg-gold-light shadow-lg shadow-gold/20"
-                      : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
+                      ? "bg-gold text-white hover:bg-gold-dark shadow-lg shadow-gold/20"
+                      : "bg-ocean text-white hover:bg-ocean-dark"
                   }`}
                 >
                   Book This Room
@@ -257,7 +258,7 @@ export default function Accommodations() {
         >
           <button
             onClick={() => setShowFeatures(!showFeatures)}
-            className="mx-auto flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 rounded-full text-white/70 text-sm font-medium transition-all duration-300 border border-white/10"
+            className="mx-auto flex items-center gap-2 px-6 py-3 bg-ocean/10 hover:bg-ocean/15 rounded-full text-ocean text-sm font-medium transition-all duration-300 border border-ocean/20"
           >
             All Room Features
             {showFeatures ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -267,18 +268,18 @@ export default function Accommodations() {
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
-              className="mt-6 bg-white/5 rounded-2xl p-6 border border-white/10"
+              className="mt-6 bg-gray-50 rounded-2xl p-6 border border-gray-100"
             >
-              <p className="text-white/40 text-xs uppercase tracking-wider mb-4 text-center">
+              <p className="text-gray-500 text-xs uppercase tracking-wider mb-4 text-center">
                 Every room includes
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 {allRoomFeatures.map((feature) => (
                   <div
                     key={feature.label}
-                    className="flex items-center gap-2 text-white/60 text-sm"
+                    className="flex items-center gap-2 text-gray-600 text-sm"
                   >
-                    <feature.icon size={14} className="text-gold/60 shrink-0" />
+                    <feature.icon size={14} className="text-gold shrink-0" />
                     {feature.label}
                   </div>
                 ))}
@@ -292,7 +293,7 @@ export default function Accommodations() {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: 1 }}
-          className="text-center text-white/30 text-sm mt-8"
+          className="text-center text-gray-500 text-sm mt-8"
         >
           All rates in Vanuatu Vatu (VT). Prices include breakfast. Seasonal rates may apply.
         </motion.p>

@@ -93,11 +93,11 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="relative bg-ocean-dark overflow-hidden">
+    <section id="contact" className="relative bg-gray-50 overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-ocean-light/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-ocean/5 rounded-full blur-[120px]" />
       </div>
 
       <div
@@ -110,10 +110,10 @@ export default function Contact() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full mb-6"
+            className="inline-flex items-center gap-2 px-4 py-1.5 bg-ocean/10 rounded-full mb-6"
           >
-            <Sparkles size={14} className="text-gold-light" />
-            <span className="text-white/70 text-sm font-medium uppercase tracking-wider">
+            <Sparkles size={14} className="text-gold" />
+            <span className="text-ocean/70 text-sm font-medium uppercase tracking-wider">
               Get in Touch
             </span>
           </motion.div>
@@ -122,16 +122,16 @@ export default function Contact() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4"
+            className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-ocean-dark mb-4"
           >
-            Contact <span className="text-gold-light">Us</span>
+            Contact <span className="text-gold">Us</span>
           </motion.h2>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-white/60 text-lg max-w-2xl mx-auto"
+            className="text-gray-600 text-lg max-w-2xl mx-auto"
           >
             Have a question or ready to plan your island escape? We&apos;d love
             to hear from you.
@@ -151,24 +151,24 @@ export default function Contact() {
               {contactInfo.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-start gap-4 p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10"
+                  className="flex items-start gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm"
                 >
-                  <div className="w-11 h-11 rounded-xl bg-gold/20 flex items-center justify-center shrink-0">
-                    <item.icon size={18} className="text-gold-light" />
+                  <div className="w-11 h-11 rounded-xl bg-gold/10 flex items-center justify-center shrink-0">
+                    <item.icon size={18} className="text-gold" />
                   </div>
                   <div>
-                    <p className="text-white/50 text-xs uppercase tracking-wider mb-1">
+                    <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">
                       {item.label}
                     </p>
                     {item.href ? (
                       <a
                         href={item.href}
-                        className="text-white font-medium text-sm hover:text-gold-light transition-colors"
+                        className="text-ocean-dark font-medium text-sm hover:text-gold transition-colors"
                       >
                         {item.value}
                       </a>
                     ) : (
-                      <p className="text-white font-medium text-sm">
+                      <p className="text-ocean-dark font-medium text-sm">
                         {item.value}
                       </p>
                     )}
@@ -178,7 +178,7 @@ export default function Contact() {
             </div>
 
             {/* Map */}
-            <div className="rounded-2xl overflow-hidden border border-white/10 h-56">
+            <div className="rounded-2xl overflow-hidden border border-gray-200 h-56 shadow-sm">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14890.41413074!2d167.42!3d-16.47!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6e8c8d1f18f1b1b1%3A0x1!2sSouth%20West%20Bay%2C%20Efate!5e0!3m2!1sen!2svu!4v1700000000000!5m2!1sen!2svu"
                 width="100%"
@@ -203,37 +203,37 @@ export default function Contact() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-16 bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10"
+                className="text-center py-16 bg-white rounded-3xl border border-gray-100 shadow-sm"
               >
-                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green/20 flex items-center justify-center">
-                  <CheckCircle size={40} className="text-green-light" />
+                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
+                  <CheckCircle size={40} className="text-green-500" />
                 </div>
-                <h3 className="font-serif text-3xl font-bold text-white mb-3">
+                <h3 className="font-serif text-3xl font-bold text-ocean-dark mb-3">
                   Tankiu Tumas!
                 </h3>
-                <p className="text-white/60 text-lg max-w-md mx-auto mb-2">
+                <p className="text-gray-600 text-lg max-w-md mx-auto mb-2">
                   Your message has been received. Our team will get back to you
                   within 24 hours.
                 </p>
-                <p className="text-gold-light text-sm font-medium">
+                <p className="text-gold text-sm font-medium">
                   Check your email for a confirmation.
                 </p>
               </motion.div>
             ) : (
               <form
                 onSubmit={handleSubmit}
-                className="bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-6 sm:p-10"
+                className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-10"
               >
                 <div className="grid sm:grid-cols-2 gap-5">
                   {/* Name */}
                   <div>
-                    <label className="block text-white/70 text-sm font-medium mb-2">
+                    <label className="block text-gray-700 text-sm font-medium mb-2">
                       Full Name *
                     </label>
                     <div className="relative">
                       <User
                         size={16}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
                       />
                       <input
                         type="text"
@@ -242,20 +242,20 @@ export default function Contact() {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="John Smith"
-                        className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all"
+                        className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-ocean-dark placeholder:text-gray-400 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-all"
                       />
                     </div>
                   </div>
 
                   {/* Email */}
                   <div>
-                    <label className="block text-white/70 text-sm font-medium mb-2">
+                    <label className="block text-gray-700 text-sm font-medium mb-2">
                       Email Address *
                     </label>
                     <div className="relative">
                       <Mail
                         size={16}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
                       />
                       <input
                         type="email"
@@ -264,20 +264,20 @@ export default function Contact() {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="john@example.com"
-                        className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all"
+                        className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-ocean-dark placeholder:text-gray-400 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-all"
                       />
                     </div>
                   </div>
 
                   {/* Phone */}
                   <div>
-                    <label className="block text-white/70 text-sm font-medium mb-2">
+                    <label className="block text-gray-700 text-sm font-medium mb-2">
                       Phone Number
                     </label>
                     <div className="relative">
                       <Phone
                         size={16}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
                       />
                       <input
                         type="tel"
@@ -285,33 +285,33 @@ export default function Contact() {
                         value={formData.phone}
                         onChange={handleChange}
                         placeholder="+678 XXXX XXX"
-                        className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all"
+                        className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-ocean-dark placeholder:text-gray-400 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-all"
                       />
                     </div>
                   </div>
 
                   {/* Subject */}
                   <div>
-                    <label className="block text-white/70 text-sm font-medium mb-2">
+                    <label className="block text-gray-700 text-sm font-medium mb-2">
                       Subject *
                     </label>
                     <div className="relative">
                       <ChevronDown
                         size={16}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                       />
                       <select
                         name="subject"
                         required
                         value={formData.subject}
                         onChange={handleChange}
-                        className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all appearance-none"
+                        className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-ocean-dark focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-all appearance-none"
                       >
-                        <option value="" disabled className="bg-ocean-dark">
+                        <option value="" disabled className="bg-white">
                           Select a subject...
                         </option>
                         {subjects.map((s) => (
-                          <option key={s} value={s} className="bg-ocean-dark">
+                          <option key={s} value={s} className="bg-white">
                             {s}
                           </option>
                         ))}
@@ -321,13 +321,13 @@ export default function Contact() {
 
                   {/* Message */}
                   <div className="sm:col-span-2">
-                    <label className="block text-white/70 text-sm font-medium mb-2">
+                    <label className="block text-gray-700 text-sm font-medium mb-2">
                       Message *
                     </label>
                     <div className="relative">
                       <MessageSquare
                         size={16}
-                        className="absolute left-4 top-4 text-white/30"
+                        className="absolute left-4 top-4 text-gray-400"
                       />
                       <textarea
                         name="message"
@@ -336,7 +336,7 @@ export default function Contact() {
                         value={formData.message}
                         onChange={handleChange}
                         placeholder="Tell us how we can help..."
-                        className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all resize-none"
+                        className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-ocean-dark placeholder:text-gray-400 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-all resize-none"
                       />
                     </div>
                   </div>
@@ -346,18 +346,18 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="mt-8 w-full flex items-center justify-center gap-3 py-4 bg-gold hover:bg-gold-light text-ocean-dark font-bold text-lg rounded-xl transition-all duration-300 shadow-xl shadow-gold/20 hover:shadow-2xl hover:shadow-gold/30 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="mt-8 w-full flex items-center justify-center gap-3 py-4 bg-gold hover:bg-gold-dark text-white font-bold text-lg rounded-xl transition-all duration-300 shadow-lg shadow-gold/20 hover:shadow-xl hover:shadow-gold/30 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send size={18} />
                   {submitting ? "Sending..." : "Send Message"}
                 </button>
 
-                <p className="text-center text-white/30 text-xs mt-4">
+                <p className="text-center text-gray-500 text-xs mt-4">
                   We typically respond within 24 hours. For urgent inquiries,
                   call{" "}
                   <a
                     href="tel:+67822170"
-                    className="text-gold/60 hover:text-gold-light"
+                    className="text-gold hover:text-gold-dark"
                   >
                     +678 22170
                   </a>

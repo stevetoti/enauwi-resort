@@ -129,7 +129,7 @@ export default function ResortFeatures() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="bg-ocean-dark rounded-3xl p-8 sm:p-10"
+          className="bg-ocean rounded-3xl p-8 sm:p-10"
         >
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full mb-4">
