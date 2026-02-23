@@ -183,8 +183,8 @@ export default function Gallery() {
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
                 sizes="(max-width: 768px) 50vw, 25vw"
               />
-              {/* Hover overlay */}
-              <div className="absolute inset-0 bg-ocean-dark/0 group-hover:bg-ocean-dark/50 transition-all duration-500 flex items-center justify-center">
+              {/* Hover overlay - lighter for vibrant images */}
+              <div className="absolute inset-0 bg-ocean-dark/0 group-hover:bg-ocean-dark/30 transition-all duration-500 flex items-center justify-center">
                 <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 text-center">
                   <ZoomIn size={28} className="text-white mx-auto mb-2" />
                   <span className="text-white/80 text-xs font-medium uppercase tracking-wider">

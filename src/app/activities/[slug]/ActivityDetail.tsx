@@ -36,7 +36,7 @@ export default function ActivityDetail({ activity }: { activity: Activity }) {
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/90 via-ocean-dark/40 to-ocean-dark/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/70 via-transparent to-transparent" />
 
         {/* Back button */}
         <div className="absolute top-6 left-6 z-10">
@@ -294,7 +294,7 @@ export default function ActivityDetail({ activity }: { activity: Activity }) {
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/90 via-ocean-dark/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/70 via-transparent to-transparent" />
                     <div className="absolute top-4 left-4">
                       <span className="px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-medium rounded-full border border-white/20">
                         {rel.tag}

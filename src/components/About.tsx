@@ -101,7 +101,7 @@ export default function About() {
                 height={600}
                 className="w-full h-[400px] lg:h-[500px] object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-ocean/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ocean/15 to-transparent" />
             </div>
             {/* Floating badge */}
             <motion.div
@@ -180,7 +180,7 @@ export default function About() {
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ocean/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ocean/40 to-transparent" />
                 <div className="absolute bottom-4 left-4">
                   <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
                     <item.icon size={22} className="text-white" />

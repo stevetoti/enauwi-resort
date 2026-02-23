@@ -17,9 +17,8 @@ export default function Hero() {
           className="object-cover"
           sizes="100vw"
         />
-        {/* Multi-layer overlays for depth */}
-        <div className="absolute inset-0 bg-gradient-to-b from-ocean-dark/40 via-ocean-dark/20 to-ocean-dark/70" />
-        <div className="absolute inset-0 bg-gradient-to-r from-ocean-dark/30 via-transparent to-transparent" />
+        {/* Subtle overlay for text readability - keeping images vibrant */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/30" />
       </div>
 
       {/* Decorative particles */}
@@ -68,7 +67,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
-            className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-[0.95]"
+            className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-[0.95] drop-shadow-[0_4px_8px_rgba(0,0,0,0.4)]"
           >
             E&apos;Nauwi
             <span className="block text-gold-light mt-2">Beach Resort</span>
@@ -78,14 +77,14 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.1 }}
-            className="text-white/80 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-light"
+            className="text-white text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-light drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
           >
-            <span className="text-gold-light italic font-serif text-xl sm:text-2xl block mb-3">
+            <span className="text-gold-light italic font-serif text-xl sm:text-2xl block mb-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">
               &ldquo;Refreshing mornings, Restful afternoons
               <br className="hidden sm:block" />
               and Relishing nights&rdquo;
             </span>
-            <span className="text-white/60 text-base">
+            <span className="text-white/90 text-base drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
               A peaceful beachfront retreat with lagoon views and warm island hospitality
               <br className="hidden sm:block" />
               on Efate Island, Vanuatu.

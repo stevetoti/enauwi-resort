@@ -196,7 +196,7 @@ export default function Accommodations() {
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/80 via-ocean-dark/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/60 via-transparent to-transparent" />
 
                 {/* Price overlay */}
                 <div className="absolute bottom-4 left-5">
