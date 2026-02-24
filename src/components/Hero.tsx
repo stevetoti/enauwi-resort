@@ -14,8 +14,10 @@ export default function Hero() {
           alt="E'Nauwi Beach Resort aerial view — stunning turquoise lagoon with white sand beach and palm trees on Malekula Island"
           fill
           priority
+          quality={100}
           className="object-cover"
           sizes="100vw"
+          unoptimized
         />
         {/* Subtle overlay for text readability - keeping images vibrant */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/30" />
