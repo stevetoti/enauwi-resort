@@ -21,9 +21,20 @@ export const metadata: Metadata = {
     description:
       "A family-friendly island retreat with calm lagoon waters and beautiful island views on Efate.",
     images: [
-      "/images/resort/beach-resort-overview.jpg",
+      {
+        url: "/images/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "E'Nauwi Beach Resort aerial view - turquoise lagoon and palm trees on Malekula Island, Vanuatu",
+      },
     ],
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "E'Nauwi Beach Resort | Efate Island, Vanuatu",
+    description: "A family-friendly island retreat with calm lagoon waters and beautiful island views.",
+    images: ["/images/og-image.jpg"],
   },
 };
 
