@@ -2,22 +2,20 @@
 
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import Image from "next/image";
+// Using standard img tag for hero to preserve full image quality
 
 export default function Hero() {
   return (
     <section id="home" className="relative h-screen min-h-[700px] overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
-        <Image
+        {/* Using standard img to preserve full quality - no Next.js optimization */}
+        <img
           src="/images/hero-aerial.jpg"
           alt="E'Nauwi Beach Resort aerial view — stunning turquoise lagoon with white sand beach and palm trees on Malekula Island"
-          fill
-          priority
-          quality={100}
-          className="object-cover"
-          sizes="100vw"
-          unoptimized
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="eager"
+          decoding="sync"
         />
         {/* Subtle overlay for text readability - keeping images vibrant */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/30" />
