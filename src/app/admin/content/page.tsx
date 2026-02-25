@@ -151,7 +151,7 @@ export default function ContentManagementPage() {
         await fetchContent()
       }
       alert(`Scan complete!\n\nFound: ${data.found} images\nNew: ${data.added} added\nExisting: ${data.existing} already in database`)
-    } catch (_err) {
+    } catch {
       setError('Failed to scan filesystem')
     } finally {
       setScanning(false)
