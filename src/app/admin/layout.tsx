@@ -31,6 +31,8 @@ import {
   BarChart3,
   Bot,
   Share2,
+  Image as ImageIcon,
+  TrendingUp,
 } from 'lucide-react'
 
 // Map sidebar items to their required permission keys
@@ -58,7 +60,8 @@ const sidebarLinks = [
   { href: '/admin/social/settings', label: 'Social Settings', icon: Settings, permission: 'dashboard' },
   { href: '/admin/social/analytics', label: 'Social Analytics', icon: BarChart3, permission: 'dashboard' },
   { href: '/admin/settings/branding', label: 'Branding', icon: Settings, permission: 'dashboard' },
-  { href: '/admin/settings/seo', label: 'SEO Settings', icon: Settings, permission: 'dashboard' },
+  { href: '/admin/content', label: 'Content', icon: ImageIcon, permission: 'dashboard' },
+  { href: '/admin/seo', label: 'SEO Hub', icon: TrendingUp, permission: 'dashboard' },
   { href: '/staff/chat', label: 'Team Chat', icon: MessageCircle, permission: 'dashboard' },
 ]
 
