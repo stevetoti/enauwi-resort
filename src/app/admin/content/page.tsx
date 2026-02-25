@@ -17,7 +17,6 @@ import {
   FolderOpen,
   ChevronLeft,
   ChevronRight,
-  Scan,
 } from 'lucide-react'
 import Image from 'next/image'
 
@@ -68,7 +67,6 @@ export default function ContentManagementPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [currentPage, setCurrentPage] = useState(1)
-  const [scanning, setScanning] = useState(false)
   
   // Upload modal state
   const [uploadModal, setUploadModal] = useState<{
@@ -141,22 +139,6 @@ export default function ContentManagementPage() {
   useEffect(() => {
     setCurrentPage(1)
   }, [searchQuery, selectedCategory])
-
-  const handleScanFilesystem = async () => {
-    setScanning(true)
-    try {
-      const res = await fetch('/api/admin/content/scan', { method: 'POST' })
-      const data = await res.json()
-      if (data.added > 0) {
-        await fetchContent()
-      }
-      alert(`Scan complete!\n\nFound: ${data.found} images\nNew: ${data.added} added\nExisting: ${data.existing} already in database`)
-    } catch {
-      setError('Failed to scan filesystem')
-    } finally {
-      setScanning(false)
-    }
-  }
 
   const openUploadModal = (item: WebsiteContent) => {
     setUploadModal({ open: true, item })
@@ -288,23 +270,13 @@ export default function ContentManagementPage() {
             Manage {content.length} images across the website
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleScanFilesystem}
-            disabled={scanning}
-            className="flex items-center gap-2 px-4 py-2 text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-xl transition-colors disabled:opacity-50"
-          >
-            <Scan className={`h-4 w-4 ${scanning ? 'animate-spin' : ''}`} />
-            {scanning ? 'Scanning...' : 'Scan for New'}
-          </button>
-          <button
-            onClick={fetchContent}
-            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors"
-          >
-            <RefreshCw className="h-4 w-4" />
-            Refresh
-          </button>
-        </div>
+        <button
+          onClick={fetchContent}
+          className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors"
+        >
+          <RefreshCw className="h-4 w-4" />
+          Refresh
+        </button>
       </div>
 
       {/* Error Banner */}
