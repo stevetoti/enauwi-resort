@@ -13,10 +13,7 @@ const nextConfig = {
         pathname: '/storage/**',
       },
     ],
-    // Maximize image quality
-    quality: 100,
     minimumCacheTTL: 60,
-    unoptimized: false,
   },
   // Enable experimental features for faster builds
   experimental: {
