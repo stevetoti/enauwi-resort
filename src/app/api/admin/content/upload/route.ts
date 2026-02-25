@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
 
 export const dynamic = 'force-dynamic'
 
@@ -50,61 +48,28 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
     
-    // Try to upload to Supabase Storage first
-    let publicUrl = ''
+    // Upload to Supabase storage bucket
+    const { error: uploadError } = await supabase.storage
+      .from('website-content')
+      .upload(filename, buffer, {
+        contentType: file.type,
+        upsert: true,
+      })
     
-    try {
-      // Upload to Supabase storage bucket
-      const { error: uploadError } = await supabase.storage
-        .from('website-content')
-        .upload(filename, buffer, {
-          contentType: file.type,
-          upsert: true,
-        })
-      
-      if (uploadError) {
-        console.error('Supabase storage upload error:', uploadError)
-        // Fall back to local storage
-        throw uploadError
-      }
-      
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('website-content')
-        .getPublicUrl(filename)
-      
-      publicUrl = urlData.publicUrl
-    } catch {
-      console.log('Falling back to local file storage')
-      
-      // Determine the correct public directory path
-      let publicDir: string
-      
-      // Check for different key types and use appropriate subdirectories
-      if (key === 'hero_image') {
-        publicDir = path.join(process.cwd(), 'public', 'images')
-      } else if (key === 'logo' || key === 'favicon' || key === 'og_image') {
-        publicDir = path.join(process.cwd(), 'public')
-      } else {
-        publicDir = path.join(process.cwd(), 'public', 'images', 'content')
-      }
-      
-      // Ensure directory exists
-      await mkdir(publicDir, { recursive: true })
-      
-      // Write file locally
-      const localPath = path.join(publicDir, filename)
-      await writeFile(localPath, buffer)
-      
-      // Set public URL for local file
-      if (key === 'logo' || key === 'favicon' || key === 'og_image') {
-        publicUrl = `/${filename}`
-      } else if (key === 'hero_image') {
-        publicUrl = `/images/${filename}`
-      } else {
-        publicUrl = `/images/content/${filename}`
-      }
+    if (uploadError) {
+      console.error('Supabase storage upload error:', uploadError)
+      return NextResponse.json(
+        { error: `Storage upload failed: ${uploadError.message}` },
+        { status: 500 }
+      )
     }
+    
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('website-content')
+      .getPublicUrl(filename)
+    
+    const publicUrl = urlData.publicUrl
     
     // Update database with new URL
     const { data: updateData, error: updateError } = await supabase
@@ -119,7 +84,10 @@ export async function POST(request: NextRequest) {
     
     if (updateError) {
       console.error('Database update error:', updateError)
-      throw updateError
+      return NextResponse.json(
+        { error: `Database update failed: ${updateError.message}` },
+        { status: 500 }
+      )
     }
     
     return NextResponse.json({
