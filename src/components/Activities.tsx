@@ -22,7 +22,7 @@ const resortActivities = [
     title: "Swimming Pool",
     description:
       "Enjoy our outdoor pool nestled among coconut trees, overlooking the beach and just moments from the bar — ideal for relaxed family time and sunny afternoons.",
-    image: "/images/resort/beach-resort-overview-sm.jpg",
+    image: "/images/pool.jpg",
     tag: "On-Site",
   },
   {
