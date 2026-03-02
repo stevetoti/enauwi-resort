@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import bcrypt from 'bcryptjs'
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,8 +34,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Account is not active. Please contact administrator.' }, { status: 401 })
     }
 
-    // Check password (simple comparison - in production use bcrypt)
-    if (!staff.password_hash || staff.password_hash !== password) {
+    // Check password - support both bcrypt hashed and legacy plain text (for migration)
+    if (!staff.password_hash) {
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
+    }
+
+    let passwordValid = false
+    const isHashed = staff.password_hash.startsWith('$2a$') || staff.password_hash.startsWith('$2b$')
+    
+    if (isHashed) {
+      // Password is properly hashed - use bcrypt compare
+      passwordValid = await bcrypt.compare(password, staff.password_hash)
+    } else {
+      // Legacy plain text password - compare directly, then upgrade to hash
+      passwordValid = staff.password_hash === password
+      
+      if (passwordValid) {
+        // Upgrade password to bcrypt hash
+        const hashedPassword = await bcrypt.hash(password, 10)
+        await supabase
+          .from('staff')
+          .update({ password_hash: hashedPassword })
+          .eq('id', staff.id)
+      }
+    }
+
+    if (!passwordValid) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
 
