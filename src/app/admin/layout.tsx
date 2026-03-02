@@ -87,6 +87,7 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<StaffUser | null>(null)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
 
@@ -95,7 +96,14 @@ export default function AdminLayout({
                      pathname === '/admin/forgot-password' || 
                      pathname === '/admin/reset-password'
 
+  // Ensure component is mounted before accessing localStorage (fixes hydration)
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+    
     if (isAuthPage) {
       setLoading(false)
       return
@@ -149,7 +157,7 @@ export default function AdminLayout({
     }
 
     checkAuth()
-  }, [isAuthPage, router])
+  }, [mounted, isAuthPage, router])
 
   const handleLogout = () => {
     localStorage.removeItem('staff')
@@ -161,7 +169,8 @@ export default function AdminLayout({
     return <>{children}</>
   }
 
-  if (loading) {
+  // Show loading until mounted and auth check complete
+  if (!mounted || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-teal-50/30 flex items-center justify-center">
         <motion.div 
