@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { csrfHeaders } from '@/lib/csrf-client'
+import { createClientSupabase } from '@/lib/supabase'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -108,7 +109,34 @@ function TableSkeleton() {
 }
 
 // ---------------------------------------------------------------------------
-// Generate Invoice Modal
+// Booking type for the selector
+// ---------------------------------------------------------------------------
+
+interface BookingRow {
+  id: string
+  guest_name: string
+  guest_email: string
+  check_in: string
+  check_out: string
+  status: string
+  total_price: number
+  invoice_number: string | null
+  booking_reference: string | null
+  room: { name: string } | null
+}
+
+function getBookingStatusLabel(status: string, checkOut: string) {
+  const today = new Date()
+  const out = new Date(checkOut)
+  if (status === 'cancelled') return { label: 'Cancelled', color: 'bg-red-100 text-red-700' }
+  if (status === 'checked_out' || out < today) return { label: 'Past', color: 'bg-gray-100 text-gray-600' }
+  if (status === 'checked_in') return { label: 'Checked In', color: 'bg-green-100 text-green-700' }
+  if (status === 'confirmed') return { label: 'Active', color: 'bg-teal-100 text-teal-700' }
+  return { label: 'Pending', color: 'bg-amber-100 text-amber-700' }
+}
+
+// ---------------------------------------------------------------------------
+// Generate Invoice Modal — with booking selector
 // ---------------------------------------------------------------------------
 
 function GenerateModal({
@@ -120,32 +148,72 @@ function GenerateModal({
   onClose: () => void
   onGenerated: () => void
 }) {
-  const [bookingId, setBookingId] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [bookings, setBookings] = useState<BookingRow[]>([])
+  const [loadingBookings, setLoadingBookings] = useState(false)
+  const [search, setSearch] = useState('')
+  const [filter, setFilter] = useState<'all' | 'active' | 'past'>('all')
+  const [generating, setGenerating] = useState<string | null>(null)
   const [error, setError] = useState('')
+  const supabase = createClientSupabase()
 
-  async function handleGenerate() {
-    if (!bookingId.trim()) return
-    setLoading(true)
+  useEffect(() => {
+    if (!open) return
+    setLoadingBookings(true)
+    setError('')
+    supabase
+      .from('bookings')
+      .select('id, guest_name, guest_email, check_in, check_out, status, total_price, invoice_number, booking_reference, room:rooms(name)')
+      .order('created_at', { ascending: false })
+      .then(({ data }) => {
+        const rows = (data || []).map((b: Record<string, unknown>) => ({
+          ...b,
+          room: Array.isArray(b.room) ? b.room[0] : b.room,
+        })) as BookingRow[]
+        setBookings(rows)
+        setLoadingBookings(false)
+      })
+  }, [open, supabase])
+
+  const filtered = bookings.filter((b) => {
+    // Search filter
+    if (search) {
+      const q = search.toLowerCase()
+      const matchesSearch = b.guest_name?.toLowerCase().includes(q) ||
+        b.guest_email?.toLowerCase().includes(q) ||
+        b.room?.name?.toLowerCase().includes(q) ||
+        b.booking_reference?.toLowerCase().includes(q)
+      if (!matchesSearch) return false
+    }
+    // Status filter
+    if (filter === 'active') {
+      return ['pending', 'confirmed', 'checked_in'].includes(b.status)
+    }
+    if (filter === 'past') {
+      return ['checked_out', 'cancelled'].includes(b.status) || new Date(b.check_out) < new Date()
+    }
+    return true
+  })
+
+  async function handleGenerate(bookingId: string) {
+    setGenerating(bookingId)
     setError('')
     try {
       const res = await fetch('/api/invoices', {
         method: 'POST',
         headers: csrfHeaders(),
-        body: JSON.stringify({ booking_id: bookingId.trim() }),
+        body: JSON.stringify({ booking_id: bookingId }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
         throw new Error(data.error || 'Failed to generate invoice')
       }
-      setBookingId('')
+      // Mark as generated locally
+      setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, invoice_number: 'generated' } : b))
       onGenerated()
-      onClose()
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Something went wrong'
-      setError(message)
+      setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
-      setLoading(false)
+      setGenerating(null)
     }
   }
 
@@ -161,53 +229,128 @@ function GenerateModal({
         onClick={onClose}
       >
         <motion.div
-          className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+          className="w-full max-w-2xl max-h-[85vh] flex flex-col rounded-2xl bg-white shadow-xl"
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Generate Invoice from Booking</h2>
+          {/* Header */}
+          <div className="flex items-center justify-between border-b px-6 py-4">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Generate Invoice</h2>
+              <p className="text-sm text-gray-500">Select a booking to generate an invoice</p>
+            </div>
             <button onClick={onClose} className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
               <X className="h-5 w-5" />
             </button>
           </div>
 
-          <p className="mb-4 text-sm text-gray-500">
-            Enter the booking ID to generate a professional invoice. You can find booking IDs on the Bookings page.
-          </p>
-
-          <input
-            type="text"
-            placeholder="Paste booking ID..."
-            value={bookingId}
-            onChange={(e) => setBookingId(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
-            className="mb-3 w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-          />
+          {/* Search & Filter */}
+          <div className="flex flex-col sm:flex-row gap-2 border-b px-6 py-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search guest, room, reference..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full rounded-lg border border-gray-200 py-2 pl-9 pr-3 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              />
+            </div>
+            <div className="flex gap-1">
+              {(['all', 'active', 'past'] as const).map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`rounded-lg px-3 py-2 text-xs font-medium capitalize transition ${
+                    filter === f ? 'bg-teal-700 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {error && (
-            <div className="mb-3 flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+            <div className="mx-6 mt-3 flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
               <AlertCircle className="h-4 w-4 shrink-0" />
               {error}
             </div>
           )}
 
-          <div className="flex justify-end gap-2">
+          {/* Booking List */}
+          <div className="flex-1 overflow-y-auto px-6 py-3">
+            {loadingBookings ? (
+              <div className="space-y-3">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-16 animate-pulse rounded-lg bg-gray-100" />
+                ))}
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="py-12 text-center text-gray-400">
+                <FileText className="mx-auto h-10 w-10 mb-2" />
+                <p className="text-sm">No bookings found</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {filtered.map((booking) => {
+                  const statusInfo = getBookingStatusLabel(booking.status, booking.check_out)
+                  const hasInvoice = !!booking.invoice_number
+                  return (
+                    <div
+                      key={booking.id}
+                      className={`flex items-center justify-between rounded-xl border p-3 transition ${
+                        hasInvoice ? 'border-gray-100 bg-gray-50 opacity-60' : 'border-gray-200 hover:border-teal-200 hover:bg-teal-50/30'
+                      }`}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <p className="font-medium text-gray-900 text-sm truncate">{booking.guest_name}</p>
+                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${statusInfo.color}`}>
+                            {statusInfo.label}
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-500 truncate">
+                          {booking.room?.name || 'Room'} &middot; {formatDate(booking.check_in)} &ndash; {formatDate(booking.check_out)}
+                          {booking.total_price ? ` · VT ${booking.total_price.toLocaleString()}` : ''}
+                        </p>
+                      </div>
+                      <div className="ml-3 shrink-0">
+                        {hasInvoice ? (
+                          <span className="inline-flex items-center gap-1 text-xs text-green-600 font-medium">
+                            <CheckCircle className="h-3.5 w-3.5" /> Invoice created
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => handleGenerate(booking.id)}
+                            disabled={generating === booking.id}
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-teal-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-teal-800 disabled:opacity-50"
+                          >
+                            {generating === booking.id ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <FileText className="h-3.5 w-3.5" />
+                            )}
+                            Generate
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="border-t px-6 py-3 text-right">
             <button
               onClick={onClose}
               className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
-              Cancel
-            </button>
-            <button
-              onClick={handleGenerate}
-              disabled={loading || !bookingId.trim()}
-              className="inline-flex items-center gap-2 rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800 disabled:opacity-50"
-            >
-              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              Generate Invoice
+              Close
             </button>
           </div>
         </motion.div>
