@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
       .select('id, name, type')
       .eq('available', true)
 
-    const availableRooms = []
+    const allRoomsWithStatus = []
     const bookedRoomIds = new Set<string>()
 
     for (const room of rooms || []) {
@@ -88,7 +88,6 @@ export async function GET(request: NextRequest) {
 
       if (isBooked) {
         bookedRoomIds.add(room.id)
-        continue
       }
 
       // Check for price overrides
@@ -115,15 +114,19 @@ export async function GET(request: NextRequest) {
 
       const discount = discounts?.[0] || null
 
-      availableRooms.push({
+      allRoomsWithStatus.push({
         ...room,
         price_vt: price,
-        active_discount: discount,
-        discounted_price: discount
+        is_booked: isBooked,
+        active_discount: isBooked ? null : discount,
+        discounted_price: !isBooked && discount
           ? Math.round(price * (1 - discount.discount_percent / 100))
           : null,
       })
     }
+
+    // Sort: available rooms first, then booked
+    allRoomsWithStatus.sort((a, b) => (a.is_booked === b.is_booked ? 0 : a.is_booked ? 1 : -1))
 
     // Calculate availability counts by room type
     const typeCounts: Record<string, { total: number; available: number }> = {}
@@ -134,11 +137,13 @@ export async function GET(request: NextRequest) {
       if (!bookedRoomIds.has(room.id)) typeCounts[type].available++
     }
 
+    const availableCount = allRoomsWithStatus.filter(r => !r.is_booked).length
+
     return NextResponse.json({
-      rooms: availableRooms,
+      rooms: allRoomsWithStatus,
       availability: typeCounts,
       totalRooms: allRooms?.length || 0,
-      availableCount: availableRooms.length,
+      availableCount,
     })
   } catch {
     return NextResponse.json({ error: 'Failed to fetch rooms' }, { status: 500 })

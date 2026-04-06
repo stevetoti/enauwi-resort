@@ -584,46 +584,58 @@ function BookingContent() {
                 <div className="grid gap-4">
                 {rooms.map(room => {
                   const roomColor = getRoomTypeColor(room.name)
+                  const booked = room.is_booked === true
                   return (
                   <div key={room.id} ref={el => { roomRefs.current[room.id] = el }}
-                    className={`bg-white rounded-2xl shadow-sm border overflow-hidden hover:shadow-md transition-all ${
-                      highlightedRoom === room.id.toString() ? 'ring-2 ring-blue-500 ring-offset-2' : 'border-gray-100'
+                    className={`relative rounded-2xl shadow-sm border overflow-hidden transition-all ${
+                      booked ? 'bg-gray-50 border-gray-200 opacity-75' :
+                      highlightedRoom === room.id.toString() ? 'bg-white ring-2 ring-blue-500 ring-offset-2' : 'bg-white border-gray-100 hover:shadow-md'
                     }`}>
+                    {/* BOOKED overlay badge */}
+                    {booked && (
+                      <div className="absolute top-4 right-4 z-10">
+                        <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-red-600 text-white text-xs font-bold shadow-lg uppercase tracking-wide">
+                          <X className="w-3 h-3" /> Booked
+                        </span>
+                      </div>
+                    )}
                     {/* Color bar on top */}
-                    <div className={`h-2 ${roomColor.bg}`} />
+                    <div className={`h-2 ${booked ? 'bg-gray-300' : roomColor.bg}`} />
                     <div className="grid md:grid-cols-[380px_1fr]">
-                      <div className="p-3">
+                      <div className={`p-3 ${booked ? 'grayscale-[40%]' : ''}`}>
                         <RoomGallery images={getRoomGallery(room)} />
                       </div>
                       <div className="p-5 flex flex-col">
                         <div className="flex-1">
                           <div className="flex items-start justify-between mb-2">
                             <div>
-                              {/* Room type badge */}
-                              <span className={`inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full mb-1 ${roomColor.light} ${roomColor.text}`}>
+                              <span className={`inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full mb-1 ${booked ? 'bg-gray-100 text-gray-500' : `${roomColor.light} ${roomColor.text}`}`}>
                                 {roomColor.label}
                               </span>
-                              <h3 className="text-lg font-bold text-gray-900">{room.name}</h3>
+                              <h3 className={`text-lg font-bold ${booked ? 'text-gray-500' : 'text-gray-900'}`}>{room.name}</h3>
                             </div>
-                            <div className={`flex items-center gap-1 ${roomColor.bg} text-white px-2 py-1 rounded text-xs font-bold`}>
-                              <Star className="w-3 h-3 fill-current" /> 9.2
-                            </div>
+                            {!booked && (
+                              <div className={`flex items-center gap-1 ${roomColor.bg} text-white px-2 py-1 rounded text-xs font-bold`}>
+                                <Star className="w-3 h-3 fill-current" /> 9.2
+                              </div>
+                            )}
                           </div>
-                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{room.description}</p>
+                          <p className={`text-sm mb-3 line-clamp-2 ${booked ? 'text-gray-400' : 'text-gray-600'}`}>{room.description}</p>
                           <div className="flex flex-wrap gap-1.5 mb-3">
                             {room.amenities?.slice(0, 5).map((amenity, idx) => (
-                              <span key={idx} className="inline-flex items-center gap-1 text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
-                                <Check className="w-3 h-3 text-green-600" /> {amenity}
+                              <span key={idx} className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full ${booked ? 'text-gray-400 bg-gray-100' : 'text-gray-600 bg-gray-100'}`}>
+                                <Check className={`w-3 h-3 ${booked ? 'text-gray-400' : 'text-green-600'}`} /> {amenity}
                               </span>
                             ))}
                           </div>
-                          <div className="flex items-center gap-3 text-xs text-gray-500">
+                          <div className={`flex items-center gap-3 text-xs ${booked ? 'text-gray-400' : 'text-gray-500'}`}>
                             <span>👥 Up to {room.max_guests}</span>
                             <span>🛏️ {room.bed_config || 'Queen'}</span>
                           </div>
                         </div>
-                        {/* Availability badge */}
-                        {availability[room.type] && (
+
+                        {/* Availability badge — only for available rooms */}
+                        {!booked && availability[room.type] && (
                           <div className="mt-2">
                             {availability[room.type].available <= 2 && availability[room.type].available > 0 ? (
                               <span className="inline-flex items-center text-xs font-semibold px-2 py-1 rounded-full bg-orange-100 text-orange-700">
@@ -636,28 +648,44 @@ function BookingContent() {
                             ) : null}
                           </div>
                         )}
+
                         <div className="mt-3 pt-3 border-t border-gray-100 flex items-end justify-between">
-                          <div>
-                            <p className="text-xs text-gray-500">{calculateNights()} night{calculateNights() > 1 ? 's' : ''}</p>
-                            {room.active_discount ? (
-                              <>
-                                <p className="text-sm text-gray-400 line-through">{formatVatu(calculateBaseTotal(room))}</p>
-                                <p className="text-2xl font-bold text-gray-900">{formatVatu(calculateTotal(room))}</p>
-                                <span className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-700">
-                                  {room.active_discount.discount_percent}% OFF — {room.active_discount.name}
-                                </span>
-                              </>
-                            ) : (
-                              <>
-                                <p className="text-2xl font-bold text-gray-900">{formatVatu(calculateTotal(room))}</p>
-                                <p className="text-xs text-green-600 font-medium">Best rate — book direct!</p>
-                              </>
-                            )}
-                          </div>
-                          <button onClick={() => { setSelectedRoom(room); setShowBookingForm(true); }}
-                            className={`${roomColor.bg} text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition`}>
-                            Book Room
-                          </button>
+                          {booked ? (
+                            <>
+                              <div>
+                                <p className="text-xs text-gray-400">{calculateNights()} night{calculateNights() > 1 ? 's' : ''}</p>
+                                <p className="text-2xl font-bold text-gray-400">{formatVatu(calculateTotal(room))}</p>
+                                <p className="text-xs text-red-500 font-medium">Unavailable for selected dates</p>
+                              </div>
+                              <div className="px-6 py-2.5 rounded-xl font-semibold text-sm bg-gray-200 text-gray-500 cursor-not-allowed">
+                                Sold Out
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div>
+                                <p className="text-xs text-gray-500">{calculateNights()} night{calculateNights() > 1 ? 's' : ''}</p>
+                                {room.active_discount ? (
+                                  <>
+                                    <p className="text-sm text-gray-400 line-through">{formatVatu(calculateBaseTotal(room))}</p>
+                                    <p className="text-2xl font-bold text-gray-900">{formatVatu(calculateTotal(room))}</p>
+                                    <span className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-700">
+                                      {room.active_discount.discount_percent}% OFF — {room.active_discount.name}
+                                    </span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <p className="text-2xl font-bold text-gray-900">{formatVatu(calculateTotal(room))}</p>
+                                    <p className="text-xs text-green-600 font-medium">Best rate — book direct!</p>
+                                  </>
+                                )}
+                              </div>
+                              <button onClick={() => { setSelectedRoom(room); setShowBookingForm(true); }}
+                                className={`${roomColor.bg} text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition`}>
+                                Book Room
+                              </button>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>

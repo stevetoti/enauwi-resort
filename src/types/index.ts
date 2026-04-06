@@ -37,6 +37,7 @@ export interface Room {
   bed_config?: string
   active_discount?: { name: string; discount_percent: number } | null
   discounted_price?: number | null
+  is_booked?: boolean
 }
 
 export interface Guest {
