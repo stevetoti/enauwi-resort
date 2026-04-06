@@ -39,6 +39,7 @@ export default function AdminRoomsPage() {
   const [rooms, setRooms] = useState<Room[]>([])
   const [loading, setLoading] = useState(true)
   const [editingRoom, setEditingRoom] = useState<Room | null>(null)
+  const [showAddRoom, setShowAddRoom] = useState(false)
 
   const supabase = createClientSupabase()
 
@@ -87,6 +88,20 @@ export default function AdminRoomsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header with Add Room button */}
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm text-gray-500">{rooms.length} room{rooms.length !== 1 ? 's' : ''} total</p>
+        </div>
+        <button
+          onClick={() => setShowAddRoom(true)}
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition"
+        >
+          <Plus className="h-4 w-4" />
+          Add Room
+        </button>
+      </div>
+
       {/* Room Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {rooms.map((room) => {
@@ -215,6 +230,17 @@ export default function AdminRoomsPage() {
           onSave={async () => {
             await fetchRooms()
             setEditingRoom(null)
+          }}
+        />
+      )}
+
+      {/* Add Room Modal */}
+      {showAddRoom && (
+        <AddRoomModal
+          onClose={() => setShowAddRoom(false)}
+          onSave={async () => {
+            await fetchRooms()
+            setShowAddRoom(false)
           }}
         />
       )}
@@ -585,6 +611,175 @@ function RoomEditModal({
             >
               <Save className="h-4 w-4" />
               {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+function AddRoomModal({
+  onClose,
+  onSave,
+}: {
+  onClose: () => void
+  onSave: () => Promise<void>
+}) {
+  const [formData, setFormData] = useState({
+    name: '',
+    type: 'bungalow',
+    description: '',
+    price_vt: 0,
+    max_guests: 2,
+    amenities: '',
+    bed_config: 'Queen',
+  })
+  const [saving, setSaving] = useState(false)
+
+  const supabase = createClientSupabase()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!formData.name || !formData.price_vt) return
+    setSaving(true)
+
+    try {
+      const { error } = await supabase
+        .from('rooms')
+        .insert({
+          name: formData.name,
+          type: formData.type,
+          description: formData.description,
+          price_vt: formData.price_vt,
+          max_guests: formData.max_guests,
+          amenities: formData.amenities.split(',').map((a) => a.trim()).filter(Boolean),
+          bed_config: formData.bed_config,
+          images: [],
+          available: true,
+        })
+
+      if (error) throw error
+      await onSave()
+    } catch {
+      alert('Failed to create room')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Add New Room</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Room Name *</label>
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="e.g. Beachfront Bungalow 1"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+              <select
+                value={formData.type}
+                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+              >
+                <option value="bungalow">Bungalow</option>
+                <option value="suite">Suite</option>
+                <option value="villa">Villa</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Max Guests</label>
+              <input
+                type="number"
+                min={1}
+                max={10}
+                value={formData.max_guests}
+                onChange={(e) => setFormData({ ...formData, max_guests: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Price (VT per night) *</label>
+            <input
+              type="number"
+              min={0}
+              required
+              value={formData.price_vt || ''}
+              onChange={(e) => setFormData({ ...formData, price_vt: parseInt(e.target.value) || 0 })}
+              placeholder="12000"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Bed Configuration</label>
+            <input
+              type="text"
+              value={formData.bed_config}
+              onChange={(e) => setFormData({ ...formData, bed_config: e.target.value })}
+              placeholder="Queen, Twin, King"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              rows={3}
+              placeholder="Describe the room..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Amenities (comma-separated)</label>
+            <input
+              type="text"
+              value={formData.amenities}
+              onChange={(e) => setFormData({ ...formData, amenities: e.target.value })}
+              placeholder="WiFi, Beach Access, Ocean View, Private Deck"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+            />
+          </div>
+
+          <p className="text-xs text-gray-400">You can add images after creating the room by clicking Edit.</p>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saving || !formData.name || !formData.price_vt}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg disabled:opacity-50"
+            >
+              <Plus className="h-4 w-4" />
+              {saving ? 'Creating...' : 'Create Room'}
             </button>
           </div>
         </form>

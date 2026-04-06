@@ -13,6 +13,8 @@ import {
   LogIn,
   LogOut,
   XCircle,
+  Trash2,
+  AlertTriangle,
 } from 'lucide-react'
 import { createClientSupabase } from '@/lib/supabase'
 import { formatVatu, formatDate } from '@/lib/utils'
@@ -44,6 +46,8 @@ export default function AdminBookingsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedBooking, setSelectedBooking] = useState<(Booking & { room?: Room }) | null>(null)
   const [updatingStatus, setUpdatingStatus] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<(Booking & { room?: Room }) | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const supabase = createClientSupabase()
 
@@ -98,6 +102,25 @@ export default function AdminBookingsPage() {
       alert('Failed to update booking status')
     } finally {
       setUpdatingStatus(false)
+    }
+  }
+
+  const deleteBooking = async (bookingId: string) => {
+    setDeleting(true)
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .delete()
+        .eq('id', bookingId)
+
+      if (error) throw error
+      await fetchBookings()
+      setDeleteTarget(null)
+      if (selectedBooking?.id === bookingId) setSelectedBooking(null)
+    } catch {
+      alert('Failed to delete booking')
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -245,6 +268,13 @@ export default function AdminBookingsPage() {
                         >
                           <Eye className="h-4 w-4" />
                         </button>
+                        <button
+                          onClick={() => setDeleteTarget(booking)}
+                          className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete booking"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                         {TRANSITION_MAP[booking.status]?.map((nextStatus) => (
                           <button
                             key={nextStatus}
@@ -284,10 +314,60 @@ export default function AdminBookingsPage() {
           booking={selectedBooking}
           onClose={() => setSelectedBooking(null)}
           onStatusUpdate={updateBookingStatus}
+          onDelete={(booking) => { setSelectedBooking(null); setDeleteTarget(booking) }}
           updatingStatus={updatingStatus}
           statusColor={statusColor}
           statusActionColor={statusActionColor}
         />
+      )}
+
+      {/* Danger Delete Confirmation */}
+      {deleteTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[60]">
+          <div className="bg-white rounded-xl max-w-md w-full shadow-xl">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <AlertTriangle className="h-6 w-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Delete Booking</h3>
+                  <p className="text-sm text-gray-500">This action cannot be undone</p>
+                </div>
+              </div>
+
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                <p className="text-sm text-red-800">
+                  You are about to permanently delete the booking for{' '}
+                  <span className="font-semibold">{deleteTarget.guest_name}</span>{' '}
+                  ({deleteTarget.room?.name || 'Unknown Room'},{' '}
+                  {formatDate(deleteTarget.check_in)} &ndash; {formatDate(deleteTarget.check_out)}).
+                </p>
+                <p className="text-sm text-red-700 mt-2">
+                  This will remove all booking data including any linked invoices. This cannot be recovered.
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeleteTarget(null)}
+                  disabled={deleting}
+                  className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => deleteBooking(deleteTarget.id)}
+                  disabled={deleting}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg disabled:opacity-50"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  {deleting ? 'Deleting...' : 'Delete Permanently'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
@@ -297,6 +377,7 @@ function BookingDetailModal({
   booking,
   onClose,
   onStatusUpdate,
+  onDelete,
   updatingStatus,
   statusColor,
   statusActionColor,
@@ -304,6 +385,7 @@ function BookingDetailModal({
   booking: Booking & { room?: Room }
   onClose: () => void
   onStatusUpdate: (id: string, status: string) => Promise<void>
+  onDelete: (booking: Booking & { room?: Room }) => void
   updatingStatus: boolean
   statusColor: (status: string) => string
   statusActionColor: (status: string) => string
@@ -424,6 +506,17 @@ function BookingDetailModal({
               ))}
             </div>
           )}
+
+          {/* Delete */}
+          <div className="pt-3 border-t border-gray-200">
+            <button
+              onClick={() => onDelete(booking)}
+              className="flex items-center gap-2 text-sm text-red-500 hover:text-red-700 transition-colors"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete this booking
+            </button>
+          </div>
         </div>
       </div>
     </div>
