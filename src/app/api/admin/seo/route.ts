@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireAuth } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,8 +16,11 @@ function getSupabaseAdmin() {
 }
 
 // GET - Fetch SEO settings
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = getSupabaseAdmin()
     
     const { data, error } = await supabase
@@ -43,8 +47,7 @@ export async function GET() {
     }
     
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error fetching SEO settings:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch SEO settings' },
       { status: 500 }
@@ -55,6 +58,9 @@ export async function GET() {
 // PUT - Update SEO settings
 export async function PUT(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = getSupabaseAdmin()
     const body = await request.json()
     
@@ -118,8 +124,7 @@ export async function PUT(request: NextRequest) {
     if (error) throw error
     
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error updating SEO settings:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to update SEO settings' },
       { status: 500 }

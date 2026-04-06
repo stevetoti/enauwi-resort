@@ -35,6 +35,8 @@ export interface Room {
   created_at: string
   tagline?: string
   bed_config?: string
+  active_discount?: { name: string; discount_percent: number } | null
+  discounted_price?: number | null
 }
 
 export interface Guest {
@@ -59,6 +61,14 @@ export interface Booking {
   notes: string
   language: string
   total_price?: number
+  base_price?: number
+  discount_percent?: number
+  discount_amount?: number
+  discount_name?: string
+  payment_method?: string
+  payment_status?: string
+  invoice_number?: string
+  booking_reference?: string
   num_guests: number
   special_requests?: string
   created_at: string

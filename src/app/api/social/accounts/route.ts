@@ -1,11 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-// Use service role to bypass RLS
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+import { supabaseAdmin as supabase } from '@/lib/supabase'
 
 // GET all connected accounts
 export async function GET() {
@@ -18,8 +12,7 @@ export async function GET() {
     if (error) throw error
 
     return NextResponse.json({ accounts: data || [] })
-  } catch (error) {
-    console.error('Error fetching accounts:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch accounts', accounts: [] }, { status: 500 })
   }
 }
@@ -81,8 +74,7 @@ export async function POST(request: Request) {
     if (error) throw error
 
     return NextResponse.json({ account: data })
-  } catch (error) {
-    console.error('Error creating account:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to create account' }, { status: 500 })
   }
 }

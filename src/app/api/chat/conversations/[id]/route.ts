@@ -28,8 +28,7 @@ export async function GET(
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error fetching conversation:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch conversation' }, { status: 500 })
   }
 }
@@ -123,8 +122,7 @@ export async function PATCH(
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error updating conversation:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to update conversation' }, { status: 500 })
   }
 }
@@ -172,8 +170,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error deleting conversation:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to delete conversation' }, { status: 500 })
   }
 }

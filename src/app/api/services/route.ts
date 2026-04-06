@@ -24,8 +24,7 @@ export async function GET(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json({ services: data })
-  } catch (error) {
-    console.error('Error fetching services:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch services' },
       { status: 500 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { requireAuth } from '@/lib/auth'
 
 // GET single staff member
 export async function GET(
@@ -7,6 +8,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const { id } = await params
 
     const { data, error } = await supabaseAdmin
@@ -25,8 +29,7 @@ export async function GET(
     }
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error fetching staff:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch staff' }, { status: 500 })
   }
 }
@@ -37,6 +40,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const { id } = await params
     const body = await request.json()
     const { 
@@ -116,8 +122,7 @@ export async function PATCH(
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error updating staff:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to update staff' }, { status: 500 })
   }
 }
@@ -128,6 +133,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const { id } = await params
 
     const { error } = await supabaseAdmin
@@ -138,8 +146,7 @@ export async function DELETE(
     if (error) throw error
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error deleting staff:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to delete staff' }, { status: 500 })
   }
 }

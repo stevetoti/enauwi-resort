@@ -38,7 +38,6 @@ export async function POST() {
         .single()
 
       if (convError) {
-        console.error(`Error creating chat for ${dept.name}:`, convError)
         continue
       }
 
@@ -76,8 +75,7 @@ export async function POST() {
       message: `Created ${created.length} department chats`,
       created 
     })
-  } catch (error) {
-    console.error('Error initializing department chats:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to initialize chats' }, { status: 500 })
   }
 }

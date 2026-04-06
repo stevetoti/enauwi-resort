@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+import { supabaseAdmin as supabase } from '@/lib/supabase'
 
 // GET all gallery images
 export async function GET(request: NextRequest) {
@@ -28,8 +23,7 @@ export async function GET(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json({ images: data || [] })
-  } catch (error) {
-    console.error('Error fetching gallery:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch gallery', images: [] }, { status: 500 })
   }
 }
@@ -87,7 +81,6 @@ export async function POST(request: NextRequest) {
       })
 
     if (uploadError) {
-      console.error('Upload error:', uploadError)
       return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 })
     }
 
@@ -111,7 +104,6 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (dbError) {
-      console.error('DB error:', dbError)
       // File uploaded but DB entry failed - still return the URL
       return NextResponse.json({ 
         url: urlData.publicUrl,
@@ -120,8 +112,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ image: galleryEntry })
-  } catch (error) {
-    console.error('Gallery upload error:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 })
   }
 }
@@ -160,8 +151,7 @@ export async function DELETE(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Delete error:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to delete image' }, { status: 500 })
   }
 }

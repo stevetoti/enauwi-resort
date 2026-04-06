@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { supabase } from '@/lib/supabase'
 
 // GET all templates
 export async function GET(request: Request) {
@@ -30,8 +25,7 @@ export async function GET(request: Request) {
     if (error) throw error
 
     return NextResponse.json({ templates: data })
-  } catch (error) {
-    console.error('Error fetching templates:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch templates' }, { status: 500 })
   }
 }
@@ -50,8 +44,7 @@ export async function POST(request: Request) {
     if (error) throw error
 
     return NextResponse.json({ template: data })
-  } catch (error) {
-    console.error('Error creating template:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to create template' }, { status: 500 })
   }
 }

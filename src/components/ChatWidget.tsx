@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageCircle, Send, X, Globe, Bot, Phone, ExternalLink, CheckCircle } from 'lucide-react'
 import type { ChatMessage } from '@/types'
@@ -185,7 +186,7 @@ function RoomCard({ roomKey, onSelect }: { roomKey: string; onSelect?: (roomKey:
   return (
     <div className="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm my-2">
       <div className="h-28 relative">
-        <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
+        <Image src={room.image} alt={room.name} fill className="object-cover" />
         <div className="absolute top-2 right-2 bg-ocean-dark/80 text-white text-xs font-bold px-2 py-1 rounded-full">
           {room.price}/night
         </div>

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { createServiceSupabase } from '@/lib/supabase-server'
 
-const openai = new OpenAI({
+const getOpenAI = () => new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
@@ -396,7 +396,7 @@ export async function POST(request: NextRequest) {
 
     const systemPrompt = SYSTEM_PROMPTS[language] || SYSTEM_PROMPTS.en
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -439,8 +439,8 @@ export async function POST(request: NextRequest) {
           { conversation_id: convId, role: 'assistant', content: aiResponse, language }
         ])
       }
-    } catch (saveError) {
-      console.error('Failed to save conversation:', saveError)
+    } catch {
+      // Save failed silently
     }
 
     // Check if AI response mentions sending email/info — trigger actual email
@@ -465,8 +465,8 @@ export async function POST(request: NextRequest) {
               }
             })
           })
-        } catch (emailError) {
-          console.error('Failed to send concierge email:', emailError)
+        } catch {
+          // Email send failed silently
         }
       }
     }
@@ -477,9 +477,7 @@ export async function POST(request: NextRequest) {
       detectedLanguage: language
     })
 
-  } catch (error) {
-    console.error('Chat API error:', error)
-
+  } catch {
     const errorMessages: Record<string, string> = {
       en: 'Sorry, I\'m experiencing technical difficulties. Please try again later.',
       bi: 'Sori, mi gat smol problem wetem system. Traem gen afta.',

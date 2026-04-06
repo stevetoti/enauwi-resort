@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireAuth } from '@/lib/auth'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -15,8 +16,11 @@ function getSupabaseAdmin() {
   return createClient(supabaseUrl, supabaseServiceRole)
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = getSupabaseAdmin()
     const { data, error } = await supabase
       .from('site_settings')
@@ -32,10 +36,9 @@ export async function GET() {
     })
     
     return NextResponse.json({ success: true, settings })
-  } catch (error) {
-    console.error('Error fetching voice settings:', error)
+  } catch {
     return NextResponse.json(
-      { success: false, message: 'Failed to load settings', error: String(error) },
+      { success: false, message: 'Failed to load settings' },
       { status: 500 }
     )
   }
@@ -43,6 +46,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = getSupabaseAdmin()
     const body = await request.json()
     const { voice_greeting, contact_phone, contact_email, check_in_time, check_out_time, front_desk_hours } = body
@@ -83,10 +89,9 @@ export async function POST(request: NextRequest) {
     }
     
     return NextResponse.json({ success: true, message: 'Settings saved successfully' })
-  } catch (error) {
-    console.error('Error saving voice settings:', error)
+  } catch {
     return NextResponse.json(
-      { success: false, message: 'Failed to save settings', error: String(error) },
+      { success: false, message: 'Failed to save settings' },
       { status: 500 }
     )
   }

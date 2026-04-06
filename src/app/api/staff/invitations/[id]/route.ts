@@ -26,8 +26,7 @@ export async function GET(
     }
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error fetching invitation:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch invitation' }, { status: 500 })
   }
 }
@@ -56,8 +55,7 @@ export async function PATCH(
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error updating invitation:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to update invitation' }, { status: 500 })
   }
 }
@@ -79,8 +77,7 @@ export async function DELETE(
     if (error) throw error
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error cancelling invitation:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to cancel invitation' }, { status: 500 })
   }
 }

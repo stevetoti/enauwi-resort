@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+import { supabaseAdmin as supabase } from '@/lib/supabase'
 
 // GET single account
 export async function GET(
@@ -21,8 +16,7 @@ export async function GET(
     if (error) throw error
 
     return NextResponse.json({ account: data })
-  } catch (error) {
-    console.error('Error fetching account:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch account' }, { status: 500 })
   }
 }
@@ -57,8 +51,7 @@ export async function PUT(
     if (error) throw error
 
     return NextResponse.json({ account: data })
-  } catch (error) {
-    console.error('Error updating account:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to update account' }, { status: 500 })
   }
 }
@@ -77,8 +70,7 @@ export async function DELETE(
     if (error) throw error
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error deleting account:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to delete account' }, { status: 500 })
   }
 }

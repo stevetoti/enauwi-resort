@@ -37,8 +37,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(invitation)
-  } catch (error) {
-    console.error('Error validating invitation:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to validate invitation' }, { status: 500 })
   }
 }

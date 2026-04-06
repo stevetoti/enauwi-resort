@@ -22,8 +22,7 @@ export async function GET(
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error fetching video:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch video' }, { status: 500 })
   }
 }
@@ -51,8 +50,7 @@ export async function PATCH(
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error updating video:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to update video' }, { status: 500 })
   }
 }
@@ -73,8 +71,7 @@ export async function DELETE(
     if (error) throw error
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error deleting video:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to delete video' }, { status: 500 })
   }
 }

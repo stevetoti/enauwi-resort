@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://enauwi-resort.vercel.app'),
   title: "E'Nauwi Beach Resort | Family-Friendly Island Retreat in Efate, Vanuatu",
   description:
     "E'Nauwi Beach Resort is a family-friendly island retreat on Efate Island, Vanuatu. Comfortable beachfront bungalows, calm lagoon waters, kayaking, snorkeling, and genuine island hospitality await families, couples, and groups.",

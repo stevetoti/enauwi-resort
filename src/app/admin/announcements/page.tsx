@@ -398,8 +398,10 @@ function AnnouncementModal({
     setError('')
 
     try {
-      const staffData = localStorage.getItem('staff')
-      const staff = staffData ? JSON.parse(staffData) : null
+      // Get current staff from session
+      const meRes = await fetch('/api/auth/me')
+      const meData = meRes.ok ? await meRes.json() : null
+      const staff = meData?.staff || null
 
       const url = announcement ? `/api/announcements/${announcement.id}` : '/api/announcements'
       const method = announcement ? 'PATCH' : 'POST'

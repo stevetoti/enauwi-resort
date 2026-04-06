@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireAuth } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,8 +16,11 @@ function getSupabaseAdmin() {
 }
 
 // GET - Fetch all website content entries
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = getSupabaseAdmin()
     
     const { data, error } = await supabase
@@ -33,8 +37,7 @@ export async function GET() {
     }
     
     return NextResponse.json(data || [])
-  } catch (error) {
-    console.error('Error fetching website content:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch website content' },
       { status: 500 }
@@ -45,6 +48,9 @@ export async function GET() {
 // PUT - Update a website content entry
 export async function PUT(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = getSupabaseAdmin()
     const body = await request.json()
     const { id, current_image_url, updated_by } = body
@@ -70,8 +76,7 @@ export async function PUT(request: NextRequest) {
     if (error) throw error
     
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error updating website content:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to update website content' },
       { status: 500 }

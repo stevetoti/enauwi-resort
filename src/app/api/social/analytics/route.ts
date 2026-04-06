@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { supabase } from '@/lib/supabase'
 
 // GET analytics data
 export async function GET(request: Request) {
@@ -116,8 +111,7 @@ export async function GET(request: Request) {
     if (error) throw error
 
     return NextResponse.json({ analytics: data })
-  } catch (error) {
-    console.error('Error fetching analytics:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 })
   }
 }
@@ -136,8 +130,7 @@ export async function POST(request: Request) {
     if (error) throw error
 
     return NextResponse.json({ analytics: data })
-  } catch (error) {
-    console.error('Error creating analytics:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to create analytics' }, { status: 500 })
   }
 }

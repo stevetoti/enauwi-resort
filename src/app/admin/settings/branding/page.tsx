@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { toast, Toaster } from 'sonner'
 
 interface BrandingData {
@@ -119,7 +120,7 @@ export default function BrandingPage() {
           <label className="block text-sm font-medium mb-2">Logo</label>
           <div className="border-2 border-dashed rounded-lg p-4 text-center">
             {branding.logo ? (
-              <img src={branding.logo} alt="Logo" className="h-20 mx-auto mb-2" />
+              <Image src={branding.logo} alt="Logo" width={200} height={80} className="h-20 w-auto mx-auto mb-2" unoptimized />
             ) : (
               <div className="h-20 flex items-center justify-center text-gray-400">No logo uploaded</div>
             )}
@@ -135,7 +136,7 @@ export default function BrandingPage() {
           <label className="block text-sm font-medium mb-2">Favicon (Square PNG)</label>
           <div className="border-2 border-dashed rounded-lg p-4 text-center">
             {branding.favicon ? (
-              <img src={branding.favicon} alt="Favicon" className="h-16 w-16 mx-auto mb-2" />
+              <Image src={branding.favicon} alt="Favicon" width={64} height={64} className="h-16 w-16 mx-auto mb-2" unoptimized />
             ) : (
               <div className="h-16 w-16 mx-auto flex items-center justify-center text-gray-400 bg-gray-100 rounded">?</div>
             )}

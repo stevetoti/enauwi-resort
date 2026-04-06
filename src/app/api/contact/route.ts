@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceSupabase } from '@/lib/supabase-server'
+import { requireCsrf } from '@/lib/csrf'
 
 export async function POST(request: NextRequest) {
   try {
+    // CSRF check
+    const csrfError = await requireCsrf(request)
+    if (csrfError) return csrfError
+
     const supabase = createServiceSupabase()
     const { name, email, phone, subject, message } = await request.json()
 
@@ -11,6 +16,17 @@ export async function POST(request: NextRequest) {
         { error: 'Name, email, subject, and message are required' },
         { status: 400 }
       )
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
+    }
+
+    // Validate lengths to prevent abuse
+    if (name.length > 200 || email.length > 254 || subject.length > 500 || message.length > 5000) {
+      return NextResponse.json({ error: 'Input too long' }, { status: 400 })
     }
 
     // Save to Supabase
@@ -26,7 +42,6 @@ export async function POST(request: NextRequest) {
       })
 
     if (dbError) {
-      console.error('Error saving contact request:', dbError)
       // Don't fail — still send emails
     }
 
@@ -43,7 +58,7 @@ export async function POST(request: NextRequest) {
           type: 'contact_form',
           data: { name, email, phone, subject, message }
         })
-      }).catch(err => console.error('Email notification failed:', err))
+      }).catch(() => {})
     )
 
     // 2. SMS to resort owner (+678 22170)
@@ -56,7 +71,7 @@ export async function POST(request: NextRequest) {
           phone: '+67822170',
           message: smsMessage
         })
-      }).catch(err => console.error('SMS notification failed:', err))
+      }).catch(() => {})
     )
 
     // 3. WhatsApp to resort owner
@@ -68,15 +83,14 @@ export async function POST(request: NextRequest) {
           phone: '+67822170',
           message: `📩 *New Contact Form Submission*\n\n*From:* ${name}\n*Email:* ${email}\n*Phone:* ${phone || 'N/A'}\n\n*Subject:* ${subject}\n\n${message}`
         })
-      }).catch(err => console.error('WhatsApp notification failed:', err))
+      }).catch(() => {})
     )
 
     // Wait for all notifications (don't fail if some don't work)
     await Promise.allSettled(notificationPromises)
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Contact API error:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to submit contact form' },
       { status: 500 }

@@ -1,12 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { randomBytes } from 'crypto'
+import { randomBytes, createHash } from 'crypto'
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
+import { requireCsrf } from '@/lib/csrf'
+
+function hashToken(token: string): string {
+  return createHash('sha256').update(token).digest('hex')
+}
 
 export async function POST(request: NextRequest) {
   try {
+    // CSRF check
+    const csrfError = await requireCsrf(request)
+    if (csrfError) return csrfError
+
+    // Rate limit: 3 password reset requests per IP per 5 minutes
+    const ip = getClientIp(request)
+    const rateLimitResult = checkRateLimit(ip, { id: 'forgot-password', limit: 3, windowSeconds: 300 })
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: 'Too many reset requests. Please try again later.' },
+        { status: 429, headers: { 'Retry-After': String(rateLimitResult.retryAfter) } }
+      )
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-    
+
     if (!supabaseUrl || !serviceRoleKey) {
       return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
     }
@@ -30,26 +50,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, message: 'If account exists, reset link sent' })
     }
 
-    // Generate reset token
+    // Generate reset token — store hash in DB, send raw token in email
     const resetToken = randomBytes(32).toString('hex')
+    const tokenHash = hashToken(resetToken)
     const expiresAt = new Date()
-    expiresAt.setHours(expiresAt.getHours() + 1) // Token expires in 1 hour
+    expiresAt.setHours(expiresAt.getHours() + 1)
 
-    // Store reset token in staff table
-    const { error: updateError } = await supabase
+    await supabase
       .from('staff')
-      .update({ 
-        reset_token: resetToken,
+      .update({
+        reset_token: tokenHash,
         reset_token_expires: expiresAt.toISOString()
       })
       .eq('id', staff.id)
 
-    if (updateError) {
-      console.error('Error storing reset token:', updateError)
-      // Try alternative: store in a separate field or just proceed
-    }
-
-    // Send reset email
+    // Send reset email with the RAW token (not the hash)
     const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://enauwi-resort.vercel.app'}/admin/reset-password?token=${resetToken}`
 
     try {
@@ -65,13 +80,12 @@ export async function POST(request: NextRequest) {
           },
         }),
       })
-    } catch (emailError) {
-      console.error('Error sending email:', emailError)
+    } catch {
+      // Email send failure is non-fatal — user can request again
     }
 
     return NextResponse.json({ success: true, message: 'If account exists, reset link sent' })
-  } catch (error) {
-    console.error('Forgot password error:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to process request' }, { status: 500 })
   }
 }

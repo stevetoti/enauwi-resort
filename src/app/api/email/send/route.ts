@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const getResend = () => new Resend(process.env.RESEND_API_KEY)
 
 const ADMIN_EMAILS = ['reservation@enauwibeachresort.com', 'gm@enauwibeachresort.com', 'marketing@enauwibeachresort.com', 'toti@pacificwavedigital.com', 'steve@pacificwavedigital.com']
 const FROM_NOREPLY = 'E\'Nauwi Beach Resort <noreply@totiroom.pacificwavedigital.com>'
@@ -292,7 +292,7 @@ export async function POST(request: NextRequest) {
     switch (type) {
       case 'booking_confirmation': {
         // Send to guest
-        const guestResult = await resend.emails.send({
+        const guestResult = await getResend().emails.send({
           from: FROM_NOREPLY,
           to: data.guestEmail,
           subject: `Booking Confirmation — ${data.reference} | E'Nauwi Beach Resort`,
@@ -301,7 +301,7 @@ export async function POST(request: NextRequest) {
         results.push({ id: guestResult.data?.id, error: guestResult.error?.message })
 
         // Send to admins
-        const adminResult = await resend.emails.send({
+        const adminResult = await getResend().emails.send({
           from: FROM_NOREPLY,
           to: ADMIN_EMAILS,
           subject: `🎉 New Booking: ${data.reference} — ${data.guestName}`,
@@ -313,7 +313,7 @@ export async function POST(request: NextRequest) {
 
       case 'contact_form': {
         // Send to admins
-        const adminResult = await resend.emails.send({
+        const adminResult = await getResend().emails.send({
           from: FROM_NOREPLY,
           to: ADMIN_EMAILS,
           replyTo: data.email,
@@ -323,7 +323,7 @@ export async function POST(request: NextRequest) {
         results.push({ id: adminResult.data?.id, error: adminResult.error?.message })
 
         // Auto-reply to sender
-        const autoReply = await resend.emails.send({
+        const autoReply = await getResend().emails.send({
           from: FROM_NOREPLY,
           to: data.email,
           subject: `We've received your message | E'Nauwi Beach Resort`,
@@ -334,7 +334,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'concierge_email': {
-        const result = await resend.emails.send({
+        const result = await getResend().emails.send({
           from: FROM_CONCIERGE,
           to: data.guestEmail,
           subject: data.subject || `Info from E'Nauwi Beach Resort`,
@@ -345,7 +345,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'staff_invitation': {
-        const result = await resend.emails.send({
+        const result = await getResend().emails.send({
           from: FROM_NOREPLY,
           to: data.email,
           subject: `You're Invited to Join E'Nauwi Beach Resort Team`,
@@ -356,7 +356,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'password_reset': {
-        const result = await resend.emails.send({
+        const result = await getResend().emails.send({
           from: FROM_NOREPLY,
           to: data.email,
           subject: `Reset Your Password | E'Nauwi Beach Resort`,
@@ -376,8 +376,7 @@ export async function POST(request: NextRequest) {
       results 
     }, { status: hasErrors ? 207 : 200 })
 
-  } catch (error) {
-    console.error('Email API error:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to send email' }, { status: 500 })
   }
 }

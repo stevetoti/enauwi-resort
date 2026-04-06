@@ -68,16 +68,13 @@ export default function AdminDashboard() {
   const supabase = createClientSupabase()
 
   useEffect(() => {
-    // Get user name from localStorage
-    try {
-      const staffData = localStorage.getItem('staff')
-      if (staffData) {
-        const staff = JSON.parse(staffData)
-        if (staff.name) setUserName(staff.name)
-      }
-    } catch {
-      // ignore
-    }
+    // Get user name from session cookie
+    fetch('/api/auth/me')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data?.staff?.name) setUserName(data.staff.name)
+      })
+      .catch(() => {})
   }, [])
 
   const fetchDashboardData = useCallback(async () => {

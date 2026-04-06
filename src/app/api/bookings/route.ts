@@ -3,9 +3,14 @@ import { createServiceSupabase } from '@/lib/supabase-server'
 import { BookingFormData } from '@/types'
 import { generateBookingReference, getDaysBetween } from '@/lib/utils'
 import { sendBookingNotifications } from '@/lib/notifications'
+import { requireCsrf } from '@/lib/csrf'
 
 export async function POST(request: NextRequest) {
   try {
+    // CSRF check
+    const csrfError = await requireCsrf(request)
+    if (csrfError) return csrfError
+
     const supabase = createServiceSupabase()
     const bookingData: BookingFormData = await request.json()
 
@@ -26,6 +31,28 @@ export async function POST(request: NextRequest) {
         { error: 'Missing required fields' },
         { status: 400 }
       )
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(guestEmail)) {
+      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
+    }
+
+    // Validate date formats (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+    if (!dateRegex.test(checkIn) || !dateRegex.test(checkOut)) {
+      return NextResponse.json({ error: 'Invalid date format' }, { status: 400 })
+    }
+
+    // Validate dates are logical
+    if (new Date(checkOut) <= new Date(checkIn)) {
+      return NextResponse.json({ error: 'Check-out must be after check-in' }, { status: 400 })
+    }
+
+    // Validate string lengths
+    if (guestName.length > 200 || guestEmail.length > 254) {
+      return NextResponse.json({ error: 'Input too long' }, { status: 400 })
     }
 
     // Get room details for pricing
@@ -61,9 +88,32 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Calculate total price
+    // Calculate total price with discounts
     const nights = getDaysBetween(checkIn, checkOut)
-    const totalPrice = room.price_vt * nights
+    const basePrice = room.price_vt * nights
+
+    // Check for active discounts
+    let discountPercent = 0
+    let discountName = ''
+    let discountAmount = 0
+
+    const { data: discounts } = await supabase
+      .from('room_discounts')
+      .select('name, discount_percent, min_nights')
+      .eq('is_active', true)
+      .lte('start_date', checkIn)
+      .gte('end_date', checkOut)
+      .or(`room_id.eq.${roomId},room_id.is.null`)
+      .order('discount_percent', { ascending: false })
+      .limit(1)
+
+    if (discounts && discounts.length > 0 && nights >= (discounts[0].min_nights || 1)) {
+      discountPercent = discounts[0].discount_percent
+      discountName = discounts[0].name
+      discountAmount = Math.round(basePrice * discountPercent / 100)
+    }
+
+    const totalPrice = basePrice - discountAmount
 
     // Create or get guest record
     const { data: existingGuest } = await supabase
@@ -93,6 +143,9 @@ export async function POST(request: NextRequest) {
       guestId = newGuest.id
     }
 
+    // Generate booking reference
+    const reference = generateBookingReference()
+
     // Create booking
     const { data: booking, error: bookingError } = await supabase
       .from('bookings')
@@ -105,7 +158,14 @@ export async function POST(request: NextRequest) {
         check_out: checkOut,
         num_guests: guests,
         total_price: totalPrice,
-        special_requests: specialRequests ? `${specialRequests} | Payment: ${paymentMethod === 'card' ? 'Credit Card' : 'Pay at Property'}` : `Payment: ${paymentMethod === 'card' ? 'Credit Card' : 'Pay at Property'}`,
+        base_price: basePrice,
+        discount_percent: discountPercent,
+        discount_amount: discountAmount,
+        discount_name: discountName || null,
+        payment_method: paymentMethod === 'card' ? 'credit_card' : 'property',
+        payment_status: 'unpaid',
+        booking_reference: reference,
+        special_requests: specialRequests || null,
         status: 'pending'
       })
       .select('*')
@@ -114,8 +174,6 @@ export async function POST(request: NextRequest) {
     if (bookingError) {
       throw bookingError
     }
-
-    const reference = generateBookingReference()
 
     // ── Multi-channel notifications (fire-and-forget) ────────────
     const baseUrl = request.nextUrl.origin
@@ -136,9 +194,7 @@ export async function POST(request: NextRequest) {
       totalPrice: formattedPrice,
       specialRequests,
       bookingId: booking.id,
-    }).catch(err => {
-      console.error('[Booking] Notification dispatch error:', err)
-    })
+    }).catch(() => {})
 
     // Return booking confirmation
     return NextResponse.json({
@@ -148,8 +204,7 @@ export async function POST(request: NextRequest) {
       totalPrice,
       nights
     })
-  } catch (error) {
-    console.error('Error creating booking:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to create booking' },
       { status: 500 }
@@ -185,8 +240,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ bookings })
-  } catch (error) {
-    console.error('Error fetching bookings:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch bookings' },
       { status: 500 }

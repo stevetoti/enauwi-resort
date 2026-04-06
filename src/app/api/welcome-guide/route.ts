@@ -351,7 +351,6 @@ export async function GET() {
     });
     
   } catch {
-    console.error("PDF error");
     return NextResponse.json({ error: 'PDF generation failed' }, { status: 500 });
   }
 }

@@ -1,23 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { requireAuth } from '@/lib/auth'
 
 // GET attendance records
 export async function GET(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const { searchParams } = new URL(request.url)
     const staffId = searchParams.get('staffId')
     const date = searchParams.get('date')
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
 
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 200)
+    const offset = (page - 1) * limit
+
     let query = supabaseAdmin
       .from('staff_attendance')
       .select(`
         *,
         staff:staff(id, name, email, department, profile_photo, role_details:roles(*))
-      `)
+      `, { count: 'exact' })
       .order('date', { ascending: false })
       .order('clock_in', { ascending: false })
+      .range(offset, offset + limit - 1)
 
     if (staffId) {
       query = query.eq('staff_id', staffId)
@@ -35,13 +44,12 @@ export async function GET(request: NextRequest) {
       query = query.lte('date', endDate)
     }
 
-    const { data, error } = await query
+    const { data, error, count } = await query
 
     if (error) throw error
 
-    return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error fetching attendance:', error)
+    return NextResponse.json({ data, total: count, page, limit })
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch attendance' }, { status: 500 })
   }
 }
@@ -49,6 +57,9 @@ export async function GET(request: NextRequest) {
 // POST clock in
 export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const body = await request.json()
     const { staff_id, action } = body
 
@@ -117,8 +128,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
-  } catch (error) {
-    console.error('Error processing attendance:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to process attendance' }, { status: 500 })
   }
 }

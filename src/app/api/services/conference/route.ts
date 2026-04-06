@@ -74,8 +74,7 @@ export async function POST(request: NextRequest) {
       booking: data,
       message: 'Conference booking inquiry submitted successfully. Our team will contact you to confirm.',
     })
-  } catch (error) {
-    console.error('Error creating conference booking:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to create conference booking' },
       { status: 500 }
@@ -94,8 +93,7 @@ export async function GET() {
     if (error) throw error
 
     return NextResponse.json({ bookings: data })
-  } catch (error) {
-    console.error('Error fetching conference bookings:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch conference bookings' },
       { status: 500 }

@@ -38,8 +38,7 @@ export async function GET(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error fetching message logs:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch message logs' }, { status: 500 })
   }
 }
@@ -155,8 +154,7 @@ export async function POST(request: NextRequest) {
       partial: !allSuccess && someSuccess,
       results,
     }, { status: allSuccess ? 200 : (someSuccess ? 207 : 500) })
-  } catch (error) {
-    console.error('Error sending message:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to send message' }, { status: 500 })
   }
 }

@@ -19,8 +19,7 @@ export async function GET(
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error fetching department documents:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch documents' }, { status: 500 })
   }
 }
@@ -65,8 +64,7 @@ export async function POST(
     if (error) throw error
 
     return NextResponse.json(data, { status: 201 })
-  } catch (error) {
-    console.error('Error creating department document:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to add document' }, { status: 500 })
   }
 }

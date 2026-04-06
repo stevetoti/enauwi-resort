@@ -20,7 +20,6 @@ export async function POST(request: NextRequest) {
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     
     if (!supabaseUrl || !serviceRoleKey) {
-      console.error('Supabase credentials not configured')
       return NextResponse.json({ error: 'Storage service not configured' }, { status: 500 })
     }
 
@@ -74,7 +73,7 @@ export async function POST(request: NextRequest) {
         fileSizeLimit: 52428800, // 50MB
       })
       if (createError && !createError.message.includes('already exists')) {
-        console.error('Error creating bucket:', createError)
+
       }
     }
 
@@ -87,7 +86,6 @@ export async function POST(request: NextRequest) {
       })
 
     if (error) {
-      console.error('Supabase upload error:', error)
       // Return specific error message
       return NextResponse.json({ 
         error: error.message || 'Storage upload failed',
@@ -105,7 +103,6 @@ export async function POST(request: NextRequest) {
       path: data.path 
     })
   } catch (error) {
-    console.error('Upload error:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to upload file' },
       { status: 500 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireAuth } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,6 +18,9 @@ function getSupabaseAdmin() {
 // POST - Upload a new image
 export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = getSupabaseAdmin()
     const formData = await request.formData()
     
@@ -57,7 +61,6 @@ export async function POST(request: NextRequest) {
       })
     
     if (uploadError) {
-      console.error('Supabase storage upload error:', uploadError)
       return NextResponse.json(
         { error: `Storage upload failed: ${uploadError.message}` },
         { status: 500 }
@@ -83,7 +86,6 @@ export async function POST(request: NextRequest) {
       .single()
     
     if (updateError) {
-      console.error('Database update error:', updateError)
       return NextResponse.json(
         { error: `Database update failed: ${updateError.message}` },
         { status: 500 }
@@ -96,7 +98,6 @@ export async function POST(request: NextRequest) {
       data: updateData,
     })
   } catch (error) {
-    console.error('Error uploading image:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to upload image' },
       { status: 500 }

@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireAuth } from '@/lib/auth'
 
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
 const AGENT_ID = process.env.ELEVENLABS_AGENT_ID || 'agent_1101kg5vbnzkfbpa55jqgawb4exv'
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     if (!ELEVENLABS_API_KEY) {
       return NextResponse.json(
         { message: 'ElevenLabs API key not configured' },
@@ -43,7 +47,6 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const error = await response.text()
-      console.error('ElevenLabs API error:', error)
       return NextResponse.json(
         { message: 'Failed to update voice agent', error },
         { status: response.status }
@@ -60,10 +63,9 @@ export async function POST(request: NextRequest) {
         first_message: data.conversation_config?.agent?.first_message,
       },
     })
-  } catch (error) {
-    console.error('Error syncing voice agent:', error)
+  } catch {
     return NextResponse.json(
-      { message: 'Internal server error', error: String(error) },
+      { message: 'Internal server error' },
       { status: 500 }
     )
   }

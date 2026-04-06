@@ -343,10 +343,13 @@ function OnboardingContent() {
                   <div className="flex flex-col items-center gap-4">
                     <div className="relative">
                       {formData.profile_photo ? (
-                        <img
+                        <Image
                           src={formData.profile_photo}
                           alt="Profile"
+                          width={128}
+                          height={128}
                           className="w-32 h-32 rounded-full object-cover border-4 border-teal-100"
+                          unoptimized
                         />
                       ) : (
                         <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center border-4 border-gray-200">

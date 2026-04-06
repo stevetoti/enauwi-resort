@@ -20,8 +20,7 @@ export async function PATCH(
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error updating document:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to update document' }, { status: 500 })
   }
 }
@@ -42,8 +41,7 @@ export async function DELETE(
     if (error) throw error
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error deleting document:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to delete document' }, { status: 500 })
   }
 }

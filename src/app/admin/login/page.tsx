@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { csrfHeaders } from '@/lib/csrf-client'
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('')
@@ -21,7 +22,7 @@ export default function AdminLoginPage() {
     try {
       const response = await fetch('/api/auth/staff-login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: csrfHeaders(),
         body: JSON.stringify({ email, password }),
       })
 
@@ -32,25 +33,21 @@ export default function AdminLoginPage() {
         return
       }
 
-      // Store staff info in localStorage for session management
-      localStorage.setItem('staff', JSON.stringify(data.staff))
-      
+      // Session cookie is set automatically by the login endpoint (httpOnly)
       // Check if user is admin or regular staff
       const permissions = data.staff.permissions || {}
-      const isAdmin = permissions.staff?.view || 
-                     permissions.roles?.view || 
+      const isAdmin = permissions.staff?.view ||
+                     permissions.roles?.view ||
                      permissions.bookings?.view ||
                      permissions.rooms?.edit ||
                      permissions.guests?.edit
-      
-      // Redirect based on role
+
       if (isAdmin) {
         router.push('/admin')
       } else {
         router.push('/staff/portal')
       }
-    } catch (error) {
-      console.error('Login error:', error)
+    } catch {
       setError('An unexpected error occurred')
     } finally {
       setLoading(false)

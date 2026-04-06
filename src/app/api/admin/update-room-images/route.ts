@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createServiceSupabase } from '@/lib/supabase-server'
+import { requireAuth } from '@/lib/auth'
 
 // Interior room images for each room type
 const roomImages: Record<string, string[]> = {
@@ -35,8 +36,11 @@ const roomImages: Record<string, string[]> = {
   ],
 }
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = createServiceSupabase()
     
     // Get all rooms
@@ -79,7 +83,7 @@ export async function POST() {
         .eq('id', room.id)
       
       if (updateError) {
-        console.error(`Error updating room ${room.name}:`, updateError)
+
       } else {
         updates.push({ id: room.id, name: room.name, images })
       }
@@ -90,8 +94,7 @@ export async function POST() {
       updated: updates.length,
       rooms: updates,
     })
-  } catch (error) {
-    console.error('Error updating room images:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to update room images' },
       { status: 500 }

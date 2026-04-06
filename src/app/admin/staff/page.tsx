@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import {
   UserPlus,
   Search,
@@ -69,13 +70,15 @@ export default function StaffManagementPage() {
       // Fetch staff
       try {
         const staffRes = await fetch('/api/staff')
-        const staffData = await staffRes.json()
-        
+        const staffJson = await staffRes.json()
+        const staffData = staffJson.data || staffJson
+
         if (Array.isArray(staffData)) {
           // Fetch today's attendance
           try {
             const attendanceRes = await fetch(`/api/attendance?date=${today}`)
-            const attendanceData = await attendanceRes.json()
+            const attendanceJson = await attendanceRes.json()
+            const attendanceData = attendanceJson.data || attendanceJson
             
             const staffWithAttendance = staffData.map((s: Staff) => ({
               ...s,
@@ -88,8 +91,8 @@ export default function StaffManagementPage() {
             setStaff(staffData)
           }
         }
-      } catch (error) {
-        console.error('Error fetching staff:', error)
+      } catch {
+        // Staff fetch failed
       }
 
       // Fetch roles
@@ -307,10 +310,13 @@ export default function StaffManagementPage() {
               {/* Avatar */}
               <div className="relative">
                 {member.profile_photo ? (
-                  <img
+                  <Image
                     src={member.profile_photo}
                     alt={member.name}
+                    width={56}
+                    height={56}
                     className="w-14 h-14 rounded-full object-cover"
+                    unoptimized
                   />
                 ) : (
                   <div className="w-14 h-14 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-xl">
@@ -717,10 +723,13 @@ function ViewStaffModal({
           {/* Header Section */}
           <div className="flex items-center gap-4">
             {staff.profile_photo ? (
-              <img
+              <Image
                 src={staff.profile_photo}
                 alt={staff.name}
+                width={96}
+                height={96}
                 className="w-24 h-24 rounded-full object-cover border-4 border-gray-100"
+                unoptimized
               />
             ) : (
               <div className="w-24 h-24 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-3xl border-4 border-gray-100">
@@ -1042,10 +1051,13 @@ function EditStaffModal({
               <div className="flex items-center gap-4">
                 <div className="relative">
                   {formData.profile_photo ? (
-                    <img
+                    <Image
                       src={formData.profile_photo}
                       alt={formData.name}
+                      width={80}
+                      height={80}
                       className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+                      unoptimized
                     />
                   ) : (
                     <div className="w-20 h-20 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-2xl border-2 border-gray-200">

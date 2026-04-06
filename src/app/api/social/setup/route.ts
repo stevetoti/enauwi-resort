@@ -219,7 +219,6 @@ export async function POST(request: Request) {
       })), { onConflict: 'name' })
 
     if (templateError) {
-      console.error('Template insert error:', templateError)
     }
 
     return NextResponse.json({ 
@@ -227,9 +226,8 @@ export async function POST(request: Request) {
       message: 'Social media tables and templates configured',
       sql: SETUP_SQL
     })
-  } catch (error) {
-    console.error('Setup error:', error)
-    return NextResponse.json({ error: 'Setup failed', details: error }, { status: 500 })
+  } catch {
+    return NextResponse.json({ error: 'Setup failed' }, { status: 500 })
   }
 }
 

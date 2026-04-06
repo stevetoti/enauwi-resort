@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import bcrypt from 'bcryptjs'
+import { requireAuth } from '@/lib/auth'
 
-// Admin endpoint to directly reset a staff member's password
 export async function POST(request: NextRequest) {
   try {
+    // Require authenticated admin session
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-    
+
     if (!supabaseUrl || !serviceRoleKey) {
       return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
     }
@@ -22,7 +27,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 })
     }
 
-    // Find staff member
     const { data: staff, error: findError } = await supabase
       .from('staff')
       .select('id, email, name')
@@ -33,23 +37,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Staff member not found' }, { status: 404 })
     }
 
-    // Update password
+    // Hash the password with bcrypt
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
+
     const { error: updateError } = await supabase
       .from('staff')
-      .update({ password_hash: newPassword })
+      .update({ password_hash: hashedPassword })
       .eq('id', staff.id)
 
     if (updateError) {
-      console.error('Password update error:', updateError)
       return NextResponse.json({ error: 'Failed to update password' }, { status: 500 })
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: `Password reset for ${staff.name} (${staff.email})` 
+    return NextResponse.json({
+      success: true,
+      message: `Password reset for ${staff.name}`
     })
-  } catch (error) {
-    console.error('Reset error:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to reset password' }, { status: 500 })
   }
 }

@@ -73,8 +73,7 @@ export async function POST(request: NextRequest) {
       order: data,
       message: 'Service order placed successfully.',
     })
-  } catch (error) {
-    console.error('Error creating service order:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to create service order' },
       { status: 500 }
@@ -93,8 +92,7 @@ export async function GET() {
     if (error) throw error
 
     return NextResponse.json({ orders: data })
-  } catch (error) {
-    console.error('Error fetching service orders:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch service orders' },
       { status: 500 }

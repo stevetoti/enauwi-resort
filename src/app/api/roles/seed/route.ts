@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { requireAuth } from '@/lib/auth'
 
 const DEFAULT_ROLES = [
   {
@@ -76,8 +77,11 @@ const DEFAULT_ROLES = [
 ]
 
 // POST - Seed default roles if none exist
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     // Check if roles already exist
     const { data: existingRoles, error: checkError } = await supabaseAdmin
       .from('roles')
@@ -107,8 +111,7 @@ export async function POST() {
       seeded: true,
       roles: data 
     })
-  } catch (error) {
-    console.error('Error seeding roles:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to seed roles' },
       { status: 500 }
@@ -117,8 +120,11 @@ export async function POST() {
 }
 
 // GET - Check if roles exist and seed if needed
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const { data: existingRoles, error: checkError } = await supabaseAdmin
       .from('roles')
       .select('*')
@@ -146,8 +152,7 @@ export async function GET() {
       roles: existingRoles,
       seeded: false 
     })
-  } catch (error) {
-    console.error('Error checking/seeding roles:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to check roles' },
       { status: 500 }

@@ -86,8 +86,7 @@ export async function POST(
       message: 'Invitation resent successfully',
       invitation: updatedInvitation,
     })
-  } catch (error) {
-    console.error('Error resending invitation:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to resend invitation' }, { status: 500 })
   }
 }

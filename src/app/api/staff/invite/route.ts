@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { randomBytes } from 'crypto'
+import { requireAuth } from '@/lib/auth'
 
 // POST send staff invitation
 export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     // Use service role key for server-side operations
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -110,8 +114,7 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json(invitation, { status: 201 })
-  } catch (error) {
-    console.error('Error sending invitation:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to send invitation' }, { status: 500 })
   }
 }

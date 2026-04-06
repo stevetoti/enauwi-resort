@@ -133,14 +133,15 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
-  // Initialize staff from localStorage
+  // Initialize staff from session cookie
   useEffect(() => {
-    const staffData = localStorage.getItem('staff')
-    if (!staffData) {
-      router.push('/admin/login')
-      return
-    }
-    setStaff(JSON.parse(staffData))
+    fetch('/api/auth/me')
+      .then(res => {
+        if (!res.ok) { router.push('/admin/login'); return null }
+        return res.json()
+      })
+      .then(data => { if (data?.staff) setStaff(data.staff) })
+      .catch(() => router.push('/admin/login'))
   }, [router])
 
   // SWR for conversations - cached, refreshes every 5 seconds

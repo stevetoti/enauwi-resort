@@ -19,8 +19,7 @@ export async function GET(
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error fetching department announcements:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch announcements' }, { status: 500 })
   }
 }
@@ -56,8 +55,7 @@ export async function POST(
     if (error) throw error
 
     return NextResponse.json(data, { status: 201 })
-  } catch (error) {
-    console.error('Error creating department announcement:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to create announcement' }, { status: 500 })
   }
 }

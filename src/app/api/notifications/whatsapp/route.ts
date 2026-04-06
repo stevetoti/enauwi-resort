@@ -70,7 +70,6 @@ export async function POST(request: NextRequest) {
 
     // Check if WhatsApp API is configured
     if (!WHATSAPP_API_TOKEN || !WHATSAPP_PHONE_ID) {
-      console.log(`[WhatsApp] Not configured — would send to ${phone}:`, template || 'custom')
       return NextResponse.json({
         success: false,
         configured: false,
@@ -118,7 +117,6 @@ export async function POST(request: NextRequest) {
     const waResult = await waResponse.json()
 
     if (!waResponse.ok) {
-      console.error('[WhatsApp] API error:', waResult)
       return NextResponse.json({
         success: false,
         error: waResult.error?.message || 'WhatsApp API error',
@@ -131,8 +129,7 @@ export async function POST(request: NextRequest) {
       messageId: waResult.messages?.[0]?.id,
     })
 
-  } catch (error) {
-    console.error('[WhatsApp] Error:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to send WhatsApp message' },
       { status: 500 }

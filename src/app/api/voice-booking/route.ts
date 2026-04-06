@@ -23,8 +23,7 @@ async function sendEmail(to: string, subject: string, html: string) {
       html,
     })
     return true
-  } catch (err) {
-    console.error('Email send error:', err)
+  } catch {
     return false
   }
 }
@@ -131,7 +130,6 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (bookingError) {
-      console.error('Booking insert error:', bookingError)
       // Still continue to notify even if DB fails
     }
 
@@ -209,8 +207,7 @@ export async function POST(request: NextRequest) {
       message: `Booking ${bookingRef} created successfully for ${guest_name}. ${room.name} for ${nights} night(s) at ${totalPrice.toLocaleString()} VT total. Confirmation email ${emailSent ? 'sent' : 'pending'} to ${guest_email}.`
     })
 
-  } catch (error) {
-    console.error('Voice booking error:', error)
+  } catch {
     return NextResponse.json({
       success: false,
       message: 'Sorry, there was an error processing the booking. Please try calling +678 22170 directly.'

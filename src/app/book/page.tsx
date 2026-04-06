@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
+import { csrfHeaders } from '@/lib/csrf-client'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -317,6 +318,9 @@ function BookingContent() {
   const [checkOut, setCheckOut] = useState('')
   const [guests, setGuests] = useState(2)
   const [rooms, setRooms] = useState<Room[]>([])
+  const [availability, setAvailability] = useState<Record<string, { total: number; available: number }>>({})
+  const [availableCount, setAvailableCount] = useState(0)
+  const [totalRooms, setTotalRooms] = useState(0)
   const [loading, setLoading] = useState(false)
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
   const [showBookingForm, setShowBookingForm] = useState(false)
@@ -345,9 +349,14 @@ function BookingContent() {
       const params = new URLSearchParams({ checkIn, checkOut, guests: guests.toString() })
       const response = await fetch(`/api/rooms?${params}`)
       const data = await response.json()
-      if (!data.error) setRooms(data.rooms)
-    } catch (error) {
-      console.error('Error:', error)
+      if (!data.error) {
+        setRooms(data.rooms)
+        if (data.availability) setAvailability(data.availability)
+        if (data.availableCount !== undefined) setAvailableCount(data.availableCount)
+        if (data.totalRooms !== undefined) setTotalRooms(data.totalRooms)
+      }
+    } catch {
+      // Search failed
     } finally {
       setLoading(false)
     }
@@ -371,7 +380,9 @@ function BookingContent() {
   }, [selectedRoomParam, rooms])
 
   const calculateNights = () => checkIn && checkOut ? getDaysBetween(checkIn, checkOut) : 1
-  const calculateTotal = (room: Room) => room.price_vt * calculateNights()
+  const getEffectivePrice = (room: Room) => room.discounted_price || room.price_vt
+  const calculateTotal = (room: Room) => getEffectivePrice(room) * calculateNights()
+  const calculateBaseTotal = (room: Room) => room.price_vt * calculateNights()
   const calculateActivitiesTotal = () => selectedActivities.reduce((sum, id) => {
     const activity = activities.find(a => a.id === id)
     return sum + (activity?.price || 0)
@@ -402,7 +413,7 @@ function BookingContent() {
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: csrfHeaders(),
         body: JSON.stringify({
           room_id: selectedRoom.id,
           check_in: checkIn,
@@ -555,7 +566,22 @@ function BookingContent() {
                 <p className="text-gray-500 text-sm">Try different dates</p>
               </div>
             ) : (
-              <div className="grid gap-4">
+              <div className="space-y-4">
+                {/* Availability summary */}
+                {totalRooms > 0 && (
+                  <div className="flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-gray-100">
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold text-gray-900">{availableCount}</span> of{' '}
+                      <span className="font-semibold text-gray-900">{totalRooms}</span> rooms available for your dates
+                    </p>
+                    {availableCount <= 2 && availableCount > 0 && (
+                      <span className="text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
+                        Book soon — filling up!
+                      </span>
+                    )}
+                  </div>
+                )}
+                <div className="grid gap-4">
                 {rooms.map(room => {
                   const roomColor = getRoomTypeColor(room.name)
                   return (
@@ -596,11 +622,37 @@ function BookingContent() {
                             <span>🛏️ {room.bed_config || 'Queen'}</span>
                           </div>
                         </div>
+                        {/* Availability badge */}
+                        {availability[room.type] && (
+                          <div className="mt-2">
+                            {availability[room.type].available <= 2 && availability[room.type].available > 0 ? (
+                              <span className="inline-flex items-center text-xs font-semibold px-2 py-1 rounded-full bg-orange-100 text-orange-700">
+                                🔥 Only {availability[room.type].available} left!
+                              </span>
+                            ) : availability[room.type].available > 2 ? (
+                              <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-700">
+                                ✓ {availability[room.type].available} of {availability[room.type].total} available
+                              </span>
+                            ) : null}
+                          </div>
+                        )}
                         <div className="mt-3 pt-3 border-t border-gray-100 flex items-end justify-between">
                           <div>
                             <p className="text-xs text-gray-500">{calculateNights()} night{calculateNights() > 1 ? 's' : ''}</p>
-                            <p className="text-2xl font-bold text-gray-900">{formatVatu(calculateTotal(room))}</p>
-                            <p className="text-xs text-green-600 font-medium">10% less than booking sites!</p>
+                            {room.active_discount ? (
+                              <>
+                                <p className="text-sm text-gray-400 line-through">{formatVatu(calculateBaseTotal(room))}</p>
+                                <p className="text-2xl font-bold text-gray-900">{formatVatu(calculateTotal(room))}</p>
+                                <span className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-700">
+                                  {room.active_discount.discount_percent}% OFF — {room.active_discount.name}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-2xl font-bold text-gray-900">{formatVatu(calculateTotal(room))}</p>
+                                <p className="text-xs text-green-600 font-medium">Best rate — book direct!</p>
+                              </>
+                            )}
                           </div>
                           <button onClick={() => { setSelectedRoom(room); setShowBookingForm(true); }}
                             className={`${roomColor.bg} text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition`}>
@@ -611,6 +663,7 @@ function BookingContent() {
                     </div>
                   </div>
                 )})}
+                </div>
               </div>
             )}
           </div>
@@ -702,9 +755,15 @@ function BookingContent() {
                 <h4 className="font-semibold text-gray-900 text-sm">{selectedRoom.name}</h4>
                 <p className="text-xs text-gray-500">{checkIn} → {checkOut} • {calculateNights()} night{calculateNights() > 1 ? 's' : ''}</p>
                 <div className="flex justify-between items-center mt-2">
-                  <span className="text-sm text-gray-600">Room</span>
-                  <span className="font-bold">{formatVatu(calculateTotal(selectedRoom))}</span>
+                  <span className="text-sm text-gray-600">Room ({calculateNights()} × {formatVatu(selectedRoom.price_vt)}/night)</span>
+                  <span className="font-bold">{formatVatu(calculateBaseTotal(selectedRoom))}</span>
                 </div>
+                {selectedRoom.active_discount && (
+                  <div className="flex justify-between items-center mt-1">
+                    <span className="text-sm text-red-600">{selectedRoom.active_discount.name} (-{selectedRoom.active_discount.discount_percent}%)</span>
+                    <span className="font-bold text-red-600">-{formatVatu(calculateBaseTotal(selectedRoom) - calculateTotal(selectedRoom))}</span>
+                  </div>
+                )}
                 {selectedActivities.length > 0 && (
                   <div className="flex justify-between items-center mt-1">
                     <span className="text-sm text-gray-600">Activities ({selectedActivities.length})</span>

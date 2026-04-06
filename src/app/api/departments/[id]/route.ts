@@ -50,8 +50,7 @@ export async function GET(
       announcements: announcements || [],
       documents: documents || []
     })
-  } catch (error) {
-    console.error('Error fetching department:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch department' }, { status: 500 })
   }
 }
@@ -97,8 +96,7 @@ export async function PATCH(
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error updating department:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to update department' }, { status: 500 })
   }
 }
@@ -132,8 +130,7 @@ export async function DELETE(
     if (error) throw error
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error deleting department:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to delete department' }, { status: 500 })
   }
 }

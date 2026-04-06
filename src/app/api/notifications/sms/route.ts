@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
 
     // Check if VanuConnect is configured
     if (!VANUCONNECT_API_KEY) {
-      console.log(`[SMS/VanuConnect] Not configured — would send to ${normalizedPhone}:`, message.slice(0, 80))
       return NextResponse.json({
         success: false,
         configured: false,
@@ -62,15 +61,12 @@ export async function POST(request: NextRequest) {
     const smsResult = await smsResponse.json()
 
     if (!smsResponse.ok || smsResult.success === false) {
-      console.error('[SMS/VanuConnect] API error:', smsResult)
       return NextResponse.json({
         success: false,
         error: smsResult.error || smsResult.message || 'VanuConnect API error',
         details: smsResult,
       }, { status: smsResponse.status || 500 })
     }
-
-    console.log(`[SMS/VanuConnect] Sent to ${normalizedPhone}: ${smsResult.message_id || 'ok'}`)
 
     return NextResponse.json({
       success: true,
@@ -80,8 +76,7 @@ export async function POST(request: NextRequest) {
       details: smsResult,
     })
 
-  } catch (error) {
-    console.error('[SMS/VanuConnect] Error:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to send SMS' },
       { status: 500 }

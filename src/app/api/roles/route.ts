@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { requireAuth } from '@/lib/auth'
 
 // GET all roles
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const { data, error } = await supabaseAdmin
       .from('roles')
       .select('*')
@@ -13,8 +17,7 @@ export async function GET() {
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error fetching roles:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch roles' }, { status: 500 })
   }
 }
@@ -22,6 +25,9 @@ export async function GET() {
 // POST create new role
 export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const body = await request.json()
     const { name, description, permissions } = body
 
@@ -54,8 +60,7 @@ export async function POST(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json(data, { status: 201 })
-  } catch (error) {
-    console.error('Error creating role:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to create role' }, { status: 500 })
   }
 }

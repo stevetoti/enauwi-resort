@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireAuth } from '@/lib/auth'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -16,8 +17,11 @@ function getSupabaseAdmin() {
 }
 
 // GET - List all knowledge entries
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = getSupabaseAdmin()
     const { data, error } = await supabase
       .from('knowledge_base')
@@ -27,10 +31,9 @@ export async function GET() {
     if (error) throw error
     
     return NextResponse.json({ success: true, entries: data || [] })
-  } catch (error) {
-    console.error('Error fetching knowledge base:', error)
+  } catch {
     return NextResponse.json(
-      { success: false, message: 'Failed to load knowledge base', error: String(error) },
+      { success: false, message: 'Failed to load knowledge base' },
       { status: 500 }
     )
   }
@@ -39,6 +42,9 @@ export async function GET() {
 // POST - Add new entry
 export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = getSupabaseAdmin()
     const { category, content } = await request.json()
     
@@ -58,10 +64,9 @@ export async function POST(request: NextRequest) {
     if (error) throw error
     
     return NextResponse.json({ success: true, entry: data })
-  } catch (error) {
-    console.error('Error adding knowledge entry:', error)
+  } catch {
     return NextResponse.json(
-      { success: false, message: 'Failed to add entry', error: String(error) },
+      { success: false, message: 'Failed to add entry' },
       { status: 500 }
     )
   }
@@ -70,6 +75,9 @@ export async function POST(request: NextRequest) {
 // PUT - Update entry
 export async function PUT(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = getSupabaseAdmin()
     const { id, content } = await request.json()
     
@@ -88,10 +96,9 @@ export async function PUT(request: NextRequest) {
     if (error) throw error
     
     return NextResponse.json({ success: true, message: 'Entry updated' })
-  } catch (error) {
-    console.error('Error updating knowledge entry:', error)
+  } catch {
     return NextResponse.json(
-      { success: false, message: 'Failed to update entry', error: String(error) },
+      { success: false, message: 'Failed to update entry' },
       { status: 500 }
     )
   }
@@ -100,6 +107,9 @@ export async function PUT(request: NextRequest) {
 // DELETE - Remove entry
 export async function DELETE(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = getSupabaseAdmin()
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
@@ -119,10 +129,9 @@ export async function DELETE(request: NextRequest) {
     if (error) throw error
     
     return NextResponse.json({ success: true, message: 'Entry deleted' })
-  } catch (error) {
-    console.error('Error deleting knowledge entry:', error)
+  } catch {
     return NextResponse.json(
-      { success: false, message: 'Failed to delete entry', error: String(error) },
+      { success: false, message: 'Failed to delete entry' },
       { status: 500 }
     )
   }

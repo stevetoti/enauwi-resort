@@ -33,13 +33,19 @@ import {
   Share2,
   Image as ImageIcon,
   TrendingUp,
+  Percent,
+  FileText,
+  LayoutGrid,
 } from 'lucide-react'
 
 // Map sidebar items to their required permission keys
 const sidebarLinks = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, permission: 'dashboard' },
   { href: '/admin/bookings', label: 'Bookings', icon: Calendar, permission: 'bookings' },
+  { href: '/admin/reservation-board', label: 'Reservation Board', icon: LayoutGrid, permission: 'bookings' },
   { href: '/admin/rooms', label: 'Rooms', icon: BedDouble, permission: 'rooms' },
+  { href: '/admin/rates', label: 'Rates & Discounts', icon: Percent, permission: 'bookings' },
+  { href: '/admin/invoices', label: 'Invoices', icon: FileText, permission: 'bookings' },
   { href: '/admin/guests', label: 'Guests', icon: Users, permission: 'guests' },
   { href: '/admin/finance', label: 'Finance', icon: Wallet, permission: 'dashboard' },
   { href: '/admin/pos', label: 'Restaurant POS', icon: UtensilsCrossed, permission: 'dashboard' },
@@ -73,6 +79,7 @@ function hasPermission(permissions: Record<string, { view?: boolean }>, key: str
 }
 
 interface StaffUser {
+  id: string
   email: string
   name: string
   profile_photo?: string
@@ -92,64 +99,55 @@ export default function AdminLayout({
   const pathname = usePathname()
 
   // Skip auth check for login, forgot-password, and reset-password pages
-  const isAuthPage = pathname === '/admin/login' || 
-                     pathname === '/admin/forgot-password' || 
+  const isAuthPage = pathname === '/admin/login' ||
+                     pathname === '/admin/forgot-password' ||
                      pathname === '/admin/reset-password'
 
-  // Ensure component is mounted before accessing localStorage (fixes hydration)
   useEffect(() => {
     setMounted(true)
   }, [])
 
   useEffect(() => {
     if (!mounted) return
-    
+
     if (isAuthPage) {
       setLoading(false)
       return
     }
 
-    const checkAuth = () => {
+    const checkAuth = async () => {
       try {
-        // Check localStorage for staff session
-        const staffData = localStorage.getItem('staff')
-        
-        if (!staffData) {
+        // Verify session via httpOnly cookie (server-validated)
+        const res = await fetch('/api/auth/me')
+        if (!res.ok) {
           router.push('/admin/login')
           return
         }
 
-        const staff = JSON.parse(staffData)
-        
-        if (!staff || !staff.email) {
-          localStorage.removeItem('staff')
-          router.push('/admin/login')
-          return
-        }
-
+        const data = await res.json()
+        const staff = data.staff
         const permissions = staff.permissions || {}
-        
-        // Check if user is an admin (has access to admin-level features)
-        const isAdmin = permissions.staff?.view || 
-                       permissions.roles?.view || 
+
+        // Check if user is an admin
+        const isAdmin = permissions.staff?.view ||
+                       permissions.roles?.view ||
                        permissions.bookings?.view ||
                        permissions.rooms?.edit ||
                        permissions.guests?.edit
-        
-        // If not admin, redirect to staff portal
+
         if (!isAdmin) {
           router.push('/staff/portal')
           return
         }
 
-        setUser({ 
-          email: staff.email, 
+        setUser({
+          id: staff.id,
+          email: staff.email,
           name: staff.name,
           profile_photo: staff.profile_photo,
-          permissions: permissions
+          permissions,
         })
       } catch {
-        localStorage.removeItem('staff')
         router.push('/admin/login')
       } finally {
         setLoading(false)
@@ -159,8 +157,8 @@ export default function AdminLayout({
     checkAuth()
   }, [mounted, isAuthPage, router])
 
-  const handleLogout = () => {
-    localStorage.removeItem('staff')
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
     router.push('/admin/login')
   }
 
@@ -173,7 +171,7 @@ export default function AdminLayout({
   if (!mounted || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-teal-50/30 flex items-center justify-center">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="flex flex-col items-center gap-4"
@@ -218,7 +216,7 @@ export default function AdminLayout({
         {/* Logo - Fixed at top */}
         <div className="flex-shrink-0 flex items-center justify-between px-5 py-5 border-b border-teal-700/50">
           <Link href="/admin" className="flex items-center gap-3 group">
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1.05, rotate: 5 }}
               className="w-12 h-12 relative"
             >
@@ -303,7 +301,7 @@ export default function AdminLayout({
                 className="w-9 h-9 rounded-full object-cover ring-2 ring-amber-400/30"
               />
             ) : (
-              <motion.div 
+              <motion.div
                 whileHover={{ scale: 1.05 }}
                 className="w-9 h-9 bg-gradient-to-br from-amber-400 to-amber-500 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-lg"
               >
@@ -327,7 +325,7 @@ export default function AdminLayout({
             href="/"
             className="flex items-center gap-3 w-full px-3 py-2 mt-1 text-sm text-teal-100 hover:bg-white/10 hover:text-white rounded-xl transition-all"
           >
-            <span className="text-xs">←</span>
+            <span className="text-xs">&#8592;</span>
             <span>Back to Website</span>
           </Link>
         </div>
@@ -346,7 +344,7 @@ export default function AdminLayout({
             <Menu className="h-6 w-6" />
           </motion.button>
           <div className="flex-1">
-            <motion.h1 
+            <motion.h1
               key={pathname}
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}

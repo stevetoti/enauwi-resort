@@ -1,15 +1,10 @@
 import { NextResponse } from 'next/server'
 import OpenAI from 'openai'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '@/lib/supabase'
 
-const openai = new OpenAI({
+const getOpenAI = () => new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 })
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
 
 interface GenerateRequest {
   type: 'room_promo' | 'activity' | 'testimonial' | 'culture' | 'seasonal' | 'general' | 'bulk'
@@ -111,7 +106,7 @@ export async function POST(request: Request) {
 
     const prompt = buildPrompt(type, language, platform, context, contextData, numberOfPosts)
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o',
       messages: [
         {
@@ -139,8 +134,7 @@ Always respond with valid JSON only, no markdown formatting.`
       usage: completion.usage
     })
   } catch (error) {
-    console.error('AI Generation error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Failed to generate content',
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })

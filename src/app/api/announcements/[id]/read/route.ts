@@ -28,8 +28,7 @@ export async function POST(
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error marking announcement as read:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to mark announcement as read' }, { status: 500 })
   }
 }

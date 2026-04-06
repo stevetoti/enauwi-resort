@@ -95,8 +95,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(result, {
       headers: { 'Cache-Control': 'private, max-age=3' }
     })
-  } catch (error) {
-    console.error('Error fetching conversations:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch conversations' }, { status: 500 })
   }
 }
@@ -176,8 +175,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(conversation, { status: 201 })
-  } catch (error) {
-    console.error('Error creating conversation:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to create conversation' }, { status: 500 })
   }
 }

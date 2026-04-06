@@ -33,8 +33,7 @@ export async function GET(
 
     // Return in chronological order
     return NextResponse.json(data?.reverse() || [])
-  } catch (error) {
-    console.error('Error fetching messages:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 })
   }
 }
@@ -97,8 +96,7 @@ export async function POST(
       .eq('staff_id', sender_id)
 
     return NextResponse.json(message, { status: 201 })
-  } catch (error) {
-    console.error('Error sending message:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to send message' }, { status: 500 })
   }
 }

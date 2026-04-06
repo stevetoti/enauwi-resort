@@ -40,8 +40,7 @@ export async function GET() {
       status: result.status,
     })
 
-  } catch (error) {
-    console.error('[VanuConnect] Balance check error:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to check balance' },
       { status: 500 }

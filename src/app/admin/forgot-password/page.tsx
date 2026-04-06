@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { csrfHeaders } from '@/lib/csrf-client'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react'
@@ -19,7 +20,7 @@ export default function ForgotPasswordPage() {
     try {
       const response = await fetch('/api/auth/forgot-password', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: csrfHeaders(),
         body: JSON.stringify({ email }),
       })
 

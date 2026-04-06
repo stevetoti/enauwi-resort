@@ -1,9 +1,13 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireAuth } from '@/lib/auth'
 
 // One-time setup endpoint to add reset token columns
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     
@@ -30,8 +34,6 @@ export async function POST() {
 
     if (error) {
       // Try direct alter if rpc doesn't exist
-      console.log('RPC failed, trying direct approach:', error)
-      
       // Alternative: just try to update with the new columns and see if it works
       const testUpdate = await supabase
         .from('staff')
@@ -47,8 +49,7 @@ export async function POST() {
     }
 
     return NextResponse.json({ success: true, message: 'Reset columns configured' })
-  } catch (error) {
-    console.error('Setup error:', error)
+  } catch {
     return NextResponse.json({ error: 'Setup failed' }, { status: 500 })
   }
 }

@@ -116,20 +116,20 @@ export default function StaffPortalPage() {
 
   const fetchData = useCallback(async () => {
     try {
-      const staffData = localStorage.getItem('staff')
-      if (!staffData) {
+      // Get staff from session cookie
+      const meRes = await fetch('/api/auth/me')
+      if (!meRes.ok) {
         router.push('/admin/login')
         return
       }
+      const meData = await meRes.json()
+      let staffInfo = meData.staff
 
-      let staffInfo = JSON.parse(staffData)
-      
-      // Always refresh staff data from server to get latest department_id
+      // Refresh full staff data from server
       try {
         const refreshRes = await fetch(`/api/staff/${staffInfo.id}`)
         if (refreshRes.ok) {
           const freshData = await refreshRes.json()
-          // Merge fresh data with existing (keep permissions from login)
           staffInfo = {
             ...staffInfo,
             department: freshData.department,
@@ -138,12 +138,11 @@ export default function StaffPortalPage() {
             profile_photo: freshData.profile_photo,
             phone: freshData.phone,
           }
-          localStorage.setItem('staff', JSON.stringify(staffInfo))
         }
-      } catch (e) {
-        console.error('Failed to refresh staff data:', e)
+      } catch {
+        // Non-fatal — use session data
       }
-      
+
       setStaff(staffInfo)
 
       const today = new Date().toISOString().split('T')[0]
@@ -151,7 +150,8 @@ export default function StaffPortalPage() {
       // Fetch today's attendance
       const attendanceRes = await fetch(`/api/attendance?staffId=${staffInfo.id}&date=${today}`)
       if (attendanceRes.ok) {
-        const attendanceData = await attendanceRes.json()
+        const attendanceJson = await attendanceRes.json()
+        const attendanceData = attendanceJson.data || attendanceJson
         setTodayAttendance(Array.isArray(attendanceData) ? attendanceData[0] : null)
       }
 
@@ -159,12 +159,13 @@ export default function StaffPortalPage() {
       const twoWeeksAgo = new Date()
       twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14)
       const startDate = twoWeeksAgo.toISOString().split('T')[0]
-      
+
       const historyRes = await fetch(`/api/attendance?staffId=${staffInfo.id}&startDate=${startDate}&endDate=${today}`)
       if (historyRes.ok) {
-        const historyData = await historyRes.json()
+        const historyJson = await historyRes.json()
+        const historyData = historyJson.data || historyJson
         if (Array.isArray(historyData)) {
-          setAttendanceHistory(historyData.sort((a: Attendance, b: Attendance) => 
+          setAttendanceHistory(historyData.sort((a: Attendance, b: Attendance) =>
             new Date(b.date).getTime() - new Date(a.date).getTime()
           ))
         }
@@ -210,11 +211,12 @@ export default function StaffPortalPage() {
 
         const teamRes = await fetch(`/api/staff?department_id=${staffInfo.department_id}`)
         if (teamRes.ok) {
-          const teamData = await teamRes.json()
-          setTeamMembers(teamData.filter((m: Staff) => m.id !== staffInfo.id))
+          const teamJson = await teamRes.json()
+          const teamData = teamJson.data || teamJson
+          if (Array.isArray(teamData)) setTeamMembers(teamData.filter((m: Staff) => m.id !== staffInfo.id))
         }
       } else if (staffInfo.department) {
-        // If department_id not in localStorage, try to fetch by department name
+        // If no department_id, try to fetch by department name
         const deptsRes = await fetch('/api/departments')
         if (deptsRes.ok) {
           const depts = await deptsRes.json()
@@ -223,9 +225,7 @@ export default function StaffPortalPage() {
           )
           if (matchingDept) {
             setDepartment(matchingDept)
-            // Update localStorage with department_id
             const updatedStaff = { ...staffInfo, department_id: matchingDept.id }
-            localStorage.setItem('staff', JSON.stringify(updatedStaff))
             setStaff(updatedStaff)
             
             // Fetch docs and team
@@ -234,8 +234,9 @@ export default function StaffPortalPage() {
             
             const teamRes = await fetch(`/api/staff?department_id=${matchingDept.id}`)
             if (teamRes.ok) {
-              const teamData = await teamRes.json()
-              setTeamMembers(teamData.filter((m: Staff) => m.id !== staffInfo.id))
+              const teamJson = await teamRes.json()
+              const teamData = teamJson.data || teamJson
+              if (Array.isArray(teamData)) setTeamMembers(teamData.filter((m: Staff) => m.id !== staffInfo.id))
             }
           }
         }
@@ -308,19 +309,17 @@ export default function StaffPortalPage() {
       })
 
       if (updateRes.ok) {
-        const updatedStaff = { ...staff, profile_photo: url }
-        localStorage.setItem('staff', JSON.stringify(updatedStaff))
-        setStaff(updatedStaff)
+        setStaff({ ...staff, profile_photo: url })
       }
-    } catch (error) {
-      console.error('Error uploading photo:', error)
+    } catch {
+      // Photo upload failed
     } finally {
       setUploadingPhoto(false)
     }
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('staff')
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
     router.push('/admin/login')
   }
 

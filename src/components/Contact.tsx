@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { csrfHeaders } from "@/lib/csrf-client";
 import { motion, useInView } from "framer-motion";
 import {
   Send,
@@ -70,7 +71,7 @@ export default function Contact() {
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: csrfHeaders(),
         body: JSON.stringify(formData),
       });
 

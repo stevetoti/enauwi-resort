@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { supabase } from '@/lib/supabase'
 
 // GET a single post
 export async function GET(
@@ -23,8 +18,7 @@ export async function GET(
     if (error) throw error
 
     return NextResponse.json({ post: data })
-  } catch (error) {
-    console.error('Error fetching post:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch post' }, { status: 500 })
   }
 }
@@ -65,8 +59,7 @@ export async function PATCH(
     if (error) throw error
 
     return NextResponse.json({ post: data })
-  } catch (error) {
-    console.error('Error updating post:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to update post' }, { status: 500 })
   }
 }
@@ -87,8 +80,7 @@ export async function DELETE(
     if (error) throw error
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error deleting post:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to delete post' }, { status: 500 })
   }
 }

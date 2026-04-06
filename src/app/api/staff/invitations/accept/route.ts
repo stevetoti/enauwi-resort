@@ -8,7 +8,6 @@ export async function POST(request: NextRequest) {
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     
     if (!supabaseUrl || !serviceRoleKey) {
-      console.error('Missing Supabase credentials')
       return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
     }
 
@@ -45,7 +44,6 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (inviteError) {
-      console.error('Invite lookup error:', inviteError)
       return NextResponse.json({ error: 'Invalid or expired invitation', details: inviteError.message }, { status: 404 })
     }
 
@@ -100,7 +98,6 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (staffError) {
-      console.error('Staff creation error:', staffError)
       return NextResponse.json({ 
         error: 'Failed to create staff account', 
         details: staffError.message,
@@ -129,7 +126,6 @@ export async function POST(request: NextRequest) {
         .eq('id', staff.id)
 
       if (updateError) {
-        console.log('Some optional fields could not be updated:', updateError.message)
         // Don't fail - staff was created
       }
     }
@@ -144,7 +140,6 @@ export async function POST(request: NextRequest) {
       .eq('id', invitation.id)
 
     if (inviteUpdateError) {
-      console.error('Invitation update error:', inviteUpdateError)
       // Don't fail - staff was created successfully
     }
 
@@ -156,7 +151,6 @@ export async function POST(request: NextRequest) {
         .eq('id', staff.id)
     } catch {
       // Password column might not exist, that's okay
-      console.log('Password storage skipped')
     }
 
     return NextResponse.json({
@@ -169,7 +163,6 @@ export async function POST(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('Error accepting invitation:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json({ 
       error: 'Failed to complete onboarding', 

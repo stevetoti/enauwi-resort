@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Mail, Calendar, Users, MapPin, Clock, AlertCircle } from 'lucide-react'
 import { Booking } from '@/types'
 import { formatVatu, formatDate } from '@/lib/utils'
@@ -207,12 +208,14 @@ export default function MyBookingsPage() {
                       {booking.room && (
                         <div className="mb-4">
                           <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+                            <div className="relative flex-shrink-0 w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
                               {booking.room.images && booking.room.images[0] ? (
-                                <img 
-                                  src={booking.room.images[0]} 
+                                <Image
+                                  src={booking.room.images[0]}
                                   alt={booking.room.name}
-                                  className="w-full h-full object-cover rounded-lg"
+                                  fill
+                                  className="object-cover rounded-lg"
+                                  unoptimized
                                 />
                               ) : (
                                 <MapPin className="h-8 w-8 text-white" />

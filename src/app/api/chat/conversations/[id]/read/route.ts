@@ -26,8 +26,7 @@ export async function POST(
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error marking as read:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to mark as read' }, { status: 500 })
   }
 }

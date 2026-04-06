@@ -35,8 +35,7 @@ export async function GET(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error fetching conference bookings:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch conference bookings' }, { status: 500 })
   }
 }
@@ -90,8 +89,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     return NextResponse.json(data)
-  } catch (error) {
-    console.error('Error updating conference booking:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to update conference booking' }, { status: 500 })
   }
 }

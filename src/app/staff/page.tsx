@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -524,10 +525,13 @@ export default function StaffPortalPage() {
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
               {staff.profile_photo ? (
-                <img
+                <Image
                   src={staff.profile_photo}
                   alt={staff.name}
+                  width={64}
+                  height={64}
                   className="w-16 h-16 rounded-full object-cover"
+                  unoptimized
                 />
               ) : (
                 <User className="h-8 w-8" />

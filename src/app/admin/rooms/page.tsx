@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import Image from 'next/image'
 import {
   BedDouble,
   Edit2,
@@ -101,10 +102,12 @@ export default function AdminRoomsPage() {
             {/* Image */}
             <div className="h-48 bg-gradient-to-br from-gray-200 to-gray-300 relative">
               {room.images && room.images[0] ? (
-                <img
+                <Image
                   src={room.images[0]}
                   alt={room.name}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  unoptimized
                 />
               ) : (
                 <div className="flex items-center justify-center h-full text-gray-400">
@@ -472,7 +475,7 @@ function RoomEditModal({
               <div className="grid grid-cols-4 gap-2 mb-3">
                 {images.map((url, idx) => (
                   <div key={idx} className="relative group rounded-lg overflow-hidden h-20 bg-gray-100">
-                    <img src={url} alt={`Room ${idx + 1}`} className="w-full h-full object-cover" />
+                    <Image src={url} alt={`Room ${idx + 1}`} fill className="object-cover" unoptimized />
                     <button
                       type="button"
                       onClick={() => handleDeleteImage(url, idx)}

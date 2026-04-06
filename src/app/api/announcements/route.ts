@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { requireAuth } from '@/lib/auth'
 
 // GET all announcements
 export async function GET(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const { searchParams } = new URL(request.url)
     const staffId = searchParams.get('staffId')
     const includeExpired = searchParams.get('includeExpired') === 'true'
@@ -44,8 +48,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(announcements)
-  } catch (error) {
-    console.error('Error fetching announcements:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch announcements' }, { status: 500 })
   }
 }
@@ -53,6 +56,9 @@ export async function GET(request: NextRequest) {
 // POST create announcement
 export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const body = await request.json()
     const { title, content, author_id, pinned, priority, target_roles, expires_at, hero_image, attachments, links } = body
 
@@ -83,8 +89,7 @@ export async function POST(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json(data, { status: 201 })
-  } catch (error) {
-    console.error('Error creating announcement:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to create announcement' }, { status: 500 })
   }
 }

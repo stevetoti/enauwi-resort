@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { requireAuth } from '@/lib/auth'
 
 // GET all guests
 export async function GET(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const { searchParams } = new URL(request.url)
     const search = searchParams.get('search')
     const limit = parseInt(searchParams.get('limit') || '100')
@@ -23,8 +27,7 @@ export async function GET(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json(data || [])
-  } catch (error) {
-    console.error('Error fetching guests:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch guests' }, { status: 500 })
   }
 }

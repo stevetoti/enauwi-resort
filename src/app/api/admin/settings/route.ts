@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceSupabase } from '@/lib/supabase-server'
+import { requireAuth } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = createServiceSupabase()
     const { searchParams } = new URL(request.url)
     const key = searchParams.get('key')
@@ -15,19 +19,20 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query
 
     if (error) {
-      console.error('Error fetching settings:', error)
       return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 })
     }
 
     return NextResponse.json({ data })
-  } catch (error) {
-    console.error('Settings GET error:', error)
+  } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
     const supabase = createServiceSupabase()
     const body = await request.json()
     const { key, value } = body
@@ -46,13 +51,11 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) {
-      console.error('Error saving settings:', error)
       return NextResponse.json({ error: 'Failed to save settings' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true, data })
-  } catch (error) {
-    console.error('Settings POST error:', error)
+  } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
