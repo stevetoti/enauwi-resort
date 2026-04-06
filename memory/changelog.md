@@ -1,5 +1,21 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-04-07 — Restaurant POS Rewrite: Guest Tab System
+
+### POS Tab System
+- Complete rewrite of `/admin/pos/page.tsx` with 3-column layout (Open Tabs | Menu | Cart)
+- **Open Tabs panel** (left): list of active tabs, create new tab with name/table/booking link, today's sales summary
+- **Menu panel** (center): category filtering, search bar, item grid (preserved from original)
+- **Cart panel** (right): shows active tab's existing items (read-only) + new items being staged, per-item notes
+- **Tab workflow**: Open tab -> browse menu -> add items over time -> close & pay when done
+- **Quick Sale mode**: no tab needed, add items and pay in one step
+- **Payment modal**: Cash/Card/Room Charge with booking lookup (preserved from original)
+- **Receipt modal**: preserved from original with tab name/guest info additions
+- **Menu Management**: preserved existing add/edit/delete/toggle availability panel
+- All tab operations via API routes: `GET/POST /api/pos/tabs`, `PATCH/DELETE /api/pos/tabs/[id]`
+- Responsive: tabs panel collapses to horizontal scrollable row on mobile
+- Uses teal (#0F766E) primary with amber accents, formatVatu for price formatting
+
 ## 2026-04-06 — New Features: Discounts, Reservation Board, Invoices
 
 ### Room Availability Display

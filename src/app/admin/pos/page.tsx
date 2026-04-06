@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
+import { formatVatu } from '@/lib/utils'
 import {
   Plus,
   Minus,
@@ -16,8 +17,18 @@ import {
   Edit,
   Check,
   Printer,
+  Clock,
+  ChefHat,
+  ChevronsRight,
+  StickyNote,
+  Users,
+  Zap,
 } from 'lucide-react'
 import { format } from 'date-fns'
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 interface MenuItem {
   id: string
@@ -28,20 +39,32 @@ interface MenuItem {
   available: boolean
 }
 
-interface CartItem extends MenuItem {
+interface CartItem {
+  id?: string
+  name: string
+  price: number
   quantity: number
+  notes?: string
 }
 
-interface Order {
+interface Tab {
   id: string
-  order_number: number
-  items: CartItem[]
-  total: number
-  payment_method: string
-  payment_status: string
+  tab_name: string
+  tab_status: 'open' | 'closed'
   guest_name: string | null
   table_number: string | null
+  room_id: string | null
+  booking_id: string | null
+  items: CartItem[]
+  subtotal: number
+  total: number
+  order_number: number
+  payment_method: string | null
+  payment_status: string
+  send_to_kitchen: boolean
   created_at: string
+  opened_at: string | null
+  closed_at: string | null
 }
 
 interface Room {
@@ -58,28 +81,47 @@ interface Booking {
 
 const CATEGORIES = ['All', 'Breakfast', 'Starters', 'Main Course', 'Desserts', 'Beverages']
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
 export default function POSPage() {
+  // Menu data
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
-  const [cart, setCart] = useState<CartItem[]>([])
-  const [orders, setOrders] = useState<Order[]>([])
-  const [activeBookings, setActiveBookings] = useState<Booking[]>([])
-  const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
-  const [showCheckout, setShowCheckout] = useState(false)
+
+  // Tab system
+  const [openTabs, setOpenTabs] = useState<Tab[]>([])
+  const [activeTabId, setActiveTabId] = useState<string | null>(null)
+  const [showNewTabForm, setShowNewTabForm] = useState(false)
+  const [newTabForm, setNewTabForm] = useState({ tab_name: '', table_number: '', booking_id: '' })
+
+  // Cart (items staged locally before saving to a tab or quick-sale)
+  const [cart, setCart] = useState<CartItem[]>([])
+
+  // Bookings for room-charge lookup
+  const [activeBookings, setActiveBookings] = useState<Booking[]>([])
+
+  // Sales summary
+  const [closedTodayTabs, setClosedTodayTabs] = useState<Tab[]>([])
+
+  // UI state
+  const [loading, setLoading] = useState(true)
   const [showManageMenu, setShowManageMenu] = useState(false)
-  const [showReceipt, setShowReceipt] = useState<Order | null>(null)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [showReceipt, setShowReceipt] = useState<Tab | null>(null)
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null)
-  
-  // Checkout form
-  const [checkoutData, setCheckoutData] = useState({
+  const [savingTab, setSavingTab] = useState(false)
+
+  // Payment form state
+  const [paymentData, setPaymentData] = useState({
     payment_method: 'cash',
     guest_name: '',
-    table_number: '',
     room_charge_booking_id: '',
   })
 
-  // Menu item form
+  // Menu item CRUD form
   const [menuForm, setMenuForm] = useState({
     name: '',
     description: '',
@@ -87,6 +129,26 @@ export default function POSPage() {
     price: '',
     available: true,
   })
+
+  // -------------------------------------------------------------------------
+  // Derived
+  // -------------------------------------------------------------------------
+
+  const activeTab = openTabs.find((t) => t.id === activeTabId) ?? null
+  const cartTotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
+
+  const todaySalesTotal = closedTodayTabs.reduce((acc, t) => acc + Number(t.total), 0)
+  const todaySalesCount = closedTodayTabs.length
+
+  const filteredItems = menuItems.filter((item) => {
+    const matchesCategory = activeCategory === 'All' || item.category === activeCategory
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    return matchesCategory && matchesSearch && item.available
+  })
+
+  // -------------------------------------------------------------------------
+  // Data fetching
+  // -------------------------------------------------------------------------
 
   const fetchMenuItems = useCallback(async () => {
     const { data } = await supabase
@@ -97,14 +159,28 @@ export default function POSPage() {
     setMenuItems(data || [])
   }, [])
 
-  const fetchOrders = useCallback(async () => {
-    const today = format(new Date(), 'yyyy-MM-dd')
-    const { data } = await supabase
-      .from('pos_orders')
-      .select('*')
-      .gte('created_at', `${today}T00:00:00`)
-      .order('created_at', { ascending: false })
-    setOrders(data || [])
+  const fetchOpenTabs = useCallback(async () => {
+    try {
+      const res = await fetch('/api/pos/tabs?status=open')
+      if (res.ok) {
+        const data: Tab[] = await res.json()
+        setOpenTabs(data)
+      }
+    } catch {
+      // silent
+    }
+  }, [])
+
+  const fetchClosedToday = useCallback(async () => {
+    try {
+      const res = await fetch('/api/pos/tabs?status=closed&today=true')
+      if (res.ok) {
+        const data: Tab[] = await res.json()
+        setClosedTodayTabs(data)
+      }
+    } catch {
+      // silent
+    }
   }, [])
 
   const fetchActiveBookings = useCallback(async () => {
@@ -121,89 +197,250 @@ export default function POSPage() {
   useEffect(() => {
     const load = async () => {
       setLoading(true)
-      await Promise.all([fetchMenuItems(), fetchOrders(), fetchActiveBookings()])
+      await Promise.all([fetchMenuItems(), fetchOpenTabs(), fetchClosedToday(), fetchActiveBookings()])
       setLoading(false)
     }
     load()
-  }, [fetchMenuItems, fetchOrders, fetchActiveBookings])
+  }, [fetchMenuItems, fetchOpenTabs, fetchClosedToday, fetchActiveBookings])
+
+  // -------------------------------------------------------------------------
+  // Cart helpers
+  // -------------------------------------------------------------------------
 
   const addToCart = (item: MenuItem) => {
-    setCart(prev => {
-      const existing = prev.find(i => i.id === item.id)
+    setCart((prev) => {
+      const existing = prev.find((i) => i.id === item.id)
       if (existing) {
-        return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i)
+        return prev.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i))
       }
-      return [...prev, { ...item, quantity: 1 }]
+      return [...prev, { id: item.id, name: item.name, price: item.price, quantity: 1, notes: '' }]
     })
   }
 
-  const updateQuantity = (itemId: string, delta: number) => {
-    setCart(prev => {
-      return prev.map(i => {
-        if (i.id === itemId) {
-          const newQty = i.quantity + delta
-          return newQty > 0 ? { ...i, quantity: newQty } : i
-        }
-        return i
-      }).filter(i => i.quantity > 0)
-    })
+  const updateQuantity = (index: number, delta: number) => {
+    setCart((prev) =>
+      prev
+        .map((item, i) => {
+          if (i !== index) return item
+          const newQty = item.quantity + delta
+          return newQty > 0 ? { ...item, quantity: newQty } : item
+        })
+        .filter((item) => item.quantity > 0),
+    )
   }
 
-  const removeFromCart = (itemId: string) => {
-    setCart(prev => prev.filter(i => i.id !== itemId))
+  const removeFromCart = (index: number) => {
+    setCart((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const cartTotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  const updateItemNotes = (index: number, notes: string) => {
+    setCart((prev) => prev.map((item, i) => (i === index ? { ...item, notes } : item)))
+  }
 
-  const handleCheckout = async () => {
-    if (cart.length === 0) return
+  // -------------------------------------------------------------------------
+  // Tab operations
+  // -------------------------------------------------------------------------
 
-    const orderData = {
-      items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
-      subtotal: cartTotal,
-      total: cartTotal,
-      payment_method: checkoutData.payment_method,
-      payment_status: 'paid',
-      guest_name: checkoutData.guest_name || null,
-      table_number: checkoutData.table_number || null,
-      booking_id: checkoutData.room_charge_booking_id || null,
-    }
-
-    const { data, error } = await supabase
-      .from('pos_orders')
-      .insert(orderData)
-      .select()
-      .single()
-
-    if (error) {
-      alert('Error creating order: ' + error.message)
+  const handleCreateTab = async () => {
+    if (!newTabForm.tab_name && !newTabForm.table_number) {
+      alert('Please enter a tab name or table number')
       return
     }
 
-    // Also add to finance if payment received
-    if (checkoutData.payment_method !== 'room_charge') {
-      await supabase.from('finance_transactions').insert({
-        date: format(new Date(), 'yyyy-MM-dd'),
-        category: 'Restaurant',
-        subcategory: 'POS Sale',
-        amount: cartTotal,
-        type: 'income',
-        description: `Order #${data.order_number}`,
-        payment_method: checkoutData.payment_method,
+    setSavingTab(true)
+    try {
+      const booking = activeBookings.find((b) => b.id === newTabForm.booking_id)
+      const res = await fetch('/api/pos/tabs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tab_name: newTabForm.tab_name || `Table ${newTabForm.table_number}`,
+          guest_name: booking?.guest_name || null,
+          table_number: newTabForm.table_number || null,
+          room_id: booking?.room_id || null,
+          booking_id: newTabForm.booking_id || null,
+          items: [],
+        }),
       })
+      if (res.ok) {
+        const tab: Tab = await res.json()
+        setOpenTabs((prev) => [tab, ...prev])
+        setActiveTabId(tab.id)
+        setShowNewTabForm(false)
+        setNewTabForm({ tab_name: '', table_number: '', booking_id: '' })
+        setCart([])
+      } else {
+        const err = await res.json()
+        alert(err.error || 'Failed to create tab')
+      }
+    } finally {
+      setSavingTab(false)
     }
-
-    setShowReceipt(data)
-    setCart([])
-    setShowCheckout(false)
-    setCheckoutData({
-      payment_method: 'cash',
-      guest_name: '',
-      table_number: '',
-      room_charge_booking_id: '',
-    })
-    fetchOrders()
   }
+
+  const handleAddToTab = async (sendToKitchen: boolean) => {
+    if (!activeTabId || cart.length === 0) return
+
+    setSavingTab(true)
+    try {
+      const payload: Record<string, unknown> = {
+        add_items: cart.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+      }
+      if (sendToKitchen) {
+        payload.send_to_kitchen = true
+      }
+
+      const res = await fetch(`/api/pos/tabs/${activeTabId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (res.ok) {
+        const updated: Tab = await res.json()
+        setOpenTabs((prev) => prev.map((t) => (t.id === updated.id ? updated : t)))
+        setCart([])
+      } else {
+        alert('Failed to add items to tab')
+      }
+    } finally {
+      setSavingTab(false)
+    }
+  }
+
+  const handleCloseTab = async () => {
+    const tabToClose = activeTab
+    if (!tabToClose) return
+
+    setSavingTab(true)
+    try {
+      const res = await fetch(`/api/pos/tabs/${tabToClose.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          close: true,
+          payment_method: paymentData.payment_method,
+          guest_name: paymentData.guest_name || tabToClose.guest_name || null,
+        }),
+      })
+      if (res.ok) {
+        const closed: Tab = await res.json()
+        setOpenTabs((prev) => prev.filter((t) => t.id !== closed.id))
+        setClosedTodayTabs((prev) => [closed, ...prev])
+        setActiveTabId(null)
+        setCart([])
+        setShowPaymentModal(false)
+        setShowReceipt(closed)
+        resetPaymentData()
+      } else {
+        alert('Failed to close tab')
+      }
+    } finally {
+      setSavingTab(false)
+    }
+  }
+
+  const handleQuickSale = async () => {
+    if (cart.length === 0) return
+
+    setSavingTab(true)
+    try {
+      // 1. Create a tab with items
+      const booking = activeBookings.find((b) => b.id === paymentData.room_charge_booking_id)
+      const createRes = await fetch('/api/pos/tabs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tab_name: paymentData.guest_name || 'Quick Sale',
+          guest_name: paymentData.guest_name || booking?.guest_name || null,
+          table_number: null,
+          booking_id: paymentData.room_charge_booking_id || null,
+          room_id: booking?.room_id || null,
+          items: cart.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+          send_to_kitchen: true,
+        }),
+      })
+      if (!createRes.ok) {
+        alert('Failed to create order')
+        return
+      }
+      const created: Tab = await createRes.json()
+
+      // 2. Immediately close it with payment
+      const closeRes = await fetch(`/api/pos/tabs/${created.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          close: true,
+          payment_method: paymentData.payment_method,
+          guest_name: paymentData.guest_name || null,
+        }),
+      })
+      if (closeRes.ok) {
+        const closed: Tab = await closeRes.json()
+        setClosedTodayTabs((prev) => [closed, ...prev])
+        setCart([])
+        setShowPaymentModal(false)
+        setShowReceipt(closed)
+        resetPaymentData()
+      } else {
+        alert('Failed to process payment')
+      }
+    } finally {
+      setSavingTab(false)
+    }
+  }
+
+  const handleDeleteTab = async (tabId: string) => {
+    if (!confirm('Delete this tab? This cannot be undone.')) return
+
+    try {
+      const res = await fetch(`/api/pos/tabs/${tabId}`, { method: 'DELETE' })
+      if (res.ok) {
+        setOpenTabs((prev) => prev.filter((t) => t.id !== tabId))
+        if (activeTabId === tabId) {
+          setActiveTabId(null)
+          setCart([])
+        }
+      }
+    } catch {
+      alert('Failed to delete tab')
+    }
+  }
+
+  const resetPaymentData = () => {
+    setPaymentData({ payment_method: 'cash', guest_name: '', room_charge_booking_id: '' })
+  }
+
+  // When selecting a tab, load its existing items into cart view context
+  const selectTab = (tabId: string) => {
+    if (activeTabId === tabId) {
+      // Deselect
+      setActiveTabId(null)
+      setCart([])
+    } else {
+      setActiveTabId(tabId)
+      setCart([]) // Fresh cart for adding new items to this tab
+    }
+  }
+
+  // Open payment modal — for closing a tab or quick sale
+  const openPayment = () => {
+    if (activeTab) {
+      // Closing a tab — pre-fill guest name from tab
+      setPaymentData({
+        payment_method: 'cash',
+        guest_name: activeTab.guest_name || '',
+        room_charge_booking_id: activeTab.booking_id || '',
+      })
+    } else {
+      resetPaymentData()
+    }
+    setShowPaymentModal(true)
+  }
+
+  // -------------------------------------------------------------------------
+  // Menu Management
+  // -------------------------------------------------------------------------
 
   const handleSaveMenuItem = async () => {
     if (!menuForm.name || !menuForm.price) {
@@ -241,29 +478,44 @@ export default function POSPage() {
     fetchMenuItems()
   }
 
-  const filteredItems = menuItems.filter(item => {
-    const matchesCategory = activeCategory === 'All' || item.category === activeCategory
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchesCategory && matchesSearch && item.available
-  })
+  // -------------------------------------------------------------------------
+  // Render helpers
+  // -------------------------------------------------------------------------
 
-  const todaySales = orders.reduce((acc, o) => acc + Number(o.total), 0)
-
-  if (loading) {
-    return <div className="flex items-center justify-center h-64">Loading...</div>
+  const tabItemCount = (tab: Tab) => {
+    const items = tab.items || []
+    return items.reduce((sum, i) => sum + i.quantity, 0)
   }
 
+  // -------------------------------------------------------------------------
+  // Loading state
+  // -------------------------------------------------------------------------
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin w-8 h-8 border-4 border-teal-600 border-t-transparent rounded-full" />
+      </div>
+    )
+  }
+
+  // -------------------------------------------------------------------------
+  // Main Render
+  // -------------------------------------------------------------------------
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Restaurant POS</h1>
-          <p className="text-gray-500">Today&apos;s Sales: {todaySales.toLocaleString()} VT ({orders.length} orders)</p>
+          <p className="text-sm text-gray-500">
+            Manage tabs, orders, and menu items
+          </p>
         </div>
         <button
           onClick={() => setShowManageMenu(!showManageMenu)}
-          className="flex items-center gap-2 px-4 py-2 bg-ocean-600 text-white rounded-lg hover:bg-ocean-700"
+          className="flex items-center gap-2 px-4 py-2 bg-teal-700 text-white rounded-lg hover:bg-teal-800 text-sm"
         >
           <Edit className="w-4 h-4" />
           Manage Menu
@@ -282,15 +534,17 @@ export default function POSPage() {
               placeholder="Item name"
               value={menuForm.name}
               onChange={(e) => setMenuForm({ ...menuForm, name: e.target.value })}
-              className="px-3 py-2 border rounded-lg"
+              className="px-3 py-2 border rounded-lg text-sm"
             />
             <select
               value={menuForm.category}
               onChange={(e) => setMenuForm({ ...menuForm, category: e.target.value })}
-              className="px-3 py-2 border rounded-lg"
+              className="px-3 py-2 border rounded-lg text-sm"
             >
-              {CATEGORIES.filter(c => c !== 'All').map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
+              {CATEGORIES.filter((c) => c !== 'All').map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
               ))}
             </select>
             <input
@@ -298,19 +552,19 @@ export default function POSPage() {
               placeholder="Price (VT)"
               value={menuForm.price}
               onChange={(e) => setMenuForm({ ...menuForm, price: e.target.value })}
-              className="px-3 py-2 border rounded-lg"
+              className="px-3 py-2 border rounded-lg text-sm"
             />
             <input
               type="text"
               placeholder="Description (optional)"
               value={menuForm.description}
               onChange={(e) => setMenuForm({ ...menuForm, description: e.target.value })}
-              className="px-3 py-2 border rounded-lg"
+              className="px-3 py-2 border rounded-lg text-sm"
             />
             <div className="flex gap-2">
               <button
                 onClick={handleSaveMenuItem}
-                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
               >
                 {editingItem ? 'Update' : 'Add'}
               </button>
@@ -320,7 +574,7 @@ export default function POSPage() {
                     setEditingItem(null)
                     setMenuForm({ name: '', description: '', category: 'Main Course', price: '', available: true })
                   }}
-                  className="px-4 py-2 border rounded-lg"
+                  className="px-4 py-2 border rounded-lg text-sm"
                 >
                   Cancel
                 </button>
@@ -341,11 +595,11 @@ export default function POSPage() {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {menuItems.map(item => (
+                {menuItems.map((item) => (
                   <tr key={item.id}>
                     <td className="px-3 py-2 text-sm">{item.name}</td>
                     <td className="px-3 py-2 text-sm">{item.category}</td>
-                    <td className="px-3 py-2 text-sm">{item.price.toLocaleString()} VT</td>
+                    <td className="px-3 py-2 text-sm">{formatVatu(item.price)}</td>
                     <td className="px-3 py-2">
                       <button
                         onClick={() => toggleItemAvailability(item)}
@@ -370,13 +624,13 @@ export default function POSPage() {
                         }}
                         className="text-blue-600 hover:text-blue-800 mr-2"
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className="w-4 h-4 inline" />
                       </button>
                       <button
                         onClick={() => handleDeleteMenuItem(item.id)}
                         className="text-red-600 hover:text-red-800"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4 inline" />
                       </button>
                     </td>
                   </tr>
@@ -387,19 +641,150 @@ export default function POSPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Menu Items */}
-        <div className="lg:col-span-2 space-y-4">
-          {/* Search and Categories */}
+      {/* ================================================================= */}
+      {/* 3-Column Layout: Tabs | Menu | Cart                               */}
+      {/* ================================================================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* ─── LEFT PANEL: Open Tabs ─── */}
+        <div className="lg:col-span-3 space-y-3">
+          {/* Mobile: horizontal scrollable row; Desktop: vertical list */}
+          <div className="bg-white rounded-xl border overflow-hidden">
+            <div className="p-3 border-b flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-teal-700" />
+                <h3 className="font-semibold text-sm">Open Tabs</h3>
+              </div>
+              <button
+                onClick={() => setShowNewTabForm(!showNewTabForm)}
+                className="flex items-center gap-1 px-2.5 py-1.5 bg-teal-700 text-white rounded-lg text-xs hover:bg-teal-800"
+              >
+                <Plus className="w-3 h-3" />
+                New Tab
+              </button>
+            </div>
+
+            {/* New Tab Form */}
+            {showNewTabForm && (
+              <div className="p-3 border-b bg-teal-50 space-y-2">
+                <input
+                  type="text"
+                  placeholder="Tab name (e.g. Table 3, John)"
+                  value={newTabForm.tab_name}
+                  onChange={(e) => setNewTabForm({ ...newTabForm, tab_name: e.target.value })}
+                  className="w-full px-2.5 py-1.5 border rounded-lg text-sm"
+                  autoFocus
+                />
+                <input
+                  type="text"
+                  placeholder="Table # (optional)"
+                  value={newTabForm.table_number}
+                  onChange={(e) => setNewTabForm({ ...newTabForm, table_number: e.target.value })}
+                  className="w-full px-2.5 py-1.5 border rounded-lg text-sm"
+                />
+                <select
+                  value={newTabForm.booking_id}
+                  onChange={(e) => setNewTabForm({ ...newTabForm, booking_id: e.target.value })}
+                  className="w-full px-2.5 py-1.5 border rounded-lg text-sm"
+                >
+                  <option value="">Link to booking (optional)</option>
+                  {activeBookings.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.guest_name} — {b.rooms?.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCreateTab}
+                    disabled={savingTab}
+                    className="flex-1 py-1.5 bg-teal-700 text-white rounded-lg text-sm hover:bg-teal-800 disabled:opacity-50"
+                  >
+                    {savingTab ? 'Creating...' : 'Open Tab'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowNewTabForm(false)
+                      setNewTabForm({ tab_name: '', table_number: '', booking_id: '' })
+                    }}
+                    className="px-3 py-1.5 border rounded-lg text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Tab List — horizontal scroll on mobile, vertical on desktop */}
+            <div className="flex lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 p-3 lg:max-h-[360px] lg:overflow-y-auto">
+              {openTabs.length === 0 && (
+                <p className="text-xs text-gray-400 text-center py-4 w-full">No open tabs</p>
+              )}
+              {openTabs.map((tab) => (
+                <div
+                  key={tab.id}
+                  className={`flex-shrink-0 lg:flex-shrink rounded-lg border p-3 cursor-pointer transition-all min-w-[160px] lg:min-w-0 ${
+                    activeTabId === tab.id
+                      ? 'border-teal-600 bg-teal-50 ring-1 ring-teal-600'
+                      : 'border-gray-200 hover:border-gray-300 bg-white'
+                  }`}
+                  onClick={() => selectTab(tab.id)}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm text-gray-900 truncate">{tab.tab_name}</p>
+                      {tab.table_number && (
+                        <p className="text-xs text-gray-500">Table {tab.table_number}</p>
+                      )}
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDeleteTab(tab.id)
+                      }}
+                      className="p-1 rounded hover:bg-red-100 text-gray-400 hover:text-red-600 flex-shrink-0"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-xs text-gray-500">{tabItemCount(tab)} items</span>
+                    <span className="text-sm font-semibold text-teal-700">{formatVatu(tab.total)}</span>
+                  </div>
+                  {tab.opened_at && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <Clock className="w-3 h-3 text-gray-400" />
+                      <span className="text-xs text-gray-400">
+                        {format(new Date(tab.opened_at), 'HH:mm')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Today's Sales Summary */}
           <div className="bg-white rounded-xl border p-4">
-            <div className="flex flex-wrap gap-2 mb-4">
-              {CATEGORIES.map(cat => (
+            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+              Today&apos;s Sales
+            </h4>
+            <p className="text-2xl font-bold text-gray-900">{formatVatu(todaySalesTotal)}</p>
+            <p className="text-sm text-gray-500">{todaySalesCount} orders completed</p>
+          </div>
+        </div>
+
+        {/* ─── CENTER PANEL: Menu ─── */}
+        <div className="lg:col-span-5 space-y-3">
+          {/* Category & Search */}
+          <div className="bg-white rounded-xl border p-3 space-y-3">
+            <div className="flex flex-wrap gap-1.5">
+              {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                     activeCategory === cat
-                      ? 'bg-ocean-600 text-white'
+                      ? 'bg-teal-700 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
@@ -414,264 +799,380 @@ export default function POSPage() {
                 placeholder="Search menu..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border rounded-lg"
+                className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm"
               />
             </div>
           </div>
 
           {/* Menu Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {filteredItems.map(item => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {filteredItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => addToCart(item)}
-                className="bg-white rounded-xl border p-4 text-left hover:border-ocean-500 hover:shadow-md transition-all"
+                className="bg-white rounded-xl border p-3 text-left hover:border-teal-500 hover:shadow-md transition-all group"
               >
-                <h4 className="font-medium text-gray-900">{item.name}</h4>
-                <p className="text-xs text-gray-500 mt-1">{item.category}</p>
-                <p className="text-lg font-bold text-ocean-600 mt-2">{item.price.toLocaleString()} VT</p>
+                <h4 className="font-medium text-sm text-gray-900 leading-tight">{item.name}</h4>
+                <p className="text-xs text-gray-400 mt-0.5">{item.category}</p>
+                <p className="text-base font-bold text-teal-700 mt-1.5">{formatVatu(item.price)}</p>
               </button>
             ))}
+            {filteredItems.length === 0 && (
+              <div className="col-span-full text-center py-8 text-gray-400 text-sm">
+                No menu items found
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Cart */}
-        <div className="bg-white rounded-xl border h-fit sticky top-4">
-          <div className="p-4 border-b flex items-center gap-2">
-            <ShoppingCart className="w-5 h-5 text-ocean-600" />
-            <h3 className="font-semibold">Current Order</h3>
-            <span className="ml-auto bg-ocean-100 text-ocean-800 px-2 py-0.5 rounded-full text-sm">
-              {cart.length} items
-            </span>
-          </div>
-
-          {cart.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
-              <ShoppingCart className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Cart is empty</p>
-              <p className="text-sm">Click menu items to add</p>
+        {/* ─── RIGHT PANEL: Cart / Active Tab ─── */}
+        <div className="lg:col-span-4">
+          <div className="bg-white rounded-xl border h-fit sticky top-4">
+            {/* Cart Header */}
+            <div className="p-3 border-b flex items-center gap-2">
+              <ShoppingCart className="w-4 h-4 text-teal-700" />
+              <h3 className="font-semibold text-sm">
+                {activeTab ? activeTab.tab_name : 'Quick Sale'}
+              </h3>
+              {activeTab && (
+                <span className="ml-auto bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full text-xs">
+                  Tab Open
+                </span>
+              )}
+              {!activeTab && cart.length > 0 && (
+                <span className="ml-auto bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-xs flex items-center gap-1">
+                  <Zap className="w-3 h-3" />
+                  Quick
+                </span>
+              )}
             </div>
-          ) : (
-            <>
-              <div className="p-4 space-y-3 max-h-80 overflow-y-auto">
-                {cart.map(item => (
-                  <div key={item.id} className="flex items-center gap-3">
-                    <div className="flex-1">
-                      <p className="font-medium text-sm">{item.name}</p>
-                      <p className="text-xs text-gray-500">{item.price.toLocaleString()} VT each</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => updateQuantity(item.id, -1)}
-                        className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200"
-                      >
-                        <Minus className="w-3 h-3" />
-                      </button>
-                      <span className="w-6 text-center font-medium">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.id, 1)}
-                        className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
-                      <button
-                        onClick={() => removeFromCart(item.id)}
-                        className="w-7 h-7 rounded-full bg-red-100 flex items-center justify-center hover:bg-red-200 text-red-600"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
 
-              <div className="p-4 border-t">
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-gray-600">Total</span>
-                  <span className="text-2xl font-bold text-gray-900">{cartTotal.toLocaleString()} VT</span>
+            {/* Existing items on the active tab (read-only view) */}
+            {activeTab && activeTab.items && activeTab.items.length > 0 && (
+              <div className="border-b bg-gray-50">
+                <div className="px-3 py-2 flex items-center gap-1">
+                  <Receipt className="w-3 h-3 text-gray-500" />
+                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                    On this tab
+                  </span>
                 </div>
-                <button
-                  onClick={() => setShowCheckout(true)}
-                  className="w-full py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700"
-                >
-                  Proceed to Payment
-                </button>
+                <div className="px-3 pb-2 space-y-1 max-h-32 overflow-y-auto">
+                  {activeTab.items.map((item, idx) => (
+                    <div key={idx} className="flex justify-between text-xs text-gray-600">
+                      <span>
+                        {item.quantity}x {item.name}
+                      </span>
+                      <span className="font-medium">{formatVatu(item.price * item.quantity)}</span>
+                    </div>
+                  ))}
+                  <div className="flex justify-between text-xs font-semibold text-gray-700 pt-1 border-t border-gray-200">
+                    <span>Tab subtotal</span>
+                    <span>{formatVatu(activeTab.total)}</span>
+                  </div>
+                </div>
               </div>
-            </>
-          )}
-        </div>
-      </div>
+            )}
 
-      {/* Recent Orders */}
-      <div className="bg-white rounded-xl border">
-        <div className="p-4 border-b">
-          <h3 className="font-semibold">Today&apos;s Orders</h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Order #</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Time</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Items</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Payment</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">Total</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {orders.slice(0, 10).map(order => (
-                <tr key={order.id}>
-                  <td className="px-4 py-3 font-medium">#{order.order_number}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500">
-                    {format(new Date(order.created_at), 'HH:mm')}
-                  </td>
-                  <td className="px-4 py-3 text-sm">
-                    {order.items.length} items
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded text-xs capitalize ${
-                      order.payment_method === 'cash' ? 'bg-green-100 text-green-800' :
-                      order.payment_method === 'card' ? 'bg-blue-100 text-blue-800' :
-                      'bg-amber-100 text-amber-800'
-                    }`}>
-                      {order.payment_method}
+            {/* New items being added (cart) */}
+            {cart.length === 0 ? (
+              <div className="p-6 text-center text-gray-400">
+                <ShoppingCart className="w-10 h-10 mx-auto mb-2 opacity-40" />
+                <p className="text-sm">
+                  {activeTab ? 'Add items to this tab' : 'Click menu items to start'}
+                </p>
+              </div>
+            ) : (
+              <>
+                {activeTab && (
+                  <div className="px-3 pt-2 flex items-center gap-1">
+                    <ChevronsRight className="w-3 h-3 text-teal-600" />
+                    <span className="text-xs font-medium text-teal-700 uppercase tracking-wide">
+                      New items to add
                     </span>
-                  </td>
-                  <td className="px-4 py-3 text-right font-medium">
-                    {Number(order.total).toLocaleString()} VT
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <button
-                      onClick={() => setShowReceipt(order)}
-                      className="text-ocean-600 hover:text-ocean-800"
-                    >
-                      <Receipt className="w-4 h-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                )}
+                <div className="p-3 space-y-2 max-h-60 overflow-y-auto">
+                  {cart.map((item, index) => (
+                    <div key={index} className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm text-gray-900 truncate">{item.name}</p>
+                          <p className="text-xs text-gray-500">{formatVatu(item.price)} each</p>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => updateQuantity(index, -1)}
+                            className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="w-5 text-center text-sm font-medium">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(index, 1)}
+                            className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => removeFromCart(index)}
+                            className="w-6 h-6 rounded-full bg-red-50 flex items-center justify-center hover:bg-red-100 text-red-500"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                      {/* Item notes */}
+                      <div className="flex items-center gap-1 pl-0.5">
+                        <StickyNote className="w-3 h-3 text-gray-300" />
+                        <input
+                          type="text"
+                          placeholder="Special instructions..."
+                          value={item.notes || ''}
+                          onChange={(e) => updateItemNotes(index, e.target.value)}
+                          className="w-full text-xs px-2 py-1 border border-gray-200 rounded focus:outline-none focus:border-teal-400"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Totals & Actions */}
+            {(cart.length > 0 || (activeTab && activeTab.items.length > 0)) && (
+              <div className="p-3 border-t space-y-3">
+                {/* Totals */}
+                <div className="space-y-1">
+                  {cart.length > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">New items</span>
+                      <span className="font-medium">{formatVatu(cartTotal)}</span>
+                    </div>
+                  )}
+                  {activeTab && (
+                    <div className="flex justify-between text-base font-bold text-gray-900">
+                      <span>Tab Total</span>
+                      <span>{formatVatu(activeTab.total + cartTotal)}</span>
+                    </div>
+                  )}
+                  {!activeTab && cart.length > 0 && (
+                    <div className="flex justify-between text-base font-bold text-gray-900">
+                      <span>Total</span>
+                      <span>{formatVatu(cartTotal)}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="space-y-2">
+                  {activeTab ? (
+                    <>
+                      {cart.length > 0 && (
+                        <>
+                          <button
+                            onClick={() => handleAddToTab(true)}
+                            disabled={savingTab}
+                            className="w-full py-2.5 bg-amber-500 text-white rounded-lg font-medium text-sm hover:bg-amber-600 disabled:opacity-50 flex items-center justify-center gap-2"
+                          >
+                            <ChefHat className="w-4 h-4" />
+                            Send to Kitchen
+                          </button>
+                          <button
+                            onClick={() => handleAddToTab(false)}
+                            disabled={savingTab}
+                            className="w-full py-2.5 bg-teal-700 text-white rounded-lg font-medium text-sm hover:bg-teal-800 disabled:opacity-50 flex items-center justify-center gap-2"
+                          >
+                            <Plus className="w-4 h-4" />
+                            Add to Tab
+                          </button>
+                        </>
+                      )}
+                      <button
+                        onClick={openPayment}
+                        className="w-full py-2.5 bg-green-600 text-white rounded-lg font-medium text-sm hover:bg-green-700 flex items-center justify-center gap-2"
+                      >
+                        <Check className="w-4 h-4" />
+                        Close &amp; Pay
+                      </button>
+                    </>
+                  ) : (
+                    cart.length > 0 && (
+                      <button
+                        onClick={openPayment}
+                        className="w-full py-2.5 bg-green-600 text-white rounded-lg font-medium text-sm hover:bg-green-700 flex items-center justify-center gap-2"
+                      >
+                        <Zap className="w-4 h-4" />
+                        Quick Sale
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Checkout Modal */}
-      {showCheckout && (
+      {/* ================================================================= */}
+      {/* Payment Modal                                                      */}
+      {/* ================================================================= */}
+      {showPaymentModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-lg font-semibold">Complete Payment</h3>
-              <button onClick={() => setShowCheckout(false)}>
+              <h3 className="text-lg font-semibold">
+                {activeTab ? `Close Tab: ${activeTab.tab_name}` : 'Quick Sale Payment'}
+              </h3>
+              <button onClick={() => setShowPaymentModal(false)}>
                 <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
 
             <div className="p-4 space-y-4">
+              {/* Payment Method */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Payment Method
+                </label>
                 <div className="grid grid-cols-3 gap-2">
                   <button
-                    onClick={() => setCheckoutData({ ...checkoutData, payment_method: 'cash' })}
-                    className={`p-3 rounded-lg border flex flex-col items-center gap-1 ${
-                      checkoutData.payment_method === 'cash' ? 'border-green-500 bg-green-50' : ''
+                    onClick={() => setPaymentData({ ...paymentData, payment_method: 'cash' })}
+                    className={`p-3 rounded-lg border flex flex-col items-center gap-1 transition-colors ${
+                      paymentData.payment_method === 'cash'
+                        ? 'border-green-500 bg-green-50'
+                        : 'hover:bg-gray-50'
                     }`}
                   >
-                    <Banknote className="w-5 h-5" />
-                    <span className="text-xs">Cash</span>
+                    <Banknote className="w-5 h-5 text-green-600" />
+                    <span className="text-xs font-medium">Cash</span>
                   </button>
                   <button
-                    onClick={() => setCheckoutData({ ...checkoutData, payment_method: 'card' })}
-                    className={`p-3 rounded-lg border flex flex-col items-center gap-1 ${
-                      checkoutData.payment_method === 'card' ? 'border-blue-500 bg-blue-50' : ''
+                    onClick={() => setPaymentData({ ...paymentData, payment_method: 'card' })}
+                    className={`p-3 rounded-lg border flex flex-col items-center gap-1 transition-colors ${
+                      paymentData.payment_method === 'card'
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'hover:bg-gray-50'
                     }`}
                   >
-                    <CreditCard className="w-5 h-5" />
-                    <span className="text-xs">Card</span>
+                    <CreditCard className="w-5 h-5 text-blue-600" />
+                    <span className="text-xs font-medium">Card</span>
                   </button>
                   <button
-                    onClick={() => setCheckoutData({ ...checkoutData, payment_method: 'room_charge' })}
-                    className={`p-3 rounded-lg border flex flex-col items-center gap-1 ${
-                      checkoutData.payment_method === 'room_charge' ? 'border-amber-500 bg-amber-50' : ''
+                    onClick={() => setPaymentData({ ...paymentData, payment_method: 'room_charge' })}
+                    className={`p-3 rounded-lg border flex flex-col items-center gap-1 transition-colors ${
+                      paymentData.payment_method === 'room_charge'
+                        ? 'border-amber-500 bg-amber-50'
+                        : 'hover:bg-gray-50'
                     }`}
                   >
-                    <BedDouble className="w-5 h-5" />
-                    <span className="text-xs">Room</span>
+                    <BedDouble className="w-5 h-5 text-amber-600" />
+                    <span className="text-xs font-medium">Room</span>
                   </button>
                 </div>
               </div>
 
-              {checkoutData.payment_method === 'room_charge' && (
+              {/* Room Charge Booking Selector */}
+              {paymentData.payment_method === 'room_charge' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Select Room/Guest</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Select Room/Guest
+                  </label>
                   <select
-                    value={checkoutData.room_charge_booking_id}
+                    value={paymentData.room_charge_booking_id}
                     onChange={(e) => {
-                      const booking = activeBookings.find(b => b.id === e.target.value)
-                      setCheckoutData({
-                        ...checkoutData,
+                      const booking = activeBookings.find((b) => b.id === e.target.value)
+                      setPaymentData({
+                        ...paymentData,
                         room_charge_booking_id: e.target.value,
-                        guest_name: booking?.guest_name || '',
+                        guest_name: booking?.guest_name || paymentData.guest_name,
                       })
                     }}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 border rounded-lg text-sm"
                   >
                     <option value="">Select a guest...</option>
-                    {activeBookings.map(booking => (
+                    {activeBookings.map((booking) => (
                       <option key={booking.id} value={booking.id}>
-                        {booking.guest_name} - {booking.rooms?.name}
+                        {booking.guest_name} — {booking.rooms?.name}
                       </option>
                     ))}
                   </select>
                 </div>
               )}
 
+              {/* Guest Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Guest Name (optional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Guest Name (optional)
+                </label>
                 <input
                   type="text"
-                  value={checkoutData.guest_name}
-                  onChange={(e) => setCheckoutData({ ...checkoutData, guest_name: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  value={paymentData.guest_name}
+                  onChange={(e) => setPaymentData({ ...paymentData, guest_name: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
                   placeholder="Enter guest name"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Table Number (optional)</label>
-                <input
-                  type="text"
-                  value={checkoutData.table_number}
-                  onChange={(e) => setCheckoutData({ ...checkoutData, table_number: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
-                  placeholder="e.g., T1, T2"
-                />
-              </div>
-
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="flex justify-between text-sm mb-2">
-                  <span>Subtotal</span>
-                  <span>{cartTotal.toLocaleString()} VT</span>
+              {/* Order Summary */}
+              <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  Order Summary
+                </p>
+                <div className="max-h-32 overflow-y-auto space-y-1">
+                  {/* Items from the active tab */}
+                  {activeTab?.items.map((item, idx) => (
+                    <div key={`tab-${idx}`} className="flex justify-between text-sm">
+                      <span>
+                        {item.quantity}x {item.name}
+                      </span>
+                      <span>{formatVatu(item.price * item.quantity)}</span>
+                    </div>
+                  ))}
+                  {/* Items from cart (for quick sale or new additions) */}
+                  {cart.map((item, idx) => (
+                    <div key={`cart-${idx}`} className="flex justify-between text-sm">
+                      <span>
+                        {item.quantity}x {item.name}
+                      </span>
+                      <span>{formatVatu(item.price * item.quantity)}</span>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex justify-between font-bold text-lg">
+                <div className="flex justify-between font-bold text-base pt-2 border-t border-gray-200">
                   <span>Total</span>
-                  <span>{cartTotal.toLocaleString()} VT</span>
+                  <span>
+                    {formatVatu(activeTab ? activeTab.total + cartTotal : cartTotal)}
+                  </span>
                 </div>
               </div>
 
+              {/* Complete Button */}
               <button
-                onClick={handleCheckout}
-                className="w-full py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 flex items-center justify-center gap-2"
+                onClick={async () => {
+                  if (activeTab) {
+                    // If there are new cart items, add them first
+                    if (cart.length > 0) {
+                      await handleAddToTab(true)
+                    }
+                    await handleCloseTab()
+                  } else {
+                    await handleQuickSale()
+                  }
+                }}
+                disabled={savingTab}
+                className="w-full py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <Check className="w-5 h-5" />
-                Complete Order
+                {savingTab ? 'Processing...' : 'Complete Payment'}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Receipt Modal */}
+      {/* ================================================================= */}
+      {/* Receipt Modal                                                      */}
+      {/* ================================================================= */}
       {showReceipt && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl w-full max-w-sm">
@@ -689,18 +1190,32 @@ export default function POSPage() {
                 <span>Date</span>
                 <span>{format(new Date(showReceipt.created_at), 'MMM dd, yyyy HH:mm')}</span>
               </div>
+              {showReceipt.tab_name && (
+                <div className="flex justify-between text-sm">
+                  <span>Tab</span>
+                  <span>{showReceipt.tab_name}</span>
+                </div>
+              )}
               {showReceipt.table_number && (
                 <div className="flex justify-between text-sm">
                   <span>Table</span>
                   <span>{showReceipt.table_number}</span>
                 </div>
               )}
+              {showReceipt.guest_name && (
+                <div className="flex justify-between text-sm">
+                  <span>Guest</span>
+                  <span>{showReceipt.guest_name}</span>
+                </div>
+              )}
 
               <div className="border-t border-dashed pt-4">
-                {showReceipt.items.map((item, idx) => (
+                {(showReceipt.items || []).map((item, idx) => (
                   <div key={idx} className="flex justify-between text-sm py-1">
-                    <span>{item.quantity}x {item.name}</span>
-                    <span>{(item.price * item.quantity).toLocaleString()} VT</span>
+                    <span>
+                      {item.quantity}x {item.name}
+                    </span>
+                    <span>{formatVatu(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
@@ -708,11 +1223,11 @@ export default function POSPage() {
               <div className="border-t border-dashed pt-4">
                 <div className="flex justify-between font-bold">
                   <span>Total</span>
-                  <span>{Number(showReceipt.total).toLocaleString()} VT</span>
+                  <span>{formatVatu(Number(showReceipt.total))}</span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-500 mt-1">
                   <span>Payment</span>
-                  <span className="capitalize">{showReceipt.payment_method}</span>
+                  <span className="capitalize">{showReceipt.payment_method || 'N/A'}</span>
                 </div>
               </div>
 
@@ -724,14 +1239,14 @@ export default function POSPage() {
             <div className="p-4 border-t flex gap-2">
               <button
                 onClick={() => window.print()}
-                className="flex-1 py-2 bg-gray-100 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-200"
+                className="flex-1 py-2 bg-gray-100 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-200 text-sm"
               >
                 <Printer className="w-4 h-4" />
                 Print
               </button>
               <button
                 onClick={() => setShowReceipt(null)}
-                className="flex-1 py-2 bg-ocean-600 text-white rounded-lg hover:bg-ocean-700"
+                className="flex-1 py-2 bg-teal-700 text-white rounded-lg hover:bg-teal-800 text-sm"
               >
                 Close
               </button>
