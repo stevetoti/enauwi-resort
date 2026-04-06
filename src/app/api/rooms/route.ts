@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceSupabase } from '@/lib/supabase-server'
+import { supabaseAdmin } from '@/lib/supabase'
+import { requireAuth } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
@@ -147,5 +149,71 @@ export async function GET(request: NextRequest) {
     })
   } catch {
     return NextResponse.json({ error: 'Failed to fetch rooms' }, { status: 500 })
+  }
+}
+
+// POST — create a new room (admin only)
+export async function POST(request: NextRequest) {
+  try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
+    const body = await request.json()
+    const { name, type, description, price_vt, max_guests, amenities, bed_config, images, tagline } = body
+
+    if (!name || !price_vt) {
+      return NextResponse.json({ error: 'Name and price are required' }, { status: 400 })
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from('rooms')
+      .insert({
+        name,
+        type: type || 'bungalow',
+        description: description || '',
+        price_vt,
+        max_guests: max_guests || 2,
+        amenities: amenities || [],
+        bed_config: bed_config || 'Queen',
+        images: images || [],
+        tagline: tagline || null,
+        available: true,
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+
+    return NextResponse.json(data, { status: 201 })
+  } catch {
+    return NextResponse.json({ error: 'Failed to create room' }, { status: 500 })
+  }
+}
+
+// PATCH — update a room (admin only)
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
+    const body = await request.json()
+    const { id, ...updates } = body
+
+    if (!id) {
+      return NextResponse.json({ error: 'Room ID is required' }, { status: 400 })
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from('rooms')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw error
+
+    return NextResponse.json(data)
+  } catch {
+    return NextResponse.json({ error: 'Failed to update room' }, { status: 500 })
   }
 }

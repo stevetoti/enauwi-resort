@@ -108,13 +108,11 @@ export default function AdminBookingsPage() {
   const deleteBooking = async (bookingId: string) => {
     setDeleting(true)
     try {
-      const { error } = await supabase
-        .from('bookings')
-        .delete()
-        .eq('id', bookingId)
+      const res = await fetch(`/api/bookings?id=${bookingId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Delete failed')
 
-      if (error) throw error
-      await fetchBookings()
+      // Remove from local state immediately
+      setBookings(prev => prev.filter(b => b.id !== bookingId))
       setDeleteTarget(null)
       if (selectedBooking?.id === bookingId) setSelectedBooking(null)
     } catch {

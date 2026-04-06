@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceSupabase } from '@/lib/supabase-server'
+import { supabaseAdmin } from '@/lib/supabase'
 import { BookingFormData } from '@/types'
 import { generateBookingReference, getDaysBetween } from '@/lib/utils'
 import { sendBookingNotifications } from '@/lib/notifications'
 import { requireCsrf } from '@/lib/csrf'
+import { requireAuth } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -245,5 +247,37 @@ export async function GET(request: NextRequest) {
       { error: 'Failed to fetch bookings' },
       { status: 500 }
     )
+  }
+}
+
+// DELETE — delete a booking (admin only)
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json({ error: 'Booking ID is required' }, { status: 400 })
+    }
+
+    // Delete any linked invoices first (cascade should handle, but be explicit)
+    await supabaseAdmin
+      .from('invoices')
+      .delete()
+      .eq('booking_id', id)
+
+    const { error } = await supabaseAdmin
+      .from('bookings')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
+
+    return NextResponse.json({ success: true })
+  } catch {
+    return NextResponse.json({ error: 'Failed to delete booking' }, { status: 500 })
   }
 }
