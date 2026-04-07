@@ -165,28 +165,47 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Name and price are required' }, { status: 400 })
     }
 
+    // Build insert object with only the fields that have values
+    const insertData: Record<string, unknown> = {
+      name,
+      type: type || 'bungalow',
+      description: description || '',
+      price_vt,
+      max_guests: max_guests || 2,
+      amenities: amenities || [],
+      images: images || [],
+      available: true,
+    }
+    // Optional columns (may not exist in all environments)
+    if (bed_config) insertData.bed_config = bed_config
+    if (tagline) insertData.tagline = tagline
+
     const { data, error } = await supabaseAdmin
       .from('rooms')
-      .insert({
-        name,
-        type: type || 'bungalow',
-        description: description || '',
-        price_vt,
-        max_guests: max_guests || 2,
-        amenities: amenities || [],
-        bed_config: bed_config || 'Queen',
-        images: images || [],
-        tagline: tagline || null,
-        available: true,
-      })
+      .insert(insertData)
       .select()
       .single()
 
-    if (error) throw error
+    if (error) {
+      // If column doesn't exist, retry without optional fields
+      if (error.message?.includes('column') && (error.message?.includes('bed_config') || error.message?.includes('tagline'))) {
+        delete insertData.bed_config
+        delete insertData.tagline
+        const { data: retryData, error: retryError } = await supabaseAdmin
+          .from('rooms')
+          .insert(insertData)
+          .select()
+          .single()
+        if (retryError) throw retryError
+        return NextResponse.json(retryData, { status: 201 })
+      }
+      throw error
+    }
 
     return NextResponse.json(data, { status: 201 })
-  } catch {
-    return NextResponse.json({ error: 'Failed to create room' }, { status: 500 })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to create room'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 
