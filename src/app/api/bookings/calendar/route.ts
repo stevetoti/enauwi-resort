@@ -20,7 +20,8 @@ export async function GET(request: NextRequest) {
     const { data, error } = await supabase
       .from('bookings')
       .select('id, room_id, guest_name, guest_email, check_in, check_out, status, total_price, num_guests, booking_reference, discount_name, discount_percent')
-      .or(`check_in.lte.${end},check_out.gte.${start}`)
+      .lt('check_in', end)
+      .gt('check_out', start)
       .in('status', ['pending', 'confirmed', 'checked_in', 'checked_out'])
       .order('check_in')
 

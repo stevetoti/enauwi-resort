@@ -69,13 +69,14 @@ export async function GET(request: NextRequest) {
     const bookedRoomIds = new Set<string>()
 
     for (const room of rooms || []) {
-      // Check for conflicting bookings
+      // Check for conflicting bookings (overlap: existing check_in < searchCheckOut AND existing check_out > searchCheckIn)
       const { data: conflicts } = await supabase
         .from('bookings')
         .select('id')
         .eq('room_id', room.id)
-        .in('status', ['confirmed', 'checked_in'])
-        .or(`check_in.lte.${checkOut},check_out.gte.${checkIn}`)
+        .in('status', ['pending', 'confirmed', 'checked_in'])
+        .lt('check_in', checkOut)
+        .gt('check_out', checkIn)
 
       // Check room_availability for specific date overrides
       const { data: unavailableDates } = await supabase

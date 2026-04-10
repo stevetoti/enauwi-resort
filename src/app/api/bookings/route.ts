@@ -71,13 +71,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check availability one more time
+    // Check availability one more time (overlap: existing check_in < newCheckOut AND existing check_out > newCheckIn)
     const { data: conflicts, error: conflictsError } = await supabase
       .from('bookings')
       .select('id')
       .eq('room_id', roomId)
-      .in('status', ['confirmed', 'checked_in'])
-      .or(`check_in.lte.${checkOut},check_out.gte.${checkIn}`)
+      .in('status', ['pending', 'confirmed', 'checked_in'])
+      .lt('check_in', checkOut)
+      .gt('check_out', checkIn)
 
     if (conflictsError) {
       throw conflictsError
