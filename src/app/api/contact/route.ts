@@ -1,13 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceSupabase } from '@/lib/supabase-server'
-import { requireCsrf } from '@/lib/csrf'
-
 export async function POST(request: NextRequest) {
   try {
-    // CSRF check
-    const csrfError = await requireCsrf(request)
-    if (csrfError) return csrfError
-
     const supabase = createServiceSupabase()
     const { name, email, phone, subject, message } = await request.json()
 

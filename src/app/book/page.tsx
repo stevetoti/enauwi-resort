@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
-import { csrfHeaders } from '@/lib/csrf-client'
+// csrfHeaders removed — bookings are public guest forms, CSRF not needed
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -413,7 +413,7 @@ function BookingContent() {
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
-        headers: csrfHeaders(),
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           room_id: selectedRoom.id,
           check_in: checkIn,

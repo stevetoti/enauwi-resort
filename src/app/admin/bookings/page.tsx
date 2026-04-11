@@ -15,6 +15,8 @@ import {
   XCircle,
   Trash2,
   AlertTriangle,
+  Pencil,
+  Save,
 } from 'lucide-react'
 import { createClientSupabase } from '@/lib/supabase'
 import { formatVatu, formatDate } from '@/lib/utils'
@@ -48,6 +50,7 @@ export default function AdminBookingsPage() {
   const [updatingStatus, setUpdatingStatus] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<(Booking & { room?: Room }) | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [editingBooking, setEditingBooking] = useState<(Booking & { room?: Room }) | null>(null)
 
   const supabase = createClientSupabase()
 
@@ -81,12 +84,16 @@ export default function AdminBookingsPage() {
   const updateBookingStatus = async (bookingId: string, newStatus: string) => {
     setUpdatingStatus(true)
     try {
-      const { error } = await supabase
-        .from('bookings')
-        .update({ status: newStatus })
-        .eq('id', bookingId)
+      const res = await fetch(`/api/bookings/${bookingId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      })
 
-      if (error) throw error
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Failed to update status')
+      }
 
       // Refresh bookings
       await fetchBookings()
@@ -97,8 +104,7 @@ export default function AdminBookingsPage() {
           prev ? { ...prev, status: newStatus as Booking['status'] } : null
         )
       }
-    } catch (error) {
-      console.error('Error updating booking status:', error)
+    } catch {
       alert('Failed to update booking status')
     } finally {
       setUpdatingStatus(false)
@@ -267,6 +273,13 @@ export default function AdminBookingsPage() {
                           <Eye className="h-4 w-4" />
                         </button>
                         <button
+                          onClick={() => setEditingBooking(booking)}
+                          className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Edit booking"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button
                           onClick={() => setDeleteTarget(booking)}
                           className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete booking"
@@ -367,6 +380,164 @@ export default function AdminBookingsPage() {
           </div>
         </div>
       )}
+
+      {/* Edit Booking Modal */}
+      {editingBooking && (
+        <BookingEditModal
+          booking={editingBooking}
+          onClose={() => setEditingBooking(null)}
+          onSave={async () => {
+            await fetchBookings()
+            setEditingBooking(null)
+          }}
+        />
+      )}
+    </div>
+  )
+}
+
+function BookingEditModal({
+  booking,
+  onClose,
+  onSave,
+}: {
+  booking: Booking & { room?: Room }
+  onClose: () => void
+  onSave: () => Promise<void>
+}) {
+  const [form, setForm] = useState({
+    guest_name: booking.guest_name,
+    guest_email: booking.guest_email,
+    guest_phone: booking.guest_phone || '',
+    check_in: booking.check_in?.split('T')[0] || '',
+    check_out: booking.check_out?.split('T')[0] || '',
+    num_guests: booking.num_guests || 1,
+    special_requests: booking.special_requests || '',
+    notes: booking.notes || '',
+  })
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSaving(true)
+    setError('')
+
+    try {
+      const res = await fetch(`/api/bookings/${booking.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Failed to update booking')
+      }
+
+      await onSave()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Edit Booking</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Guest Name *</label>
+            <input type="text" required value={form.guest_name}
+              onChange={(e) => setForm({ ...form, guest_name: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+              <input type="email" required value={form.guest_email}
+                onChange={(e) => setForm({ ...form, guest_email: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <input type="text" value={form.guest_phone}
+                onChange={(e) => setForm({ ...form, guest_phone: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Check-in *</label>
+              <input type="date" required value={form.check_in}
+                onChange={(e) => setForm({ ...form, check_in: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Check-out *</label>
+              <input type="date" required value={form.check_out}
+                onChange={(e) => setForm({ ...form, check_out: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent" />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Number of Guests</label>
+            <input type="number" min={1} max={10} value={form.num_guests}
+              onChange={(e) => setForm({ ...form, num_guests: parseInt(e.target.value) || 1 })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent" />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Special Requests</label>
+            <textarea value={form.special_requests} rows={2}
+              onChange={(e) => setForm({ ...form, special_requests: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent" />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Admin Notes</label>
+            <textarea value={form.notes} rows={2}
+              onChange={(e) => setForm({ ...form, notes: e.target.value })}
+              placeholder="Internal notes (not visible to guest)"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent" />
+          </div>
+
+          <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-500">
+            Room: <span className="font-medium text-gray-700">{booking.room?.name || 'N/A'}</span>
+            {' · '}Status: <span className="font-medium text-gray-700">{booking.status.replace('_', ' ')}</span>
+            {booking.total_price ? <>{' · '}Total: <span className="font-medium text-gray-700">{formatVatu(booking.total_price)}</span></> : null}
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose}
+              className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
+              Cancel
+            </button>
+            <button type="submit" disabled={saving}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg disabled:opacity-50">
+              <Save className="h-4 w-4" />
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

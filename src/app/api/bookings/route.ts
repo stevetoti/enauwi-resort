@@ -4,15 +4,11 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { BookingFormData } from '@/types'
 import { generateBookingReference, getDaysBetween } from '@/lib/utils'
 import { sendBookingNotifications } from '@/lib/notifications'
-import { requireCsrf } from '@/lib/csrf'
+// CSRF removed — bookings are public guest actions, not authenticated admin mutations
 import { requireAuth } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    // CSRF check
-    const csrfError = await requireCsrf(request)
-    if (csrfError) return csrfError
-
     const supabase = createServiceSupabase()
     const bookingData: BookingFormData = await request.json()
 
