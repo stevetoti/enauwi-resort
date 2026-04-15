@@ -15,6 +15,9 @@ import {
 } from 'lucide-react'
 import { format, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth } from 'date-fns'
 
+type RecurringType = 'none' | 'daily' | 'weekly' | 'monthly'
+type PricingType = 'flat' | 'per_person'
+
 interface Venue {
   id: string
   name: string
@@ -43,7 +46,25 @@ interface Event {
   contact_email: string | null
   contact_phone: string | null
   notes: string | null
+  event_end_date?: string | null
+  recurring_type?: RecurringType | null
+  recurring_end_date?: string | null
+  pricing_type?: PricingType | null
+  price_per_person?: number | null
+  package_name?: string | null
   venues?: Venue
+}
+
+const RECURRING_OPTIONS: { value: RecurringType; label: string }[] = [
+  { value: 'none', label: 'None' },
+  { value: 'daily', label: 'Daily' },
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'monthly', label: 'Monthly' },
+]
+
+const recurringLabel = (t?: RecurringType | null) => {
+  if (!t || t === 'none') return null
+  return `Repeats ${t.charAt(0).toUpperCase() + t.slice(1)}`
 }
 
 const PACKAGES = [
@@ -88,6 +109,12 @@ export default function EventsPage() {
     contact_email: '',
     contact_phone: '',
     notes: '',
+    event_end_date: '',
+    recurring_type: 'none' as RecurringType,
+    recurring_end_date: '',
+    pricing_type: 'flat' as PricingType,
+    price_per_person: '',
+    package_name: '',
   })
 
   const [venueForm, setVenueForm] = useState({
@@ -131,22 +158,38 @@ export default function EventsPage() {
       return
     }
 
+    const attendeesNum = eventForm.attendees ? parseInt(eventForm.attendees) : null
+    const perPersonNum = eventForm.price_per_person ? parseFloat(eventForm.price_per_person) : null
+    const computedTotal =
+      eventForm.pricing_type === 'per_person'
+        ? (perPersonNum || 0) * (attendeesNum || 0)
+        : parseFloat(eventForm.total) || 0
+
     const eventData = {
       name: eventForm.name,
       venue_id: eventForm.venue_id,
       event_date: eventForm.event_date,
+      event_end_date: eventForm.event_end_date || eventForm.event_date,
       start_time: eventForm.start_time,
       end_time: eventForm.end_time,
       package: eventForm.package,
-      attendees: eventForm.attendees ? parseInt(eventForm.attendees) : null,
+      attendees: attendeesNum,
       catering_included: eventForm.catering_included,
-      total: parseFloat(eventForm.total) || 0,
+      total: computedTotal,
       deposit: parseFloat(eventForm.deposit) || 0,
       status: eventForm.status,
       contact_name: eventForm.contact_name,
       contact_email: eventForm.contact_email || null,
       contact_phone: eventForm.contact_phone || null,
       notes: eventForm.notes || null,
+      recurring_type: eventForm.recurring_type || 'none',
+      recurring_end_date:
+        eventForm.recurring_type && eventForm.recurring_type !== 'none'
+          ? eventForm.recurring_end_date || null
+          : null,
+      pricing_type: eventForm.pricing_type || 'flat',
+      price_per_person: eventForm.pricing_type === 'per_person' ? perPersonNum : null,
+      package_name: eventForm.pricing_type === 'per_person' ? (eventForm.package_name || null) : null,
     }
 
     if (editingEvent) {
@@ -214,6 +257,12 @@ export default function EventsPage() {
       contact_email: '',
       contact_phone: '',
       notes: '',
+      event_end_date: '',
+      recurring_type: 'none' as RecurringType,
+      recurring_end_date: '',
+      pricing_type: 'flat' as PricingType,
+      price_per_person: '',
+      package_name: '',
     })
   }
 
@@ -439,8 +488,15 @@ export default function EventsPage() {
                     <div className="text-xs text-gray-500 mt-1 space-y-0.5">
                       <p className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        {format(new Date(event.event_date), 'MMM dd, yyyy')}
+                        {event.event_end_date && event.event_end_date !== event.event_date
+                          ? `${format(new Date(event.event_date), 'MMM dd')} – ${format(new Date(event.event_end_date), 'MMM dd, yyyy')}`
+                          : format(new Date(event.event_date), 'MMM dd, yyyy')}
                       </p>
+                      {recurringLabel(event.recurring_type) && (
+                        <span className="inline-block text-xs bg-teal-100 text-teal-800 px-2 py-0.5 rounded">
+                          {recurringLabel(event.recurring_type)}
+                        </span>
+                      )}
                       <p className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {event.start_time} - {event.end_time}
@@ -485,9 +541,18 @@ export default function EventsPage() {
                     {event.attendees && (
                       <p className="text-xs text-gray-500">{event.attendees} attendees</p>
                     )}
+                    {recurringLabel(event.recurring_type) && (
+                      <span className="inline-block mt-1 text-xs bg-teal-100 text-teal-800 px-2 py-0.5 rounded">
+                        {recurringLabel(event.recurring_type)}
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-sm">
-                    <p>{format(new Date(event.event_date), 'MMM dd, yyyy')}</p>
+                    <p>
+                      {event.event_end_date && event.event_end_date !== event.event_date
+                        ? `${format(new Date(event.event_date), 'MMM dd')} – ${format(new Date(event.event_end_date), 'MMM dd, yyyy')}`
+                        : format(new Date(event.event_date), 'MMM dd, yyyy')}
+                    </p>
                     <p className="text-xs text-gray-500">{event.start_time} - {event.end_time}</p>
                   </td>
                   <td className="px-4 py-3 text-sm">{event.venues?.name}</td>
@@ -519,7 +584,20 @@ export default function EventsPage() {
                     </select>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <p className="font-medium">{Number(event.total).toLocaleString()} VT</p>
+                    {event.pricing_type === 'per_person' && event.price_per_person ? (
+                      <div>
+                        {event.package_name && (
+                          <p className="text-xs text-amber-700 font-medium">{event.package_name}</p>
+                        )}
+                        <p className="text-xs text-gray-600">
+                          VT {Number(event.price_per_person).toLocaleString()}/person
+                          {event.attendees ? ` · ${event.attendees} attendees` : ''}
+                        </p>
+                        <p className="font-medium">VT {Number(event.total).toLocaleString()} total</p>
+                      </div>
+                    ) : (
+                      <p className="font-medium">{Number(event.total).toLocaleString()} VT</p>
+                    )}
                     {event.deposit > 0 && (
                       <p className="text-xs text-green-600">Deposit: {Number(event.deposit).toLocaleString()}</p>
                     )}
@@ -544,6 +622,12 @@ export default function EventsPage() {
                           contact_email: event.contact_email || '',
                           contact_phone: event.contact_phone || '',
                           notes: event.notes || '',
+                          event_end_date: event.event_end_date || '',
+                          recurring_type: (event.recurring_type as RecurringType) || 'none',
+                          recurring_end_date: event.recurring_end_date || '',
+                          pricing_type: (event.pricing_type as PricingType) || 'flat',
+                          price_per_person: event.price_per_person?.toString() || '',
+                          package_name: event.package_name || '',
                         })
                         setShowEventModal(true)
                       }}
@@ -609,14 +693,30 @@ export default function EventsPage() {
                   </select>
                 </div>
 
+                <div className="col-span-2 border-t pt-4">
+                  <h4 className="font-medium mb-3">Dates & Time</h4>
+                </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Date *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Start Date *</label>
                   <input
                     type="date"
                     value={eventForm.event_date}
                     onChange={(e) => setEventForm({ ...eventForm, event_date: e.target.value })}
                     className="w-full px-3 py-2 border rounded-lg"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                  <input
+                    type="date"
+                    value={eventForm.event_end_date}
+                    min={eventForm.event_date}
+                    onChange={(e) => setEventForm({ ...eventForm, event_end_date: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Leave blank for single-day event</p>
                 </div>
 
                 <div>
@@ -713,18 +813,118 @@ export default function EventsPage() {
                 </div>
 
                 <div className="col-span-2 border-t pt-4">
-                  <h4 className="font-medium mb-3">Pricing & Status</h4>
+                  <h4 className="font-medium mb-3">Recurring</h4>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Total (VT)</label>
-                  <input
-                    type="number"
-                    value={eventForm.total}
-                    onChange={(e) => setEventForm({ ...eventForm, total: e.target.value })}
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Recurring</label>
+                  <select
+                    value={eventForm.recurring_type}
+                    onChange={(e) => setEventForm({ ...eventForm, recurring_type: e.target.value as RecurringType })}
                     className="w-full px-3 py-2 border rounded-lg"
-                  />
+                  >
+                    {RECURRING_OPTIONS.map(o => (
+                      <option key={o.value} value={o.value}>{o.label}</option>
+                    ))}
+                  </select>
                 </div>
+
+                {eventForm.recurring_type !== 'none' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Recurring End Date</label>
+                    <input
+                      type="date"
+                      value={eventForm.recurring_end_date}
+                      onChange={(e) => setEventForm({ ...eventForm, recurring_end_date: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-lg"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">When should this recurring event stop?</p>
+                  </div>
+                )}
+
+                <div className="col-span-2 border-t pt-4">
+                  <h4 className="font-medium mb-3">Pricing</h4>
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Pricing Type</label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="pricing_type"
+                        value="flat"
+                        checked={eventForm.pricing_type === 'flat'}
+                        onChange={() => setEventForm({ ...eventForm, pricing_type: 'flat' })}
+                        className="w-4 h-4 text-teal-700"
+                      />
+                      <span className="text-sm">Flat Rate</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="pricing_type"
+                        value="per_person"
+                        checked={eventForm.pricing_type === 'per_person'}
+                        onChange={() => setEventForm({ ...eventForm, pricing_type: 'per_person' })}
+                        className="w-4 h-4 text-teal-700"
+                      />
+                      <span className="text-sm">Per Person</span>
+                    </label>
+                  </div>
+                </div>
+
+                {eventForm.pricing_type === 'per_person' ? (
+                  <>
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Package Name</label>
+                      <input
+                        type="text"
+                        value={eventForm.package_name}
+                        onChange={(e) => setEventForm({ ...eventForm, package_name: e.target.value })}
+                        className="w-full px-3 py-2 border rounded-lg"
+                        placeholder="e.g., Bronze Birthday Package"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Price Per Person (VT)</label>
+                      <input
+                        type="number"
+                        value={eventForm.price_per_person}
+                        onChange={(e) => setEventForm({ ...eventForm, price_per_person: e.target.value })}
+                        className="w-full px-3 py-2 border rounded-lg"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Calculated Total (VT)</label>
+                      <input
+                        type="text"
+                        readOnly
+                        value={(
+                          (parseFloat(eventForm.price_per_person) || 0) *
+                          (parseInt(eventForm.attendees) || 0)
+                        ).toLocaleString()}
+                        className="w-full px-3 py-2 border rounded-lg bg-gray-50 text-gray-700"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        {(parseInt(eventForm.attendees) || 0)} attendees ×{' '}
+                        {(parseFloat(eventForm.price_per_person) || 0).toLocaleString()} VT
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Total (VT)</label>
+                    <input
+                      type="number"
+                      value={eventForm.total}
+                      onChange={(e) => setEventForm({ ...eventForm, total: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-lg"
+                    />
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Deposit (VT)</label>

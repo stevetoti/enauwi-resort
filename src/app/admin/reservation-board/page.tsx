@@ -14,6 +14,7 @@ import {
   Percent,
   Loader2,
   BedDouble,
+  Plus,
 } from 'lucide-react'
 import { formatVatu, formatDate } from '@/lib/utils'
 import { Room } from '@/types'
@@ -118,6 +119,25 @@ export default function ReservationBoardPage() {
   const [popoverPosition, setPopoverPosition] = useState<{ top: number; left: number } | null>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [mounted, setMounted] = useState(false)
+
+  // Quick book state
+  const [quickBook, setQuickBook] = useState<{
+    room: Room
+    checkIn: string
+    checkOut: string
+  } | null>(null)
+  const [qbGuestName, setQbGuestName] = useState('')
+  const [qbEmail, setQbEmail] = useState('')
+  const [qbPhone, setQbPhone] = useState('')
+  const [qbGuests, setQbGuests] = useState(2)
+  const [qbRequests, setQbRequests] = useState('')
+  const [qbStatus, setQbStatus] = useState<'pending' | 'confirmed'>('confirmed')
+  const [qbSubmitting, setQbSubmitting] = useState(false)
+  const [qbError, setQbError] = useState<string | null>(null)
+
+  // Drag-to-select state
+  const [dragStart, setDragStart] = useState<{ roomId: string; day: number } | null>(null)
+  const [dragEnd, setDragEnd] = useState<number | null>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -231,6 +251,150 @@ export default function ReservationBoardPage() {
     }
     return bookedRoomIds.size
   }, [bookings, todayStr])
+
+  // ── Occupancy map: room_id -> Set of occupied day numbers ────────────
+  const occupancyMap = useMemo(() => {
+    const map: Record<string, Set<number>> = {}
+    for (const b of bookings) {
+      if (!map[b.room_id]) map[b.room_id] = new Set()
+      const checkIn = parseDate(b.check_in)
+      const checkOut = parseDate(b.check_out)
+      const monthStart = new Date(currentYear, currentMonth, 1)
+      const monthEnd = new Date(currentYear, currentMonth, daysInMonth)
+      const visibleStart = checkIn < monthStart ? monthStart : checkIn
+      const visibleEnd = checkOut > monthEnd ? monthEnd : checkOut
+      for (let d = visibleStart.getDate(); d <= visibleEnd.getDate(); d++) {
+        map[b.room_id].add(d)
+      }
+    }
+    return map
+  }, [bookings, currentYear, currentMonth, daysInMonth])
+
+  const isDayOccupied = (roomId: string, day: number) =>
+    occupancyMap[roomId]?.has(day) ?? false
+
+  // ── Quick book handlers ──────────────────────────────────────────────
+  const resetQuickBookForm = () => {
+    setQbGuestName('')
+    setQbEmail('')
+    setQbPhone('')
+    setQbGuests(2)
+    setQbRequests('')
+    setQbStatus('confirmed')
+    setQbError(null)
+    setQbSubmitting(false)
+  }
+
+  const openQuickBook = (room: Room, startDay: number, endDay: number) => {
+    // Ensure range contains no occupied days
+    const [lo, hi] = startDay <= endDay ? [startDay, endDay] : [endDay, startDay]
+    for (let d = lo; d <= hi; d++) {
+      if (isDayOccupied(room.id, d)) return
+    }
+    const checkIn = toDateString(currentYear, currentMonth, lo)
+    // check_out is the day AFTER the last selected day
+    const checkOutDate = new Date(currentYear, currentMonth, hi + 1)
+    const checkOut = toDateString(
+      checkOutDate.getFullYear(),
+      checkOutDate.getMonth(),
+      checkOutDate.getDate()
+    )
+    resetQuickBookForm()
+    setQuickBook({ room, checkIn, checkOut })
+  }
+
+  const closeQuickBook = () => {
+    setQuickBook(null)
+    resetQuickBookForm()
+  }
+
+  const handleCellMouseDown = (roomId: string, day: number, e: React.MouseEvent) => {
+    if (isDayOccupied(roomId, day)) return
+    e.stopPropagation()
+    setDragStart({ roomId, day })
+    setDragEnd(day)
+  }
+
+  const handleCellMouseEnter = (roomId: string, day: number) => {
+    if (!dragStart || dragStart.roomId !== roomId) return
+    // Don't extend through occupied cells
+    const [lo, hi] = dragStart.day <= day ? [dragStart.day, day] : [day, dragStart.day]
+    for (let d = lo; d <= hi; d++) {
+      if (isDayOccupied(roomId, d)) return
+    }
+    setDragEnd(day)
+  }
+
+  const handleCellMouseUp = (roomId: string, day: number, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!dragStart || dragStart.roomId !== roomId) {
+      setDragStart(null)
+      setDragEnd(null)
+      return
+    }
+    const room = rooms.find((r) => r.id === roomId)
+    if (!room) {
+      setDragStart(null)
+      setDragEnd(null)
+      return
+    }
+    const end = dragEnd ?? day
+    openQuickBook(room, dragStart.day, end)
+    setDragStart(null)
+    setDragEnd(null)
+  }
+
+  const isCellInDragRange = (roomId: string, day: number) => {
+    if (!dragStart || dragStart.roomId !== roomId || dragEnd == null) return false
+    const [lo, hi] = dragStart.day <= dragEnd ? [dragStart.day, dragEnd] : [dragEnd, dragStart.day]
+    return day >= lo && day <= hi
+  }
+
+  const submitQuickBook = async () => {
+    if (!quickBook) return
+    if (!qbGuestName.trim() || !qbEmail.trim()) {
+      setQbError('Guest name and email are required.')
+      return
+    }
+    setQbSubmitting(true)
+    setQbError(null)
+    try {
+      const res = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          room_id: quickBook.room.id,
+          check_in: quickBook.checkIn,
+          check_out: quickBook.checkOut,
+          guests: qbGuests,
+          guest_name: qbGuestName.trim(),
+          guest_email: qbEmail.trim(),
+          guest_phone: qbPhone.trim() || undefined,
+          special_requests: qbRequests.trim() || undefined,
+          status: qbStatus,
+          payment_method: 'property',
+        }),
+      })
+      if (res.status === 409) {
+        const data = await res.json().catch(() => ({}))
+        setQbError(data.error || 'Room is not available for those dates.')
+        setQbSubmitting(false)
+        return
+      }
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setQbError(data.error || 'Failed to create booking.')
+        setQbSubmitting(false)
+        return
+      }
+      await fetchBookings()
+      closeQuickBook()
+    } catch (err) {
+      console.error('Quick book failed:', err)
+      setQbError('Network error — please try again.')
+      setQbSubmitting(false)
+    }
+  }
 
   // ── Popover handler ──────────────────────────────────────────────────
 
@@ -422,15 +586,32 @@ export default function ReservationBoardPage() {
                         const isToday = isCurrentMonth && day === todayDate
                         const dateObj = new Date(currentYear, currentMonth, day)
                         const isWeekend = dateObj.getDay() === 0 || dateObj.getDay() === 6
+                        const occupied = isDayOccupied(room.id, day)
+                        const inDrag = isCellInDragRange(room.id, day)
 
                         return (
                           <div
                             key={day}
-                            className={`shrink-0 border-r border-gray-50 ${
-                              isToday ? 'bg-blue-50/40' : isWeekend ? 'bg-gray-50/30' : ''
+                            onMouseDown={(e) => !occupied && handleCellMouseDown(room.id, day, e)}
+                            onMouseEnter={() => !occupied && handleCellMouseEnter(room.id, day)}
+                            onMouseUp={(e) => !occupied && handleCellMouseUp(room.id, day, e)}
+                            className={`group shrink-0 border-r border-gray-50 relative ${
+                              inDrag
+                                ? 'bg-teal-100'
+                                : isToday
+                                ? 'bg-blue-50/40'
+                                : isWeekend
+                                ? 'bg-gray-50/30'
+                                : ''
+                            } ${
+                              !occupied ? 'cursor-pointer hover:bg-teal-50 select-none' : ''
                             }`}
                             style={{ width: CELL_W, minHeight: 52 }}
-                          />
+                          >
+                            {!occupied && (
+                              <Plus className="absolute inset-0 m-auto h-4 w-4 text-teal-600 opacity-0 group-hover:opacity-60 transition-opacity pointer-events-none" />
+                            )}
+                          </div>
                         )
                       })}
 
@@ -478,6 +659,210 @@ export default function ReservationBoardPage() {
           </div>
         )}
       </div>
+
+      {/* ── Quick Book Modal ───────────────────────────────────────────── */}
+      <AnimatePresence>
+        {quickBook && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 bg-black/40"
+              onClick={closeQuickBook}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.97 }}
+              transition={{ duration: 0.18 }}
+              className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div
+                className="pointer-events-auto w-full max-w-md bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <div className="px-5 py-4 bg-teal-600 text-white flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Plus className="h-5 w-5" />
+                    <h2 className="text-base font-semibold">Quick Book</h2>
+                  </div>
+                  <button
+                    onClick={closeQuickBook}
+                    className="p-1 rounded-lg hover:bg-white/10 transition-colors"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <div className="p-5 space-y-4">
+                  {/* Room (read-only) */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                      Room
+                    </label>
+                    <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
+                      <BedDouble className="h-4 w-4 text-teal-600" />
+                      <span className="text-sm font-medium text-gray-900">
+                        {quickBook.room.name}
+                      </span>
+                      <span className="text-xs text-gray-500 capitalize">
+                        · {quickBook.room.type}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Dates */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                        Check-in
+                      </label>
+                      <input
+                        type="date"
+                        value={quickBook.checkIn}
+                        onChange={(e) =>
+                          setQuickBook(
+                            quickBook ? { ...quickBook, checkIn: e.target.value } : null
+                          )
+                        }
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                        Check-out
+                      </label>
+                      <input
+                        type="date"
+                        value={quickBook.checkOut}
+                        onChange={(e) =>
+                          setQuickBook(
+                            quickBook ? { ...quickBook, checkOut: e.target.value } : null
+                          )
+                        }
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Guest Name */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                      Guest Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={qbGuestName}
+                      onChange={(e) => setQbGuestName(e.target.value)}
+                      placeholder="John Smith"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    />
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                      Email <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={qbEmail}
+                      onChange={(e) => setQbEmail(e.target.value)}
+                      placeholder="guest@example.com"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    />
+                  </div>
+
+                  {/* Phone + Guests */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                        Phone
+                      </label>
+                      <input
+                        type="tel"
+                        value={qbPhone}
+                        onChange={(e) => setQbPhone(e.target.value)}
+                        placeholder="+678 ..."
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                        Guests
+                      </label>
+                      <input
+                        type="number"
+                        min={1}
+                        value={qbGuests}
+                        onChange={(e) => setQbGuests(Math.max(1, Number(e.target.value) || 1))}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Status */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                      Status
+                    </label>
+                    <select
+                      value={qbStatus}
+                      onChange={(e) => setQbStatus(e.target.value as 'pending' | 'confirmed')}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    >
+                      <option value="confirmed">Confirmed</option>
+                      <option value="pending">Pending</option>
+                    </select>
+                  </div>
+
+                  {/* Special requests */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                      Special Requests
+                    </label>
+                    <textarea
+                      value={qbRequests}
+                      onChange={(e) => setQbRequests(e.target.value)}
+                      rows={2}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none"
+                    />
+                  </div>
+
+                  {/* Error */}
+                  {qbError && (
+                    <div className="px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                      {qbError}
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer */}
+                <div className="px-5 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-2">
+                  <button
+                    onClick={closeQuickBook}
+                    disabled={qbSubmitting}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 rounded-lg border border-gray-200 hover:bg-white transition-colors disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={submitQuickBook}
+                    disabled={qbSubmitting}
+                    className="px-4 py-2 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                  >
+                    {qbSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                    Create Booking
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* ── Booking Detail Popover ─────────────────────────────────────── */}
       <AnimatePresence>

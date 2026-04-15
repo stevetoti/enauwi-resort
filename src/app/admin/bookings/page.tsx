@@ -17,12 +17,20 @@ import {
   AlertTriangle,
   Pencil,
   Save,
+  Plus,
+  Users2,
 } from 'lucide-react'
 import { createClientSupabase } from '@/lib/supabase'
 import { formatVatu, formatDate } from '@/lib/utils'
 import { Booking, Room } from '@/types'
 
 type BookingStatus = 'all' | 'pending' | 'confirmed' | 'checked_in' | 'checked_out' | 'cancelled'
+
+type BookingWithGroup = Booking & {
+  group_id?: string | null
+  group_name?: string | null
+  room?: Room
+}
 
 const STATUS_OPTIONS: { value: BookingStatus; label: string; icon: React.ReactNode }[] = [
   { value: 'all', label: 'All Bookings', icon: <Calendar className="h-4 w-4" /> },
@@ -42,15 +50,16 @@ const TRANSITION_MAP: Record<string, string[]> = {
 }
 
 export default function AdminBookingsPage() {
-  const [bookings, setBookings] = useState<(Booking & { room?: Room })[]>([])
+  const [bookings, setBookings] = useState<BookingWithGroup[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<BookingStatus>('all')
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedBooking, setSelectedBooking] = useState<(Booking & { room?: Room }) | null>(null)
+  const [selectedBooking, setSelectedBooking] = useState<BookingWithGroup | null>(null)
   const [updatingStatus, setUpdatingStatus] = useState(false)
-  const [deleteTarget, setDeleteTarget] = useState<(Booking & { room?: Room }) | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<BookingWithGroup | null>(null)
   const [deleting, setDeleting] = useState(false)
-  const [editingBooking, setEditingBooking] = useState<(Booking & { room?: Room }) | null>(null)
+  const [editingBooking, setEditingBooking] = useState<BookingWithGroup | null>(null)
+  const [groupModalOpen, setGroupModalOpen] = useState(false)
 
   const supabase = createClientSupabase()
 
@@ -206,6 +215,16 @@ export default function AdminBookingsPage() {
               <ChevronDown className="h-4 w-4 text-gray-400 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
+
+          {/* New Group Booking */}
+          <button
+            onClick={() => setGroupModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
+          >
+            <Plus className="h-4 w-4" />
+            <Users2 className="h-4 w-4" />
+            New Group Booking
+          </button>
         </div>
       </div>
 
@@ -233,8 +252,17 @@ export default function AdminBookingsPage() {
                   <tr key={booking.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-gray-900 flex items-center gap-2">
                           {booking.guest_name}
+                          {booking.group_id && (
+                            <span
+                              title={booking.group_name || 'Group booking'}
+                              className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-amber-100 text-amber-800"
+                            >
+                              <Users2 className="h-3 w-3" />
+                              Group
+                            </span>
+                          )}
                         </p>
                         <p className="text-xs text-gray-500">{booking.guest_email}</p>
                         {booking.guest_phone && (
@@ -379,6 +407,17 @@ export default function AdminBookingsPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Group Booking Modal */}
+      {groupModalOpen && (
+        <GroupBookingModal
+          onClose={() => setGroupModalOpen(false)}
+          onCreated={async () => {
+            await fetchBookings()
+            setGroupModalOpen(false)
+          }}
+        />
       )}
 
       {/* Edit Booking Modal */}
@@ -687,6 +726,317 @@ function BookingDetailModal({
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+function GroupBookingModal({
+  onClose,
+  onCreated,
+}: {
+  onClose: () => void
+  onCreated: () => Promise<void>
+}) {
+  const [form, setForm] = useState({
+    group_name: '',
+    guest_name: '',
+    guest_email: '',
+    guest_phone: '',
+    check_in: '',
+    check_out: '',
+    special_requests: '',
+    notes: '',
+  })
+  const [rooms, setRooms] = useState<Room[]>([])
+  const [selectedRoomIds, setSelectedRoomIds] = useState<string[]>([])
+  const [loadingRooms, setLoadingRooms] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await fetch('/api/rooms?includeAll=true')
+        if (!res.ok) throw new Error('Failed to load rooms')
+        const data = await res.json()
+        const list: Room[] = Array.isArray(data) ? data : data.rooms || []
+        if (!cancelled) setRooms(list)
+      } catch {
+        if (!cancelled) setError('Failed to load rooms')
+      } finally {
+        if (!cancelled) setLoadingRooms(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const toggleRoom = (id: string) => {
+    setSelectedRoomIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    )
+  }
+
+  const nights = (() => {
+    if (!form.check_in || !form.check_out) return 0
+    const inD = new Date(form.check_in)
+    const outD = new Date(form.check_out)
+    const ms = outD.getTime() - inD.getTime()
+    const n = Math.round(ms / (1000 * 60 * 60 * 24))
+    return n > 0 ? n : 0
+  })()
+
+  const selectedRooms = rooms.filter((r) => selectedRoomIds.includes(r.id))
+  const perNight = selectedRooms.reduce((sum, r) => sum + (r.price_vt || 0), 0)
+  const total = perNight * nights
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+
+    if (selectedRoomIds.length === 0) {
+      setError('Please select at least one room')
+      return
+    }
+    if (nights <= 0) {
+      setError('Check-out must be after check-in')
+      return
+    }
+
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/bookings/group', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          group_name: form.group_name,
+          guest_name: form.guest_name,
+          guest_email: form.guest_email,
+          guest_phone: form.guest_phone || undefined,
+          check_in: form.check_in,
+          check_out: form.check_out,
+          room_ids: selectedRoomIds,
+          special_requests: form.special_requests || undefined,
+          notes: form.notes || undefined,
+        }),
+      })
+
+      if (res.status === 409) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'One or more selected rooms are not available for these dates')
+      }
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Failed to create group booking')
+      }
+
+      setSuccess(true)
+      setTimeout(async () => {
+        await onCreated()
+      }, 800)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create group booking')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+          <div className="flex items-center gap-2">
+            <Users2 className="h-5 w-5 text-teal-600" />
+            <h3 className="text-lg font-semibold text-gray-900">New Group Booking</h3>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
+          {success && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+              <CheckCircle className="h-4 w-4" />
+              Group booking created successfully
+            </div>
+          )}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Group Name *</label>
+            <input
+              type="text"
+              required
+              value={form.group_name}
+              onChange={(e) => setForm({ ...form, group_name: e.target.value })}
+              placeholder="e.g. Smith Family Holiday"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Lead Contact Name *</label>
+            <input
+              type="text"
+              required
+              value={form.guest_name}
+              onChange={(e) => setForm({ ...form, guest_name: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+              <input
+                type="email"
+                required
+                value={form.guest_email}
+                onChange={(e) => setForm({ ...form, guest_email: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <input
+                type="tel"
+                value={form.guest_phone}
+                onChange={(e) => setForm({ ...form, guest_phone: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Check-in *</label>
+              <input
+                type="date"
+                required
+                value={form.check_in}
+                onChange={(e) => setForm({ ...form, check_in: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Check-out *</label>
+              <input
+                type="date"
+                required
+                value={form.check_out}
+                onChange={(e) => setForm({ ...form, check_out: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Select Rooms *</label>
+            {loadingRooms ? (
+              <div className="flex items-center justify-center h-24 border border-gray-200 rounded-lg">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-teal-600"></div>
+              </div>
+            ) : rooms.length === 0 ? (
+              <div className="text-sm text-gray-500 border border-gray-200 rounded-lg p-4">
+                No rooms available
+              </div>
+            ) : (
+              <div className="border border-gray-200 rounded-lg divide-y divide-gray-100 max-h-64 overflow-y-auto">
+                {rooms.map((room) => {
+                  const checked = selectedRoomIds.includes(room.id)
+                  return (
+                    <label
+                      key={room.id}
+                      className={`flex items-center justify-between px-3 py-2.5 cursor-pointer hover:bg-gray-50 ${
+                        checked ? 'bg-teal-50' : ''
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => toggleRoom(room.id)}
+                          className="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-600"
+                        />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{room.name}</p>
+                          {room.type && (
+                            <p className="text-xs text-gray-500 capitalize">{room.type}</p>
+                          )}
+                        </div>
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">
+                        {formatVatu(room.price_vt || 0)}
+                        <span className="text-xs text-gray-400 font-normal"> /night</span>
+                      </span>
+                    </label>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-700">
+                <span className="font-medium">{selectedRoomIds.length}</span> room(s) selected ·{' '}
+                <span className="font-medium">{nights}</span> night{nights === 1 ? '' : 's'}
+              </span>
+              <span className="font-bold text-gray-900">
+                Total: {formatVatu(total)}
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Special Requests</label>
+            <textarea
+              value={form.special_requests}
+              rows={2}
+              onChange={(e) => setForm({ ...form, special_requests: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+            <textarea
+              value={form.notes}
+              rows={2}
+              placeholder="Internal admin notes"
+              onChange={(e) => setForm({ ...form, notes: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={submitting}
+              className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={submitting || success}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg disabled:opacity-50"
+            >
+              <Plus className="h-4 w-4" />
+              {submitting ? 'Creating...' : success ? 'Created' : 'Create Group Booking'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   )
