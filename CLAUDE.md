@@ -64,18 +64,21 @@ memory/                 # Changelog, decisions, todo
 - Voice call booking agent (ElevenLabs)
 
 ### Admin Portal (/admin/*)
-- Dashboard, bookings, rooms, guests, staff management
+- Dashboard, bookings (with edit/delete + group bookings), rooms, guests, staff
+- **Reservation Board** — visual calendar, click cells to quick-book
+- **Rates & Discounts** — % discounts with date ranges
+- **Invoices** — generate, print, mark paid (sequential ENW-XXXXX numbering)
+- **Restaurant POS** — guest tabs, send to kitchen, close & pay flow
+- **Events** — date ranges, recurring (daily/weekly/monthly), per-person pricing packages
 - Department management, roles & permissions (RBAC)
 - Housekeeping task assignments
-- Financial management & POS
+- Financial management
 - Inventory tracking
 - Internal announcements & communications (SMS, WhatsApp, Email)
 - Content management & SEO settings
 - Social media management with AI content generation
-- Video management
-- Knowledge base
-- Conference/group bookings
-- Reports & analytics
+- Video management, Knowledge base
+- Conference bookings, Reports & analytics
 
 ### Staff Portal (/staff/*)
 - Staff dashboard, internal chat, onboarding flow

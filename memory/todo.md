@@ -1,22 +1,46 @@
 # Todo — Enauwi Beach Resort
 
-## Completed (2026-04-06)
-- [x] Password hashing in all reset endpoints
-- [x] Reset token hashing (SHA-256)
-- [x] API authentication on all admin/staff endpoints
-- [x] Session management (localStorage -> httpOnly JWT cookies)
-- [x] Middleware.ts for route protection
-- [x] RLS policies migration (with table-existence guards)
-- [x] Pagination on staff and attendance APIs
-- [x] Input validation on bookings and contact
-- [x] Replace `<img>` with next/image
-- [x] Remove console.log/error from API routes
-- [x] Move Playwright to devDependencies
-- [x] Add metadataBase to root layout
-- [x] Fix module-scope client initializations
-- [x] Create CLAUDE.md, AGENTS.md, .env.example, memory/
-- [x] Rate limiting on auth endpoints (login, forgot-password, reset-password)
-- [x] CSRF token protection on public forms (login, contact, bookings, forgot-password)
+## Pending Migrations to Apply in Production
+Run these in Supabase SQL editor in order:
 
-## No Known Minor Issues Remaining
-All identified production issues have been resolved.
+1. **Group Bookings + Event Recurring/Pricing** (most recent):
+   ```sql
+   ALTER TABLE bookings ADD COLUMN IF NOT EXISTS group_id UUID;
+   ALTER TABLE bookings ADD COLUMN IF NOT EXISTS group_name TEXT;
+   ALTER TABLE bookings ADD COLUMN IF NOT EXISTS is_group_lead BOOLEAN DEFAULT false;
+   CREATE INDEX IF NOT EXISTS idx_bookings_group_id ON bookings(group_id) WHERE group_id IS NOT NULL;
+
+   ALTER TABLE events ADD COLUMN IF NOT EXISTS event_end_date DATE;
+   ALTER TABLE events ADD COLUMN IF NOT EXISTS recurring_type TEXT DEFAULT 'none';
+   ALTER TABLE events ADD COLUMN IF NOT EXISTS recurring_end_date DATE;
+   ALTER TABLE events ADD COLUMN IF NOT EXISTS recurring_occurrences INTEGER;
+   ALTER TABLE events ADD COLUMN IF NOT EXISTS recurring_parent_id UUID REFERENCES events(id) ON DELETE CASCADE;
+   ALTER TABLE events ADD COLUMN IF NOT EXISTS pricing_type TEXT DEFAULT 'flat';
+   ALTER TABLE events ADD COLUMN IF NOT EXISTS price_per_person DECIMAL(10,2);
+   ALTER TABLE events ADD COLUMN IF NOT EXISTS package_name TEXT;
+   ```
+
+2. Optional: Add bed_config and tagline columns to rooms (already gracefully handled by API):
+   ```sql
+   ALTER TABLE rooms ADD COLUMN IF NOT EXISTS bed_config TEXT;
+   ALTER TABLE rooms ADD COLUMN IF NOT EXISTS tagline TEXT;
+   ```
+
+## Recently Completed
+- Group bookings (multi-room reservations with shared group_id)
+- Calendar click-to-book on reservation board (single click + drag-range)
+- Event date range, recurring (daily/weekly/monthly), per-person pricing
+- Booking edit (change dates, names, all fields)
+- POS tab system (running bills, send to kitchen, close & pay)
+- Discount management, invoice generation, reservation board
+- Security hardening (JWT cookies, RLS, password hashing, rate limiting)
+
+## Future Enhancements
+- [ ] Generate child event records for recurring events (currently pattern-only)
+- [ ] Recurring booking patterns (weekly housekeeping, scheduled maintenance)
+- [ ] Group booking checkout flow on the public guest site
+- [ ] Bulk operations on bookings (mass cancel, mass status change)
+- [ ] Inventory integration for menu items (auto-deduct stock)
+- [ ] Multi-currency support
+- [ ] Mobile-optimised admin layouts (some pages still desktop-first)
+- [ ] Stripe/payment processor integration for online card payments

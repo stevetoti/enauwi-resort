@@ -1,5 +1,77 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-04-11 — Group Bookings, Calendar Click-to-Book, Event Recurring & Per-Person Pricing
+
+### Group Bookings (multi-room reservations)
+- New `POST /api/bookings/group` creates linked bookings sharing a `group_id`
+- Admin "+ New Group Booking" button on `/admin/bookings`
+- Multi-room checkbox picker with live total calculation
+- Bookings table shows "Group" badge for grouped reservations
+- One contact, multiple rooms, all booked atomically with conflict checking
+
+### Reservation Board: Click-to-Book
+- Empty cells on `/admin/reservation-board` are now clickable
+- Click opens Quick Book modal pre-filled with room and date
+- Drag across cells to select date range (multi-day bookings)
+- Hover shows + icon on empty cells
+- Existing booking bars still show detail popovers (no regression)
+
+### Events Page Updates
+- **Date range:** Replaced single Date with Start Date + End Date fields
+- **Recurring events:** Dropdown for None/Daily/Weekly/Monthly with end date
+- **Per-person pricing:** Toggle between Flat Rate and Per Person
+  - Per Person mode: package name (e.g. "Bronze Birthday Package") + price per person
+  - Total auto-calculated from attendees × price_per_person
+- Display: date ranges shown as "Apr 12 - Apr 14", "Repeats Weekly" badges, per-person breakdown
+
+### Database (migration 20260411_group_bookings_event_recurring.sql)
+- bookings: added group_id, group_name, is_group_lead
+- events: added event_end_date, recurring_type, recurring_end_date, recurring_occurrences, recurring_parent_id, pricing_type, price_per_person, package_name
+
+---
+
+## 2026-04-11 — Booking Edit + Email & Booking Reliability Fixes
+
+### Booking Edit
+- New "+ Edit" button (pencil icon) on every booking row
+- Edit modal: change guest name, email, phone, dates, guests, notes
+- Date changes validated for room conflicts before saving
+- `PATCH /api/bookings/[id]` now supports all field updates (was status-only)
+- New `GET /api/bookings/[id]` for fetching single booking
+
+### Critical Reliability Fixes
+- **Booking failures (intermittent):** Removed CSRF requirement from public POST endpoints (bookings, contact)
+  - Root cause: CSRF tokens have 4-hour TTL; expired tokens caused silent 403 errors
+  - Public guest forms don't need CSRF (SameSite:lax cookies already prevent cross-origin POSTs)
+- **Email notifications not sending:** Same root cause — bookings were failing before notifications could fire
+- **Room availability overlap bug:** Date overlap query used `.or()` (matched almost every booking)
+  - Fixed: changed to `.lt()` + `.gt()` for proper AND-based date range overlap
+  - Added `pending` to conflict status checks to prevent double-booking during processing
+
+---
+
+## 2026-04-08 — Room Creation & Booking Deletion Fixes
+
+### Room Creation Fix
+- Bug: Insert silently failed because `bed_config`/`tagline` columns don't exist in production
+- Fix: API now skips optional columns and auto-retries without them on column-missing errors
+- Add Room modal got full feature parity with Edit modal (image upload, tagline, bed config)
+
+### Booking Deletion Fix
+- Bug: Deletion appeared to succeed but row remained
+- Root cause: Used client-side Supabase (anon key) which is blocked by RLS
+- Fix: Routed through `DELETE /api/bookings?id=xxx` (service role)
+- Also deletes linked invoices first to prevent FK errors
+- Removes from UI immediately on success
+
+### Booking Page UX
+- Booked rooms now shown greyed out with red "BOOKED" badge instead of being hidden
+- "Sold Out" disabled button on booked rooms
+- Available rooms sort to top, booked to bottom
+- Same room can now be booked for non-overlapping dates
+
+---
+
 ## 2026-04-07 — Restaurant POS Rewrite: Guest Tab System
 
 ### POS Tab System

@@ -1,5 +1,35 @@
 # Decisions — Enauwi Beach Resort
 
+## 2026-04-11 — Group Bookings via group_id (no junction table)
+- **Context:** Team needed multi-room reservations (group/family bookings)
+- **Decision:** Store one booking row per room, link with shared `group_id` UUID + `group_name`. Mark first as `is_group_lead`.
+- **Reason:** Avoids a junction table or schema overhaul. Each booking still has its own status/dates/room — preserves all existing booking logic (availability checks, edits, deletions, status transitions). Group simply means "these were booked together by the same contact."
+
+## 2026-04-11 — Recurring Events: Pattern-Only (no expansion)
+- **Context:** Events needed to support recurring (weekly birthdays, daily tours, etc.)
+- **Decision:** Store recurring pattern fields (`recurring_type`, `recurring_end_date`) on parent event. Don't auto-generate child event rows.
+- **Reason:** Simpler — calendar UI can interpret the pattern when displaying. Avoids cascade complications when a recurring event is edited or cancelled. Future enhancement: add child event generation if needed for individual instance overrides.
+
+## 2026-04-11 — Removed CSRF from Public Forms
+- **Context:** CSRF tokens have 4-hour TTL; intermittent booking failures occurred when guests had pages open longer
+- **Decision:** Removed `requireCsrf()` from public POST endpoints (bookings, contact). Kept on authenticated forms (login, forgot-password).
+- **Reason:** CSRF protects against attacks on authenticated sessions. Public guest forms don't have authenticated sessions to protect. SameSite:lax cookies already prevent cross-origin POSTs from succeeding without explicit user navigation.
+
+## 2026-04-11 — Date Overlap Query: AND not OR
+- **Context:** Room availability checks were marking nearly every room as booked
+- **Decision:** Replaced `.or('check_in.lte.${checkOut},check_out.gte.${checkIn}')` with chained `.lt('check_in', checkOut).gt('check_out', checkIn)`
+- **Reason:** Date overlap detection requires both conditions true (AND), not either (OR). The OR version matched any booking that started before OR ended after — almost everything. Chained Supabase filters create AND.
+
+## 2026-04-08 — Resilient Inserts for Optional Columns
+- **Context:** Production schema lacked some optional columns (`bed_config`, `tagline`) that newer code referenced
+- **Decision:** API inserts skip optional columns by default; auto-retry without them on column-missing errors
+- **Reason:** Avoids forcing migrations to deploy code changes. New optional fields gracefully degrade in environments where the column doesn't exist yet.
+
+## 2026-04-07 — POS Tabs: Reuse pos_orders Table
+- **Context:** Team needed running tabs (open bills that stay open until guest pays)
+- **Decision:** Added `tab_status` ('open'/'closed') and related fields to existing `pos_orders` table instead of new `pos_tabs` table
+- **Reason:** Tabs ARE pos_orders — just orders that haven't been paid yet. JSONB items column already supports multi-item orders. Avoids duplicate code paths for tab vs. immediate-sale flows.
+
 ## 2026-04-06 — JWT Session with jose Library
 - **Context:** App used localStorage for staff sessions (XSS-vulnerable, no server validation, no expiry)
 - **Decision:** Implemented JWT tokens stored in httpOnly cookies using the `jose` library
