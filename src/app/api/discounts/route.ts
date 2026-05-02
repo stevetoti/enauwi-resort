@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Name, discount_percent, start_date, and end_date are required' }, { status: 400 })
     }
 
-    if (discount_percent < 1 || discount_percent > 100) {
-      return NextResponse.json({ error: 'Discount must be between 1% and 100%' }, { status: 400 })
+    if (discount_percent <= 0 || discount_percent > 100) {
+      return NextResponse.json({ error: 'Discount must be greater than 0% and at most 100%' }, { status: 400 })
     }
 
     const { data, error } = await supabaseAdmin
