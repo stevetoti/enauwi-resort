@@ -15,6 +15,8 @@ import {
   AlertCircle,
   ArrowLeft,
   Clock,
+  Download,
+  Trash2,
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { csrfHeaders } from '@/lib/csrf-client'
@@ -68,7 +70,88 @@ interface Invoice {
 // ---------------------------------------------------------------------------
 
 function formatCurrency(amount: number): string {
-  return `VT ${amount.toLocaleString('en-US')}`
+  return `VT ${(amount || 0).toLocaleString('en-US')}`
+}
+
+// Safe date — manual invoices may have no dates
+function safeDate(value: string | null | undefined): string {
+  if (!value) return '—'
+  const d = new Date(value)
+  return isNaN(d.getTime()) ? '—' : formatDate(value)
+}
+
+// Build a Word-openable (.doc) HTML document for an invoice/receipt
+function buildInvoiceWordHtml(invoice: Invoice, isReceipt: boolean): string {
+  const docTitle = isReceipt ? 'RECEIPT' : 'INVOICE'
+  const rows =
+    invoice.items && invoice.items.length > 0
+      ? invoice.items
+      : [{ id: 'base', description: invoice.room_name || 'Accommodation', quantity: invoice.num_nights, unit_price: invoice.base_rate, total: invoice.base_total, item_type: 'accommodation' }]
+
+  const itemRows = rows
+    .map(
+      (it) => `<tr>
+        <td style="padding:6px 8px;border-bottom:1px solid #e2e8f0;">${it.description}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #e2e8f0;text-align:center;">${it.quantity ?? ''}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #e2e8f0;text-align:right;">${formatCurrency(it.unit_price)}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #e2e8f0;text-align:right;">${formatCurrency(it.total)}</td>
+      </tr>`
+    )
+    .join('')
+
+  const datesBlock =
+    invoice.check_in || invoice.check_out
+      ? `<p style="margin:2px 0;"><b>Check-in:</b> ${safeDate(invoice.check_in)} &nbsp; <b>Check-out:</b> ${safeDate(invoice.check_out)}${invoice.num_guests ? ` &nbsp; <b>Guests:</b> ${invoice.num_guests}` : ''}</p>`
+      : ''
+
+  return `<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="utf-8"><title>${docTitle} ${invoice.invoice_number}</title></head>
+<body style="font-family:Calibri,Arial,sans-serif;color:#1f2937;font-size:11pt;">
+  <table style="width:100%;border-collapse:collapse;margin-bottom:16px;"><tr>
+    <td style="vertical-align:top;">
+      <div style="font-size:18pt;font-weight:bold;color:#0f766e;">E'NAUWI BEACH RESORT</div>
+      <div style="color:#6b7280;">South East Efate, Vanuatu</div>
+      <div style="color:#6b7280;">+678 22170 · reservation@enauwibeachresort.com</div>
+    </td>
+    <td style="vertical-align:top;text-align:right;font-size:16pt;font-weight:bold;color:#0f766e;">${docTitle}</td>
+  </tr></table>
+  <table style="width:100%;border-collapse:collapse;margin-bottom:14px;"><tr>
+    <td style="vertical-align:top;">
+      <p style="margin:2px 0;"><b>${docTitle} Number:</b> ${invoice.invoice_number}</p>
+      <p style="margin:2px 0;"><b>Date:</b> ${safeDate(invoice.issued_at)}</p>
+      ${isReceipt && invoice.paid_at ? `<p style="margin:2px 0;"><b>Payment Date:</b> ${safeDate(invoice.paid_at)}</p>` : ''}
+    </td>
+    <td style="vertical-align:top;text-align:right;">
+      <p style="margin:2px 0;"><b>Bill To</b></p>
+      <p style="margin:2px 0;">${invoice.guest_name}</p>
+      ${invoice.guest_email ? `<p style="margin:2px 0;color:#6b7280;">${invoice.guest_email}</p>` : ''}
+      ${invoice.guest_phone ? `<p style="margin:2px 0;color:#6b7280;">${invoice.guest_phone}</p>` : ''}
+    </td>
+  </tr></table>
+  <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;margin-bottom:14px;">
+    <thead><tr style="background:#f1f5f9;">
+      <th style="padding:8px;text-align:left;">Description</th>
+      <th style="padding:8px;text-align:center;">Qty</th>
+      <th style="padding:8px;text-align:right;">Unit Price</th>
+      <th style="padding:8px;text-align:right;">Total</th>
+    </tr></thead>
+    <tbody>${itemRows}</tbody>
+  </table>
+  <table style="width:100%;border-collapse:collapse;margin-bottom:14px;"><tr><td></td>
+    <td style="width:260px;">
+      <table style="width:100%;border-collapse:collapse;">
+        <tr><td style="padding:3px 0;color:#6b7280;">Subtotal</td><td style="padding:3px 0;text-align:right;">${formatCurrency(invoice.subtotal)}</td></tr>
+        ${invoice.discount_amount > 0 ? `<tr><td style="padding:3px 0;color:#15803d;">Discount${invoice.discount_name ? ` (${invoice.discount_name})` : ''} ${invoice.discount_percent ? `${invoice.discount_percent}%` : ''}</td><td style="padding:3px 0;text-align:right;color:#15803d;">-${formatCurrency(invoice.discount_amount)}</td></tr>` : ''}
+        <tr><td style="padding:6px 0;border-top:2px solid #0f766e;font-weight:bold;font-size:13pt;">Total</td><td style="padding:6px 0;border-top:2px solid #0f766e;text-align:right;font-weight:bold;font-size:13pt;">${formatCurrency(invoice.total)}</td></tr>
+      </table>
+    </td>
+  </tr></table>
+  <p style="margin:2px 0;"><b>Payment:</b> ${invoice.payment_method || 'Not specified'} &nbsp; <b>Status:</b> ${(invoice.payment_status || 'unpaid').toUpperCase()}</p>
+  ${datesBlock}
+  ${invoice.notes ? `<p style="margin:8px 0 2px;"><b>Notes:</b> ${invoice.notes}</p>` : ''}
+  <p style="margin-top:24px;text-align:center;color:#0f766e;font-weight:bold;">Thank you for choosing E'Nauwi Beach Resort!</p>
+  <p style="text-align:center;color:#9ca3af;font-size:9pt;">www.enauwibeachresort.org</p>
+</body></html>`
 }
 
 function statusBadge(status: string) {
@@ -360,6 +443,226 @@ function GenerateModal({
 }
 
 // ---------------------------------------------------------------------------
+// Manual Invoice Modal — create an invoice without a booking
+// ---------------------------------------------------------------------------
+
+interface LineItemInput {
+  description: string
+  quantity: number
+  unit_price: number
+}
+
+function ManualInvoiceModal({
+  open,
+  onClose,
+  onCreated,
+}: {
+  open: boolean
+  onClose: () => void
+  onCreated: () => void
+}) {
+  const [guestName, setGuestName] = useState('')
+  const [guestEmail, setGuestEmail] = useState('')
+  const [guestPhone, setGuestPhone] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState('property')
+  const [paymentStatus, setPaymentStatus] = useState('unpaid')
+  const [discountPercent, setDiscountPercent] = useState(0)
+  const [notes, setNotes] = useState('')
+  const [items, setItems] = useState<LineItemInput[]>([{ description: '', quantity: 1, unit_price: 0 }])
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  function reset() {
+    setGuestName(''); setGuestEmail(''); setGuestPhone(''); setPaymentMethod('property')
+    setPaymentStatus('unpaid'); setDiscountPercent(0); setNotes('')
+    setItems([{ description: '', quantity: 1, unit_price: 0 }]); setError('')
+  }
+
+  const updateItem = (i: number, patch: Partial<LineItemInput>) =>
+    setItems((prev) => prev.map((it, idx) => (idx === i ? { ...it, ...patch } : it)))
+  const addItem = () => setItems((prev) => [...prev, { description: '', quantity: 1, unit_price: 0 }])
+  const removeItem = (i: number) => setItems((prev) => (prev.length > 1 ? prev.filter((_, idx) => idx !== i) : prev))
+
+  const subtotal = items.reduce((s, it) => s + (Number(it.quantity) || 0) * (Number(it.unit_price) || 0), 0)
+  const discountAmount = Math.round(subtotal * (Number(discountPercent) || 0) / 100)
+  const total = subtotal - discountAmount
+
+  async function handleCreate() {
+    setError('')
+    if (!guestName.trim()) { setError('Guest name is required'); return }
+    if (!items.some((it) => it.description.trim())) { setError('Add at least one line item with a description'); return }
+    setSaving(true)
+    try {
+      const res = await fetch('/api/invoices', {
+        method: 'POST',
+        headers: csrfHeaders(),
+        body: JSON.stringify({
+          guest_name: guestName,
+          guest_email: guestEmail || undefined,
+          guest_phone: guestPhone || undefined,
+          payment_method: paymentMethod,
+          payment_status: paymentStatus,
+          discount_percent: Number(discountPercent) || 0,
+          notes: notes || undefined,
+          items: items.filter((it) => it.description.trim()),
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Failed to create invoice')
+      }
+      reset()
+      onCreated()
+      onClose()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (!open) return null
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        onClick={onClose}
+      >
+        <motion.div
+          className="w-full max-w-2xl max-h-[88vh] flex flex-col rounded-2xl bg-white shadow-xl"
+          initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between border-b px-6 py-4">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">New Manual Invoice</h2>
+              <p className="text-sm text-gray-500">Create an invoice with custom line items (no booking required)</p>
+            </div>
+            <button onClick={onClose} className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+            {error && (
+              <div className="flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+                <AlertCircle className="h-4 w-4 shrink-0" /> {error}
+              </div>
+            )}
+
+            {/* Guest */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="sm:col-span-1">
+                <label className="block text-xs font-medium text-gray-600 mb-1">Bill To (name) *</label>
+                <input value={guestName} onChange={(e) => setGuestName(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Email</label>
+                <input type="email" value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Phone</label>
+                <input value={guestPhone} onChange={(e) => setGuestPhone(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500" />
+              </div>
+            </div>
+
+            {/* Line items */}
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Line Items *</label>
+              <div className="space-y-2">
+                {items.map((it, i) => (
+                  <div key={i} className="flex gap-2 items-start">
+                    <input placeholder="Description" value={it.description}
+                      onChange={(e) => updateItem(i, { description: e.target.value })}
+                      className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500" />
+                    <input type="number" min={0} placeholder="Qty" value={it.quantity}
+                      onChange={(e) => updateItem(i, { quantity: parseFloat(e.target.value) || 0 })}
+                      className="w-16 rounded-lg border border-gray-300 px-2 py-2 text-sm text-center focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500" />
+                    <input type="number" min={0} placeholder="Unit VT" value={it.unit_price}
+                      onChange={(e) => updateItem(i, { unit_price: parseFloat(e.target.value) || 0 })}
+                      className="w-28 rounded-lg border border-gray-300 px-2 py-2 text-sm text-right focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500" />
+                    <div className="w-28 px-2 py-2 text-sm text-right text-gray-600">{formatCurrency((Number(it.quantity) || 0) * (Number(it.unit_price) || 0))}</div>
+                    <button onClick={() => removeItem(i)} disabled={items.length === 1}
+                      className="p-2 text-gray-400 hover:text-red-600 disabled:opacity-30">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button onClick={addItem} className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-teal-700 hover:text-teal-800">
+                <Plus className="h-3.5 w-3.5" /> Add line item
+              </button>
+            </div>
+
+            {/* Discount + payment */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Discount %</label>
+                <input type="number" min={0} max={100} step="0.1" value={discountPercent}
+                  onChange={(e) => setDiscountPercent(parseFloat(e.target.value) || 0)}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Payment Method</label>
+                <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500">
+                  <option value="property">Pay at property</option>
+                  <option value="credit_card">Credit card</option>
+                  <option value="bank_transfer">Bank transfer</option>
+                  <option value="cash">Cash</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Status</label>
+                <select value={paymentStatus} onChange={(e) => setPaymentStatus(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500">
+                  <option value="unpaid">Unpaid</option>
+                  <option value="partial">Partial</option>
+                  <option value="paid">Paid</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Notes</label>
+              <textarea value={notes} rows={2} onChange={(e) => setNotes(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500" />
+            </div>
+
+            {/* Totals preview */}
+            <div className="flex justify-end">
+              <div className="w-56 space-y-1 text-sm">
+                <div className="flex justify-between text-gray-600"><span>Subtotal</span><span>{formatCurrency(subtotal)}</span></div>
+                {discountAmount > 0 && (
+                  <div className="flex justify-between text-green-700"><span>Discount {discountPercent}%</span><span>-{formatCurrency(discountAmount)}</span></div>
+                )}
+                <div className="flex justify-between border-t border-gray-200 pt-1 font-bold text-gray-900"><span>Total</span><span>{formatCurrency(total)}</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 border-t px-6 py-3">
+            <button onClick={onClose} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              Cancel
+            </button>
+            <button onClick={handleCreate} disabled={saving}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800 disabled:opacity-50">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
+              Create Invoice
+            </button>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Invoice Detail / Print View
 // ---------------------------------------------------------------------------
 
@@ -397,6 +700,19 @@ function InvoiceDetail({
 
   function handlePrint() {
     window.print()
+  }
+
+  function handleDownloadWord() {
+    const html = buildInvoiceWordHtml(invoice, receiptMode)
+    const blob = new Blob(['﻿', html], { type: 'application/msword' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${receiptMode ? 'Receipt' : 'Invoice'}-${invoice.invoice_number}.doc`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
   }
 
   const docTitle = receiptMode ? 'RECEIPT' : 'INVOICE'
@@ -440,10 +756,17 @@ function InvoiceDetail({
         )}
 
         <button
+          onClick={handleDownloadWord}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          <Download className="h-4 w-4" /> Word
+        </button>
+
+        <button
           onClick={handlePrint}
           className="inline-flex items-center gap-1.5 rounded-lg bg-teal-700 px-3 py-2 text-sm font-medium text-white hover:bg-teal-800"
         >
-          <Printer className="h-4 w-4" /> Print
+          <Printer className="h-4 w-4" /> Print / PDF
         </button>
       </div>
 
@@ -481,11 +804,11 @@ function InvoiceDetail({
             </p>
             <p className="mt-1 text-lg font-bold text-gray-900">{invoice.invoice_number}</p>
             <p className="mt-0.5 text-sm text-gray-500">
-              Date: {formatDate(invoice.issued_at)}
+              Date: {safeDate(invoice.issued_at)}
             </p>
             {receiptMode && invoice.paid_at && (
               <p className="mt-0.5 text-sm text-gray-500">
-                Payment Date: {formatDate(invoice.paid_at)}
+                Payment Date: {safeDate(invoice.paid_at)}
               </p>
             )}
           </div>
@@ -595,13 +918,13 @@ function InvoiceDetail({
           </div>
           <div className="space-y-1.5">
             <p className="text-gray-500">
-              <span className="font-medium text-gray-700">Check-in:</span> {formatDate(invoice.check_in)}
+              <span className="font-medium text-gray-700">Check-in:</span> {safeDate(invoice.check_in)}
             </p>
             <p className="text-gray-500">
-              <span className="font-medium text-gray-700">Check-out:</span> {formatDate(invoice.check_out)}
+              <span className="font-medium text-gray-700">Check-out:</span> {safeDate(invoice.check_out)}
             </p>
             <p className="text-gray-500">
-              <span className="font-medium text-gray-700">Guests:</span> {invoice.num_guests}
+              <span className="font-medium text-gray-700">Guests:</span> {invoice.num_guests || '—'}
             </p>
           </div>
         </div>
@@ -641,6 +964,7 @@ export default function AdminInvoicesPage() {
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [showGenerateModal, setShowGenerateModal] = useState(false)
+  const [showManualModal, setShowManualModal] = useState(false)
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
 
@@ -738,13 +1062,22 @@ export default function AdminInvoicesPage() {
             Generate and manage invoices for guest bookings
           </p>
         </div>
-        <button
-          onClick={() => setShowGenerateModal(true)}
-          className="inline-flex items-center gap-2 rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-teal-800 transition-colors"
-        >
-          <Plus className="h-4 w-4" />
-          Generate from Booking
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowManualModal(true)}
+            className="inline-flex items-center gap-2 rounded-xl border border-teal-700 px-4 py-2.5 text-sm font-medium text-teal-700 hover:bg-teal-50 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            New Manual Invoice
+          </button>
+          <button
+            onClick={() => setShowGenerateModal(true)}
+            className="inline-flex items-center gap-2 rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-teal-800 transition-colors"
+          >
+            <FileText className="h-4 w-4" />
+            Generate from Booking
+          </button>
+        </div>
       </div>
 
       {/* Search */}
@@ -809,7 +1142,7 @@ export default function AdminInvoicesPage() {
                     <td className="px-4 py-3 text-gray-800">{inv.guest_name}</td>
                     <td className="hidden px-4 py-3 text-gray-600 md:table-cell">{inv.room_name}</td>
                     <td className="hidden px-4 py-3 text-gray-500 lg:table-cell">
-                      {formatDate(inv.check_in)} &ndash; {formatDate(inv.check_out)}
+                      {inv.check_in ? `${safeDate(inv.check_in)} – ${safeDate(inv.check_out)}` : '—'}
                     </td>
                     <td className="px-4 py-3 text-right font-medium text-gray-800">
                       {formatCurrency(inv.total)}
@@ -838,6 +1171,13 @@ export default function AdminInvoicesPage() {
         open={showGenerateModal}
         onClose={() => setShowGenerateModal(false)}
         onGenerated={fetchInvoices}
+      />
+
+      {/* Manual Invoice Modal */}
+      <ManualInvoiceModal
+        open={showManualModal}
+        onClose={() => setShowManualModal(false)}
+        onCreated={fetchInvoices}
       />
     </div>
   )

@@ -2,6 +2,100 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { requireAuth } from '@/lib/auth'
 
+// ── Next sequential invoice number (ENW-00001) ──────────────────
+async function nextInvoiceNumber(): Promise<string> {
+  const { data: counter } = await supabaseAdmin
+    .from('invoice_counter')
+    .select('last_number')
+    .eq('id', 1)
+    .single()
+
+  const nextNumber = (counter?.last_number || 0) + 1
+  await supabaseAdmin.from('invoice_counter').update({ last_number: nextNumber }).eq('id', 1)
+  return `ENW-${String(nextNumber).padStart(5, '0')}`
+}
+
+// ── Create a manual invoice (no booking) from custom line items ──
+async function createManualInvoice(body: Record<string, unknown>): Promise<NextResponse> {
+  const guestName = String(body.guest_name || '').trim()
+  if (!guestName) {
+    return NextResponse.json({ error: 'Guest name is required' }, { status: 400 })
+  }
+
+  const rawItems = body.items as Array<Record<string, unknown>>
+  const items = rawItems
+    .map((it) => {
+      const description = String(it.description || '').trim()
+      const quantity = Number(it.quantity) || 0
+      const unit_price = Number(it.unit_price) || 0
+      return { description, quantity, unit_price, total: Math.round(quantity * unit_price) }
+    })
+    .filter((it) => it.description.length > 0)
+
+  if (items.length === 0) {
+    return NextResponse.json({ error: 'At least one line item with a description is required' }, { status: 400 })
+  }
+
+  const baseTotal = items.reduce((sum, it) => sum + it.total, 0)
+  const discountPercent = Number(body.discount_percent) || 0
+  const discountAmount = Math.round(baseTotal * discountPercent / 100)
+  const subtotal = baseTotal - discountAmount
+  const total = subtotal // Vanuatu has no VAT
+
+  const invoiceNumber = await nextInvoiceNumber()
+
+  const { data: invoice, error: invoiceError } = await supabaseAdmin
+    .from('invoices')
+    .insert({
+      booking_id: null,
+      invoice_number: invoiceNumber,
+      guest_name: guestName,
+      guest_email: body.guest_email ? String(body.guest_email) : null,
+      guest_phone: body.guest_phone ? String(body.guest_phone) : null,
+      room_name: body.room_name ? String(body.room_name) : null,
+      check_in: body.check_in ? String(body.check_in) : null,
+      check_out: body.check_out ? String(body.check_out) : null,
+      num_nights: body.num_nights ? Number(body.num_nights) : null,
+      num_guests: body.num_guests ? Number(body.num_guests) : null,
+      base_rate: null,
+      base_total: baseTotal,
+      discount_name: body.discount_name ? String(body.discount_name) : null,
+      discount_percent: discountPercent,
+      discount_amount: discountAmount,
+      subtotal,
+      tax_percent: 0,
+      tax_amount: 0,
+      total,
+      payment_method: body.payment_method ? String(body.payment_method) : 'property',
+      payment_status: body.payment_status ? String(body.payment_status) : 'unpaid',
+      notes: body.notes ? String(body.notes) : null,
+      special_requests: null,
+    })
+    .select()
+    .single()
+
+  if (invoiceError) throw invoiceError
+
+  await supabaseAdmin.from('invoice_items').insert(
+    items.map((it) => ({
+      invoice_id: invoice.id,
+      description: it.description,
+      quantity: it.quantity,
+      unit_price: it.unit_price,
+      total: it.total,
+      item_type: 'custom',
+    }))
+  )
+
+  const { data: fullInvoice } = await supabaseAdmin
+    .from('invoices')
+    .select('*, items:invoice_items(*)')
+    .eq('id', invoice.id)
+    .single()
+
+  return NextResponse.json(fullInvoice, { status: 201 })
+}
+
 // GET invoices
 export async function GET(request: NextRequest) {
   try {
@@ -40,8 +134,14 @@ export async function POST(request: NextRequest) {
     const session = await requireAuth(request)
     if (session instanceof NextResponse) return session
 
-    const { booking_id } = await request.json()
+    const body = await request.json()
 
+    // ── Manual invoice (no booking) — custom line items ──────────
+    if (Array.isArray(body.items) && body.items.length > 0) {
+      return await createManualInvoice(body)
+    }
+
+    const booking_id = body.booking_id
     if (!booking_id) {
       return NextResponse.json({ error: 'booking_id is required' }, { status: 400 })
     }

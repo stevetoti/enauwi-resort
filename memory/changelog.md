@@ -1,5 +1,23 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-06-05 — [Claude Code] Manual invoices + Word (.doc) export
+
+Team request: generate invoices manually (without a booking) and download invoices/receipts as Word documents.
+
+### Manual / standalone invoices
+- `POST /api/invoices` now accepts a manual payload (`items[]` present, no `booking_id`) → `createManualInvoice()`: guest details + custom line items, auto-numbered (ENW-XXXXX), `booking_id` null, optional discount
+- New **"New Manual Invoice"** button + `ManualInvoiceModal` on `/admin/invoices`: bill-to, dynamic line items (description/qty/unit price) with live row + total calc, discount %, payment method/status, notes
+- Refactored invoice-number generation into shared `nextInvoiceNumber()`
+
+### Word (.doc) export
+- New **"Word"** button in the invoice detail toolbar (alongside Print/PDF) → downloads a Word-openable `.doc` via `buildInvoiceWordHtml()` (respects Receipt mode)
+- Works for both booking-based and manual invoices
+
+### Robustness
+- Added `safeDate()` guard so manual invoices with no dates render "—" instead of crashing (formatDate throws on null); applied in list + detail views
+
+Verified: `tsc --noEmit` clean, `npm run build` clean, runtime E2E screenshots captured (client-reports/screenshots/ 5–7).
+
 ## 2026-06-05 — [Claude Code] Change room type when editing a booking + auto revised guest message
 
 Team request (GM/ops): allow changing room type during booking edit, and auto-send a revised message to the guest when changes are made.
