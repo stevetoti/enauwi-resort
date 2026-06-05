@@ -18,7 +18,7 @@ Team request (GM/ops): allow changing room type during booking edit, and auto-se
 ### Bug fix
 - Availability/conflict check on booking edit now also runs when **room changes** (previously only on date change), preventing edits into an already-booked room
 
-Verified: `tsc --noEmit` clean, `npm run build` compiles successfully. Live domain confirmed = https://www.enauwibeachresort.org.
+Verified: `tsc --noEmit` clean, `npm run build` compiles successfully. E2E screenshots captured (client-reports/screenshots/, gitignored). **Deployed to production 2026-06-05** (dpl_ANadWyNfkcJtMYez8q4EP5jN5Hqv) — live on https://www.enauwibeachresort.org. Live domain confirmed = www.enauwibeachresort.org (linked to Vercel project).
 
 ## 2026-04-11 — Group Bookings, Calendar Click-to-Book, Event Recurring & Per-Person Pricing
 
