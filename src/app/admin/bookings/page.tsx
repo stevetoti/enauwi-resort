@@ -448,14 +448,43 @@ function BookingEditModal({
     guest_name: booking.guest_name,
     guest_email: booking.guest_email,
     guest_phone: booking.guest_phone || '',
+    room_id: booking.room_id || '',
     check_in: booking.check_in?.split('T')[0] || '',
     check_out: booking.check_out?.split('T')[0] || '',
     num_guests: booking.num_guests || 1,
+    total_price: booking.total_price || 0,
     special_requests: booking.special_requests || '',
     notes: booking.notes || '',
   })
+  const [rooms, setRooms] = useState<Room[]>([])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+
+  // Load room list for the room-type selector
+  useEffect(() => {
+    const supabase = createClientSupabase()
+    supabase
+      .from('rooms')
+      .select('*')
+      .order('name')
+      .then(({ data }) => {
+        if (data) setRooms(data as Room[])
+      })
+  }, [])
+
+  const nightsFor = (checkIn: string, checkOut: string) => {
+    if (!checkIn || !checkOut) return 0
+    const diff = (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000
+    return diff > 0 ? Math.ceil(diff) : 0
+  }
+  const nights = nightsFor(form.check_in, form.check_out)
+
+  // Suggested total = selected room nightly rate × nights (staff can override)
+  const suggestTotal = (roomId: string, checkIn: string, checkOut: string, fallback: number) => {
+    const room = rooms.find((r) => r.id === roomId)
+    const n = nightsFor(checkIn, checkOut)
+    return room && n > 0 ? room.price_vt * n : fallback
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -521,26 +550,50 @@ function BookingEditModal({
             </div>
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
+            <select value={form.room_id}
+              onChange={(e) => setForm({ ...form, room_id: e.target.value, total_price: suggestTotal(e.target.value, form.check_in, form.check_out, form.total_price) })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-teal-600 focus:border-transparent">
+              <option value="">Select a room…</option>
+              {rooms.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name} — {formatVatu(r.price_vt)}/night
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Check-in *</label>
               <input type="date" required value={form.check_in}
-                onChange={(e) => setForm({ ...form, check_in: e.target.value })}
+                onChange={(e) => setForm({ ...form, check_in: e.target.value, total_price: suggestTotal(form.room_id, e.target.value, form.check_out, form.total_price) })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Check-out *</label>
               <input type="date" required value={form.check_out}
-                onChange={(e) => setForm({ ...form, check_out: e.target.value })}
+                onChange={(e) => setForm({ ...form, check_out: e.target.value, total_price: suggestTotal(form.room_id, form.check_in, e.target.value, form.total_price) })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent" />
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Number of Guests</label>
-            <input type="number" min={1} max={10} value={form.num_guests}
-              onChange={(e) => setForm({ ...form, num_guests: parseInt(e.target.value) || 1 })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Number of Guests</label>
+              <input type="number" min={1} max={10} value={form.num_guests}
+                onChange={(e) => setForm({ ...form, num_guests: parseInt(e.target.value) || 1 })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Total Price (VT){nights > 0 ? <span className="text-gray-400 font-normal"> · {nights} night{nights > 1 ? 's' : ''}</span> : null}
+              </label>
+              <input type="number" min={0} value={form.total_price}
+                onChange={(e) => setForm({ ...form, total_price: parseInt(e.target.value) || 0 })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-600 focus:border-transparent" />
+            </div>
           </div>
 
           <div>
@@ -559,9 +612,13 @@ function BookingEditModal({
           </div>
 
           <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-500">
-            Room: <span className="font-medium text-gray-700">{booking.room?.name || 'N/A'}</span>
-            {' · '}Status: <span className="font-medium text-gray-700">{booking.status.replace('_', ' ')}</span>
-            {booking.total_price ? <>{' · '}Total: <span className="font-medium text-gray-700">{formatVatu(booking.total_price)}</span></> : null}
+            Status: <span className="font-medium text-gray-700">{booking.status.replace('_', ' ')}</span>
+            {' · '}Original total: <span className="font-medium text-gray-700">{booking.total_price ? formatVatu(booking.total_price) : 'N/A'}</span>
+          </div>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-700 flex gap-2">
+            <span aria-hidden>✉️</span>
+            <span>Changing the room, dates, guests or price will automatically email{booking.guest_phone ? ' & SMS' : ''} the guest a revised confirmation.</span>
           </div>
 
           <div className="flex gap-3 pt-2">

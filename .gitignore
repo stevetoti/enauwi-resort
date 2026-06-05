@@ -42,3 +42,4 @@ public/images/resort/originals/
 .env.production
 .env.development
 *.key
+client-reports/

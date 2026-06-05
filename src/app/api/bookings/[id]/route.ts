@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceSupabase } from '@/lib/supabase-server'
 import { requireAuth } from '@/lib/auth'
+import { sendBookingUpdateNotifications } from '@/lib/notifications'
+import { getDaysBetween } from '@/lib/utils'
 
 // GET single booking
 export async function GET(
@@ -84,8 +86,8 @@ export async function PATCH(
       return NextResponse.json({ error: 'No fields to update' }, { status: 400 })
     }
 
-    // If dates changed, check for conflicts
-    if (updates.check_in || updates.check_out) {
+    // If dates OR room changed, re-check availability (excludes this booking)
+    if (updates.check_in || updates.check_out || updates.room_id) {
       const newCheckIn = (updates.check_in || currentBooking.check_in) as string
       const newCheckOut = (updates.check_out || currentBooking.check_out) as string
       const roomId = (updates.room_id || currentBooking.room_id) as string
@@ -112,6 +114,42 @@ export async function PATCH(
       .single()
 
     if (updateError) throw updateError
+
+    // ── Notify the guest if guest-facing details changed ──────────
+    // (room, dates, guest count, or price). Fire-and-forget; never blocks the save.
+    try {
+      const ci = (v: unknown) => String(v ?? '').split('T')[0]
+      const changed: string[] = []
+      if (body.room_id !== undefined && body.room_id !== currentBooking.room_id) changed.push('Room')
+      if (body.check_in !== undefined && body.check_in !== ci(currentBooking.check_in)) changed.push('Check-in date')
+      if (body.check_out !== undefined && body.check_out !== ci(currentBooking.check_out)) changed.push('Check-out date')
+      if (body.num_guests !== undefined && Number(body.num_guests) !== Number(currentBooking.num_guests)) changed.push('Number of guests')
+      if (body.total_price !== undefined && Number(body.total_price) !== Number(currentBooking.total_price)) changed.push('Total price')
+
+      if (changed.length > 0 && booking.status !== 'cancelled' && booking.guest_email) {
+        const checkIn = ci(booking.check_in)
+        const checkOut = ci(booking.check_out)
+        const nights = checkIn && checkOut ? getDaysBetween(checkIn, checkOut) : 0
+        const baseUrl = request.nextUrl.origin
+
+        sendBookingUpdateNotifications(baseUrl, {
+          guestName: booking.guest_name,
+          guestEmail: booking.guest_email,
+          guestPhone: booking.guest_phone || undefined,
+          reference: booking.booking_reference || booking.invoice_number || booking.id,
+          roomName: booking.room?.name || 'Your room',
+          checkIn: checkIn ? new Date(checkIn).toLocaleDateString('en-US', { dateStyle: 'long' }) : '',
+          checkOut: checkOut ? new Date(checkOut).toLocaleDateString('en-US', { dateStyle: 'long' }) : '',
+          guests: booking.num_guests || 1,
+          nights,
+          totalPrice: `VT ${Number(booking.total_price || 0).toLocaleString()}`,
+          specialRequests: booking.special_requests || undefined,
+          bookingId: booking.id,
+        }, changed.join(', ')).catch(() => {})
+      }
+    } catch {
+      // Notification failures must never block the booking update
+    }
 
     return NextResponse.json({ booking })
   } catch {

@@ -64,6 +64,62 @@ function bookingConfirmationHTML(data: {
 </html>`
 }
 
+function bookingUpdatedHTML(data: {
+  guestName: string
+  roomName: string
+  checkIn: string
+  checkOut: string
+  guests: number
+  totalPrice: string
+  reference: string
+  specialRequests?: string
+  changeSummary?: string
+}) {
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f5f0e8;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+<div style="max-width:600px;margin:0 auto;background:#ffffff;">
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg,#0A4B78,#0D5A91);padding:40px 30px;text-align:center;">
+    <h1 style="color:#D4A853;font-size:28px;margin:0;font-family:Georgia,serif;">E'Nauwi Beach Resort</h1>
+    <p style="color:#ffffff;opacity:0.8;margin:8px 0 0;font-size:13px;letter-spacing:2px;text-transform:uppercase;">Booking Updated</p>
+  </div>
+
+  <!-- Body -->
+  <div style="padding:30px;">
+    <h2 style="color:#0A4B78;font-size:22px;margin:0 0 8px;">Hi ${data.guestName},</h2>
+    <p style="color:#666;line-height:1.6;margin:0 0 16px;">Your booking has been updated. ${data.changeSummary ? `The following ${data.changeSummary.includes(',') ? 'details were' : 'detail was'} changed: <strong style="color:#0A4B78;">${data.changeSummary}</strong>.` : ''} Please review your revised details below.</p>
+
+    <!-- Booking Details Card -->
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:24px;">
+      <h3 style="color:#0A4B78;font-size:16px;margin:0 0 16px;border-bottom:2px solid #D4A853;padding-bottom:8px;">Revised Booking Details</h3>
+      <table style="width:100%;border-collapse:collapse;">
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Reference</td><td style="padding:8px 0;color:#0A4B78;font-weight:bold;text-align:right;font-size:14px;">${data.reference}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Room</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${data.roomName}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Check-in</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${data.checkIn}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Check-out</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${data.checkOut}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Guests</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${data.guests}</td></tr>
+        ${data.specialRequests ? `<tr><td style="padding:8px 0;color:#888;font-size:14px;">Special Requests</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${data.specialRequests}</td></tr>` : ''}
+        <tr style="border-top:2px solid #D4A853;"><td style="padding:12px 0;color:#0A4B78;font-weight:bold;font-size:16px;">Total</td><td style="padding:12px 0;color:#0A4B78;font-weight:bold;text-align:right;font-size:16px;">${data.totalPrice}</td></tr>
+      </table>
+    </div>
+
+    <p style="color:#666;line-height:1.6;font-size:14px;">If anything looks incorrect, please 📞 call us at <strong>+678 22170</strong> or reply to this email and we'll put it right.</p>
+    <p style="color:#D4A853;font-family:Georgia,serif;font-size:16px;margin-top:24px;">— The E'Nauwi Team</p>
+  </div>
+
+  <!-- Footer -->
+  <div style="background:#083D63;padding:24px 30px;text-align:center;">
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · South East Efate, Vanuatu</p>
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:4px 0 0;">📞 +678 22170 · ✉ info@enauwiresort.vu</p>
+  </div>
+</div>
+</body>
+</html>`
+}
+
 function contactFormAdminHTML(data: {
   name: string
   email: string
@@ -308,6 +364,18 @@ export async function POST(request: NextRequest) {
           html: bookingAdminHTML(data),
         })
         results.push({ id: adminResult.data?.id, error: adminResult.error?.message })
+        break
+      }
+
+      case 'booking_updated': {
+        // Send revised confirmation to guest
+        const guestResult = await getResend().emails.send({
+          from: FROM_NOREPLY,
+          to: data.guestEmail,
+          subject: `Booking Updated — ${data.reference} | E'Nauwi Beach Resort`,
+          html: bookingUpdatedHTML(data),
+        })
+        results.push({ id: guestResult.data?.id, error: guestResult.error?.message })
         break
       }
 

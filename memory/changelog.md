@@ -1,5 +1,25 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-06-05 — [Claude Code] Change room type when editing a booking + auto revised guest message
+
+Team request (GM/ops): allow changing room type during booking edit, and auto-send a revised message to the guest when changes are made.
+
+### Booking edit — room type selector
+- `BookingEditModal` (`src/app/admin/bookings/page.tsx`) now has a **Room Type dropdown** (loads all rooms), a **Total Price** field, and a live **nights** count
+- Changing room or dates auto-suggests a new total (rate × nights); staff can override
+- Info banner notes the guest will be emailed/SMSed a revised confirmation
+
+### Auto revised-confirmation notification
+- New `sendBookingUpdateNotifications()` in `src/lib/notifications.ts` (email + WhatsApp + SMS), with `buildUpdateSMSMessage()`
+- New `booking_updated` email template + case in `src/app/api/email/send/route.ts` ("Booking Updated", revised details, "what changed" line)
+- `PATCH /api/bookings/[id]` now detects guest-facing changes (room, check-in, check-out, guests, total) and fires the revised notification (fire-and-forget; never blocks the save)
+- Sends only when something guest-facing actually changed and the booking isn't cancelled
+
+### Bug fix
+- Availability/conflict check on booking edit now also runs when **room changes** (previously only on date change), preventing edits into an already-booked room
+
+Verified: `tsc --noEmit` clean, `npm run build` compiles successfully. Live domain confirmed = https://www.enauwibeachresort.org.
+
 ## 2026-04-11 — Group Bookings, Calendar Click-to-Book, Event Recurring & Per-Person Pricing
 
 ### Group Bookings (multi-room reservations)
