@@ -47,6 +47,25 @@ export async function PATCH(
     }
     if (body.notes !== undefined) updates.notes = body.notes
 
+    // Quote status changes (sent / accepted / declined)
+    if (body.quote_status) {
+      updates.quote_status = body.quote_status
+    }
+
+    // Convert a quote into an invoice: assign a fresh ENW number + flip type
+    if (body.action === 'convert_to_invoice') {
+      const { data: counter } = await supabaseAdmin
+        .from('invoice_counter')
+        .select('last_number')
+        .eq('id', 1)
+        .single()
+      const nextNumber = (counter?.last_number || 0) + 1
+      await supabaseAdmin.from('invoice_counter').update({ last_number: nextNumber }).eq('id', 1)
+      updates.invoice_number = `ENW-${String(nextNumber).padStart(5, '0')}`
+      updates.doc_type = 'invoice'
+      updates.quote_status = 'converted'
+    }
+
     const { data, error } = await supabaseAdmin
       .from('invoices')
       .update(updates)

@@ -1,5 +1,25 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-06-08 — [Claude Code] Menu categories + Combined Customer Invoice + Quotation module
+
+Remaining back-office requests from the team's original email.
+
+### Menu Categories (POS)
+- Expanded POS category taxonomy (no migration): added Lunch Meals, Pikinini Meals, Taste of China, Pizza, Vegetarian Meals; Main Course now has sub-categories (Beef/Steaks/Chicken/Lamb/Pork/Seafood) via an optgroup in the add-item dropdown; the 'Main Course' filter chip also surfaces its sub-categories
+- Note: POS uses menu_items.category (string). Public /menu uses a separate menu_categories table — left untouched (pre-existing dual model)
+
+### Combined Customer Invoice
+- New `GET /api/invoices/aggregate?name=` gathers a guest's accommodation (bookings) + restaurant (orders) + services (service_orders) into draft line items (defensive per-source try/catch)
+- Manual invoice modal has a "Combine a guest's services" control → fetches & appends all their items into one invoice; staff review before creating. No migration.
+
+### Quotation Module (reuses invoices table)
+- Migration `20260608_quotations.sql` (RUN IN SUPABASE before quotes work): adds doc_type/valid_until/quote_status/converted_invoice_number to invoices + quote_counter
+- Invoices page now has Invoices | Quotations tabs; quotes are created via the same modal (doc_type='quote', QUO-XXXXX numbers), get the same branding/Word export
+- Quote detail shows "QUOTATION" + a "Convert to Invoice" action (assigns a fresh ENW number, flips doc_type)
+- Defensive: GET filters doc_type in JS and invoice creation never references quote columns, so deploying before the migration causes NO regression (quote creation just errors until migration runs)
+
+Verified: tsc + build clean; runtime screenshots 9–12 (client-reports/screenshots/).
+
 ## 2026-06-08 — [Claude Code] Invoice & receipt branding + payment details footer
 
 Team request (back-office email): brand all invoices/receipts and add payment info.

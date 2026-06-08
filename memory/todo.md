@@ -3,6 +3,10 @@
 ## Pending Migrations to Apply in Production
 Run these in Supabase SQL editor in order:
 
+0. **Quotations module (2026-06-08)** — REQUIRED before the Quotes tab can create/list quotes.
+   Run `supabase/migrations/20260608_quotations.sql`. Invoices, branding, combined-invoice
+   and menu categories all work WITHOUT this — only the Quotes feature needs it.
+
 1. **Group Bookings + Event Recurring/Pricing** (most recent):
    ```sql
    ALTER TABLE bookings ADD COLUMN IF NOT EXISTS group_id UUID;

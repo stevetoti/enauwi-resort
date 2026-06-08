@@ -15,6 +15,19 @@ async function nextInvoiceNumber(): Promise<string> {
   return `ENW-${String(nextNumber).padStart(5, '0')}`
 }
 
+// ── Next sequential quotation number (QUO-00001) ────────────────
+async function nextQuoteNumber(): Promise<string> {
+  const { data: counter } = await supabaseAdmin
+    .from('quote_counter')
+    .select('last_number')
+    .eq('id', 1)
+    .single()
+
+  const nextNumber = (counter?.last_number || 0) + 1
+  await supabaseAdmin.from('quote_counter').update({ last_number: nextNumber }).eq('id', 1)
+  return `QUO-${String(nextNumber).padStart(5, '0')}`
+}
+
 // ── Create a manual invoice (no booking) from custom line items ──
 async function createManualInvoice(body: Record<string, unknown>): Promise<NextResponse> {
   const guestName = String(body.guest_name || '').trim()
@@ -42,35 +55,45 @@ async function createManualInvoice(body: Record<string, unknown>): Promise<NextR
   const subtotal = baseTotal - discountAmount
   const total = subtotal // Vanuatu has no VAT
 
-  const invoiceNumber = await nextInvoiceNumber()
+  const isQuote = body.doc_type === 'quote'
+  const documentNumber = isQuote ? await nextQuoteNumber() : await nextInvoiceNumber()
+
+  const insertData: Record<string, unknown> = {
+    booking_id: null,
+    invoice_number: documentNumber,
+    guest_name: guestName,
+    guest_email: body.guest_email ? String(body.guest_email) : null,
+    guest_phone: body.guest_phone ? String(body.guest_phone) : null,
+    room_name: body.room_name ? String(body.room_name) : null,
+    check_in: body.check_in ? String(body.check_in) : null,
+    check_out: body.check_out ? String(body.check_out) : null,
+    num_nights: body.num_nights ? Number(body.num_nights) : null,
+    num_guests: body.num_guests ? Number(body.num_guests) : null,
+    base_rate: null,
+    base_total: baseTotal,
+    discount_name: body.discount_name ? String(body.discount_name) : null,
+    discount_percent: discountPercent,
+    discount_amount: discountAmount,
+    subtotal,
+    tax_percent: 0,
+    tax_amount: 0,
+    total,
+    payment_method: body.payment_method ? String(body.payment_method) : 'property',
+    payment_status: body.payment_status ? String(body.payment_status) : 'unpaid',
+    notes: body.notes ? String(body.notes) : null,
+    special_requests: null,
+  }
+  // Only set quote-specific columns for quotes, so invoice creation is
+  // unaffected if the quotations migration hasn't been run yet.
+  if (isQuote) {
+    insertData.doc_type = 'quote'
+    insertData.quote_status = 'draft'
+    if (body.valid_until) insertData.valid_until = String(body.valid_until)
+  }
 
   const { data: invoice, error: invoiceError } = await supabaseAdmin
     .from('invoices')
-    .insert({
-      booking_id: null,
-      invoice_number: invoiceNumber,
-      guest_name: guestName,
-      guest_email: body.guest_email ? String(body.guest_email) : null,
-      guest_phone: body.guest_phone ? String(body.guest_phone) : null,
-      room_name: body.room_name ? String(body.room_name) : null,
-      check_in: body.check_in ? String(body.check_in) : null,
-      check_out: body.check_out ? String(body.check_out) : null,
-      num_nights: body.num_nights ? Number(body.num_nights) : null,
-      num_guests: body.num_guests ? Number(body.num_guests) : null,
-      base_rate: null,
-      base_total: baseTotal,
-      discount_name: body.discount_name ? String(body.discount_name) : null,
-      discount_percent: discountPercent,
-      discount_amount: discountAmount,
-      subtotal,
-      tax_percent: 0,
-      tax_amount: 0,
-      total,
-      payment_method: body.payment_method ? String(body.payment_method) : 'property',
-      payment_status: body.payment_status ? String(body.payment_status) : 'unpaid',
-      notes: body.notes ? String(body.notes) : null,
-      special_requests: null,
-    })
+    .insert(insertData)
     .select()
     .single()
 
@@ -105,6 +128,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const bookingId = searchParams.get('bookingId')
     const search = searchParams.get('search')
+    const docType = searchParams.get('doc_type') || 'invoice' // 'invoice' | 'quote'
 
     let query = supabaseAdmin
       .from('invoices')
@@ -122,7 +146,13 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query
     if (error) throw error
 
-    return NextResponse.json(data || [])
+    // Filter by document type in JS so the list still works before the
+    // quotations migration adds the doc_type column (missing → treated as 'invoice').
+    const filtered = (data || []).filter(
+      (row: { doc_type?: string }) => (row.doc_type || 'invoice') === docType
+    )
+
+    return NextResponse.json(filtered)
   } catch {
     return NextResponse.json({ error: 'Failed to fetch invoices' }, { status: 500 })
   }

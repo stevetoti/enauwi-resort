@@ -63,6 +63,9 @@ interface Invoice {
   issued_at: string
   paid_at: string | null
   items: InvoiceItem[]
+  doc_type?: 'invoice' | 'quote'
+  quote_status?: string | null
+  valid_until?: string | null
 }
 
 // ---------------------------------------------------------------------------
@@ -82,7 +85,7 @@ function safeDate(value: string | null | undefined): string {
 
 // Build a Word-openable (.doc) HTML document for an invoice/receipt
 function buildInvoiceWordHtml(invoice: Invoice, isReceipt: boolean): string {
-  const docTitle = isReceipt ? 'RECEIPT' : 'INVOICE'
+  const docTitle = invoice.doc_type === 'quote' ? 'QUOTATION' : isReceipt ? 'RECEIPT' : 'INVOICE'
   const rows =
     invoice.items && invoice.items.length > 0
       ? invoice.items
@@ -461,13 +464,17 @@ interface LineItemInput {
 
 function ManualInvoiceModal({
   open,
+  docType = 'invoice',
   onClose,
   onCreated,
 }: {
   open: boolean
+  docType?: 'invoice' | 'quote'
   onClose: () => void
   onCreated: () => void
 }) {
+  const isQuote = docType === 'quote'
+  const docLabel = isQuote ? 'Quotation' : 'Invoice'
   const [guestName, setGuestName] = useState('')
   const [guestEmail, setGuestEmail] = useState('')
   const [guestPhone, setGuestPhone] = useState('')
@@ -478,11 +485,36 @@ function ManualInvoiceModal({
   const [items, setItems] = useState<LineItemInput[]>([{ description: '', quantity: 1, unit_price: 0 }])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [combineName, setCombineName] = useState('')
+  const [combining, setCombining] = useState(false)
+
+  // Combined invoice: pull a guest's accommodation + restaurant + services into line items
+  async function handleCombine() {
+    const q = combineName.trim() || guestName.trim()
+    if (!q) { setError('Enter a guest name to combine their services'); return }
+    setCombining(true); setError('')
+    try {
+      const res = await fetch(`/api/invoices/aggregate?name=${encodeURIComponent(q)}`)
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to find services')
+      if (data.guest_name && !guestName.trim()) setGuestName(data.guest_name)
+      if (data.guest_email && !guestEmail.trim()) setGuestEmail(data.guest_email)
+      const found: LineItemInput[] = (data.items || []).map((it: { description: string; quantity: number; unit_price: number }) => ({
+        description: it.description, quantity: it.quantity, unit_price: it.unit_price,
+      }))
+      if (found.length === 0) { setError('No services found for that guest'); return }
+      setItems((prev) => [...prev.filter((p) => p.description.trim()), ...found])
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to combine services')
+    } finally {
+      setCombining(false)
+    }
+  }
 
   function reset() {
     setGuestName(''); setGuestEmail(''); setGuestPhone(''); setPaymentMethod('property')
     setPaymentStatus('unpaid'); setDiscountPercent(0); setNotes('')
-    setItems([{ description: '', quantity: 1, unit_price: 0 }]); setError('')
+    setItems([{ description: '', quantity: 1, unit_price: 0 }]); setError(''); setCombineName('')
   }
 
   const updateItem = (i: number, patch: Partial<LineItemInput>) =>
@@ -504,6 +536,7 @@ function ManualInvoiceModal({
         method: 'POST',
         headers: csrfHeaders(),
         body: JSON.stringify({
+          doc_type: docType,
           guest_name: guestName,
           guest_email: guestEmail || undefined,
           guest_phone: guestPhone || undefined,
@@ -544,8 +577,8 @@ function ManualInvoiceModal({
         >
           <div className="flex items-center justify-between border-b px-6 py-4">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">New Manual Invoice</h2>
-              <p className="text-sm text-gray-500">Create an invoice with custom line items (no booking required)</p>
+              <h2 className="text-lg font-semibold text-gray-900">New {docLabel}</h2>
+              <p className="text-sm text-gray-500">Create a {docLabel.toLowerCase()} with custom line items (no booking required)</p>
             </div>
             <button onClick={onClose} className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
               <X className="h-5 w-5" />
@@ -556,6 +589,31 @@ function ManualInvoiceModal({
             {error && (
               <div className="flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
                 <AlertCircle className="h-4 w-4 shrink-0" /> {error}
+              </div>
+            )}
+
+            {/* Combined invoice — pull a guest's services (invoices only) */}
+            {!isQuote && (
+              <div className="rounded-lg border border-dashed border-teal-300 bg-teal-50/40 p-3">
+                <label className="mb-1 block text-xs font-medium text-teal-800">Combine a guest&apos;s services (optional)</label>
+                <div className="flex gap-2">
+                  <input
+                    placeholder="Guest name"
+                    value={combineName}
+                    onChange={(e) => setCombineName(e.target.value)}
+                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleCombine}
+                    disabled={combining}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-teal-700 px-3 py-2 text-sm font-medium text-white hover:bg-teal-800 disabled:opacity-50"
+                  >
+                    {combining ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                    Find &amp; add
+                  </button>
+                </div>
+                <p className="mt-1 text-[11px] text-teal-700/70">Pulls the guest&apos;s bookings, restaurant orders &amp; service orders into one invoice. Review the lines below before creating.</p>
               </div>
             )}
 
@@ -660,7 +718,7 @@ function ManualInvoiceModal({
             <button onClick={handleCreate} disabled={saving}
               className="inline-flex items-center gap-1.5 rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800 disabled:opacity-50">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
-              Create Invoice
+              Create {docLabel}
             </button>
           </div>
         </motion.div>
@@ -684,9 +742,29 @@ function InvoiceDetail({
 }) {
   const [receiptMode, setReceiptMode] = useState(false)
   const [markingPaid, setMarkingPaid] = useState(false)
+  const [converting, setConverting] = useState(false)
   const printRef = useRef<HTMLDivElement>(null)
 
-  const canShowReceipt = invoice.payment_status === 'paid'
+  const isQuote = invoice.doc_type === 'quote'
+  const canShowReceipt = !isQuote && invoice.payment_status === 'paid'
+
+  async function handleConvert() {
+    if (!confirm('Convert this quotation into an invoice? It will get a new invoice number.')) return
+    setConverting(true)
+    try {
+      const res = await fetch(`/api/invoices/${invoice.id}`, {
+        method: 'PATCH',
+        headers: csrfHeaders(),
+        body: JSON.stringify({ action: 'convert_to_invoice' }),
+      })
+      if (!res.ok) throw new Error('Failed to convert')
+      onBack() // it now lives under Invoices
+    } catch (err) {
+      console.error('Failed to convert quote:', err)
+    } finally {
+      setConverting(false)
+    }
+  }
 
   async function handleMarkPaid() {
     setMarkingPaid(true)
@@ -715,14 +793,14 @@ function InvoiceDetail({
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${receiptMode ? 'Receipt' : 'Invoice'}-${invoice.invoice_number}.doc`
+    a.download = `${isQuote ? 'Quotation' : receiptMode ? 'Receipt' : 'Invoice'}-${invoice.invoice_number}.doc`
     document.body.appendChild(a)
     a.click()
     a.remove()
     URL.revokeObjectURL(url)
   }
 
-  const docTitle = receiptMode ? 'RECEIPT' : 'INVOICE'
+  const docTitle = isQuote ? 'QUOTATION' : receiptMode ? 'RECEIPT' : 'INVOICE'
 
   return (
     <div>
@@ -751,7 +829,18 @@ function InvoiceDetail({
           </button>
         )}
 
-        {invoice.payment_status !== 'paid' && (
+        {isQuote && invoice.quote_status !== 'converted' && (
+          <button
+            onClick={handleConvert}
+            disabled={converting}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[#439de5] px-3 py-2 text-sm font-medium text-white hover:bg-[#3a8acd] disabled:opacity-50"
+          >
+            {converting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
+            Convert to Invoice
+          </button>
+        )}
+
+        {!isQuote && invoice.payment_status !== 'paid' && (
           <button
             onClick={handleMarkPaid}
             disabled={markingPaid}
@@ -989,6 +1078,7 @@ export default function AdminInvoicesPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [showGenerateModal, setShowGenerateModal] = useState(false)
   const [showManualModal, setShowManualModal] = useState(false)
+  const [docType, setDocType] = useState<'invoice' | 'quote'>('invoice')
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
 
@@ -1004,6 +1094,7 @@ export default function AdminInvoicesPage() {
     try {
       const params = new URLSearchParams()
       if (debouncedSearch) params.set('search', debouncedSearch)
+      params.set('doc_type', docType)
       const res = await fetch(`/api/invoices?${params.toString()}`)
       if (!res.ok) throw new Error('Failed to fetch invoices')
       const data = await res.json()
@@ -1013,7 +1104,7 @@ export default function AdminInvoicesPage() {
     } finally {
       setLoading(false)
     }
-  }, [debouncedSearch])
+  }, [debouncedSearch, docType])
 
   useEffect(() => {
     fetchInvoices()
@@ -1081,9 +1172,11 @@ export default function AdminInvoicesPage() {
       {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Invoices</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{docType === 'quote' ? 'Quotations' : 'Invoices'}</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Generate and manage invoices for guest bookings
+            {docType === 'quote'
+              ? 'Create quotations and convert them to invoices when approved'
+              : 'Generate and manage invoices for guest bookings'}
           </p>
         </div>
         <div className="flex gap-2">
@@ -1092,16 +1185,35 @@ export default function AdminInvoicesPage() {
             className="inline-flex items-center gap-2 rounded-xl border border-teal-700 px-4 py-2.5 text-sm font-medium text-teal-700 hover:bg-teal-50 transition-colors"
           >
             <Plus className="h-4 w-4" />
-            New Manual Invoice
+            {docType === 'quote' ? 'New Quotation' : 'New Manual Invoice'}
           </button>
-          <button
-            onClick={() => setShowGenerateModal(true)}
-            className="inline-flex items-center gap-2 rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-teal-800 transition-colors"
-          >
-            <FileText className="h-4 w-4" />
-            Generate from Booking
-          </button>
+          {docType === 'invoice' && (
+            <button
+              onClick={() => setShowGenerateModal(true)}
+              className="inline-flex items-center gap-2 rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-teal-800 transition-colors"
+            >
+              <FileText className="h-4 w-4" />
+              Generate from Booking
+            </button>
+          )}
         </div>
+      </div>
+
+      {/* Invoices / Quotes tabs */}
+      <div className="flex gap-1 border-b border-gray-200">
+        {(['invoice', 'quote'] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setDocType(t)}
+            className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+              docType === t
+                ? 'border-teal-700 text-teal-700'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            {t === 'invoice' ? 'Invoices' : 'Quotations'}
+          </button>
+        ))}
       </div>
 
       {/* Search */}
@@ -1197,9 +1309,10 @@ export default function AdminInvoicesPage() {
         onGenerated={fetchInvoices}
       />
 
-      {/* Manual Invoice Modal */}
+      {/* Manual Invoice / Quotation Modal */}
       <ManualInvoiceModal
         open={showManualModal}
+        docType={docType}
         onClose={() => setShowManualModal(false)}
         onCreated={fetchInvoices}
       />

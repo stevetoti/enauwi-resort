@@ -79,7 +79,15 @@ interface Booking {
   rooms: Room
 }
 
-const CATEGORIES = ['All', 'Breakfast', 'Starters', 'Main Course', 'Desserts', 'Beverages']
+// Top-level menu categories (filter chips). 'Main Course' also matches its sub-categories.
+const CATEGORIES = [
+  'All', 'Breakfast', 'Starters', 'Lunch Meals', 'Pikinini Meals',
+  'Taste of China', 'Pizza', 'Vegetarian Meals', 'Main Course', 'Desserts', 'Beverages',
+]
+// Sub-categories filed under Main Course
+const MAIN_COURSE_SUBCATEGORIES = [
+  'Beef Dishes', 'Steaks', 'Chicken Dishes', 'Lamb Dishes', 'Pork Dishes', 'Seafood Dishes',
+]
 
 // ---------------------------------------------------------------------------
 // Component
@@ -141,7 +149,11 @@ export default function POSPage() {
   const todaySalesCount = closedTodayTabs.length
 
   const filteredItems = menuItems.filter((item) => {
-    const matchesCategory = activeCategory === 'All' || item.category === activeCategory
+    const matchesCategory =
+      activeCategory === 'All' ||
+      item.category === activeCategory ||
+      // 'Main Course' chip also surfaces its sub-categories
+      (activeCategory === 'Main Course' && MAIN_COURSE_SUBCATEGORIES.includes(item.category))
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase())
     return matchesCategory && matchesSearch && item.available
   })
@@ -541,11 +553,22 @@ export default function POSPage() {
               onChange={(e) => setMenuForm({ ...menuForm, category: e.target.value })}
               className="px-3 py-2 border rounded-lg text-sm"
             >
-              {CATEGORIES.filter((c) => c !== 'All').map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
+              {CATEGORIES.filter((c) => c !== 'All').map((cat) =>
+                cat === 'Main Course' ? (
+                  <optgroup key={cat} label="Main Course">
+                    <option value="Main Course">Main Course (general)</option>
+                    {MAIN_COURSE_SUBCATEGORIES.map((sub) => (
+                      <option key={sub} value={sub}>
+                        {sub}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                )
+              )}
             </select>
             <input
               type="number"
