@@ -107,14 +107,16 @@ function buildInvoiceWordHtml(invoice: Invoice, isReceipt: boolean): string {
   return `<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
 <head><meta charset="utf-8"><title>${docTitle} ${invoice.invoice_number}</title></head>
 <body style="font-family:Calibri,Arial,sans-serif;color:#1f2937;font-size:11pt;">
-  <table style="width:100%;border-collapse:collapse;margin-bottom:16px;"><tr>
-    <td style="vertical-align:top;">
-      <div style="font-size:18pt;font-weight:bold;color:#0f766e;">E'NAUWI BEACH RESORT</div>
+  <table style="width:100%;border-collapse:collapse;margin-bottom:8px;"><tr>
+    <td style="vertical-align:middle;width:70px;"><img src="https://www.enauwibeachresort.org/logo-enauwi.png" alt="E'Nauwi Beach Resort" width="64" style="display:block;" /></td>
+    <td style="vertical-align:middle;">
+      <div style="font-size:18pt;font-weight:bold;color:#439de5;">E'NAUWI BEACH RESORT</div>
       <div style="color:#6b7280;">South East Efate, Vanuatu</div>
       <div style="color:#6b7280;">+678 22170 · reservation@enauwibeachresort.com</div>
     </td>
-    <td style="vertical-align:top;text-align:right;font-size:16pt;font-weight:bold;color:#0f766e;">${docTitle}</td>
+    <td style="vertical-align:middle;text-align:right;font-size:16pt;font-weight:bold;color:#f19500;">${docTitle}</td>
   </tr></table>
+  <div style="border-bottom:3px solid #f19500;margin-bottom:14px;"></div>
   <table style="width:100%;border-collapse:collapse;margin-bottom:14px;"><tr>
     <td style="vertical-align:top;">
       <p style="margin:2px 0;"><b>${docTitle} Number:</b> ${invoice.invoice_number}</p>
@@ -142,14 +144,19 @@ function buildInvoiceWordHtml(invoice: Invoice, isReceipt: boolean): string {
       <table style="width:100%;border-collapse:collapse;">
         <tr><td style="padding:3px 0;color:#6b7280;">Subtotal</td><td style="padding:3px 0;text-align:right;">${formatCurrency(invoice.subtotal)}</td></tr>
         ${invoice.discount_amount > 0 ? `<tr><td style="padding:3px 0;color:#15803d;">Discount${invoice.discount_name ? ` (${invoice.discount_name})` : ''} ${invoice.discount_percent ? `${invoice.discount_percent}%` : ''}</td><td style="padding:3px 0;text-align:right;color:#15803d;">-${formatCurrency(invoice.discount_amount)}</td></tr>` : ''}
-        <tr><td style="padding:6px 0;border-top:2px solid #0f766e;font-weight:bold;font-size:13pt;">Total</td><td style="padding:6px 0;border-top:2px solid #0f766e;text-align:right;font-weight:bold;font-size:13pt;">${formatCurrency(invoice.total)}</td></tr>
+        <tr><td style="padding:6px 0;border-top:2px solid #439de5;font-weight:bold;font-size:13pt;">Total</td><td style="padding:6px 0;border-top:2px solid #439de5;text-align:right;font-weight:bold;font-size:13pt;">${formatCurrency(invoice.total)}</td></tr>
       </table>
     </td>
   </tr></table>
   <p style="margin:2px 0;"><b>Payment:</b> ${invoice.payment_method || 'Not specified'} &nbsp; <b>Status:</b> ${(invoice.payment_status || 'unpaid').toUpperCase()}</p>
   ${datesBlock}
   ${invoice.notes ? `<p style="margin:8px 0 2px;"><b>Notes:</b> ${invoice.notes}</p>` : ''}
-  <p style="margin-top:24px;text-align:center;color:#0f766e;font-weight:bold;">Thank you for choosing E'Nauwi Beach Resort!</p>
+  <table style="width:100%;border-collapse:collapse;margin-top:14px;border:1px solid #439de5;background:#f3f9fe;"><tr><td style="padding:10px 12px;">
+    <div style="font-weight:bold;color:#439de5;margin-bottom:3px;">Payment Details</div>
+    <div style="color:#374151;">Bank: <b>BRED Bank</b> &nbsp;·&nbsp; Account Number: <b>013134710100015</b></div>
+    <div style="color:#6b7280;font-size:9pt;margin-top:2px;">For retreat/meeting bookings paying via LPO — Vendor ID: <b>ENB002</b> · Vendor Name: <b>E'Nauwi Beach Resort</b></div>
+  </td></tr></table>
+  <p style="margin-top:20px;text-align:center;color:#439de5;font-weight:bold;border-top:3px solid #f19500;padding-top:14px;">Thank you for choosing E'Nauwi Beach Resort!</p>
   <p style="text-align:center;color:#9ca3af;font-size:9pt;">www.enauwibeachresort.org</p>
 </body></html>`
 }
@@ -776,18 +783,21 @@ function InvoiceDetail({
         className="mx-auto max-w-2xl rounded-2xl border border-gray-200 bg-white p-8 shadow-sm print:max-w-none print:rounded-none print:border-0 print:p-0 print:shadow-none"
       >
         {/* Header */}
-        <div className="mb-8 border-b border-gray-200 pb-6">
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-teal-700">E&apos;NAUWI BEACH RESORT</h1>
-              <p className="mt-1 text-sm text-gray-500">South East Efate, Vanuatu</p>
-              <p className="text-sm text-gray-500">+678 22170</p>
-              <p className="text-sm text-gray-500">reservation@enauwibeachresort.com</p>
+        <div className="mb-8 border-b-2 border-[#f19500] pb-6">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-enauwi.png" alt="E'Nauwi Beach Resort" className="h-16 w-auto shrink-0" />
+              <div>
+                <h1 className="text-2xl font-bold text-[#439de5]">E&apos;NAUWI BEACH RESORT</h1>
+                <p className="mt-1 text-sm text-gray-500">South East Efate, Vanuatu</p>
+                <p className="text-sm text-gray-500">+678 22170 &middot; reservation@enauwibeachresort.com</p>
+              </div>
             </div>
             <div className="text-right">
               <span
                 className={`inline-block rounded-lg px-3 py-1 text-sm font-bold uppercase tracking-wider ${
-                  receiptMode ? 'bg-amber-100 text-amber-800' : 'bg-teal-100 text-teal-800'
+                  receiptMode ? 'bg-[#f19500]/10 text-[#f19500]' : 'bg-[#439de5]/10 text-[#439de5]'
                 }`}
               >
                 {docTitle}
@@ -944,10 +954,24 @@ function InvoiceDetail({
           </div>
         )}
 
+        {/* Payment Details */}
+        <div className="mb-6 rounded-lg border border-[#439de5]/30 bg-[#439de5]/5 p-4 text-sm">
+          <p className="mb-1 font-semibold text-[#439de5]">Payment Details</p>
+          <p className="text-gray-600">
+            Bank: <span className="font-medium text-gray-800">BRED Bank</span>
+            {' '}&middot;{' '}
+            Account Number: <span className="font-medium text-gray-800">013134710100015</span>
+          </p>
+          <p className="mt-1 text-xs text-gray-500">
+            For retreat/meeting bookings paying via LPO &mdash; Vendor ID: <span className="font-medium text-gray-700">ENB002</span>
+            {' '}&middot;{' '}Vendor Name: <span className="font-medium text-gray-700">E&apos;Nauwi Beach Resort</span>
+          </p>
+        </div>
+
         {/* Footer */}
-        <div className="border-t border-gray-200 pt-6 text-center">
-          <p className="text-sm font-medium text-teal-700">Thank you for choosing E&apos;Nauwi Beach Resort!</p>
-          <p className="mt-1 text-xs text-gray-400">www.enauwibeachresort.com</p>
+        <div className="border-t-2 border-[#f19500] pt-6 text-center">
+          <p className="text-sm font-medium text-[#439de5]">Thank you for choosing E&apos;Nauwi Beach Resort!</p>
+          <p className="mt-1 text-xs text-gray-400">www.enauwibeachresort.org</p>
         </div>
       </div>
     </div>

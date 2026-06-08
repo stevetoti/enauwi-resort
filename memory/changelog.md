@@ -1,5 +1,18 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-06-08 — [Claude Code] Invoice & receipt branding + payment details footer
+
+Team request (back-office email): brand all invoices/receipts and add payment info.
+
+- Invoice & receipt detail (screen + print/PDF) and the Word export now show:
+  - E'Nauwi logo top-left, resort name in brand **blue #439de5**, **orange #f19500** accent lines (header + footer), doc-type badge in brand colours
+  - **Payment Details** footer: Bank BRED Bank · Account 013134710100015; plus LPO line (Vendor ID ENB002 · Vendor Name E'Nauwi Beach Resort)
+  - Footer URL corrected to www.enauwibeachresort.org
+- Applies to both booking-based and manual invoices, and Receipt mode
+- Verified: tsc + build clean, screenshot client-reports/screenshots/8-branded-invoice.png
+
+Note: Quotation Module (create/track/convert quotes) and Combined Customer Invoice (consolidate accommodation+event+restaurant) from the same email are NOT yet built — pending sequencing. Menu category additions also pending.
+
 ## 2026-06-05 — [Claude Code] Manual invoices + Word (.doc) export
 
 Team request: generate invoices manually (without a booking) and download invoices/receipts as Word documents.
