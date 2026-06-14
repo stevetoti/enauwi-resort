@@ -1,5 +1,17 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-06-08 — [Claude Code] Analytics, Pixel & site verification wiring (admin-managed)
+
+Technical/Meta requests — site side. (Accounts/IDs created by Stephen in Google/Meta.)
+
+- `src/lib/seo-settings.ts` — cached (5-min) server reader of the existing `site_settings` (key='seo'); defensive (read failure never breaks layout)
+- `src/components/Analytics.tsx` — injects GA4 (gtag) + Meta Pixel via next/script when IDs are set
+- `layout.tsx` — `generateMetadata()` now emits google-site-verification + facebook-domain-verification meta tags from settings; RootLayout renders <Analytics>; metadataBase + OG alt corrected to enauwibeachresort.org/Efate
+- Admin → SEO: added "Google Search Console verification" + "Facebook Domain Verification" fields (GA ID + Pixel ID fields already existed — now actually wired live)
+- Everything driven from Admin → SEO (what the marketer asked: "paste it in the admin portal"). No deploy needed when IDs change.
+
+Still needs Stephen: create GA4 property, verify in Search Console, verify domain in Meta Business Manager, get Pixel ID — then paste the 4 values in Admin → SEO.
+
 ## 2026-06-08 — [Claude Code] Menu categories + Combined Customer Invoice + Quotation module
 
 Remaining back-office requests from the team's original email.

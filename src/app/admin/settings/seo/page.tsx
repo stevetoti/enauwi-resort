@@ -10,6 +10,8 @@ interface SEOData {
   metaKeywords: string
   googleAnalyticsId: string
   facebookPixelId: string
+  googleSiteVerification: string
+  facebookDomainVerification: string
 }
 
 const defaultSEO: SEOData = {
@@ -18,6 +20,8 @@ const defaultSEO: SEOData = {
   metaKeywords: "Vanuatu resort, beach resort, family accommodation",
   googleAnalyticsId: '',
   facebookPixelId: '',
+  googleSiteVerification: '',
+  facebookDomainVerification: '',
 }
 
 export default function SEOPage() {
@@ -133,6 +137,36 @@ export default function SEOPage() {
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500"
                 placeholder="123456789"
               />
+              <p className="text-xs text-gray-500 mt-1">Loads the Meta Pixel on every page once set.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Site Verification */}
+        <div className="border-t pt-6">
+          <h2 className="text-lg font-semibold mb-4">Site Verification</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Google Search Console verification</label>
+              <input
+                type="text"
+                value={seo.googleSiteVerification}
+                onChange={e => setSEO(prev => ({ ...prev, googleSiteVerification: e.target.value }))}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500"
+                placeholder="paste only the content value (not the full meta tag)"
+              />
+              <p className="text-xs text-gray-500 mt-1">From Search Console → HTML tag method: paste the <code>content=&quot;...&quot;</code> value.</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Facebook Domain Verification</label>
+              <input
+                type="text"
+                value={seo.facebookDomainVerification}
+                onChange={e => setSEO(prev => ({ ...prev, facebookDomainVerification: e.target.value }))}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500"
+                placeholder="paste only the content value (not the full meta tag)"
+              />
+              <p className="text-xs text-gray-500 mt-1">From Meta Business Manager → Domains → Meta-tag method: paste the <code>content=&quot;...&quot;</code> value.</p>
             </div>
           </div>
         </div>
