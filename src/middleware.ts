@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSessionFromRequest } from '@/lib/auth'
-import { generateCsrfToken, setCsrfCookie, CSRF_COOKIE } from '@/lib/csrf'
+import { generateCsrfToken, setCsrfCookie, isCsrfCookieValid } from '@/lib/csrf'
 
 const PUBLIC_AUTH_PAGES = ['/admin/login', '/admin/forgot-password', '/admin/reset-password']
+
+// Ensure the response carries a VALID CSRF cookie. Reissues when the cookie is
+// missing OR fails verification (e.g. a stale cookie signed with a rotated key),
+// so a bad cookie can never permanently block logins/mutations.
+async function withFreshCsrf(request: NextRequest): Promise<NextResponse> {
+  const response = NextResponse.next()
+  if (!(await isCsrfCookieValid(request))) {
+    setCsrfCookie(response, await generateCsrfToken())
+  }
+  return response
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -11,27 +22,9 @@ export async function middleware(request: NextRequest) {
   const isAdminRoute = pathname.startsWith('/admin')
   const isStaffRoute = pathname.startsWith('/staff')
 
-  if (!isAdminRoute && !isStaffRoute) {
-    // For public pages: ensure a CSRF cookie exists (for forms like contact, booking)
-    if (!request.cookies.get(CSRF_COOKIE)?.value) {
-      const token = await generateCsrfToken()
-      const response = NextResponse.next()
-      setCsrfCookie(response, token)
-      return response
-    }
-    return NextResponse.next()
-  }
-
-  // Allow public auth pages without session
-  if (PUBLIC_AUTH_PAGES.includes(pathname)) {
-    // Ensure CSRF cookie for login/forgot-password forms
-    if (!request.cookies.get(CSRF_COOKIE)?.value) {
-      const token = await generateCsrfToken()
-      const response = NextResponse.next()
-      setCsrfCookie(response, token)
-      return response
-    }
-    return NextResponse.next()
+  // Public pages + public auth pages: just ensure a valid CSRF cookie exists
+  if ((!isAdminRoute && !isStaffRoute) || PUBLIC_AUTH_PAGES.includes(pathname)) {
+    return withFreshCsrf(request)
   }
 
   const session = await getSessionFromRequest(request)
@@ -42,15 +35,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Ensure CSRF cookie for authenticated pages
-  if (!request.cookies.get(CSRF_COOKIE)?.value) {
-    const token = await generateCsrfToken()
-    const response = NextResponse.next()
-    setCsrfCookie(response, token)
-    return response
-  }
-
-  return NextResponse.next()
+  // Authenticated pages: ensure a valid CSRF cookie for mutations
+  return withFreshCsrf(request)
 }
 
 export const config = {

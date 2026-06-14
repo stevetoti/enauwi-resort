@@ -1,5 +1,16 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-06-08 — [Claude Code] Fix: login "Invalid or missing CSRF token" (stale-cookie blocker)
+
+Root cause: middleware only issued the `enauwi_csrf` cookie when ABSENT, so a
+stale cookie (signed with a rotated key, failing jwtVerify) was never refreshed
+and permanently blocked login/mutations.
+
+- Added `isCsrfCookieValid()` in `src/lib/csrf.ts` (verifies the cookie JWT)
+- `middleware.ts` now reissues the CSRF cookie when missing OR invalid (via a
+  `withFreshCsrf()` helper), so a bad cookie self-heals on the next page load
+- Immediate workaround for affected users: incognito / clear site cookies
+
 ## 2026-06-08 — [Claude Code] Analytics, Pixel & site verification wiring (admin-managed)
 
 Technical/Meta requests — site side. (Accounts/IDs created by Stephen in Google/Meta.)

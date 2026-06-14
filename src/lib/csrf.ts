@@ -30,6 +30,20 @@ export function setCsrfCookie(response: NextResponse, token: string): void {
   })
 }
 
+/** Check whether the CSRF cookie alone is present and a valid JWT (no header needed).
+ *  Used by middleware to decide whether to (re)issue a fresh cookie so a stale
+ *  cookie (e.g. signed with a rotated key) can't permanently block logins. */
+export async function isCsrfCookieValid(request: NextRequest): Promise<boolean> {
+  const token = request.cookies.get(CSRF_COOKIE)?.value
+  if (!token) return false
+  try {
+    await jwtVerify(token, getCsrfSecret())
+    return true
+  } catch {
+    return false
+  }
+}
+
 /** Validate CSRF: token in header must match token in cookie, and both must be valid JWTs */
 export async function validateCsrf(request: NextRequest): Promise<boolean> {
   const cookieToken = request.cookies.get(CSRF_COOKIE)?.value
