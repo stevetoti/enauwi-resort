@@ -153,8 +153,10 @@ export async function GET(request: NextRequest) {
     )
 
     return NextResponse.json(filtered)
-  } catch {
-    return NextResponse.json({ error: 'Failed to fetch invoices' }, { status: 500 })
+  } catch (e) {
+    const detail = e instanceof Error ? e.message : String(e)
+    console.error('[invoices GET] failed:', detail)
+    return NextResponse.json({ error: 'Failed to fetch invoices', detail }, { status: 500 })
   }
 }
 
@@ -284,7 +286,9 @@ export async function POST(request: NextRequest) {
       .single()
 
     return NextResponse.json(fullInvoice, { status: 201 })
-  } catch {
-    return NextResponse.json({ error: 'Failed to generate invoice' }, { status: 500 })
+  } catch (e) {
+    const detail = e instanceof Error ? e.message : String(e)
+    console.error('[invoices POST] failed:', detail)
+    return NextResponse.json({ error: 'Failed to generate invoice', detail }, { status: 500 })
   }
 }

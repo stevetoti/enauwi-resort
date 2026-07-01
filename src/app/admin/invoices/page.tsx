@@ -298,7 +298,7 @@ function GenerateModal({
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        throw new Error(data.error || 'Failed to generate invoice')
+        throw new Error([data.error, data.detail].filter(Boolean).join(' — ') || 'Failed to generate invoice')
       }
       // Mark as generated locally
       setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, invoice_number: 'generated' } : b))
@@ -549,7 +549,7 @@ function ManualInvoiceModal({
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        throw new Error(data.error || 'Failed to create invoice')
+        throw new Error([data.error, data.detail].filter(Boolean).join(' — ') || 'Failed to create invoice')
       }
       reset()
       onCreated()

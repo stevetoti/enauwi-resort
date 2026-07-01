@@ -76,7 +76,9 @@ export async function PATCH(
     if (error) throw error
 
     return NextResponse.json(data)
-  } catch {
-    return NextResponse.json({ error: 'Failed to update invoice' }, { status: 500 })
+  } catch (e) {
+    const detail = e instanceof Error ? e.message : String(e)
+    console.error('[invoice PATCH] failed:', detail)
+    return NextResponse.json({ error: 'Failed to update invoice', detail }, { status: 500 })
   }
 }
