@@ -1,5 +1,5 @@
 import { unstable_cache } from 'next/cache'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 export interface SiteSEO {
   metaTitle?: string
@@ -17,7 +17,7 @@ export interface SiteSEO {
 export const getSiteSEO = unstable_cache(
   async (): Promise<SiteSEO> => {
     try {
-      const { data } = await supabase
+      const { data } = await supabaseAdmin
         .from('site_settings')
         .select('value')
         .eq('key', 'seo')

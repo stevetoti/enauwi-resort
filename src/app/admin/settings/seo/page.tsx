@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { csrfHeaders } from '@/lib/csrf-client'
 import { toast, Toaster } from 'sonner'
 
 interface SEOData {
@@ -35,13 +35,12 @@ export default function SEOPage() {
 
   async function loadSEO() {
     try {
-      const { data } = await supabase
-        .from('site_settings')
-        .select('value')
-        .eq('key', 'seo')
-        .single()
-      if (data?.value) {
-        setSEO({ ...defaultSEO, ...data.value })
+      const res = await fetch('/api/settings/seo')
+      if (res.ok) {
+        const value = await res.json()
+        if (value && typeof value === 'object') {
+          setSEO({ ...defaultSEO, ...value })
+        }
       }
     } catch (error) {
       console.error('Error loading SEO:', error)
@@ -53,14 +52,17 @@ export default function SEOPage() {
   async function saveSEO() {
     setSaving(true)
     try {
-      const { error } = await supabase
-        .from('site_settings')
-        .upsert({ key: 'seo', value: seo, updated_at: new Date().toISOString() }, { onConflict: 'key' })
-      if (error) throw error
+      const res = await fetch('/api/settings/seo', {
+        method: 'POST',
+        headers: csrfHeaders(),
+        body: JSON.stringify(seo),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error([data.error, data.detail].filter(Boolean).join(' — ') || 'Save failed')
       toast.success('SEO settings saved!')
     } catch (error) {
       console.error('Save error:', error)
-      toast.error('Failed to save')
+      toast.error(error instanceof Error ? error.message : 'Failed to save')
     } finally {
       setSaving(false)
     }
