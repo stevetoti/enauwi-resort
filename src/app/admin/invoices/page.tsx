@@ -102,10 +102,9 @@ function buildInvoiceWordHtml(invoice: Invoice, isReceipt: boolean): string {
     )
     .join('')
 
-  const datesBlock =
-    invoice.check_in || invoice.check_out
-      ? `<p style="margin:2px 0;"><b>Check-in:</b> ${safeDate(invoice.check_in)} &nbsp; <b>Check-out:</b> ${safeDate(invoice.check_out)}${invoice.num_guests ? ` &nbsp; <b>Guests:</b> ${invoice.num_guests}` : ''}</p>`
-      : ''
+  const datesBlock = invoice.booking_id
+    ? `<p style="margin:2px 0;"><b>Check-in:</b> ${safeDate(invoice.check_in)} &nbsp; <b>Check-out:</b> ${safeDate(invoice.check_out)}${invoice.num_guests ? ` &nbsp; <b>Guests:</b> ${invoice.num_guests}` : ''}</p>`
+    : ''
 
   return `<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
 <head><meta charset="utf-8"><title>${docTitle} ${invoice.invoice_number}</title></head>
@@ -1015,17 +1014,19 @@ function InvoiceDetail({
               </p>
             )}
           </div>
-          <div className="space-y-1.5">
-            <p className="text-gray-500">
-              <span className="font-medium text-gray-700">Check-in:</span> {safeDate(invoice.check_in)}
-            </p>
-            <p className="text-gray-500">
-              <span className="font-medium text-gray-700">Check-out:</span> {safeDate(invoice.check_out)}
-            </p>
-            <p className="text-gray-500">
-              <span className="font-medium text-gray-700">Guests:</span> {invoice.num_guests || '—'}
-            </p>
-          </div>
+          {invoice.booking_id ? (
+            <div className="space-y-1.5">
+              <p className="text-gray-500">
+                <span className="font-medium text-gray-700">Check-in:</span> {safeDate(invoice.check_in)}
+              </p>
+              <p className="text-gray-500">
+                <span className="font-medium text-gray-700">Check-out:</span> {safeDate(invoice.check_out)}
+              </p>
+              <p className="text-gray-500">
+                <span className="font-medium text-gray-700">Guests:</span> {invoice.num_guests || '—'}
+              </p>
+            </div>
+          ) : null}
         </div>
 
         {/* Notes */}

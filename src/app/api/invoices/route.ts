@@ -58,18 +58,25 @@ async function createManualInvoice(body: Record<string, unknown>): Promise<NextR
   const isQuote = body.doc_type === 'quote'
   const documentNumber = isQuote ? await nextQuoteNumber() : await nextInvoiceNumber()
 
+  // The invoices table marks room_name / check_in / check_out / num_nights /
+  // base_rate / guest_email as NOT NULL (they were designed around bookings).
+  // A manual/combined invoice or quote has none of those, so supply safe
+  // placeholder values. The document type is tracked so the UI hides the
+  // (meaningless) stay dates for these — see `booking_id: null`.
+  const today = new Date().toISOString().slice(0, 10)
+
   const insertData: Record<string, unknown> = {
     booking_id: null,
     invoice_number: documentNumber,
     guest_name: guestName,
-    guest_email: body.guest_email ? String(body.guest_email) : null,
+    guest_email: body.guest_email ? String(body.guest_email) : '',
     guest_phone: body.guest_phone ? String(body.guest_phone) : null,
-    room_name: body.room_name ? String(body.room_name) : null,
-    check_in: body.check_in ? String(body.check_in) : null,
-    check_out: body.check_out ? String(body.check_out) : null,
-    num_nights: body.num_nights ? Number(body.num_nights) : null,
-    num_guests: body.num_guests ? Number(body.num_guests) : null,
-    base_rate: null,
+    room_name: body.room_name ? String(body.room_name) : '',
+    check_in: body.check_in ? String(body.check_in) : today,
+    check_out: body.check_out ? String(body.check_out) : today,
+    num_nights: body.num_nights ? Number(body.num_nights) : 0,
+    num_guests: body.num_guests ? Number(body.num_guests) : 1,
+    base_rate: 0,
     base_total: baseTotal,
     discount_name: body.discount_name ? String(body.discount_name) : null,
     discount_percent: discountPercent,
@@ -154,7 +161,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(filtered)
   } catch (e) {
-    const detail = e instanceof Error ? e.message : String(e)
+    const detail = e instanceof Error ? e.message : ((e as { message?: string })?.message ?? JSON.stringify(e))
     console.error('[invoices GET] failed:', detail)
     return NextResponse.json({ error: 'Failed to fetch invoices', detail }, { status: 500 })
   }
@@ -287,7 +294,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(fullInvoice, { status: 201 })
   } catch (e) {
-    const detail = e instanceof Error ? e.message : String(e)
+    const detail = e instanceof Error ? e.message : ((e as { message?: string })?.message ?? JSON.stringify(e))
     console.error('[invoices POST] failed:', detail)
     return NextResponse.json({ error: 'Failed to generate invoice', detail }, { status: 500 })
   }
