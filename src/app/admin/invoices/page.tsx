@@ -17,6 +17,7 @@ import {
   Clock,
   Download,
   Trash2,
+  Pencil,
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { csrfHeaders } from '@/lib/csrf-client'
@@ -464,14 +465,17 @@ interface LineItemInput {
 function ManualInvoiceModal({
   open,
   docType = 'invoice',
+  editInvoice = null,
   onClose,
   onCreated,
 }: {
   open: boolean
   docType?: 'invoice' | 'quote'
+  editInvoice?: Invoice | null
   onClose: () => void
   onCreated: () => void
 }) {
+  const isEdit = !!editInvoice
   const isQuote = docType === 'quote'
   const docLabel = isQuote ? 'Quotation' : 'Invoice'
   const [guestName, setGuestName] = useState('')
@@ -486,6 +490,30 @@ function ManualInvoiceModal({
   const [error, setError] = useState('')
   const [combineName, setCombineName] = useState('')
   const [combining, setCombining] = useState(false)
+
+  // Prefill from the invoice being edited (or reset for a new one) when opened
+  useEffect(() => {
+    if (!open) return
+    if (editInvoice) {
+      setGuestName(editInvoice.guest_name || '')
+      setGuestEmail(editInvoice.guest_email || '')
+      setGuestPhone(editInvoice.guest_phone || '')
+      setPaymentMethod(editInvoice.payment_method || 'property')
+      setPaymentStatus(editInvoice.payment_status || 'unpaid')
+      setDiscountPercent(editInvoice.discount_percent || 0)
+      setNotes(editInvoice.notes || '')
+      setItems(
+        editInvoice.items && editInvoice.items.length > 0
+          ? editInvoice.items.map((it) => ({ description: it.description, quantity: it.quantity, unit_price: it.unit_price }))
+          : [{ description: '', quantity: 1, unit_price: 0 }]
+      )
+      setError('')
+      setCombineName('')
+    } else {
+      reset()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, editInvoice])
 
   // Combined invoice: pull a guest's accommodation + restaurant + services into line items
   async function handleCombine() {
@@ -531,24 +559,39 @@ function ManualInvoiceModal({
     if (!items.some((it) => it.description.trim())) { setError('Add at least one line item with a description'); return }
     setSaving(true)
     try {
-      const res = await fetch('/api/invoices', {
-        method: 'POST',
+      const cleanItems = items.filter((it) => it.description.trim())
+      const res = await fetch(isEdit ? `/api/invoices/${editInvoice!.id}` : '/api/invoices', {
+        method: isEdit ? 'PATCH' : 'POST',
         headers: csrfHeaders(),
-        body: JSON.stringify({
-          doc_type: docType,
-          guest_name: guestName,
-          guest_email: guestEmail || undefined,
-          guest_phone: guestPhone || undefined,
-          payment_method: paymentMethod,
-          payment_status: paymentStatus,
-          discount_percent: Number(discountPercent) || 0,
-          notes: notes || undefined,
-          items: items.filter((it) => it.description.trim()),
-        }),
+        body: JSON.stringify(
+          isEdit
+            ? {
+                action: 'edit',
+                guest_name: guestName,
+                guest_email: guestEmail || undefined,
+                guest_phone: guestPhone || undefined,
+                payment_method: paymentMethod,
+                payment_status: paymentStatus,
+                discount_percent: Number(discountPercent) || 0,
+                notes: notes || undefined,
+                items: cleanItems,
+              }
+            : {
+                doc_type: docType,
+                guest_name: guestName,
+                guest_email: guestEmail || undefined,
+                guest_phone: guestPhone || undefined,
+                payment_method: paymentMethod,
+                payment_status: paymentStatus,
+                discount_percent: Number(discountPercent) || 0,
+                notes: notes || undefined,
+                items: cleanItems,
+              }
+        ),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        throw new Error([data.error, data.detail].filter(Boolean).join(' — ') || 'Failed to create invoice')
+        throw new Error([data.error, data.detail].filter(Boolean).join(' — ') || 'Failed to save')
       }
       reset()
       onCreated()
@@ -576,8 +619,8 @@ function ManualInvoiceModal({
         >
           <div className="flex items-center justify-between border-b px-6 py-4">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">New {docLabel}</h2>
-              <p className="text-sm text-gray-500">Create a {docLabel.toLowerCase()} with custom line items (no booking required)</p>
+              <h2 className="text-lg font-semibold text-gray-900">{isEdit ? 'Edit' : 'New'} {docLabel}</h2>
+              <p className="text-sm text-gray-500">{isEdit ? `Update this ${docLabel.toLowerCase()}` : `Create a ${docLabel.toLowerCase()} with custom line items (no booking required)`}</p>
             </div>
             <button onClick={onClose} className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
               <X className="h-5 w-5" />
@@ -592,7 +635,7 @@ function ManualInvoiceModal({
             )}
 
             {/* Combined invoice — pull a guest's services (invoices only) */}
-            {!isQuote && (
+            {!isQuote && !isEdit && (
               <div className="rounded-lg border border-dashed border-teal-300 bg-teal-50/40 p-3">
                 <label className="mb-1 block text-xs font-medium text-teal-800">Combine a guest&apos;s services (optional)</label>
                 <div className="flex gap-2">
@@ -717,7 +760,7 @@ function ManualInvoiceModal({
             <button onClick={handleCreate} disabled={saving}
               className="inline-flex items-center gap-1.5 rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800 disabled:opacity-50">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
-              Create {docLabel}
+              {isEdit ? 'Save Changes' : `Create ${docLabel}`}
             </button>
           </div>
         </motion.div>
@@ -734,10 +777,12 @@ function InvoiceDetail({
   invoice,
   onBack,
   onStatusUpdate,
+  onEdit,
 }: {
   invoice: Invoice
   onBack: () => void
   onStatusUpdate: () => void
+  onEdit: (invoice: Invoice) => void
 }) {
   const [receiptMode, setReceiptMode] = useState(false)
   const [markingPaid, setMarkingPaid] = useState(false)
@@ -825,6 +870,15 @@ function InvoiceDetail({
           >
             <Receipt className="h-4 w-4" />
             {receiptMode ? 'Receipt Mode' : 'Switch to Receipt'}
+          </button>
+        )}
+
+        {!invoice.booking_id && (
+          <button
+            onClick={() => onEdit(invoice)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            <Pencil className="h-4 w-4" /> Edit
           </button>
         )}
 
@@ -1081,7 +1135,19 @@ export default function AdminInvoicesPage() {
   const [showManualModal, setShowManualModal] = useState(false)
   const [docType, setDocType] = useState<'invoice' | 'quote'>('invoice')
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
+  const [editInvoice, setEditInvoice] = useState<Invoice | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
+
+  // Open the modal in edit mode for a manual invoice/quote
+  function startEdit(inv: Invoice) {
+    setSelectedInvoice(null)
+    setEditInvoice(inv)
+    setShowManualModal(true)
+  }
+  function closeManualModal() {
+    setShowManualModal(false)
+    setEditInvoice(null)
+  }
 
   // Debounce search
   useEffect(() => {
@@ -1162,6 +1228,7 @@ export default function AdminInvoicesPage() {
               viewInvoice(selectedInvoice.id)
               fetchInvoices()
             }}
+            onEdit={startEdit}
           />
         </div>
       </div>
@@ -1310,11 +1377,12 @@ export default function AdminInvoicesPage() {
         onGenerated={fetchInvoices}
       />
 
-      {/* Manual Invoice / Quotation Modal */}
+      {/* Manual Invoice / Quotation Modal (create + edit) */}
       <ManualInvoiceModal
         open={showManualModal}
-        docType={docType}
-        onClose={() => setShowManualModal(false)}
+        docType={editInvoice ? (editInvoice.doc_type || 'invoice') : docType}
+        editInvoice={editInvoice}
+        onClose={closeManualModal}
         onCreated={fetchInvoices}
       />
     </div>

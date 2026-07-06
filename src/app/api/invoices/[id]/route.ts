@@ -37,6 +37,70 @@ export async function PATCH(
     if (session instanceof NextResponse) return session
 
     const body = await request.json()
+
+    // ── Full edit of a manual/quote document (fields + line items) ──
+    if (body.action === 'edit' && Array.isArray(body.items)) {
+      const guestName = String(body.guest_name || '').trim()
+      if (!guestName) {
+        return NextResponse.json({ error: 'Guest name is required' }, { status: 400 })
+      }
+      const items = (body.items as Array<Record<string, unknown>>)
+        .map((it) => {
+          const description = String(it.description || '').trim()
+          const quantity = Number(it.quantity) || 0
+          const unit_price = Number(it.unit_price) || 0
+          return { description, quantity, unit_price, total: Math.round(quantity * unit_price) }
+        })
+        .filter((it) => it.description.length > 0)
+      if (items.length === 0) {
+        return NextResponse.json({ error: 'At least one line item with a description is required' }, { status: 400 })
+      }
+      const baseTotal = items.reduce((s, it) => s + it.total, 0)
+      const discountPercent = Number(body.discount_percent) || 0
+      const discountAmount = Math.round(baseTotal * discountPercent / 100)
+      const subtotal = baseTotal - discountAmount
+      const paymentStatus = body.payment_status ? String(body.payment_status) : 'unpaid'
+
+      const { error: updErr } = await supabaseAdmin
+        .from('invoices')
+        .update({
+          guest_name: guestName,
+          guest_email: body.guest_email ? String(body.guest_email) : '',
+          guest_phone: body.guest_phone ? String(body.guest_phone) : null,
+          discount_percent: discountPercent,
+          discount_amount: discountAmount,
+          base_total: baseTotal,
+          subtotal,
+          total: subtotal,
+          payment_method: body.payment_method ? String(body.payment_method) : 'property',
+          payment_status: paymentStatus,
+          notes: body.notes ? String(body.notes) : null,
+          ...(paymentStatus === 'paid' ? { paid_at: new Date().toISOString() } : {}),
+        })
+        .eq('id', params.id)
+      if (updErr) throw updErr
+
+      // Replace the line items
+      await supabaseAdmin.from('invoice_items').delete().eq('invoice_id', params.id)
+      await supabaseAdmin.from('invoice_items').insert(
+        items.map((it) => ({
+          invoice_id: params.id,
+          description: it.description,
+          quantity: it.quantity,
+          unit_price: it.unit_price,
+          total: it.total,
+          item_type: 'custom',
+        }))
+      )
+
+      const { data: full } = await supabaseAdmin
+        .from('invoices')
+        .select('*, items:invoice_items(*)')
+        .eq('id', params.id)
+        .single()
+      return NextResponse.json(full)
+    }
+
     const updates: Record<string, unknown> = {}
 
     if (body.payment_status) {
