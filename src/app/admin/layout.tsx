@@ -68,6 +68,7 @@ const sidebarLinks = [
   { href: '/admin/settings/branding', label: 'Branding', icon: Settings, permission: 'dashboard' },
   { href: '/admin/content', label: 'Content', icon: ImageIcon, permission: 'dashboard' },
   { href: '/admin/settings/seo', label: 'SEO & Analytics', icon: TrendingUp, permission: 'dashboard' },
+  { href: '/admin/blog', label: 'Blog & Articles', icon: FileText, permission: 'dashboard' },
   { href: '/staff/chat', label: 'Team Chat', icon: MessageCircle, permission: 'dashboard' },
 ]
 

@@ -87,3 +87,16 @@
 .lightbox-overlay {
   @apply fixed inset-0 z-50 bg-black/90 flex items-center justify-center;
 }
+
+/* Blog article rendered markdown */
+.blog-content { color: #374151; line-height: 1.75; font-size: 1.05rem; }
+.blog-content h1 { @apply font-serif text-3xl font-bold text-sky-900 mt-8 mb-4; }
+.blog-content h2 { @apply font-serif text-2xl font-bold text-sky-900 mt-8 mb-3; }
+.blog-content h3 { @apply text-xl font-semibold text-sky-800 mt-6 mb-2; }
+.blog-content p { @apply my-4; }
+.blog-content ul { @apply my-4 list-disc pl-6 space-y-1; }
+.blog-content ol { @apply my-4 list-decimal pl-6 space-y-1; }
+.blog-content a { @apply text-sky-700 underline hover:text-sky-900; }
+.blog-content strong { @apply font-semibold text-gray-900; }
+.blog-content blockquote { @apply border-l-4 border-amber-400 pl-4 italic text-gray-600 my-4; }
+.blog-content img { @apply rounded-xl my-6 max-w-full; }

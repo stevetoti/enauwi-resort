@@ -1,5 +1,24 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-07-03 — [Claude Code] Auto-publishing SEO blog
+
+New blog to grow organic search traffic. Fully automatic per the team.
+
+- DB: blog_posts + blog_topics (migration 20260703_blog.sql — RUN IN SUPABASE)
+- Public /blog listing + /blog/[slug] articles: server-rendered, per-article
+  meta + OpenGraph + JSON-LD Article schema, markdown via marked, CTA to /book
+- Dynamic app/sitemap.ts (replaces stale public/sitemap.xml which had the wrong
+  .com domain) incl. all blog posts; robots.txt domain fixed to .org
+- Admin → Blog & Articles: list, publish 10 curated starter articles, "Generate
+  one now (AI)", unpublish/delete
+- Auto-generation: src/lib/blog-generate.ts (OpenAI gpt-4o, grounded in resort
+  facts, draws from blog_topics backlog). Vercel cron weekly (Mon 01:00 UTC) ->
+  /api/blog/generate, auth via CRON_SECRET (set in Vercel prod)
+- 10 curated articles embedded in src/data/blog-seed.ts (from the SEO drafts)
+
+Go-live after deploy: (1) run the migration, (2) Admin → Blog → "Publish 10
+starter articles", (3) submit sitemap in Search Console.
+
 ## 2026-06-08 — [Claude Code] Fix: login "Invalid or missing CSRF token" (stale-cookie blocker)
 
 Root cause: middleware only issued the `enauwi_csrf` cookie when ABSENT, so a
