@@ -71,6 +71,13 @@ export default async function BlogArticlePage({ params }: { params: { slug: stri
           </div>
         </div>
 
+        {post.cover_image && (
+          <div className="mx-auto max-w-3xl px-4 pt-6">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={post.cover_image} alt={post.title} className="max-h-[440px] w-full rounded-2xl object-cover" />
+          </div>
+        )}
+
         <article className="blog-content mx-auto max-w-3xl px-4 py-10" dangerouslySetInnerHTML={{ __html: html }} />
 
         <div className="mx-auto max-w-3xl px-4 pb-20">

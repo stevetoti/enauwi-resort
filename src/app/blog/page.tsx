@@ -50,8 +50,15 @@ export default async function BlogPage() {
                   href={`/blog/${post.slug}`}
                   className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                 >
-                  <div className="flex h-32 items-center justify-center bg-gradient-to-br from-sky-600 to-cyan-500 p-5 text-center">
-                    <h2 className="font-serif text-lg font-bold leading-snug text-white">{post.title}</h2>
+                  <div className="relative h-44 overflow-hidden">
+                    {post.cover_image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={post.cover_image} alt={post.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                    ) : (
+                      <div className="h-full w-full bg-gradient-to-br from-sky-600 to-cyan-500" />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                    <h2 className="absolute bottom-0 p-4 font-serif text-lg font-bold leading-snug text-white">{post.title}</h2>
                   </div>
                   <div className="flex flex-1 flex-col p-5">
                     <p className="mb-3 flex-1 text-sm text-gray-600">{post.excerpt}</p>

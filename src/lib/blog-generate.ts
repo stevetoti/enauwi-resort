@@ -18,6 +18,43 @@ occasional rare dugong sightings, sunset cruises, island hopping, a bar & restau
 The nearest town is Port Vila (Vanuatu's capital, served by Bauerfield International Airport). \
 Website: www.enauwibeachresort.org, phone +678 22170.`
 
+// Real resort photos the auto-writer drops into each article.
+const RESORT_IMAGES = [
+  '/images/resort/beach-resort-overview.jpg',
+  '/images/resort/hero-resort-lagoon.jpg',
+  '/images/resort/private-island-sandbar.jpg',
+  '/images/resort/lagoon-island-view.jpg',
+  '/images/resort/resort-coral-reef.jpg',
+  '/images/new/kayak-snorkeling.jpg',
+  '/images/resort/beach-kayaks-cove.jpg',
+  '/images/resort/resort-lagoon-kayak.jpg',
+  '/images/resort/resort-buildings-aerial.jpg',
+  '/images/resort/resort-lagoon-aerial.jpg',
+  '/images/pool.jpg',
+  '/images/resort/wedding-beach-couple.jpg',
+]
+
+// Insert 3 distinct resort photos spread through the article body; returns
+// { content, cover }.
+function addImages(body: string, title: string, seed: number): { content: string; cover: string } {
+  const pool = [...RESORT_IMAGES]
+  // deterministic-ish shuffle by seed so consecutive articles vary
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = (seed * (i + 7)) % (i + 1)
+    ;[pool[i], pool[j]] = [pool[j], pool[i]]
+  }
+  const chosen = pool.slice(0, 3)
+  const alt = `${title} — E'Nauwi Beach Resort, Efate Vanuatu`
+  const blocks = body.replace(/^#\s.*\n+/, '').split(/\n\n+/)
+  const positions = Array.from(new Set([1, Math.floor(blocks.length * 0.5), Math.floor(blocks.length * 0.8)]))
+    .filter((p) => p > 0 && p <= blocks.length)
+    .slice(0, 3)
+  for (let k = positions.length - 1; k >= 0; k--) {
+    blocks.splice(positions[k], 0, `![${alt}](${chosen[k] || chosen[0]})`)
+  }
+  return { content: blocks.join('\n\n'), cover: chosen[0] }
+}
+
 // Generates one SEO article with OpenAI (grounded in real resort facts) and
 // publishes it. Used by the weekly cron and the admin "Generate now" button.
 export async function generateAndPublishArticle(): Promise<{ slug: string; title: string }> {
@@ -53,11 +90,11 @@ Return ONLY the article body in Markdown.`
     max_tokens: 1800,
   })
 
-  const content = completion.choices[0]?.message?.content?.trim() || ''
-  if (!content) throw new Error('Empty AI response')
+  const rawContent = completion.choices[0]?.message?.content?.trim() || ''
+  if (!rawContent) throw new Error('Empty AI response')
 
   const firstPara =
-    content
+    rawContent
       .replace(/^#.*$/gm, '')
       .replace(/[#*_>`-]/g, '')
       .split('\n')
@@ -65,6 +102,9 @@ Return ONLY the article body in Markdown.`
       .filter(Boolean)[0] || ''
   const excerpt = firstPara.slice(0, 180)
   const metaDescription = firstPara.slice(0, 155)
+
+  // Add real resort photos to the article
+  const { content, cover } = addImages(rawContent, title, Date.now() % 100000)
 
   let slug = slugify(title)
   const { data: existing } = await supabaseAdmin.from('blog_posts').select('id').eq('slug', slug).maybeSingle()
@@ -76,6 +116,7 @@ Return ONLY the article body in Markdown.`
     excerpt,
     meta_description: metaDescription,
     content,
+    cover_image: cover,
     keywords: keyword,
     status: 'published',
     ai_generated: true,
