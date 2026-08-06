@@ -43,14 +43,15 @@ function addImages(body: string, title: string, seed: number): { content: string
     const j = (seed * (i + 7)) % (i + 1)
     ;[pool[i], pool[j]] = [pool[j], pool[i]]
   }
-  const chosen = pool.slice(0, 3)
+  const chosen = pool.slice(0, 3) // [0] = hero cover, [1] & [2] = in-body
   const alt = `${title} — E'Nauwi Beach Resort, Efate Vanuatu`
   const blocks = body.replace(/^#\s.*\n+/, '').split(/\n\n+/)
-  const positions = Array.from(new Set([1, Math.floor(blocks.length * 0.5), Math.floor(blocks.length * 0.8)]))
+  const bodyImgs = [chosen[1], chosen[2]]
+  const positions = Array.from(new Set([1, Math.floor(blocks.length * 0.6)]))
     .filter((p) => p > 0 && p <= blocks.length)
-    .slice(0, 3)
+    .slice(0, 2)
   for (let k = positions.length - 1; k >= 0; k--) {
-    blocks.splice(positions[k], 0, `![${alt}](${chosen[k] || chosen[0]})`)
+    blocks.splice(positions[k], 0, `![${alt}](${bodyImgs[k]})`)
   }
   return { content: blocks.join('\n\n'), cover: chosen[0] }
 }
