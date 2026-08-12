@@ -127,8 +127,8 @@ export default function TermsPage() {
             <h2 className="font-serif text-xl font-bold text-ocean">Children Policy</h2>
           </div>
           <div className="bg-green-light/10 rounded-xl p-4 mb-4 border border-green-light/20">
-            <p className="text-ocean font-semibold text-lg">Kids stay FREE! 🎉</p>
-            <p className="text-ocean/60 text-sm mt-1">Up to 2 children aged 12 and under stay free when occupying the parent or guardian&apos;s room, using existing bedding.</p>
+            <p className="text-ocean font-semibold text-lg">Children Welcome 👨‍👩‍👧‍👦</p>
+            <p className="text-ocean/60 text-sm mt-1">Children are welcome at the resort. Child / extra-person charges apply and vary by room type and occupancy — please confirm current child rates with the resort when booking.</p>
           </div>
           <ul className="space-y-2 text-sm text-ocean/70">
             <li>• Nanny Service available daily <strong className="text-ocean">8:00 AM – 8:00 PM</strong></li>
@@ -200,7 +200,7 @@ export default function TermsPage() {
             <li>• Front desk hours: <strong className="text-ocean">8:00 AM – 5:00 PM</strong> daily.</li>
             <li>• If arriving after 5:00 PM, please contact the property in advance.</li>
             <li>• An email with check-in instructions will be sent <strong className="text-ocean">7 days before arrival</strong>.</li>
-            <li>• Up to 2 children (aged 12 and under) stay <strong className="text-ocean">free</strong> in the parent&apos;s room with existing bedding.</li>
+            <li>• Children are welcome; <strong className="text-ocean">child / extra-person charges apply</strong> (rates vary by room and occupancy — confirm with the resort when booking).</li>
             <li>• Only <strong className="text-ocean">registered guests</strong> are allowed in the guestrooms.</li>
             <li>• Airport shuttle: <strong className="text-ocean">VUV 2,000/adult</strong>, <strong className="text-ocean">VUV 1,000/child</strong> (one-way).</li>
             <li>• Late checkout: <strong className="text-ocean">VUV 2,500/hour</strong> (subject to availability).</li>

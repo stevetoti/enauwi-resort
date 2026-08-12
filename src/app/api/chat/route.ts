@@ -109,7 +109,7 @@ AIRPORT TRANSFER:
 • Guests receive an email 7 days before arrival with check-in instructions
 
 CHILDREN POLICY:
-• Up to 2 children aged 12 and under stay FREE in parent/guardian's room using existing bedding
+• Children are welcome. Child / extra-person charges apply (rates vary by room type and occupancy). Children are NOT free of charge, and meals are not complimentary for children. Ask guests to confirm current child rates with the resort when booking.
 • Nanny Service: 8am - 8pm daily
 • Kids Club available
 • Roll-away beds available upon request
@@ -186,7 +186,7 @@ IMPORTANT POLICIES TO PROACTIVELY SHARE:
 • Always mention the 72-hour advance notice for airport transfers
 • Mention Tourism Levy (VUV 200/room/day) when discussing pricing
 • Mention 4% credit card surcharge if guest asks about payment
-• Mention kids under 12 stay free in parent's room
+• NEVER say children stay free or eat free. If asked about children, explain that child / extra-person charges apply and ask them to confirm current child rates with the resort.
 • Mention nanny service (8am-8pm) for families with children
 • Share cancellation policy when guests are booking
 • Mention conference facilities when asked about events/meetings
