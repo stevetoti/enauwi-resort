@@ -67,6 +67,36 @@ interface Invoice {
   doc_type?: 'invoice' | 'quote'
   quote_status?: string | null
   valid_until?: string | null
+  created_by_name?: string | null
+  received_by_name?: string | null
+  voided?: boolean
+  voided_at?: string | null
+  voided_by_name?: string | null
+  void_reason?: string | null
+}
+
+interface StaffOption { id: string; name: string }
+
+// Shared staff list for the "Created by" / "Received by" dropdowns
+function useStaffList(): StaffOption[] {
+  const [staff, setStaff] = useState<StaffOption[]>([])
+  useEffect(() => {
+    fetch('/api/staff?limit=200&status=active')
+      .then((r) => (r.ok ? r.json() : { data: [] }))
+      .then((d) => {
+        const arr = Array.isArray(d) ? d : d.data || []
+        setStaff(
+          arr
+            .map((s: { id: string; name?: string; full_name?: string; email?: string }) => ({
+              id: s.id,
+              name: s.name || s.full_name || s.email || '',
+            }))
+            .filter((s: StaffOption) => s.name)
+        )
+      })
+      .catch(() => {})
+  }, [])
+  return staff
 }
 
 // ---------------------------------------------------------------------------
@@ -152,6 +182,8 @@ function buildInvoiceWordHtml(invoice: Invoice, isReceipt: boolean): string {
     </td>
   </tr></table>
   <p style="margin:2px 0;"><b>Payment:</b> ${invoice.payment_method || 'Not specified'} &nbsp; <b>Status:</b> ${(invoice.payment_status || 'unpaid').toUpperCase()}</p>
+  ${invoice.created_by_name ? `<p style="margin:2px 0;"><b>Created by:</b> ${invoice.created_by_name}</p>` : ''}
+  ${invoice.received_by_name ? `<p style="margin:2px 0;"><b>Payment received by:</b> ${invoice.received_by_name}</p>` : ''}
   ${datesBlock}
   ${invoice.notes ? `<p style="margin:8px 0 2px;"><b>Notes:</b> ${invoice.notes}</p>` : ''}
   <table style="width:100%;border-collapse:collapse;margin-top:14px;border:1px solid #439de5;background:#f3f9fe;"><tr><td style="padding:10px 12px;">
@@ -247,6 +279,8 @@ function GenerateModal({
   const [filter, setFilter] = useState<'all' | 'active' | 'past'>('all')
   const [generating, setGenerating] = useState<string | null>(null)
   const [error, setError] = useState('')
+  const [createdBy, setCreatedBy] = useState('')
+  const staff = useStaffList()
   const supabase = createClientSupabase()
 
   useEffect(() => {
@@ -294,7 +328,7 @@ function GenerateModal({
       const res = await fetch('/api/invoices', {
         method: 'POST',
         headers: csrfHeaders(),
-        body: JSON.stringify({ booking_id: bookingId }),
+        body: JSON.stringify({ booking_id: bookingId, created_by: createdBy || undefined, created_by_name: staff.find((s) => s.id === createdBy)?.name || undefined }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
@@ -337,6 +371,18 @@ function GenerateModal({
             <button onClick={onClose} className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
               <X className="h-5 w-5" />
             </button>
+          </div>
+
+          {/* Created-by selector */}
+          <div className="flex items-center gap-2 border-b px-6 py-2">
+            <label className="whitespace-nowrap text-xs font-medium text-gray-600">Created by:</label>
+            <select value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}
+              className="flex-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm bg-white focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500">
+              <option value="">Select staff member…</option>
+              {staff.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
           </div>
 
           {/* Search & Filter */}
@@ -485,6 +531,8 @@ function ManualInvoiceModal({
   const [paymentStatus, setPaymentStatus] = useState('unpaid')
   const [discountPercent, setDiscountPercent] = useState(0)
   const [notes, setNotes] = useState('')
+  const [createdBy, setCreatedBy] = useState('')
+  const staff = useStaffList()
   const [items, setItems] = useState<LineItemInput[]>([{ description: '', quantity: 1, unit_price: 0 }])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -541,7 +589,7 @@ function ManualInvoiceModal({
   function reset() {
     setGuestName(''); setGuestEmail(''); setGuestPhone(''); setPaymentMethod('property')
     setPaymentStatus('unpaid'); setDiscountPercent(0); setNotes('')
-    setItems([{ description: '', quantity: 1, unit_price: 0 }]); setError(''); setCombineName('')
+    setItems([{ description: '', quantity: 1, unit_price: 0 }]); setError(''); setCombineName(''); setCreatedBy('')
   }
 
   const updateItem = (i: number, patch: Partial<LineItemInput>) =>
@@ -585,6 +633,8 @@ function ManualInvoiceModal({
                 payment_status: paymentStatus,
                 discount_percent: Number(discountPercent) || 0,
                 notes: notes || undefined,
+                created_by: createdBy || undefined,
+                created_by_name: staff.find((s) => s.id === createdBy)?.name || undefined,
                 items: cleanItems,
               }
         ),
@@ -741,6 +791,19 @@ function ManualInvoiceModal({
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500" />
             </div>
 
+            {!isEdit && (
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Created by <span className="text-gray-400 font-normal">(staff)</span></label>
+                <select value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500">
+                  <option value="">Select staff member…</option>
+                  {staff.map((s) => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             {/* Totals preview */}
             <div className="flex justify-end">
               <div className="w-56 space-y-1 text-sm">
@@ -778,15 +841,23 @@ function InvoiceDetail({
   onBack,
   onStatusUpdate,
   onEdit,
+  canManage,
 }: {
   invoice: Invoice
   onBack: () => void
   onStatusUpdate: () => void
   onEdit: (invoice: Invoice) => void
+  canManage: boolean
 }) {
   const [receiptMode, setReceiptMode] = useState(false)
   const [markingPaid, setMarkingPaid] = useState(false)
   const [converting, setConverting] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [showReceivedBy, setShowReceivedBy] = useState(false)
+  const [receivedBy, setReceivedBy] = useState('')
+  const [showVoid, setShowVoid] = useState(false)
+  const [voidReason, setVoidReason] = useState('')
+  const staff = useStaffList()
   const printRef = useRef<HTMLDivElement>(null)
 
   const isQuote = invoice.doc_type === 'quote'
@@ -810,20 +881,57 @@ function InvoiceDetail({
     }
   }
 
-  async function handleMarkPaid() {
+  async function confirmMarkPaid() {
     setMarkingPaid(true)
     try {
       const res = await fetch(`/api/invoices/${invoice.id}`, {
         method: 'PATCH',
         headers: csrfHeaders(),
-        body: JSON.stringify({ payment_status: 'paid' }),
+        body: JSON.stringify({
+          payment_status: 'paid',
+          received_by: receivedBy || undefined,
+          received_by_name: staff.find((s) => s.id === receivedBy)?.name || undefined,
+        }),
       })
       if (!res.ok) throw new Error('Failed to update status')
+      setShowReceivedBy(false)
       onStatusUpdate()
     } catch (err) {
       console.error('Failed to mark as paid:', err)
     } finally {
       setMarkingPaid(false)
+    }
+  }
+
+  async function handleVoid() {
+    setBusy(true)
+    try {
+      const res = await fetch(`/api/invoices/${invoice.id}`, {
+        method: 'PATCH',
+        headers: csrfHeaders(),
+        body: JSON.stringify({ action: 'void', void_reason: voidReason || undefined }),
+      })
+      if (!res.ok) throw new Error('Failed to void')
+      setShowVoid(false)
+      onBack()
+    } catch (err) {
+      console.error('Failed to void invoice:', err)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function handleDelete() {
+    if (!confirm('Permanently DELETE this document? This cannot be undone. (Use Void instead to keep an audit record.)')) return
+    setBusy(true)
+    try {
+      const res = await fetch(`/api/invoices/${invoice.id}`, { method: 'DELETE', headers: csrfHeaders() })
+      if (!res.ok) throw new Error('Failed to delete')
+      onBack()
+    } catch (err) {
+      console.error('Failed to delete invoice:', err)
+    } finally {
+      setBusy(false)
     }
   }
 
@@ -895,7 +1003,7 @@ function InvoiceDetail({
 
         {!isQuote && invoice.payment_status !== 'paid' && (
           <button
-            onClick={handleMarkPaid}
+            onClick={() => setShowReceivedBy(true)}
             disabled={markingPaid}
             className="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
           >
@@ -917,7 +1025,65 @@ function InvoiceDetail({
         >
           <Printer className="h-4 w-4" /> Print / PDF
         </button>
+
+        {canManage && !invoice.voided && (
+          <button
+            onClick={() => setShowVoid(true)}
+            disabled={busy}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 px-3 py-2 text-sm font-medium text-amber-700 hover:bg-amber-50 disabled:opacity-50"
+          >
+            <XCircle className="h-4 w-4" /> Void
+          </button>
+        )}
+        {canManage && (
+          <button
+            onClick={handleDelete}
+            disabled={busy}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-red-300 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+          >
+            <Trash2 className="h-4 w-4" /> Delete
+          </button>
+        )}
       </div>
+
+      {/* Received-by dialog (shown when marking paid) */}
+      {showReceivedBy && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 print:hidden">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900">Mark as Paid</h3>
+            <p className="mt-1 text-sm text-gray-500">Who received this payment?</p>
+            <select value={receivedBy} onChange={(e) => setReceivedBy(e.target.value)}
+              className="mt-3 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm">
+              <option value="">Select staff member…</option>
+              {staff.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+            <div className="mt-5 flex justify-end gap-2">
+              <button onClick={() => setShowReceivedBy(false)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
+              <button onClick={confirmMarkPaid} disabled={markingPaid} className="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50">
+                {markingPaid ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />} Confirm Paid
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Void dialog */}
+      {showVoid && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 print:hidden">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900">Void this {isQuote ? 'quotation' : 'invoice'}?</h3>
+            <p className="mt-1 text-sm text-gray-500">It will be hidden from the active list but kept for audit. Add a reason (optional):</p>
+            <input value={voidReason} onChange={(e) => setVoidReason(e.target.value)} placeholder="e.g. duplicate / created in error"
+              className="mt-3 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            <div className="mt-5 flex justify-end gap-2">
+              <button onClick={() => setShowVoid(false)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
+              <button onClick={handleVoid} disabled={busy} className="inline-flex items-center gap-1.5 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50">
+                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4" />} Void
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Printable Invoice */}
       <div
@@ -1067,6 +1233,16 @@ function InvoiceDetail({
                 {formatCurrency(invoice.total)} on {formatDate(invoice.paid_at)}
               </p>
             )}
+            {invoice.created_by_name && (
+              <p className="text-gray-500">
+                <span className="font-medium text-gray-700">Created by:</span> {invoice.created_by_name}
+              </p>
+            )}
+            {invoice.received_by_name && (
+              <p className="text-gray-500">
+                <span className="font-medium text-gray-700">Payment received by:</span> {invoice.received_by_name}
+              </p>
+            )}
           </div>
           {invoice.booking_id ? (
             <div className="space-y-1.5">
@@ -1134,9 +1310,28 @@ export default function AdminInvoicesPage() {
   const [showGenerateModal, setShowGenerateModal] = useState(false)
   const [showManualModal, setShowManualModal] = useState(false)
   const [docType, setDocType] = useState<'invoice' | 'quote'>('invoice')
+  const [showVoided, setShowVoided] = useState(false)
+  const [canManage, setCanManage] = useState(false)
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
   const [editInvoice, setEditInvoice] = useState<Invoice | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
+
+  // Who may void/delete invoices (managers / staff with edit rights, like Jonah & Shaniella)
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        const p = d?.staff?.permissions || {}
+        const role = String(d?.staff?.role || '').toLowerCase()
+        const allowed =
+          ['super_admin', 'admin', 'manager'].includes(role) ||
+          p?.invoices?.edit || p?.invoices?.delete ||
+          p?.bookings?.edit || p?.bookings?.delete ||
+          p?.finance?.edit
+        setCanManage(!!allowed)
+      })
+      .catch(() => {})
+  }, [])
 
   // Open the modal in edit mode for a manual invoice/quote
   function startEdit(inv: Invoice) {
@@ -1162,6 +1357,7 @@ export default function AdminInvoicesPage() {
       const params = new URLSearchParams()
       if (debouncedSearch) params.set('search', debouncedSearch)
       params.set('doc_type', docType)
+      if (showVoided) params.set('voided', 'true')
       const res = await fetch(`/api/invoices?${params.toString()}`)
       if (!res.ok) throw new Error('Failed to fetch invoices')
       const data = await res.json()
@@ -1171,7 +1367,7 @@ export default function AdminInvoicesPage() {
     } finally {
       setLoading(false)
     }
-  }, [debouncedSearch, docType])
+  }, [debouncedSearch, docType, showVoided])
 
   useEffect(() => {
     fetchInvoices()
@@ -1229,6 +1425,7 @@ export default function AdminInvoicesPage() {
               fetchInvoices()
             }}
             onEdit={startEdit}
+            canManage={canManage}
           />
         </div>
       </div>
@@ -1282,6 +1479,16 @@ export default function AdminInvoicesPage() {
             {t === 'invoice' ? 'Invoices' : 'Quotations'}
           </button>
         ))}
+        <div className="ml-auto flex items-center">
+          <button
+            onClick={() => setShowVoided((v) => !v)}
+            className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+              showVoided ? 'border-amber-600 text-amber-700' : 'border-transparent text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            {showVoided ? '← Active' : 'Voided'}
+          </button>
+        </div>
       </div>
 
       {/* Search */}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
+import { EXPENSE_TAXONOMY, EXPENSE_CATEGORY_NAMES } from '@/data/expense-categories'
 import {
   TrendingUp,
   TrendingDown,
@@ -34,6 +35,7 @@ interface Transaction {
   date: string
   category: string
   subcategory: string | null
+  sub_subcategory?: string | null
   amount: number
   type: 'income' | 'expense'
   description: string | null
@@ -48,7 +50,6 @@ interface DailyData {
 }
 
 const CATEGORIES = ['Rooms', 'Restaurant', 'Conference', 'Activities', 'Bar', 'Other']
-const EXPENSE_CATEGORIES = ['Supplies', 'Maintenance', 'Utilities', 'Salaries', 'Marketing', 'Other']
 const COLORS = ['#0D4F8B', '#E8941C', '#17A2B8', '#40916C', '#C77B0A', '#854B06']
 
 export default function FinancePage() {
@@ -65,10 +66,23 @@ export default function FinancePage() {
     date: format(new Date(), 'yyyy-MM-dd'),
     category: 'Rooms',
     subcategory: '',
+    sub_subcategory: '',
     amount: '',
     description: '',
     payment_method: 'cash',
   })
+
+  // Open the add modal, resetting the category to a valid default for the type
+  function openTransactionModal(type: 'income' | 'expense') {
+    setModalType(type)
+    setFormData((f) => ({
+      ...f,
+      category: type === 'income' ? 'Rooms' : EXPENSE_CATEGORY_NAMES[0],
+      subcategory: '',
+      sub_subcategory: '',
+    }))
+    setShowModal(true)
+  }
 
   // Stats
   const [stats, setStats] = useState({
@@ -181,6 +195,7 @@ export default function FinancePage() {
         date: formData.date,
         category: formData.category,
         subcategory: formData.subcategory || null,
+        sub_subcategory: formData.sub_subcategory || null,
         amount: parseFloat(formData.amount),
         type: modalType,
         description: formData.description || null,
@@ -195,6 +210,7 @@ export default function FinancePage() {
         date: format(new Date(), 'yyyy-MM-dd'),
         category: 'Rooms',
         subcategory: '',
+        sub_subcategory: '',
         amount: '',
         description: '',
         payment_method: 'cash',
@@ -205,12 +221,13 @@ export default function FinancePage() {
   }
 
   const exportCSV = () => {
-    const headers = ['Date', 'Type', 'Category', 'Subcategory', 'Amount', 'Description', 'Payment Method']
+    const headers = ['Date', 'Type', 'Category', 'Subcategory', 'Item', 'Amount', 'Description', 'Payment Method']
     const rows = transactions.map(t => [
       t.date,
       t.type,
       t.category,
       t.subcategory || '',
+      t.sub_subcategory || '',
       t.amount,
       t.description || '',
       t.payment_method || ''
@@ -264,14 +281,14 @@ export default function FinancePage() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => { setModalType('income'); setShowModal(true) }}
+            onClick={() => openTransactionModal('income')}
             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
           >
             <Plus className="w-4 h-4" />
             Add Income
           </button>
           <button
-            onClick={() => { setModalType('expense'); setShowModal(true) }}
+            onClick={() => openTransactionModal('expense')}
             className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
           >
             <Plus className="w-4 h-4" />
@@ -503,19 +520,70 @@ export default function FinancePage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <select
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
-                  required
-                >
-                  {(modalType === 'income' ? CATEGORIES : EXPENSE_CATEGORIES).map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
+              {modalType === 'income' ? (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg"
+                    required
+                  >
+                    {CATEGORIES.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Main Category</label>
+                    <select
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value, subcategory: '', sub_subcategory: '' })}
+                      className="w-full px-3 py-2 border rounded-lg bg-white"
+                      required
+                    >
+                      {EXPENSE_TAXONOMY.map(c => (
+                        <option key={c.category} value={c.category}>{c.category}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory</label>
+                    <select
+                      value={formData.subcategory}
+                      onChange={(e) => setFormData({ ...formData, subcategory: e.target.value, sub_subcategory: '' })}
+                      className="w-full px-3 py-2 border rounded-lg bg-white"
+                      required
+                    >
+                      <option value="">Select subcategory…</option>
+                      {(EXPENSE_TAXONOMY.find(c => c.category === formData.category)?.subcategories || []).map(s => (
+                        <option key={s.name} value={s.name}>{s.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {(() => {
+                    const sub = EXPENSE_TAXONOMY.find(c => c.category === formData.category)?.subcategories.find(s => s.name === formData.subcategory)
+                    if (!sub?.items?.length) return null
+                    return (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Item <span className="text-gray-400 font-normal">(optional)</span></label>
+                        <select
+                          value={formData.sub_subcategory}
+                          onChange={(e) => setFormData({ ...formData, sub_subcategory: e.target.value })}
+                          className="w-full px-3 py-2 border rounded-lg bg-white"
+                        >
+                          <option value="">— none —</option>
+                          {sub.items.map(it => (
+                            <option key={it} value={it}>{it}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )
+                  })()}
+                </>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Amount (VT)</label>

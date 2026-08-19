@@ -89,6 +89,8 @@ async function createManualInvoice(body: Record<string, unknown>): Promise<NextR
     payment_status: body.payment_status ? String(body.payment_status) : 'unpaid',
     notes: body.notes ? String(body.notes) : null,
     special_requests: null,
+    created_by: body.created_by ? String(body.created_by) : null,
+    created_by_name: body.created_by_name ? String(body.created_by_name) : null,
   }
   // Only set quote-specific columns for quotes, so invoice creation is
   // unaffected if the quotations migration hasn't been run yet.
@@ -136,6 +138,7 @@ export async function GET(request: NextRequest) {
     const bookingId = searchParams.get('bookingId')
     const search = searchParams.get('search')
     const docType = searchParams.get('doc_type') || 'invoice' // 'invoice' | 'quote'
+    const voidedOnly = searchParams.get('voided') === 'true' // active list hides voided by default
 
     let query = supabaseAdmin
       .from('invoices')
@@ -155,9 +158,10 @@ export async function GET(request: NextRequest) {
 
     // Filter by document type in JS so the list still works before the
     // quotations migration adds the doc_type column (missing → treated as 'invoice').
-    const filtered = (data || []).filter(
-      (row: { doc_type?: string }) => (row.doc_type || 'invoice') === docType
-    )
+    const filtered = (data || []).filter((row: { doc_type?: string; voided?: boolean }) => {
+      if ((row.doc_type || 'invoice') !== docType) return false
+      return voidedOnly ? !!row.voided : !row.voided
+    })
 
     return NextResponse.json(filtered)
   } catch (e) {
@@ -263,6 +267,8 @@ export async function POST(request: NextRequest) {
         payment_status: booking.payment_status || 'unpaid',
         notes: booking.notes,
         special_requests: booking.special_requests,
+        created_by: body.created_by ? String(body.created_by) : null,
+        created_by_name: body.created_by_name ? String(body.created_by_name) : null,
       })
       .select()
       .single()

@@ -268,6 +268,11 @@ export default function AdminBookingsPage() {
                         {booking.guest_phone && (
                           <p className="text-xs text-gray-400">{booking.guest_phone}</p>
                         )}
+                        {booking.booking_reference && (
+                          <p className="mt-0.5 text-xs font-mono font-semibold text-teal-700">
+                            Ref: {booking.booking_reference}
+                          </p>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700">

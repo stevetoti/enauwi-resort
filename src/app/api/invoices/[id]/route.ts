@@ -2,6 +2,21 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { requireAuth } from '@/lib/auth'
 
+// Authorised to void/delete invoices (managers or staff with edit rights)
+function canManageInvoices(session: {
+  role?: string
+  permissions?: Record<string, Record<string, boolean>>
+}): boolean {
+  const role = String(session.role || '').toLowerCase()
+  const p = session.permissions || {}
+  return (
+    ['super_admin', 'admin', 'manager'].includes(role) ||
+    !!p?.invoices?.edit || !!p?.invoices?.delete ||
+    !!p?.bookings?.edit || !!p?.bookings?.delete ||
+    !!p?.finance?.edit
+  )
+}
+
 // GET single invoice
 export async function GET(
   request: NextRequest,
@@ -111,9 +126,28 @@ export async function PATCH(
     }
     if (body.notes !== undefined) updates.notes = body.notes
 
+    // Who received the payment (staff dropdown)
+    if (body.received_by !== undefined) updates.received_by = body.received_by || null
+    if (body.received_by_name !== undefined) updates.received_by_name = body.received_by_name || null
+
     // Quote status changes (sent / accepted / declined)
     if (body.quote_status) {
       updates.quote_status = body.quote_status
+    }
+
+    // Void / cancel an invoice (kept for audit, hidden from the active list)
+    if (body.action === 'void') {
+      if (!canManageInvoices(session)) {
+        return NextResponse.json({ error: 'Not authorised to void invoices' }, { status: 403 })
+      }
+      updates.voided = true
+      updates.voided_at = new Date().toISOString()
+      updates.voided_by_name = body.voided_by_name ? String(body.voided_by_name) : null
+      updates.void_reason = body.void_reason ? String(body.void_reason) : null
+    }
+    if (body.action === 'unvoid') {
+      updates.voided = false
+      updates.voided_at = null
     }
 
     // Convert a quote into an invoice: assign a fresh ENW number + flip type
@@ -144,5 +178,24 @@ export async function PATCH(
     const detail = e instanceof Error ? e.message : ((e as { message?: string })?.message ?? JSON.stringify(e))
     console.error('[invoice PATCH] failed:', detail)
     return NextResponse.json({ error: 'Failed to update invoice', detail }, { status: 500 })
+  }
+}
+
+// DELETE — hard-delete an invoice/quote (authorised users only)
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const session = await requireAuth(request)
+    if (session instanceof NextResponse) return session
+    if (!canManageInvoices(session)) {
+      return NextResponse.json({ error: 'Not authorised to delete invoices' }, { status: 403 })
+    }
+    await supabaseAdmin.from('invoice_items').delete().eq('invoice_id', params.id)
+    const { error } = await supabaseAdmin.from('invoices').delete().eq('id', params.id)
+    if (error) throw error
+    return NextResponse.json({ success: true })
+  } catch (e) {
+    const detail = e instanceof Error ? e.message : ((e as { message?: string })?.message ?? JSON.stringify(e))
+    console.error('[invoice DELETE] failed:', detail)
+    return NextResponse.json({ error: 'Failed to delete invoice', detail }, { status: 500 })
   }
 }
