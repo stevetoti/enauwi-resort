@@ -1,6 +1,7 @@
 -- Corrections & features pack (team email 2026-08-14)
 
 -- 2 & 3. Invoice "Created By" / "Payment Received By" (staff dropdown, stored for audit)
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS created_by UUID;
 ALTER TABLE invoices ADD COLUMN IF NOT EXISTS created_by_name TEXT;
 ALTER TABLE invoices ADD COLUMN IF NOT EXISTS received_by UUID;
 ALTER TABLE invoices ADD COLUMN IF NOT EXISTS received_by_name TEXT;
