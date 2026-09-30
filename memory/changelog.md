@@ -14,6 +14,8 @@ Audit found tracking never switched on and several core-page gaps. Fixed:
 - DB (data only): +20 fresh blog_topics; site_settings key='seo' cleared (held "Scale Rankings Pro" junk from another project)
 - Left as-is: 4 seed articles the team unpublished on Sep 4/15
 
+Deployed: commit c1d3b9a → production (enauwi-resort-b7jhh782q), verified live: per-page titles/canonicals, Resort JSON-LD, /activities 200, sitemap 29 URLs, vercel.app → .org 308 (API unaffected). No migrations; no edge functions.
+
 Still needs Stephen: GA4 ID, Meta Pixel ID, Google + Facebook verification codes → Admin → SEO; then Search Console sitemap submit + Google Business Profile.
 
 ## 2026-07-03 — [Claude Code] Auto-publishing SEO blog
