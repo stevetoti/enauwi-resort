@@ -1,5 +1,21 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-09-30 — [Claude Code] SEO completion pass
+
+Audit found tracking never switched on and several core-page gaps. Fixed:
+
+- Homepage: Resort + WebSite JSON-LD (src/lib/site.ts — shared site facts), canonical; H1 space ("E'Nauwi Beach Resort")
+- Per-route metadata layouts for /book, /menu, /services, /terms (own titles, descriptions, canonicals, OG); /my-bookings + /order noindex
+- New /activities index page (was 404 but in sitemap) with ItemList JSON-LD; activity detail pages get canonicals
+- Sitemap: + /activities, 8 activity pages, /terms (now 25 URLs)
+- Blog: OG/Twitter cover images + Article schema image; /blog OG
+- middleware: enauwi-resort.vercel.app page GETs 308 → www.enauwibeachresort.org (API excluded so webhooks/cron unaffected)
+- Blog generator: skips backlog topics whose keyword already has an article; when backlog is empty the AI proposes a new non-overlapping topic (old behaviour recycled topics → duplicate articles)
+- DB (data only): +20 fresh blog_topics; site_settings key='seo' cleared (held "Scale Rankings Pro" junk from another project)
+- Left as-is: 4 seed articles the team unpublished on Sep 4/15
+
+Still needs Stephen: GA4 ID, Meta Pixel ID, Google + Facebook verification codes → Admin → SEO; then Search Console sitemap submit + Google Business Profile.
+
 ## 2026-07-03 — [Claude Code] Auto-publishing SEO blog
 
 New blog to grow organic search traffic. Fully automatic per the team.

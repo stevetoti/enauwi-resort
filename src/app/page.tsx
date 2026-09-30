@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
@@ -10,10 +11,19 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 import VoiceCallWidget from "@/components/VoiceCallWidget";
+import { resortJsonLd } from "@/lib/site";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function Home() {
   return (
     <main className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(resortJsonLd()) }}
+      />
       <Navbar />
       <Hero />
       <About />

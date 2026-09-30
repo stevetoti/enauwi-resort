@@ -18,9 +18,11 @@ export async function generateMetadata({
   return {
     title: `${activity.title} | E'Nauwi Beach Resort Activities`,
     description: activity.tagline,
+    alternates: { canonical: `/activities/${activity.slug}` },
     openGraph: {
       title: `${activity.title} | E'Nauwi Beach Resort`,
       description: activity.tagline,
+      url: `/activities/${activity.slug}`,
       images: [activity.heroImage],
     },
   }

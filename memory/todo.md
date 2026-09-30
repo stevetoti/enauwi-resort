@@ -30,6 +30,18 @@ Run these in Supabase SQL editor in order:
    ALTER TABLE rooms ADD COLUMN IF NOT EXISTS tagline TEXT;
    ```
 
+## SEO Gaps (audit 2026-09-30 — [Claude Code])
+- [x] **site_settings key='seo' holds junk from another project** ("Scale Rankings Pro") — clear it; GA4 / Pixel / Google + FB verification IDs never entered, so none are live
+- [ ] Stephen: paste GA4 / Pixel / Google + FB verification IDs into Admin → SEO (junk cleared 2026-09-30)
+- [ ] Search Console: verify property + submit sitemap (needs the verification ID above)
+- [ ] Google Business Profile for the resort (biggest local-ranking lever; add exact map pin, then add geo to src/lib/site.ts)
+- [x] /activities is in sitemap but 404s — add an index page or remove from sitemap; add the 10 /activities/[slug] pages to sitemap
+- [x] No Hotel/LocalBusiness JSON-LD on homepage (address, geo, phone, priceRange, rating)
+- [x] /book, /menu, /services, /terms (client components) all share the homepage title/description — add per-route layout.tsx metadata
+- [x] No canonical on homepage/core pages; enauwi-resort.vercel.app serves 200 (duplicate) — add canonicals and/or redirect vercel.app → www.enauwibeachresort.org
+- [x] Blog AI generator is producing near-duplicate topics (snorkelling x2, when-to-visit x2, family x2, honeymoon/romantic) — dedupe against existing titles
+- [ ] 4 seed articles still in draft (how-to-get-to-enauwi, sunset-cruises, weekend-itinerary, diving-marine-life)
+
 ## Recently Completed
 - Group bookings (multi-room reservations with shared group_id)
 - Calendar click-to-book on reservation board (single click + drag-range)

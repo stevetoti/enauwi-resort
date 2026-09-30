@@ -18,6 +18,35 @@ occasional rare dugong sightings, sunset cruises, island hopping, a bar & restau
 The nearest town is Port Vila (Vanuatu's capital, served by Bauerfield International Airport). \
 Website: www.enauwibeachresort.org, phone +678 22170.`
 
+function normalise(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+}
+
+// Asks the AI for one new article idea that doesn't overlap any existing title.
+async function proposeNewTopic(existingTitles: string[]): Promise<{ title: string; keyword: string }> {
+  const completion = await getOpenAI().chat.completions.create({
+    model: 'gpt-4o',
+    response_format: { type: 'json_object' },
+    messages: [
+      { role: 'system', content: 'You plan SEO content for a Vanuatu beach resort travel blog.' },
+      {
+        role: 'user',
+        content: `Resort context: ${RESORT_CONTEXT}
+
+Existing articles (do NOT repeat or closely overlap any of these topics or their search intent):
+${existingTitles.map((t) => `- ${t}`).join('\n')}
+
+Propose ONE new article that targets a different long-tail search travellers make when planning a trip to Efate or Vanuatu.
+Return JSON: {"title": "...", "keyword": "..."}`,
+      },
+    ],
+    temperature: 0.9,
+  })
+  const parsed = JSON.parse(completion.choices[0]?.message?.content || '{}') as { title?: string; keyword?: string }
+  if (!parsed.title || !parsed.keyword) throw new Error('AI did not return a usable topic')
+  return { title: parsed.title, keyword: parsed.keyword }
+}
+
 // Real resort photos the auto-writer drops into each article.
 const RESORT_IMAGES = [
   '/images/resort/beach-resort-overview.jpg',
@@ -59,15 +88,31 @@ function addImages(body: string, title: string, seed: number): { content: string
 // Generates one SEO article with OpenAI (grounded in real resort facts) and
 // publishes it. Used by the weekly cron and the admin "Generate now" button.
 export async function generateAndPublishArticle(): Promise<{ slug: string; title: string }> {
-  // Pick an unused topic; if the backlog is exhausted, recycle it.
-  let { data: topics } = await supabaseAdmin.from('blog_topics').select('*').eq('used', false).limit(1)
-  if (!topics || topics.length === 0) {
-    await supabaseAdmin.from('blog_topics').update({ used: false }).neq('id', '00000000-0000-0000-0000-000000000000')
-    ;({ data: topics } = await supabaseAdmin.from('blog_topics').select('*').eq('used', false).limit(1))
+  // Pick the next unused topic that doesn't repeat an existing article. When the
+  // backlog runs out, ask the AI for a fresh topic instead of recycling old ones
+  // (recycling published near-duplicate articles that compete with each other).
+  const { data: posts } = await supabaseAdmin.from('blog_posts').select('title, keywords')
+  const existingTitles = (posts || []).map((p) => String(p.title))
+  const existingKeywords = new Set((posts || []).map((p) => normalise(String(p.keywords || ''))).filter(Boolean))
+
+  const { data: backlog } = await supabaseAdmin
+    .from('blog_topics')
+    .select('*')
+    .eq('used', false)
+    .order('created_at', { ascending: true })
+  let topic: { id?: string; title: string; keyword: string } | null = null
+  for (const t of backlog || []) {
+    if (existingKeywords.has(normalise(String(t.keyword || '')))) {
+      await supabaseAdmin.from('blog_topics').update({ used: true }).eq('id', t.id)
+      continue
+    }
+    topic = t
+    break
   }
-  const topic = topics?.[0]
-  const title: string = topic?.title || 'Discover Vanuatu — Island Travel Tips'
-  const keyword: string = topic?.keyword || 'Vanuatu travel'
+  if (!topic) topic = await proposeNewTopic(existingTitles)
+
+  const title: string = topic.title
+  const keyword: string = topic.keyword
 
   const prompt = `Write a helpful, engaging SEO blog article for a beach resort's travel blog.
 Title: "${title}"
@@ -125,7 +170,7 @@ Return ONLY the article body in Markdown.`
   })
   if (error) throw error
 
-  if (topic?.id) await supabaseAdmin.from('blog_topics').update({ used: true }).eq('id', topic.id)
+  if (topic.id) await supabaseAdmin.from('blog_topics').update({ used: true }).eq('id', topic.id)
 
   return { slug, title }
 }

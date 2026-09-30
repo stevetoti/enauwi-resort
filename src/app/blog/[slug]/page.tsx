@@ -24,6 +24,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       type: 'article',
       url: `${SITE}/blog/${post.slug}`,
       publishedTime: post.published_at || undefined,
+      images: [post.cover_image || '/images/og-image.jpg'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description,
+      images: [post.cover_image || '/images/og-image.jpg'],
     },
   }
 }
@@ -46,6 +53,9 @@ export default async function BlogArticlePage({ params }: { params: { slug: stri
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
+    image: post.cover_image
+      ? [post.cover_image.startsWith('http') ? post.cover_image : `${SITE}${post.cover_image}`]
+      : undefined,
     description: post.meta_description || post.excerpt || '',
     datePublished: post.published_at,
     dateModified: post.published_at,

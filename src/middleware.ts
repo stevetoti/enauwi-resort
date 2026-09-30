@@ -15,8 +15,18 @@ async function withFreshCsrf(request: NextRequest): Promise<NextResponse> {
   return response
 }
 
+// The raw Vercel domain serves an exact copy of the site — send page visits to
+// the real domain so Google indexes one version. API routes are excluded by the
+// matcher, so webhooks and the cron keep working on either host.
+const LEGACY_HOST = 'enauwi-resort.vercel.app'
+const CANONICAL_ORIGIN = 'https://www.enauwibeachresort.org'
+
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
+  const { pathname, search } = request.nextUrl
+
+  if (request.headers.get('host') === LEGACY_HOST && (request.method === 'GET' || request.method === 'HEAD')) {
+    return NextResponse.redirect(`${CANONICAL_ORIGIN}${pathname}${search}`, 308)
+  }
 
   // Only protect /admin/* and /staff/* routes (not API routes — those protect themselves)
   const isAdminRoute = pathname.startsWith('/admin')

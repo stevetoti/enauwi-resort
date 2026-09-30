@@ -47,6 +47,8 @@ const baseMetadata: Metadata = {
       },
     ],
     type: "website",
+    siteName: "E'Nauwi Beach Resort",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",

@@ -11,6 +11,12 @@ export const metadata: Metadata = {
   description:
     "Travel tips, guides and inspiration for your Vanuatu holiday — beaches, snorkelling, activities and island life from E'Nauwi Beach Resort on Efate.",
   alternates: { canonical: '/blog' },
+  openGraph: {
+    title: "Vanuatu & Efate Travel Guides | E'Nauwi Beach Resort",
+    description: 'Travel tips, guides and inspiration for your Vanuatu holiday.',
+    url: '/blog',
+    images: ['/images/og-image.jpg'],
+  },
 }
 
 function formatDate(d: string | null) {
