@@ -1,5 +1,9 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-10-02 — [Claude Code] GA4 live
+
+Saved googleAnalyticsId G-L2296Q9QEJ in site_settings key='seo' (data only). Verified the tag on /, /book, /blog, /activities (~11 min to propagate — expect the same delay for future Admin → SEO changes). Search Console / Pixel / FB verification still pending.
+
 ## 2026-10-02 — [Claude Code] Published the 4 held-back seed articles
 
 At Stephen's request (data only, no deploy): how-to-get-to-enauwi-from-port-vila,
