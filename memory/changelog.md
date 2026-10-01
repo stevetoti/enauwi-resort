@@ -1,5 +1,13 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-10-02 — [Claude Code] Published the 4 held-back seed articles
+
+At Stephen's request (data only, no deploy): how-to-get-to-enauwi-from-port-vila,
+sunset-cruises-island-hopping-efate, weekend-itinerary-enauwi-efate,
+diving-marine-life-vanuatu-lagoons → status=published, published_at=now. 18 posts live.
+Claims for the team to confirm: 72-hour airport-transfer notice + "airport shuttle at
+modest rates", continental breakfast, sunset cruises offered, dugongs in the lagoon.
+
 ## 2026-09-30 — [Claude Code] SEO completion pass
 
 Audit found tracking never switched on and several core-page gaps. Fixed:
