@@ -1,5 +1,9 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-10-03 — [Claude Code] Search Console verification file
+
+Added public/googleb215dddf637f1964.html (Google HTML-file verification for https://www.enauwibeachresort.org/). Must never be removed — Search Console re-checks it.
+
 ## 2026-10-02 — [Claude Code] GA4 live
 
 Saved googleAnalyticsId G-L2296Q9QEJ in site_settings key='seo' (data only). Verified the tag on /, /book, /blog, /activities (~11 min to propagate — expect the same delay for future Admin → SEO changes). Search Console / Pixel / FB verification still pending.
