@@ -218,6 +218,15 @@ export default function Activities() {
               </Link>
             ))}
           </div>
+          <div className="text-center mt-6">
+            <Link
+              href="/activities"
+              className="inline-flex items-center gap-1.5 text-ocean font-semibold text-sm hover:text-gold transition-colors"
+            >
+              See all activities &amp; tours
+              <ArrowRight size={14} />
+            </Link>
+          </div>
         </motion.div>
 
         {/* CTA */}

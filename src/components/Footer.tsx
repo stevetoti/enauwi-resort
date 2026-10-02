@@ -15,21 +15,23 @@ const footerLinks = [
   {
     title: "Resort",
     links: [
-      { label: "About Us", href: "#about" },
-      { label: "Accommodations", href: "#accommodations" },
-      { label: "Features & Amenities", href: "#features" },
-      { label: "Activities", href: "#activities" },
-      { label: "Gallery", href: "#gallery" },
+      { label: "About Us", href: "/#about" },
+      { label: "Accommodations", href: "/#accommodations" },
+      { label: "Features & Amenities", href: "/#features" },
+      { label: "Activities & Tours", href: "/activities" },
+      { label: "Gallery", href: "/#gallery" },
+      { label: "Restaurant Menu", href: "/menu" },
     ],
   },
   {
     title: "Information",
     links: [
-      { label: "Getting Here", href: "#location" },
+      { label: "Getting Here", href: "/#location" },
+      { label: "Travel Blog", href: "/blog" },
       { label: "Services & Experiences", href: "/services" },
       { label: "Book a Room", href: "/book" },
       { label: "Terms & Policies", href: "/terms" },
-      { label: "Contact Us", href: "#contact" },
+      { label: "Contact Us", href: "/#contact" },
     ],
   },
 ];
@@ -44,7 +46,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <a href="#home" className="inline-flex items-center gap-3 mb-5">
+            <a href="/#home" className="inline-flex items-center gap-3 mb-5">
               <div className="relative w-14 h-14">
                 <Image
                   src="/logo-enauwi.png"
@@ -158,7 +160,8 @@ export default function Footer() {
 
       {/* Back to top */}
       <motion.a
-        href="#home"
+        href="#"
+        aria-label="Back to top"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-gold text-white shadow-xl shadow-gold/30 flex items-center justify-center hover:bg-gold-dark transition-colors"

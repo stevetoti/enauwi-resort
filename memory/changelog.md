@@ -1,5 +1,15 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-10-03 — [Claude Code] Internal links: /activities + /blog were orphaned
+
+Search Console showed /activities "unknown to Google — no referring page". Nothing in
+the site linked to /activities or /blog.
+- Navbar: + Blog; section links now "/#about" etc. (previously "#about", which did
+  nothing on subpages like /blog and /activities)
+- Footer: + Activities & Tours (/activities), Restaurant Menu, Travel Blog; section
+  links prefixed with "/"; back-to-top uses "#"
+- Homepage Activities section: + "See all activities & tours" → /activities
+
 ## 2026-10-03 — [Claude Code] Search Console verification file
 
 Added public/googleb215dddf637f1964.html (Google HTML-file verification for https://www.enauwibeachresort.org/). Must never be removed — Search Console re-checks it. Verified by Stephen 2026-10-03.

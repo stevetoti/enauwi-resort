@@ -5,15 +5,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone } from "lucide-react";
 import Image from "next/image";
 
+// Section links are prefixed with "/" so they also work from subpages
+// (/blog, /book, …) — on the homepage they still just scroll.
 const navLinks = [
-  { href: "#home", label: "Home" },
-  { href: "#about", label: "About" },
-  { href: "#accommodations", label: "Rooms" },
-  { href: "#activities", label: "Activities" },
-  { href: "#gallery", label: "Gallery" },
-  { href: "#location", label: "Location" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#home", label: "Home" },
+  { href: "/#about", label: "About" },
+  { href: "/#accommodations", label: "Rooms" },
+  { href: "/#activities", label: "Activities" },
+  { href: "/#gallery", label: "Gallery" },
+  { href: "/blog", label: "Blog" },
+  { href: "/#location", label: "Location" },
+  { href: "/#contact", label: "Contact" },
 ];
+
+const sectionOf = (href: string) => href.split("#")[1] ?? "";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -24,7 +29,7 @@ export default function Navbar() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
 
-      const sections = navLinks.map((l) => l.href.replace("#", ""));
+      const sections = navLinks.map((l) => sectionOf(l.href)).filter(Boolean);
       for (let i = sections.length - 1; i >= 0; i--) {
         const el = document.getElementById(sections[i]);
         if (el) {
@@ -54,7 +59,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo */}
-          <a href="#home" className="flex items-center gap-2 group shrink-0">
+          <a href="/#home" className="flex items-center gap-2 group shrink-0">
             <div className="relative w-12 h-12 sm:w-14 sm:h-14">
               <Image
                 src="/logo-enauwi.png"
@@ -81,16 +86,16 @@ export default function Navbar() {
                 href={link.href}
                 className={`relative px-4 py-2 text-sm font-medium tracking-wide transition-colors duration-300 rounded-full ${
                   isScrolled
-                    ? activeSection === link.href.replace("#", "")
+                    ? activeSection === sectionOf(link.href)
                       ? "text-ocean"
                       : "text-ocean/60 hover:text-ocean"
-                    : activeSection === link.href.replace("#", "")
+                    : activeSection === sectionOf(link.href)
                     ? "text-white"
                     : "text-white/70 hover:text-white"
                 }`}
               >
                 {link.label}
-                {activeSection === link.href.replace("#", "") && (
+                {activeSection === sectionOf(link.href) && (
                   <motion.div
                     layoutId="activeNav"
                     className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full ${
@@ -159,7 +164,7 @@ export default function Navbar() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
                   className={`block py-3 px-4 text-lg font-medium rounded-xl transition-colors ${
-                    activeSection === link.href.replace("#", "")
+                    activeSection === sectionOf(link.href)
                       ? "bg-ocean/5 text-ocean"
                       : "text-ocean/60 hover:text-ocean hover:bg-ocean/5"
                   }`}
