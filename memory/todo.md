@@ -33,7 +33,8 @@ Run these in Supabase SQL editor in order:
 ## SEO Gaps (audit 2026-09-30 — [Claude Code])
 - [x] **site_settings key='seo' holds junk from another project** ("Scale Rankings Pro") — clear it; GA4 / Pixel / Google + FB verification IDs never entered, so none are live
 - [ ] Stephen (GA4 live 2026-10-02): paste Pixel / Google + FB verification IDs into Admin → SEO (junk cleared 2026-09-30)
-- [ ] Search Console: verify property + submit sitemap — [Claude Code] 2026-10-03: property https://www.enauwibeachresort.org/ VERIFIED (HTML file); sitemap submit pending
+- [x] Search Console: verify property + submit sitemap — [Claude Code] 2026-10-03: property https://www.enauwibeachresort.org/ VERIFIED (HTML file); sitemap.xml submitted + indexing requested for /, /activities, /blog (2026-10-03)
+- [ ] Check Search Console Pages/Enhancements ~2026-10-10 for indexing errors
 - [ ] Google Business Profile for the resort (biggest local-ranking lever; add exact map pin, then add geo to src/lib/site.ts)
 - [x] /activities is in sitemap but 404s — add an index page or remove from sitemap; add the 10 /activities/[slug] pages to sitemap
 - [x] No Hotel/LocalBusiness JSON-LD on homepage (address, geo, phone, priceRange, rating)
