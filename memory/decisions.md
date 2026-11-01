@@ -1,5 +1,13 @@
 # Decisions — Enauwi Beach Resort
 
+## 2026-11-01 — [Codex] Approved SEO release and measured baseline
+
+- Context: Stephen approved Phase A and requested actual DataForSEO ranks. He configured project-local API credentials and explicitly requested room availability remain unchanged.
+- Decision: ship server-visible core copy/metadata, meaningful schema/internal links and accessibility changes; keep article bodies/slugs, APIs and database intact. Static reviewed metadata avoids a migration. No fake ratings added; unsupported booking scores/testimonials removed.
+- Evidence: 90 Google mobile country/query checks; AU/NZ keyword demand; 37-page after crawl; real-data empty inventory and separate browser-only booking fixture. Provider failures stay distinct from rank misses; historical database gaps do not imply zero rankings.
+- Release/handoff: source is on codex/enauwi-seo-2026-11-01; see docs/seo/release.json for the exact production commit/deployment before a future release. Main was not changed by this isolated release.
+
+
 ## 2026-11-01 — [Codex] SEO baseline integrity and review scope
 
 - Context: Stephen requested Golden SEO audit plus necessary SEO/keyword work; the named workflow requires approval of a concrete fix plan before site changes.

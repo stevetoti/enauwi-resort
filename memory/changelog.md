@@ -1,5 +1,15 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-11-01 — [Codex] SEO production release and actual ranking report complete
+
+- Live https://www.enauwibeachresort.org/; source becbbe1cddc3571403dcfdb39080cc5c2efc6684; deployment dpl_DnUzGEeBZ3RAXACtCFfFqJ7L7Ygq. No migrations or Edge Functions. Release branch codex/enauwi-seo-2026-11-01; main not advanced by this isolated release.
+- Verified production build/typecheck/lint; 19 live no-JS/desktop/mobile observations with zero app errors or guest writes; 37/37 sitemap pages successful; Google verification file, robots/sitemap, private noindex, 404 and legacy 308 preserved. Final homepage heading word boundary verified.
+- Raw on-page score 96 -> 100, overall 96 -> 97. Initial HTML words: book 9 -> 322, services 8 -> 267, menu 23 -> 254. Remaining crawler warnings manually interpreted; no ranking gains claimed from checklist changes.
+- DataForSEO: authenticated, actual Google mobile ranks across VU/AU/NZ. 85 usable of90 checks, five errors after one retry; US$1.2531 provider-reported total. Main brand #1 VU/AU and #5 NZ (article); corporate retreat article #5 AU. Complete evidence/coverage in docs/seo/rankings.csv.
+- User explicitly instructed room availability remain unchanged; all16 room records remain not available. Real empty-state tested; separate labelled browser fixture tested the modal only, never saved.
+- Updated PDF output/pdf/enauwi-seo-rankings-and-release-2026-11-01.pdf and full docs/seo/ release/report/verification handoff. Original audit/report retained. No recurring monitor, external posts, emails or new articles.
+
+
 ## 2026-11-01 — [Codex] SEO pre-release verification passed
 
 - Production build with network passed and includes all 22 published blog paths. Typecheck/lint passed.

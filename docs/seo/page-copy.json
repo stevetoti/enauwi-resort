@@ -1,7 +1,7 @@
 [
   {
     "path": "/",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Family Beach Resort on Efate | E'Nauwi Beach Resort",
     "title_characters": 51,
     "description": "Stay at E'Nauwi Beach Resort on Efate, Vanuatu. Explore beachfront bungalows, lagoon kayaking and family stays. Check availability.",
@@ -16,7 +16,7 @@
   },
   {
     "path": "/book",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Beachfront Bungalows Efate | E'Nauwi Beach Resort",
     "title_characters": 49,
     "description": "Book beachfront and lagoon-view bungalows on Efate, Vanuatu. Compare one- and two-bedroom options at E'Nauwi Beach Resort and check availability.",
@@ -31,7 +31,7 @@
   },
   {
     "path": "/activities",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Things to Do on Efate | E'Nauwi Beach Resort",
     "title_characters": 44,
     "description": "Explore things to do on Efate from E'Nauwi Beach Resort, including kayaking, snorkelling and island activities. Enquire about current availability.",
@@ -46,12 +46,12 @@
   },
   {
     "path": "/services",
-    "status": "draft - approval required",
-    "title": "Conference Venue on Efate | E'Nauwi Beach Resort",
-    "title_characters": 48,
+    "status": "implemented and verified live 2026-11-01",
+    "title": "Conference Enquiries Efate | E'Nauwi Beach Resort",
+    "title_characters": 49,
     "description": "Explore conference and guest services at E'Nauwi Beach Resort on Efate, Vanuatu. Contact the team for current availability and a tailored quote.",
     "description_characters": 144,
-    "h1": "Conference Venue and Guest Services on Efate",
+    "h1": "Conference and Guest Service Enquiries on Efate",
     "intro": "Planning a meeting, workshop, or group stay on Efate? Contact E'Nauwi Beach Resort about conference facilities and guest services. Tell the team your dates, group size, and requirements so they can confirm current availability and provide a tailored quote.",
     "canonical": "/services",
     "current_title": "Conference Room, Services & Experiences | E'Nauwi Beach Resort",
@@ -61,7 +61,7 @@
   },
   {
     "path": "/menu",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Beachfront Restaurant Efate | E'Nauwi Beach Resort",
     "title_characters": 50,
     "description": "Explore the restaurant menu at E'Nauwi Beach Resort on Efate, Vanuatu. Enjoy lagoon-side dining and check the current dishes and prices.",
@@ -76,7 +76,7 @@
   },
   {
     "path": "/blog",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Efate & Vanuatu Travel Guides | E'Nauwi Beach Resort",
     "title_characters": 52,
     "description": "Plan your Efate holiday with E'Nauwi Beach Resort's Vanuatu travel guides. Explore accommodation tips, island activities and practical trip advice.",
@@ -91,7 +91,7 @@
   },
   {
     "path": "/terms",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Terms, Conditions & Policies | E'Nauwi Beach Resort",
     "title_characters": 51,
     "description": "Check-in and check-out times, cancellation policy and booking terms for E'Nauwi Beach Resort on Efate, Vanuatu.",
@@ -106,7 +106,7 @@
   },
   {
     "path": "/activities/snorkeling-diving",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Snorkelling on Efate | E'Nauwi Beach Resort",
     "title_characters": 43,
     "description": "Explore snorkelling on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
@@ -121,7 +121,7 @@
   },
   {
     "path": "/activities/island-hopping",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Island Hopping on Efate | E'Nauwi Beach Resort",
     "title_characters": 46,
     "description": "Explore island Hopping on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
@@ -136,7 +136,7 @@
   },
   {
     "path": "/activities/sport-fishing",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Sport Fishing on Efate | E'Nauwi Beach Resort",
     "title_characters": 45,
     "description": "Explore sport Fishing on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
@@ -151,7 +151,7 @@
   },
   {
     "path": "/activities/sunset-spa",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Spa & Relaxation on Efate | E'Nauwi Beach Resort",
     "title_characters": 48,
     "description": "Explore spa & Relaxation on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
@@ -166,7 +166,7 @@
   },
   {
     "path": "/activities/volcano-trek",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Guided Viewpoint Trek on Efate | E'Nauwi Beach Resort",
     "title_characters": 53,
     "description": "Explore guided Viewpoint Trek on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
@@ -181,7 +181,7 @@
   },
   {
     "path": "/activities/turtle-watching",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Turtle Watching on Efate | E'Nauwi Beach Resort",
     "title_characters": 47,
     "description": "Explore turtle Watching on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
@@ -196,7 +196,7 @@
   },
   {
     "path": "/activities/cooking-class",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Vanuatu Cooking Class | E'Nauwi Beach Resort",
     "title_characters": 44,
     "description": "Explore vanuatu Cooking Class from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
@@ -211,7 +211,7 @@
   },
   {
     "path": "/activities/sunset-kayaking",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Sunset Kayaking on Efate | E'Nauwi Beach Resort",
     "title_characters": 47,
     "description": "Explore sunset Kayaking on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
@@ -226,7 +226,7 @@
   },
   {
     "path": "/blog/kayaking-in-vanuatu-a-beginners-guide-to-paddling-efates-lagoons",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Kayaking in Vanuatu: A Beginner's Guide",
     "title_characters": 39,
     "description": "Read kayaking in Vanuatu: A Beginner's Guide with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -241,7 +241,7 @@
   },
   {
     "path": "/blog/planning-a-conference-or-corporate-retreat-in-vanuatu",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Planning a Conference or Corporate Retreat in Vanuatu",
     "title_characters": 53,
     "description": "Explore planning a Conference or Corporate Retreat in Vanuatu with E'Nauwi Beach Resort. Find ideas for your Efate, Vanuatu holiday.",
@@ -256,7 +256,7 @@
   },
   {
     "path": "/blog/why-enauwi-beach-resort-is-perfect-for-your-island-escape",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "An Island Escape at E'Nauwi Beach Resort",
     "title_characters": 40,
     "description": "Read an Island Escape at E'Nauwi Beach Resort with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -271,7 +271,7 @@
   },
   {
     "path": "/blog/how-to-spend-a-week-in-vanuatu",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "How to Spend a Week in Vanuatu",
     "title_characters": 30,
     "description": "Read how to Spend a Week in Vanuatu with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -286,7 +286,7 @@
   },
   {
     "path": "/blog/weekend-itinerary-enauwi-efate",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "A Weekend at E'Nauwi: Your Efate Itinerary",
     "title_characters": 42,
     "description": "Read a Weekend at E'Nauwi: Your Efate Itinerary with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -301,7 +301,7 @@
   },
   {
     "path": "/blog/sunset-cruises-island-hopping-efate",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Sunset Cruises & Island Hopping on Efate",
     "title_characters": 40,
     "description": "Read sunset Cruises & Island Hopping on Efate with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -316,7 +316,7 @@
   },
   {
     "path": "/blog/diving-marine-life-vanuatu-lagoons",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Diving & Marine Life in Vanuatu's Lagoons",
     "title_characters": 41,
     "description": "Read diving & Marine Life in Vanuatu's Lagoons with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -331,7 +331,7 @@
   },
   {
     "path": "/blog/how-to-get-to-enauwi-from-port-vila",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Port Vila to E'Nauwi Beach Resort: Getting Here",
     "title_characters": 47,
     "description": "Read port Vila to E'Nauwi Beach Resort: Getting Here with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -346,7 +346,7 @@
   },
   {
     "path": "/blog/snorkelling-diving-spots-around-efate",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Snorkelling & Diving Spots Around Efate",
     "title_characters": 39,
     "description": "Read snorkelling & Diving Spots Around Efate with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -361,7 +361,7 @@
   },
   {
     "path": "/blog/romantic-getaways-in-vanuatu-for-couples",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Romantic Getaways in Vanuatu for Couples",
     "title_characters": 40,
     "description": "Read romantic Getaways in Vanuatu for Couples with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -376,7 +376,7 @@
   },
   {
     "path": "/blog/a-first-timers-guide-to-port-vila",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "A First-Timer's Guide to Port Vila",
     "title_characters": 34,
     "description": "Read a First-Timer's Guide to Port Vila with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -391,7 +391,7 @@
   },
   {
     "path": "/blog/traditional-vanuatu-food-you-have-to-try",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Traditional Vanuatu Food to Try",
     "title_characters": 31,
     "description": "Read traditional Vanuatu Food to Try with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -406,7 +406,7 @@
   },
   {
     "path": "/blog/the-best-time-of-year-to-visit-efate",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "The Best Time of Year to Visit Efate",
     "title_characters": 36,
     "description": "Read the Best Time of Year to Visit Efate with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -421,7 +421,7 @@
   },
   {
     "path": "/blog/planning-a-family-holiday-in-vanuatu",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Planning a Family Holiday in Vanuatu",
     "title_characters": 36,
     "description": "Read planning a Family Holiday in Vanuatu with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -436,7 +436,7 @@
   },
   {
     "path": "/blog/a-guide-to-vanuatus-marine-life-coral-reefs",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Vanuatu Marine Life & Coral Reefs: A Guide",
     "title_characters": 42,
     "description": "Read vanuatu Marine Life & Coral Reefs: A Guide with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -451,7 +451,7 @@
   },
   {
     "path": "/blog/top-things-to-do-in-efate-vanuatu",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Top Things to Do on Efate, Vanuatu",
     "title_characters": 34,
     "description": "Read top Things to Do on Efate, Vanuatu with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -466,7 +466,7 @@
   },
   {
     "path": "/blog/best-beaches-efate-vanuatu",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Best Beaches on Efate: A Visitor's Guide",
     "title_characters": 40,
     "description": "Read best Beaches on Efate: A Visitor's Guide with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -481,7 +481,7 @@
   },
   {
     "path": "/blog/snorkelling-efate-dugongs",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Snorkelling Near E'Nauwi: Reef & Wildlife Guide",
     "title_characters": 47,
     "description": "Read snorkelling Near E'Nauwi: Reef & Wildlife Guide with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -496,7 +496,7 @@
   },
   {
     "path": "/blog/family-things-to-do-efate-vanuatu",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Family-Friendly Things to Do on Efate",
     "title_characters": 37,
     "description": "Read family-Friendly Things to Do on Efate with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -511,7 +511,7 @@
   },
   {
     "path": "/blog/when-to-visit-vanuatu",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "When to Visit Vanuatu: A Seasonal Guide",
     "title_characters": 39,
     "description": "Read when to Visit Vanuatu: A Seasonal Guide with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -526,7 +526,7 @@
   },
   {
     "path": "/blog/beachfront-bungalows-vs-villas-enauwi",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Beachfront Bungalows at E'Nauwi: Where to Stay",
     "title_characters": 46,
     "description": "Read beachfront Bungalows at E'Nauwi: Where to Stay with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
@@ -541,7 +541,7 @@
   },
   {
     "path": "/blog/vanuatu-honeymoon-wedding-getaways",
-    "status": "draft - approval required",
+    "status": "implemented and verified live 2026-11-01",
     "title": "Vanuatu Honeymoon & Wedding Getaways",
     "title_characters": 36,
     "description": "Read vanuatu Honeymoon & Wedding Getaways with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",

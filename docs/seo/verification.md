@@ -33,3 +33,11 @@
 - Runtime log scan returned no error/fatal groups for this deployment. This does not assert complete monitoring or analytics event delivery.
 - Stephen explicitly requested inventory stay unchanged.
 - Final small follow-up: add an explicit space between the homepage brand and location spans so extracted heading text preserves word boundaries. Build in progress before release.
+
+## Final follow-up verified - Codex, 2026-11-01
+
+Final production source becbbe1cddc3571403dcfdb39080cc5c2efc6684, deployment dpl_DnUzGEeBZ3RAXACtCFfFqJ7L7Ygq: READY, custom domains assigned, final build passed. Homepage extracted H1 now reads "E'Nauwi Beach Resort on Efate Island, Vanuatu" with the word boundary intact. Repeated public crawl: 37/37 URLs successful, same on-page 100/overall97 raw scores. Deployment-scoped error/fatal log scan returned no groups. No additional guest transaction or inventory change. Final-heading.json and release.json record this release separately from the first live acceptance observations.
+
+## Final report QA - Codex, 2026-11-01
+
+Five-page PDF rendered to PNG and visually reviewed after final release data was inserted: no clipping, overlap or broken glyphs observed. PDF text verified exact deployed source commit and READY status, with no stale release placeholders. JSON/CSV checks confirm 37 distinct implemented metadata titles, 90 ranking rows, 13 observed positions and five explicitly failed checks.

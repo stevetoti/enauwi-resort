@@ -2,10 +2,10 @@
  "site": {
   "input": "https://www.enauwibeachresort.org",
   "host": "enauwibeachresort.org",
-  "checked_at": "2026-11-01 09:17 UTC",
+  "checked_at": "2026-11-01 09:28 UTC",
   "home_status": 200,
   "home_url": "https://www.enauwibeachresort.org",
-  "home_seconds": 1.49,
+  "home_seconds": 1.66,
   "platform": "Next.js",
   "seo_plugin": [],
   "analytics": [
@@ -101,11 +101,11 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/",
    "redirects": 0,
-   "seconds": 0.87,
+   "seconds": 0.52,
    "title": "Family Beach Resort on Efate | E'Nauwi Beach Resort",
    "description": "Stay at E'Nauwi Beach Resort on Efate, Vanuatu. Explore beachfront bungalows, lagoon kayaking and family stays. Check availability.",
    "h1": [
-    "E'Nauwi Beach Resorton Efate Island, Vanuatu"
+    "E'Nauwi Beach Resort on Efate Island, Vanuatu"
    ],
    "h2_count": 7,
    "canonical": "https://www.enauwibeachresort.org",
@@ -133,7 +133,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/book",
    "redirects": 0,
-   "seconds": 0.56,
+   "seconds": 1.58,
    "title": "Beachfront Bungalows Efate | E'Nauwi Beach Resort",
    "description": "Book beachfront and lagoon-view bungalows on Efate, Vanuatu. Compare one- and two-bedroom options at E'Nauwi Beach Resort and check availability.",
    "h1": [
@@ -164,7 +164,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/activities",
    "redirects": 0,
-   "seconds": 0.72,
+   "seconds": 0.91,
    "title": "Things to Do on Efate | E'Nauwi Beach Resort",
    "description": "Explore things to do on Efate from E'Nauwi Beach Resort, including kayaking, snorkelling and island activities. Enquire about current availability.",
    "h1": [
@@ -196,7 +196,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/services",
    "redirects": 0,
-   "seconds": 0.57,
+   "seconds": 1.07,
    "title": "Conference Enquiries Efate | E'Nauwi Beach Resort",
    "description": "Explore conference and guest services at E'Nauwi Beach Resort on Efate, Vanuatu. Contact the team for current availability and a tailored quote.",
    "h1": [
@@ -227,7 +227,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/menu",
    "redirects": 0,
-   "seconds": 0.48,
+   "seconds": 0.85,
    "title": "Beachfront Restaurant Efate | E'Nauwi Beach Resort",
    "description": "Explore the restaurant menu at E'Nauwi Beach Resort on Efate, Vanuatu. Enjoy lagoon-side dining and check the current dishes and prices.",
    "h1": [
@@ -258,7 +258,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog",
    "redirects": 0,
-   "seconds": 0.55,
+   "seconds": 1.04,
    "title": "Efate & Vanuatu Travel Guides | E'Nauwi Beach Resort",
    "description": "Plan your Efate holiday with E'Nauwi Beach Resort's Vanuatu travel guides. Explore accommodation tips, island activities and practical trip advice.",
    "h1": [
@@ -289,7 +289,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/terms",
    "redirects": 0,
-   "seconds": 0.97,
+   "seconds": 0.88,
    "title": "Terms, Conditions & Policies | E'Nauwi Beach Resort",
    "description": "Check-in and check-out times, cancellation policy and booking terms for E'Nauwi Beach Resort on Efate, Vanuatu.",
    "h1": [
@@ -316,7 +316,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/activities/snorkeling-diving",
    "redirects": 0,
-   "seconds": 0.53,
+   "seconds": 0.96,
    "title": "Snorkelling on Efate | E'Nauwi Beach Resort",
    "description": "Explore snorkelling on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
    "h1": [
@@ -347,7 +347,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/activities/island-hopping",
    "redirects": 0,
-   "seconds": 1.24,
+   "seconds": 1.07,
    "title": "Island Hopping on Efate | E'Nauwi Beach Resort",
    "description": "Explore island Hopping on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
    "h1": [
@@ -378,7 +378,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/activities/sport-fishing",
    "redirects": 0,
-   "seconds": 1.2,
+   "seconds": 0.87,
    "title": "Sport Fishing on Efate | E'Nauwi Beach Resort",
    "description": "Explore sport Fishing on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
    "h1": [
@@ -409,7 +409,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/activities/sunset-spa",
    "redirects": 0,
-   "seconds": 1.11,
+   "seconds": 0.96,
    "title": "Spa & Relaxation on Efate | E'Nauwi Beach Resort",
    "description": "Explore spa & Relaxation on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
    "h1": [
@@ -440,7 +440,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/activities/volcano-trek",
    "redirects": 0,
-   "seconds": 1.22,
+   "seconds": 0.96,
    "title": "Guided Viewpoint Trek on Efate | E'Nauwi Beach Resort",
    "description": "Explore guided Viewpoint Trek on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
    "h1": [
@@ -471,7 +471,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/activities/turtle-watching",
    "redirects": 0,
-   "seconds": 1.06,
+   "seconds": 1.08,
    "title": "Turtle Watching on Efate | E'Nauwi Beach Resort",
    "description": "Explore turtle Watching on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
    "h1": [
@@ -502,7 +502,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/activities/cooking-class",
    "redirects": 0,
-   "seconds": 1.14,
+   "seconds": 0.98,
    "title": "Vanuatu Cooking Class | E'Nauwi Beach Resort",
    "description": "Explore vanuatu Cooking Class from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
    "h1": [
@@ -533,7 +533,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/activities/sunset-kayaking",
    "redirects": 0,
-   "seconds": 1.16,
+   "seconds": 0.92,
    "title": "Sunset Kayaking on Efate | E'Nauwi Beach Resort",
    "description": "Explore sunset Kayaking on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
    "h1": [
@@ -564,7 +564,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/kayaking-in-vanuatu-a-beginners-guide-to-paddling-efates-lagoons",
    "redirects": 0,
-   "seconds": 1.02,
+   "seconds": 0.88,
    "title": "Kayaking in Vanuatu: A Beginner's Guide",
    "description": "Read kayaking in Vanuatu: A Beginner's Guide with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -598,7 +598,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/planning-a-conference-or-corporate-retreat-in-vanuatu",
    "redirects": 0,
-   "seconds": 1.07,
+   "seconds": 0.76,
    "title": "Planning a Conference or Corporate Retreat in Vanuatu",
    "description": "Explore planning a Conference or Corporate Retreat in Vanuatu with E'Nauwi Beach Resort. Find ideas for your Efate, Vanuatu holiday.",
    "h1": [
@@ -632,7 +632,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/why-enauwi-beach-resort-is-perfect-for-your-island-escape",
    "redirects": 0,
-   "seconds": 1.0,
+   "seconds": 0.79,
    "title": "An Island Escape at E'Nauwi Beach Resort",
    "description": "Read an Island Escape at E'Nauwi Beach Resort with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -666,7 +666,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/how-to-spend-a-week-in-vanuatu",
    "redirects": 0,
-   "seconds": 1.14,
+   "seconds": 0.98,
    "title": "How to Spend a Week in Vanuatu",
    "description": "Read how to Spend a Week in Vanuatu with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -700,7 +700,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/weekend-itinerary-enauwi-efate",
    "redirects": 0,
-   "seconds": 0.41,
+   "seconds": 0.89,
    "title": "A Weekend at E'Nauwi: Your Efate Itinerary",
    "description": "Read a Weekend at E'Nauwi: Your Efate Itinerary with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -734,7 +734,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/sunset-cruises-island-hopping-efate",
    "redirects": 0,
-   "seconds": 0.88,
+   "seconds": 0.87,
    "title": "Sunset Cruises & Island Hopping on Efate",
    "description": "Read sunset Cruises & Island Hopping on Efate with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -768,7 +768,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/diving-marine-life-vanuatu-lagoons",
    "redirects": 0,
-   "seconds": 0.95,
+   "seconds": 0.76,
    "title": "Diving & Marine Life in Vanuatu's Lagoons",
    "description": "Read diving & Marine Life in Vanuatu's Lagoons with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -802,7 +802,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/how-to-get-to-enauwi-from-port-vila",
    "redirects": 0,
-   "seconds": 0.88,
+   "seconds": 0.86,
    "title": "Port Vila to E'Nauwi Beach Resort: Getting Here",
    "description": "Read port Vila to E'Nauwi Beach Resort: Getting Here with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -836,7 +836,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/snorkelling-diving-spots-around-efate",
    "redirects": 0,
-   "seconds": 0.91,
+   "seconds": 0.83,
    "title": "Snorkelling & Diving Spots Around Efate",
    "description": "Read snorkelling & Diving Spots Around Efate with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -870,7 +870,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/romantic-getaways-in-vanuatu-for-couples",
    "redirects": 0,
-   "seconds": 0.87,
+   "seconds": 0.81,
    "title": "Romantic Getaways in Vanuatu for Couples",
    "description": "Read romantic Getaways in Vanuatu for Couples with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -904,7 +904,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/a-first-timers-guide-to-port-vila",
    "redirects": 0,
-   "seconds": 0.99,
+   "seconds": 0.79,
    "title": "A First-Timer's Guide to Port Vila",
    "description": "Read a First-Timer's Guide to Port Vila with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -938,7 +938,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/traditional-vanuatu-food-you-have-to-try",
    "redirects": 0,
-   "seconds": 1.0,
+   "seconds": 0.91,
    "title": "Traditional Vanuatu Food to Try",
    "description": "Read traditional Vanuatu Food to Try with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -972,7 +972,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/the-best-time-of-year-to-visit-efate",
    "redirects": 0,
-   "seconds": 0.91,
+   "seconds": 0.8,
    "title": "The Best Time of Year to Visit Efate",
    "description": "Read the Best Time of Year to Visit Efate with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -1006,7 +1006,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/planning-a-family-holiday-in-vanuatu",
    "redirects": 0,
-   "seconds": 0.95,
+   "seconds": 0.81,
    "title": "Planning a Family Holiday in Vanuatu",
    "description": "Read planning a Family Holiday in Vanuatu with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -1040,7 +1040,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/a-guide-to-vanuatus-marine-life-coral-reefs",
    "redirects": 0,
-   "seconds": 0.96,
+   "seconds": 0.8,
    "title": "Vanuatu Marine Life & Coral Reefs: A Guide",
    "description": "Read vanuatu Marine Life & Coral Reefs: A Guide with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -1074,7 +1074,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/top-things-to-do-in-efate-vanuatu",
    "redirects": 0,
-   "seconds": 1.05,
+   "seconds": 0.86,
    "title": "Top Things to Do on Efate, Vanuatu",
    "description": "Read top Things to Do on Efate, Vanuatu with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -1108,7 +1108,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/best-beaches-efate-vanuatu",
    "redirects": 0,
-   "seconds": 0.86,
+   "seconds": 0.78,
    "title": "Best Beaches on Efate: A Visitor's Guide",
    "description": "Read best Beaches on Efate: A Visitor's Guide with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -1142,7 +1142,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/snorkelling-efate-dugongs",
    "redirects": 0,
-   "seconds": 0.93,
+   "seconds": 0.8,
    "title": "Snorkelling Near E'Nauwi: Reef & Wildlife Guide",
    "description": "Read snorkelling Near E'Nauwi: Reef & Wildlife Guide with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -1210,7 +1210,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/when-to-visit-vanuatu",
    "redirects": 0,
-   "seconds": 0.9,
+   "seconds": 0.84,
    "title": "When to Visit Vanuatu: A Seasonal Guide",
    "description": "Read when to Visit Vanuatu: A Seasonal Guide with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -1244,7 +1244,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/beachfront-bungalows-vs-villas-enauwi",
    "redirects": 0,
-   "seconds": 0.96,
+   "seconds": 0.74,
    "title": "Beachfront Bungalows at E'Nauwi: Where to Stay",
    "description": "Read beachfront Bungalows at E'Nauwi: Where to Stay with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [
@@ -1278,7 +1278,7 @@
    "status": 200,
    "final_url": "https://www.enauwibeachresort.org/blog/vanuatu-honeymoon-wedding-getaways",
    "redirects": 0,
-   "seconds": 0.89,
+   "seconds": 0.75,
    "title": "Vanuatu Honeymoon & Wedding Getaways",
    "description": "Read vanuatu Honeymoon & Wedding Getaways with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
    "h1": [

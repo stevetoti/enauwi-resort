@@ -1,6 +1,6 @@
 # Approved SEO implementation - 1 November 2026
 
-Agent: Codex. Phase A approved by Stephen in chat; actual DataForSEO rankings additionally requested. This file records progress, not a claim that deployment is complete.
+Agent: Codex. Phase A approved by Stephen in chat; actual DataForSEO rankings additionally requested. Phase A is complete on production; release.json records the source and deployment.
 
 ## Implemented in source
 
@@ -22,10 +22,14 @@ Thirty phrases are being checked on Google mobile in each of three countries, wi
 ## Release checks
 
 - Initial TypeScript/lint checks passed; first production build passed but could not reach Supabase in the restricted execution environment.
-- Final production build with network access and 19 desktop/mobile/no-JavaScript acceptance observations passed. Real inventory is empty on both current live and local sites; booking-form selection used a separate labelled browser fixture, never saved. Public release verification is pending.
+- Final production build with network access and 19 desktop/mobile/no-JavaScript acceptance observations passed. Real inventory is empty on both current live and local sites; booking-form selection used a separate labelled browser fixture, never saved. Public release verification passed, including all 37 sitemap URLs and 19 no-JavaScript/desktop/mobile observations.
 - Existing build warnings from jose's Edge-runtime imports and outdated Browserslist are outside this SEO change. No dependency or lockfile changes requested.
 - Release must map to a pushed commit and then be verified at https://www.enauwibeachresort.org/ before completion is reported.
 
 ## Existing inventory block
 
 Before release, /api/rooms?includeAll=true returned 16 room records but none marked available, on both local and production versions. Normal public searches returned zero options. No inventory was changed; Stephen explicitly instructed that room availability remain unchanged. The read-only comparison is saved in room-availability-baseline.json.
+
+## Final release - Codex, 2026-11-01
+
+Source: becbbe1cddc3571403dcfdb39080cc5c2efc6684 on codex/enauwi-seo-2026-11-01. Deployment: dpl_DnUzGEeBZ3RAXACtCFfFqJ7L7Ygq. Live: https://www.enauwibeachresort.org/. No migrations or Edge Function deployments. Heading word boundary corrected and verified. No room inventory changes, new articles, profile posts, guest transactions or recurring jobs. The final report and verification artifacts are saved with this branch for Claude Code handoff.

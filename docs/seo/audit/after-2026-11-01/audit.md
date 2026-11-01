@@ -1,6 +1,6 @@
 # SEO audit — enauwibeachresort.org
 
-Checked 2026-11-01 09:17 UTC · 37 URLs crawled · sitemap lists 37 URLs
+Checked 2026-11-01 09:28 UTC · 37 URLs crawled · sitemap lists 37 URLs
 
 **Platform:** Next.js · **Analytics:** GA4
 

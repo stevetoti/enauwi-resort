@@ -1,17 +1,17 @@
 {
-  "status": "READY - initial SEO release verified; final heading-spacing follow-up pending",
+  "status": "READY - live verification passed",
   "url": "https://www.enauwibeachresort.org/",
-  "deployment_url": "https://enauwi-resort-kgghojtyd-pacificwaveprojects.vercel.app",
-  "deployment_id": "dpl_SJYNrudiKsKqqvZFgX9LUujrR7QE",
-  "commit": "c5db05547d83cac583b169f532de1ea638899bd9",
+  "deployment_url": "https://enauwi-resort-ip4vkkqkl-pacificwaveprojects.vercel.app",
+  "deployment_id": "dpl_DnUzGEeBZ3RAXACtCFfFqJ7L7Ygq",
+  "commit": "becbbe1cddc3571403dcfdb39080cc5c2efc6684",
   "branch": "codex/enauwi-seo-2026-11-01",
   "framework": "Next.js 14.2.35",
-  "build_duration_seconds": 66.5,
+  "build_duration_seconds": 53.65,
   "migrations": [],
   "edge_functions": [],
   "verification_summary": "Production build/typecheck/lint passed. Nineteen live no-JavaScript/desktop/mobile observations passed with zero browser errors or guest writes. All 37 sitemap URLs return successfully. Verification file, robots/sitemap, private-page noindex, genuine 404 and legacy-host 308 checked. Real room inventory remains unavailable on Stephen's explicit instruction; booking modal checked separately with a browser-only labelled fixture.",
   "runtime_error_scan": {
-    "deployment": "dpl_SJYNrudiKsKqqvZFgX9LUujrR7QE",
+    "deployment": "dpl_DnUzGEeBZ3RAXACtCFfFqJ7L7Ygq",
     "window": "15m",
     "levels": [
       "error",
@@ -21,5 +21,6 @@
     "note": "No error/fatal groups returned by deployment-scoped runtime log query."
   },
   "inventory_decision": "Stephen requested room availability remain unchanged; none of 16 room records marked available.",
-  "checked_at": "2026-11-01T09:24:23.805616+00:00"
+  "checked_at": "2026-11-01T09:29:31.161678+00:00",
+  "prior_seo_deployment": "dpl_SJYNrudiKsKqqvZFgX9LUujrR7QE"
 }

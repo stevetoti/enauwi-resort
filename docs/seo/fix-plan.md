@@ -1,6 +1,6 @@
 # E'Nauwi SEO fix plan - 1 November 2026
 
-Status: Phase A approved by Stephen in chat on 2026-11-01; implementation in progress. User also authorized actual DataForSEO rankings and configured project-local API credentials. Original below describes the reviewed scope; progress and evidence are tracked in implementation.md.
+Status: Phase A approved by Stephen in chat on 2026-11-01; implemented and verified on production. User also authorized actual DataForSEO rankings and configured project-local API credentials. Original below describes the reviewed scope; progress and evidence are tracked in implementation.md.
 
 ## Phase A - recommended implementation scope
 
@@ -32,3 +32,7 @@ Status: Phase A approved by Stephen in chat on 2026-11-01; implementation in pro
 After approval: implement Phase A; typecheck, lint, production build and browser verification; commit and push; deploy through the project's approved process; repeat the public crawl and check canonical/verification files, booking/menu/enquiry behavior and mobile layouts. Record exact before/after evidence in changes.csv and memory/changelog.md. No claimed improved scores until that re-audit exists.
 
 Approval requested: Phase A (items 1-6), then a verified deployment. Phase B remains access/fact-gated. New weddings pages, article publishing, redirects and recurring jobs are excluded until separately approved.
+
+## Completion - Codex, 2026-11-01
+
+Phase A is live and verified. Exact source commit and deployment are in release.json. DataForSEO authentication and 90 country/query checks completed; five search-engine errors remain explicitly labelled. AU/NZ keyword demand is recorded; VU Labs is unsupported. Stephen explicitly instructed that inventory remain unchanged. Phase B private-account/fact checks, new articles, profile posts and recurring jobs remain outside this completed release.
