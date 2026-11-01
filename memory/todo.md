@@ -2,7 +2,7 @@
 
 ## 2026-11-01 — [Codex] Booking inventory finding
 
-- [ ] All 16 existing room records are not marked available; public room searches return zero options. Confirmed on both existing live site and local build before deployment. Await Stephen decision; do not alter inventory implicitly as part of SEO. Evidence: docs/seo/room-availability-baseline.json.
+- [ ] All 16 existing room records are not marked available; public room searches return zero options. Confirmed on both existing live site and local build before deployment. — [Codex] 2026-11-01: Stephen explicitly requested availability remain unchanged; any future change needs a new instruction. Evidence: docs/seo/room-availability-baseline.json.
 
 
 ## 2026-11-01 — [Codex] Golden SEO follow-up

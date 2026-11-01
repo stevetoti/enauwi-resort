@@ -98,8 +98,10 @@ try {
     results.push({ phase: label, path: '/menu', loadedCategories: menuSections })
 
     await page.goto(origin + '/activities/snorkeling-diving', { waitUntil: 'domcontentloaded', timeout: 60000 })
+    await page.waitForLoadState('networkidle', { timeout: 60000 })
     const imageControl = page.getByRole('button', { name: 'View Snorkeling & Diving photo 2 of 4', exact: true })
     await imageControl.click()
+    await page.waitForFunction(label => document.querySelector(`button[aria-label="${label}"]`)?.getAttribute('aria-pressed') === 'true', 'View Snorkeling & Diving photo 2 of 4')
     assert.equal(await imageControl.getAttribute('aria-pressed'), 'true')
     assert.equal(await page.getByRole('heading', { level: 1 }).count(), 1)
     await page.screenshot({ path: `${output}/${label}-activity.png`, fullPage: true })

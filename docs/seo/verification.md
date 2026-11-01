@@ -23,3 +23,13 @@
 - Credential scan passed: generated evidence/scripts/SEO data contain neither the project DataForSEO password nor Supabase service-role key. .env.local is ignored by git.
 - Measured baseline: 90 Google mobile/country checks, 85 successful, five search-engine errors after one retry. 13 country/query rows contain observed domain positions. Provider-reported research cost US$1.2531. Not-found and failed checks remain distinct; actual returned coverage is exported.
 - Public post-deployment verification remains pending.
+
+## Initial public release verification - Codex, 2026-11-01
+
+- Production deployment dpl_SJYNrudiKsKqqvZFgX9LUujrR7QE (source c5db05547d83cac583b169f532de1ea638899bd9) is READY and assigned to all expected custom domains.
+- All 37 sitemap pages passed the public crawl. Raw on-page score 96 -> 100, overall 96 -> 97; scores are diagnostic, not Google scores. Server-visible words: /book 9 -> 322, /services 8 -> 267, /menu 23 -> 254. Reviewed caveats are in audit/after-2026-11-01/reviewed-findings.md.
+- Live browser acceptance: 19 observations passed, zero app errors and writes. Gallery test was adjusted to wait for hydration and state updates; no site-code/gallery defect found.
+- Public Search Console file, sitemap (37 URLs), robots, my-bookings/order noindex and genuine 404 verified. Legacy host returns correct 308 Location; Python 3.9 does not automatically follow it, so header was checked directly.
+- Runtime log scan returned no error/fatal groups for this deployment. This does not assert complete monitoring or analytics event delivery.
+- Stephen explicitly requested inventory stay unchanged.
+- Final small follow-up: add an explicit space between the homepage brand and location spans so extracted heading text preserves word boundaries. Build in progress before release.

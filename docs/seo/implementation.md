@@ -28,4 +28,4 @@ Thirty phrases are being checked on Google mobile in each of three countries, wi
 
 ## Existing inventory block
 
-Before release, /api/rooms?includeAll=true returned 16 room records but none marked available, on both local and production versions. Normal public searches returned zero options. No inventory was changed; Stephen was asked to decide whether all 16 should be enabled. The read-only comparison is saved in room-availability-baseline.json.
+Before release, /api/rooms?includeAll=true returned 16 room records but none marked available, on both local and production versions. Normal public searches returned zero options. No inventory was changed; Stephen explicitly instructed that room availability remain unchanged. The read-only comparison is saved in room-availability-baseline.json.

@@ -1,0 +1,57 @@
+{
+  "checked_at": "2026-11-01T09:20:25.446790+00:00",
+  "checks": [
+    {
+      "request": "https://www.enauwibeachresort.org/googleb215dddf637f1964.html",
+      "expected_status": 200,
+      "status": 200,
+      "final_url": "https://www.enauwibeachresort.org/googleb215dddf637f1964.html",
+      "verification_contents_present": true
+    },
+    {
+      "request": "https://www.enauwibeachresort.org/robots.txt",
+      "expected_status": 200,
+      "status": 200,
+      "final_url": "https://www.enauwibeachresort.org/robots.txt",
+      "canonical_sitemap_present": true
+    },
+    {
+      "request": "https://www.enauwibeachresort.org/sitemap.xml",
+      "expected_status": 200,
+      "status": 200,
+      "final_url": "https://www.enauwibeachresort.org/sitemap.xml",
+      "url_count": 37
+    },
+    {
+      "request": "https://www.enauwibeachresort.org/my-bookings",
+      "expected_status": 200,
+      "status": 200,
+      "final_url": "https://www.enauwibeachresort.org/my-bookings",
+      "robots": [
+        "<meta name=\"robots\" content=\"noindex, follow\"/>"
+      ]
+    },
+    {
+      "request": "https://www.enauwibeachresort.org/order/seo-verification-does-not-exist",
+      "expected_status": 200,
+      "status": 200,
+      "final_url": "https://www.enauwibeachresort.org/order/seo-verification-does-not-exist",
+      "robots": [
+        "<meta name=\"robots\" content=\"noindex, nofollow\"/>"
+      ]
+    },
+    {
+      "request": "https://www.enauwibeachresort.org/seo-verification-not-a-real-page",
+      "expected_status": 404,
+      "status": 404,
+      "final_url": "https://www.enauwibeachresort.org/seo-verification-not-a-real-page"
+    },
+    {
+      "request": "https://enauwi-resort.vercel.app/book",
+      "expected_status": 308,
+      "status": 308,
+      "final_url": "https://enauwi-resort.vercel.app/book",
+      "redirect_target": "https://www.enauwibeachresort.org/book"
+    }
+  ]
+}

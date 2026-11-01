@@ -70,7 +70,7 @@ export default function Hero() {
             className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-[0.95] drop-shadow-[0_4px_8px_rgba(0,0,0,0.4)]"
           >
             E&apos;Nauwi{" "}
-            <span className="block text-gold-light mt-2">Beach Resort</span>
+            <span className="block text-gold-light mt-2">Beach Resort</span>{" "}
             <span className="mt-4 block font-sans text-base font-normal leading-relaxed sm:text-lg">on Efate Island, Vanuatu</span>
           </motion.h1>
 
