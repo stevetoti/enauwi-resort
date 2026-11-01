@@ -1,0 +1,23 @@
+{
+  "AU": {
+    "location_code": 2036,
+    "location_name": "Australia",
+    "location_code_parent": null,
+    "country_iso_code": "AU",
+    "location_type": "Country"
+  },
+  "VU": {
+    "location_code": 2548,
+    "location_name": "Vanuatu",
+    "location_code_parent": null,
+    "country_iso_code": "VU",
+    "location_type": "Country"
+  },
+  "NZ": {
+    "location_code": 2554,
+    "location_name": "New Zealand",
+    "location_code_parent": null,
+    "country_iso_code": "NZ",
+    "location_type": "Country"
+  }
+}

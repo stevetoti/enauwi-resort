@@ -1,0 +1,54 @@
+{
+  "version": "0.1.20261022",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.2942 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "11010844-1363-0096-0000-2744f6b8dbbb",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.2652 sec.",
+      "cost": 0,
+      "result_count": 3,
+      "path": [
+        "v3",
+        "serp",
+        "google",
+        "locations"
+      ],
+      "data": {
+        "api": "serp",
+        "function": "locations",
+        "se": "google"
+      },
+      "result": [
+        {
+          "location_code": 2036,
+          "location_name": "Australia",
+          "location_code_parent": null,
+          "country_iso_code": "AU",
+          "location_type": "Country"
+        },
+        {
+          "location_code": 2548,
+          "location_name": "Vanuatu",
+          "location_code_parent": null,
+          "country_iso_code": "VU",
+          "location_type": "Country"
+        },
+        {
+          "location_code": 2554,
+          "location_name": "New Zealand",
+          "location_code_parent": null,
+          "country_iso_code": "NZ",
+          "location_type": "Country"
+        }
+      ]
+    }
+  ],
+  "evidence_filter": "Retained only the three measured countries from the free location directory. Original SHA256: df375027848f7b59ed9638fcb2cbe4af63e17d6c94f38e1fb008f7187ac4fe83"
+}

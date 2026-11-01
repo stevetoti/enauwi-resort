@@ -1,5 +1,51 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-11-01 — [Codex] SEO pre-release verification passed
+
+- Production build with network passed and includes all 22 published blog paths. Typecheck/lint passed.
+- 19 browser observations passed across no-JS, desktop and mobile; zero application errors/writes. Real services/menu categories load; booking real empty-state matches production. Room-selection modal tested with an isolated labelled browser fixture because all16 existing rooms are unavailable.
+- DataForSEO baseline finalized: 90 Google mobile country/query checks, 85 successful, five failed after one retry; 13 observed rank rows. Cost US$1.2531. Main brand #1 VU/AU, #5 NZ (directions article); corporate retreat article #5 AU.
+- Preparing pushed source commit and approved production release.
+
+
+## 2026-11-01 — [Codex] Existing inventory block found during acceptance
+
+- Before deployment, live and local /api/rooms both return zero publicly available rooms; includeAll read returns 16 records, none marked available. /api/services returns 17 on both. Inventory unchanged; asked Stephen whether current closure is intentional.
+- All nine no-JavaScript HTML/metadata checks pass. Real-data room selection cannot proceed until inventory is enabled; separately checking booking UI with an isolated labelled browser fixture. No guest mutations attempted.
+
+
+## 2026-11-01 — [Codex] Server-visible SEO and DataForSEO connection
+
+- User added DataForSEO API credentials directly to project .env.local; authentication succeeds (provider/task 20000). Country support verified: VU 2548, AU 2036, NZ 2554. Labs supports AU/NZ but not VU; live SERP supports all three.
+- Running 30-query Google mobile baseline across three countries, depth requested 100 with actual returned coverage recorded. Saved raw tasks; failed requests remain separate from absent rankings. Budget ceiling US$4.90. No recurring schedule.
+- Implemented server-owned book/services/menu pages, reviewed metadata source and safe JSON-LD helpers, inner-page breadcrumbs, FAQs/internal links, gallery labels, and concise article preview overrides without changing headlines or database.
+- Removed hard-coded booking ratings and unverified testimonial carousel from the revised booking page. No migration or auth changes.
+
+
+## 2026-11-01 — [Codex] Approved SEO implementation started
+
+- Stephen approved Phase A and verified deployment, and explicitly requested measured DataForSEO rankings.
+- Separating interactive booking/services/menu clients from permanent server-rendered content; fixed Hero Efate alt text and gallery control labels.
+- Automated approval review rejected cross-project credential probing; asked Stephen to configure working DataForSEO credentials directly in this project ignored .env.local. No rejected operation retried or bypassed.
+
+
+## 2026-11-01 — [Codex] Golden SEO baseline and approval package completed
+
+- Crawled all 37 live sitemap URLs; independent HTML evidence confirms /book and /services have no H1 and only 9/8 visible words in the first response. /menu has 23 words. Hero alt wrongly says Malekula.
+- Corrected automated interpretation in the reviewed report: Resort schema already exists; crawler's missing-business-schema warning is false positive. GA4 tag and public Search Console verification file verified; dashboards not accessed.
+- Keyword provider rejected existing company SEO config (HTTP 401). Prepared 126 unmeasured candidate phrases across 16 groups; no invented volumes/positions. Mobile speed unavailable (HTTP 429).
+- Created docs/seo/ audit evidence, keyword map, fix plan, metadata drafts for 37 URLs, six core intros, 16 FAQ answers, 12 draft briefs, local-profile copy and verification record. Six-page report: output/pdf/enauwi-seo-report-2026-11-01.pdf, rendered and visually checked.
+- No source/database/live setting changes or deployment. Golden SEO explicitly requires review of the concrete fix plan before implementation; pending Stephen's Phase A approval.
+- Persistent-memory helper unusable: system Python lacks numpy; bundled Python sync hits a read-only memory database. Used existing shared journals directly; did not change memory storage or permissions.
+
+
+## 2026-11-01 — [Codex] Golden SEO audit started
+
+- Located requested skill in shared claude-skills repository. Canonical live domain confirmed as www.enauwibeachresort.org.
+- Preparing dated crawl, measured keyword research, keyword map and prioritized fix plan. Public publishing/deployment awaits review of the concrete plan.
+- Persistent-memory CLI unavailable (Python numpy missing); shared project journals read directly.
+
+
 ## 2026-10-03 — [Claude Code] Internal links: /activities + /blog were orphaned
 
 Search Console showed /activities "unknown to Google — no referring page". Nothing in

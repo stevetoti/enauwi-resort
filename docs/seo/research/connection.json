@@ -1,0 +1,12 @@
+{
+  "checked_at": "2026-11-01",
+  "provider": "DataForSEO",
+  "http_status": 200,
+  "status_code": 20000,
+  "task_status_codes": [
+    20000
+  ],
+  "status": "authenticated",
+  "cost_usd": 0,
+  "credential_source": "User configured project .env.local; values not exposed or included in evidence."
+}

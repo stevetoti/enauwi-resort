@@ -1,0 +1,50 @@
+[
+  {
+    "origin": "http://127.0.0.1:3100",
+    "path": "/api/rooms?guests=2",
+    "status": 200,
+    "result_count": 0,
+    "available_room_flags": 0,
+    "observed_at": "2026-11-01T09:10:48.367920+00:00"
+  },
+  {
+    "origin": "http://127.0.0.1:3100",
+    "path": "/api/rooms?includeAll=true&guests=1",
+    "status": 200,
+    "result_count": 16,
+    "available_room_flags": 0,
+    "observed_at": "2026-11-01T09:10:50.080577+00:00"
+  },
+  {
+    "origin": "http://127.0.0.1:3100",
+    "path": "/api/services",
+    "status": 200,
+    "result_count": 17,
+    "available_room_flags": 0,
+    "observed_at": "2026-11-01T09:10:50.099125+00:00"
+  },
+  {
+    "origin": "https://www.enauwibeachresort.org",
+    "path": "/api/rooms?guests=2",
+    "status": 200,
+    "result_count": 0,
+    "available_room_flags": 0,
+    "observed_at": "2026-11-01T09:10:51.330654+00:00"
+  },
+  {
+    "origin": "https://www.enauwibeachresort.org",
+    "path": "/api/rooms?includeAll=true&guests=1",
+    "status": 200,
+    "result_count": 16,
+    "available_room_flags": 0,
+    "observed_at": "2026-11-01T09:10:53.484346+00:00"
+  },
+  {
+    "origin": "https://www.enauwibeachresort.org",
+    "path": "/api/services",
+    "status": 200,
+    "result_count": 17,
+    "available_room_flags": 0,
+    "observed_at": "2026-11-01T09:10:54.133479+00:00"
+  }
+]

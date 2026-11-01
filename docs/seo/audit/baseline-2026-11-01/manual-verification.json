@@ -1,0 +1,216 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "final": "https://www.enauwibeachresort.org/",
+    "h1": [
+      "E&#x27;Nauwi<!-- --> <span class=\"block text-gold-light mt-2\">Beach Resort</span>"
+    ],
+    "json_ld": [
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Resort",
+            "@id": "https://www.enauwibeachresort.org/#resort",
+            "name": "E'Nauwi Beach Resort",
+            "url": "https://www.enauwibeachresort.org/",
+            "logo": "https://www.enauwibeachresort.org/logo-enauwi.png",
+            "image": [
+              "https://www.enauwibeachresort.org/images/og-image.jpg"
+            ],
+            "description": "A family-friendly beachfront resort on Efate Island, Vanuatu, with bungalows on a calm lagoon, a swimming pool, kayaking, snorkelling, a restaurant and bar, and conference facilities.",
+            "telephone": "+678 22170",
+            "email": "reservation@enauwibeachresort.com",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "South East Efate",
+              "addressRegion": "Shefa Province",
+              "addressCountry": "VU"
+            },
+            "checkinTime": "14:00",
+            "checkoutTime": "10:00",
+            "currenciesAccepted": "VUV",
+            "amenityFeature": [
+              {
+                "@type": "LocationFeatureSpecification",
+                "name": "Beachfront bungalows",
+                "value": true
+              },
+              {
+                "@type": "LocationFeatureSpecification",
+                "name": "Swimming pool",
+                "value": true
+              },
+              {
+                "@type": "LocationFeatureSpecification",
+                "name": "Restaurant",
+                "value": true
+              },
+              {
+                "@type": "LocationFeatureSpecification",
+                "name": "Bar",
+                "value": true
+              },
+              {
+                "@type": "LocationFeatureSpecification",
+                "name": "Kayaks",
+                "value": true
+              },
+              {
+                "@type": "LocationFeatureSpecification",
+                "name": "Snorkelling",
+                "value": true
+              },
+              {
+                "@type": "LocationFeatureSpecification",
+                "name": "Conference room",
+                "value": true
+              }
+            ],
+            "sameAs": [
+              "https://www.facebook.com/EnauwiBeachResort",
+              "https://www.instagram.com/enauwibeachresort"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://www.enauwibeachresort.org/#website",
+            "url": "https://www.enauwibeachresort.org/",
+            "name": "E'Nauwi Beach Resort",
+            "publisher": {
+              "@id": "https://www.enauwibeachresort.org/#resort"
+            }
+          }
+        ]
+      }
+    ],
+    "malekula_in_html": true,
+    "robots": [],
+    "ga4_id_present": true,
+    "images_empty_alt": 0,
+    "redirects": []
+  },
+  {
+    "path": "/book",
+    "status": 200,
+    "final": "https://www.enauwibeachresort.org/book",
+    "h1": [],
+    "json_ld": [],
+    "malekula_in_html": false,
+    "robots": [],
+    "ga4_id_present": true,
+    "images_empty_alt": 0,
+    "redirects": []
+  },
+  {
+    "path": "/services",
+    "status": 200,
+    "final": "https://www.enauwibeachresort.org/services",
+    "h1": [],
+    "json_ld": [],
+    "malekula_in_html": false,
+    "robots": [],
+    "ga4_id_present": true,
+    "images_empty_alt": 0,
+    "redirects": []
+  },
+  {
+    "path": "/menu",
+    "status": 200,
+    "final": "https://www.enauwibeachresort.org/menu",
+    "h1": [
+      "Restaurant Menu"
+    ],
+    "json_ld": [],
+    "malekula_in_html": false,
+    "robots": [],
+    "ga4_id_present": true,
+    "images_empty_alt": 0,
+    "redirects": []
+  },
+  {
+    "path": "/activities/snorkeling-diving",
+    "status": 200,
+    "final": "https://www.enauwibeachresort.org/activities/snorkeling-diving",
+    "h1": [
+      "Snorkeling &amp; Diving"
+    ],
+    "json_ld": [],
+    "malekula_in_html": false,
+    "robots": [],
+    "ga4_id_present": true,
+    "images_empty_alt": 4,
+    "redirects": []
+  },
+  {
+    "path": "/activities/island-hopping",
+    "status": 200,
+    "final": "https://www.enauwibeachresort.org/activities/island-hopping",
+    "h1": [
+      "Island Hopping"
+    ],
+    "json_ld": [],
+    "malekula_in_html": false,
+    "robots": [],
+    "ga4_id_present": true,
+    "images_empty_alt": 4,
+    "redirects": []
+  },
+  {
+    "path": "/activities/cooking-class",
+    "status": 200,
+    "final": "https://www.enauwibeachresort.org/activities/cooking-class",
+    "h1": [
+      "Traditional Laplap Cooking Class"
+    ],
+    "json_ld": [],
+    "malekula_in_html": false,
+    "robots": [],
+    "ga4_id_present": true,
+    "images_empty_alt": 4,
+    "redirects": []
+  },
+  {
+    "path": "/googleb215dddf637f1964.html",
+    "status": 200,
+    "final": "https://www.enauwibeachresort.org/googleb215dddf637f1964.html",
+    "h1": [],
+    "json_ld": [],
+    "malekula_in_html": false,
+    "robots": [],
+    "ga4_id_present": false,
+    "images_empty_alt": 0,
+    "redirects": []
+  },
+  {
+    "path": "/my-bookings",
+    "status": 200,
+    "final": "https://www.enauwibeachresort.org/my-bookings",
+    "h1": [
+      "My Bookings"
+    ],
+    "json_ld": [],
+    "malekula_in_html": false,
+    "robots": [
+      "<meta name=\"robots\" content=\"noindex, follow\"/>"
+    ],
+    "ga4_id_present": true,
+    "images_empty_alt": 0,
+    "redirects": []
+  },
+  {
+    "path": "/order/example",
+    "status": 200,
+    "final": "https://www.enauwibeachresort.org/order/example",
+    "h1": [],
+    "json_ld": [],
+    "malekula_in_html": false,
+    "robots": [
+      "<meta name=\"robots\" content=\"noindex, nofollow\"/>"
+    ],
+    "ga4_id_present": true,
+    "images_empty_alt": 0,
+    "redirects": []
+  }
+]

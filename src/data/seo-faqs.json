@@ -1,0 +1,74 @@
+{
+  "/book": [
+    {
+      "question": "What types of bungalow can I book?",
+      "answer": "The resort website lists one- and two-bedroom beachfront and lagoon-view accommodation. Select your dates and guest numbers to check current availability."
+    },
+    {
+      "question": "Where is E'Nauwi Beach Resort?",
+      "answer": "The resort is on Efate Island in Shefa Province, Vanuatu. Contact the team for directions from Port Vila or the airport."
+    },
+    {
+      "question": "What time are check-in and check-out?",
+      "answer": "The website lists check-in at 2:00 PM and check-out at 10:00 AM. Ask the team about requests outside those times."
+    },
+    {
+      "question": "How can I arrange a group stay?",
+      "answer": "Contact the resort with your dates, guest numbers, and preferred room types so the team can confirm availability."
+    }
+  ],
+  "/menu": [
+    {
+      "question": "Where is the restaurant?",
+      "answer": "The restaurant is at E'Nauwi Beach Resort on Efate Island, Vanuatu, overlooking the lagoon."
+    },
+    {
+      "question": "Where can I see current dishes and prices?",
+      "answer": "Browse the current restaurant menu on this page. Contact the resort if you need help confirming availability."
+    },
+    {
+      "question": "Can I ask about dietary requirements?",
+      "answer": "Contact the resort before your visit to discuss your dietary requirements and what the kitchen can offer."
+    },
+    {
+      "question": "Can I enquire about group dining?",
+      "answer": "Contact the team with your preferred date, group size, and meal requirements to ask about options."
+    }
+  ],
+  "/services": [
+    {
+      "question": "How do I enquire about a conference?",
+      "answer": "Send your dates, expected guest numbers, and meeting requirements to the resort so the team can confirm current facilities and availability."
+    },
+    {
+      "question": "Can I request a tailored quote?",
+      "answer": "Yes. Contact the resort with your requirements and ask for a quote based on the services currently available."
+    },
+    {
+      "question": "Can delegates ask about accommodation?",
+      "answer": "The resort offers bungalow accommodation. The team can confirm room availability for your event dates."
+    },
+    {
+      "question": "What should I confirm before reserving?",
+      "answer": "Confirm room capacity, equipment, catering, accessibility requirements, opening status, and the final quote with the resort."
+    }
+  ],
+  "/activities": [
+    {
+      "question": "How do I enquire about an activity?",
+      "answer": "Choose an activity on this page and contact the resort to confirm availability and make arrangements."
+    },
+    {
+      "question": "Do activities depend on the weather?",
+      "answer": "Outdoor and water activities may depend on conditions. Ask the resort for current advice before making plans."
+    },
+    {
+      "question": "Can children join?",
+      "answer": "Suitability varies by activity. Tell the team the children's ages and ask about supervision and safety requirements."
+    },
+    {
+      "question": "Are activity prices included in accommodation?",
+      "answer": "Check with the resort which activities are included and which have additional charges before booking."
+    }
+  ]
+}

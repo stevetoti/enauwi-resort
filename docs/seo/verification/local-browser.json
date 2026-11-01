@@ -1,0 +1,144 @@
+{
+  "origin": "http://127.0.0.1:3100",
+  "checkedAt": "2026-11-01T09:11:51.422Z",
+  "results": [
+    {
+      "phase": "javascript-disabled",
+      "path": "/",
+      "status": 200,
+      "h1": "E'Nauwi Beach Resorton Efate Island, Vanuatu",
+      "canonical": "https://www.enauwibeachresort.org",
+      "title": "Family Beach Resort on Efate | E'Nauwi Beach Resort"
+    },
+    {
+      "phase": "javascript-disabled",
+      "path": "/book",
+      "status": 200,
+      "h1": "Beachfront Bungalows on Efate, Vanuatu",
+      "canonical": "https://www.enauwibeachresort.org/book",
+      "title": "Beachfront Bungalows Efate | E'Nauwi Beach Resort"
+    },
+    {
+      "phase": "javascript-disabled",
+      "path": "/services",
+      "status": 200,
+      "h1": "Conference and Guest Service Enquiries on Efate",
+      "canonical": "https://www.enauwibeachresort.org/services",
+      "title": "Conference Enquiries Efate | E'Nauwi Beach Resort"
+    },
+    {
+      "phase": "javascript-disabled",
+      "path": "/menu",
+      "status": 200,
+      "h1": "Beachfront Restaurant on Efate",
+      "canonical": "https://www.enauwibeachresort.org/menu",
+      "title": "Beachfront Restaurant Efate | E'Nauwi Beach Resort"
+    },
+    {
+      "phase": "javascript-disabled",
+      "path": "/activities",
+      "status": 200,
+      "h1": "Things to Do on Efate, Vanuatu",
+      "canonical": "https://www.enauwibeachresort.org/activities",
+      "title": "Things to Do on Efate | E'Nauwi Beach Resort"
+    },
+    {
+      "phase": "javascript-disabled",
+      "path": "/activities/snorkeling-diving",
+      "status": 200,
+      "h1": "Snorkelling on Efate",
+      "canonical": "https://www.enauwibeachresort.org/activities/snorkeling-diving",
+      "title": "Snorkelling on Efate | E'Nauwi Beach Resort"
+    },
+    {
+      "phase": "javascript-disabled",
+      "path": "/blog",
+      "status": 200,
+      "h1": "Efate and Vanuatu Travel Guides",
+      "canonical": "https://www.enauwibeachresort.org/blog",
+      "title": "Efate & Vanuatu Travel Guides | E'Nauwi Beach Resort"
+    },
+    {
+      "phase": "javascript-disabled",
+      "path": "/blog/weekend-itinerary-enauwi-efate",
+      "status": 200,
+      "h1": "A Perfect Weekend Itinerary at E'Nauwi Beach Resort",
+      "canonical": "https://www.enauwibeachresort.org/blog/weekend-itinerary-enauwi-efate",
+      "title": "A Weekend at E'Nauwi: Your Efate Itinerary"
+    },
+    {
+      "phase": "javascript-disabled",
+      "path": "/book?room=2br-superior",
+      "status": 200,
+      "h1": "Beachfront Bungalows on Efate, Vanuatu",
+      "canonical": "https://www.enauwibeachresort.org/book",
+      "title": "Beachfront Bungalows Efate | E'Nauwi Beach Resort"
+    },
+    {
+      "phase": "desktop",
+      "path": "/book",
+      "apiStatus": 200,
+      "roomsReturned": 0,
+      "bookingModal": "not testable against real data: existing live inventory is also empty"
+    },
+    {
+      "phase": "desktop",
+      "path": "/book",
+      "dataSource": "browser-only labelled fixture; real inventory empty",
+      "bookableOptions": 1,
+      "bookingModal": "opened without submission"
+    },
+    {
+      "phase": "desktop",
+      "path": "/services",
+      "apiStatus": 200,
+      "serviceCount": 17,
+      "conferenceForm": "opened without submission"
+    },
+    {
+      "phase": "desktop",
+      "path": "/menu",
+      "loadedCategories": 4
+    },
+    {
+      "phase": "desktop",
+      "path": "/activities/snorkeling-diving",
+      "galleryControls": "labelled and selectable",
+      "noHorizontalOverflow": true
+    },
+    {
+      "phase": "mobile",
+      "path": "/book",
+      "apiStatus": 200,
+      "roomsReturned": 0,
+      "bookingModal": "not testable against real data: existing live inventory is also empty"
+    },
+    {
+      "phase": "mobile",
+      "path": "/book",
+      "dataSource": "browser-only labelled fixture; real inventory empty",
+      "bookableOptions": 1,
+      "bookingModal": "opened without submission"
+    },
+    {
+      "phase": "mobile",
+      "path": "/services",
+      "apiStatus": 200,
+      "serviceCount": 17,
+      "conferenceForm": "opened without submission"
+    },
+    {
+      "phase": "mobile",
+      "path": "/menu",
+      "loadedCategories": 4
+    },
+    {
+      "phase": "mobile",
+      "path": "/activities/snorkeling-diving",
+      "galleryControls": "labelled and selectable",
+      "noHorizontalOverflow": true
+    }
+  ],
+  "appErrors": [],
+  "blockedWrites": []
+}

@@ -1,4 +1,6 @@
-import type { Metadata } from 'next'
+import { getPageSEO, publicPageMetadata, pageJsonLd } from '@/lib/seo'
+import JsonLd from '@/components/seo/JsonLd'
+import ResortFAQ from '@/components/seo/ResortFAQ'
 import Link from 'next/link'
 import { ArrowRight, Clock, Users } from 'lucide-react'
 import Navbar from '@/components/Navbar'
@@ -6,20 +8,11 @@ import Footer from '@/components/Footer'
 import { activities } from '@/data/activities'
 import { SITE_URL } from '@/lib/site'
 
-export const metadata: Metadata = {
-  title: "Things to Do on Efate, Vanuatu — Activities & Tours | E'Nauwi Beach Resort",
-  description:
-    "Snorkelling with dugongs, island hopping, sunset kayaking, sport fishing, turtle watching and more — guided activities and tours from E'Nauwi Beach Resort on Efate, Vanuatu.",
-  alternates: { canonical: '/activities' },
-  openGraph: {
-    title: "Activities & Tours on Efate | E'Nauwi Beach Resort",
-    description: 'Snorkelling, island hopping, kayaking, fishing and more from our beachfront resort on Efate, Vanuatu.',
-    url: '/activities',
-    images: ['/images/og-image.jpg'],
-  },
-}
+export const metadata = publicPageMetadata('/activities')
 
 export default function ActivitiesPage() {
+  const seo = getPageSEO('/activities')!
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -35,14 +28,14 @@ export default function ActivitiesPage() {
   return (
     <>
       <Navbar />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd data={jsonLd} />
+      <JsonLd data={pageJsonLd('/activities', { name: seo.h1, description: seo.description }, [], 'CollectionPage')} />
       <main className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
         <section className="mx-auto max-w-5xl px-4 pt-28 pb-8 text-center">
           <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-amber-600">Island Adventures</p>
           <h1 className="font-serif text-4xl font-bold text-sky-900 md:text-5xl">Things to Do on Efate, Vanuatu</h1>
           <p className="mx-auto mt-4 max-w-2xl text-gray-600">
-            Guided activities and excursions from E&apos;Nauwi Beach Resort — from snorkelling our lagoon to island
-            hopping and sunset kayaking.
+            {seo.intro}
           </p>
         </section>
 
@@ -90,6 +83,7 @@ export default function ActivitiesPage() {
             </Link>
           </div>
         </section>
+        <ResortFAQ path="/activities" />
       </main>
       <Footer />
     </>

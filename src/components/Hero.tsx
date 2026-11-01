@@ -11,9 +11,10 @@ export default function Hero() {
       <div className="absolute inset-0">
         <Image
           src="/images/hero-aerial.jpg"
-          alt="E'Nauwi Beach Resort aerial view — stunning turquoise lagoon with white sand beach and palm trees on Malekula Island"
+          alt="E'Nauwi Beach Resort aerial view — stunning turquoise lagoon with white sand beach and palm trees on Efate Island, Vanuatu"
           fill
           className="object-cover"
+          sizes="100vw"
           priority
         />
         {/* Subtle overlay for text readability - keeping images vibrant */}
@@ -70,6 +71,7 @@ export default function Hero() {
           >
             E&apos;Nauwi{" "}
             <span className="block text-gold-light mt-2">Beach Resort</span>
+            <span className="mt-4 block font-sans text-base font-normal leading-relaxed sm:text-lg">on Efate Island, Vanuatu</span>
           </motion.h1>
 
           <motion.p
@@ -84,7 +86,7 @@ export default function Hero() {
               and Relishing nights&rdquo;
             </span>
             <span className="text-white/90 text-base drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-              A peaceful beachfront retreat with lagoon views and warm island hospitality
+              A family-friendly beach resort with lagoon views and warm island hospitality
               <br className="hidden sm:block" />
               on Efate Island, Vanuatu.
             </span>

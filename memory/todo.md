@@ -1,5 +1,21 @@
 # Todo — Enauwi Beach Resort
 
+## 2026-11-01 — [Codex] Booking inventory finding
+
+- [ ] All 16 existing room records are not marked available; public room searches return zero options. Confirmed on both existing live site and local build before deployment. Await Stephen decision; do not alter inventory implicitly as part of SEO. Evidence: docs/seo/room-availability-baseline.json.
+
+
+## 2026-11-01 — [Codex] Golden SEO follow-up
+
+- [x] Crawl 37 public sitemap pages and verify major findings; report and draft keyword/copy package prepared — [Codex] 2026-11-01: docs/seo/ and output/pdf/enauwi-seo-report-2026-11-01.pdf.
+- [x] Stephen: review docs/seo/fix-plan.md and approve Phase A items 1-6 for implementation and verified deployment. — [Codex] 2026-11-01: approved in chat; user additionally requested actual DataForSEO rankings.
+- [ ] After approval: render useful /book and /services HTML, improve /menu, apply reviewed metadata/copy, fix Hero geography, add useful markup and labels; verify booking/menu/enquiry behavior, build and deploy, then re-audit.
+- [ ] Restore keyword provider authentication (401), then measure AU/NZ/VU demand and mobile ranks; current 126 phrases are candidates only.
+- [ ] Confirm conference opening/capacity, exact map pin/address, spa/viewpoint trek and tour operators, transfer/breakfast terms, wildlife wording; tourism listing and site disagree on conference readiness.
+- [ ] Review actual Search Console indexing/query data and analytics booking/enquiry events; obtain Business Profile manager access. GA4 tag and public verification file alone do not confirm these.
+- [ ] Obtain a successful mobile speed report (429 during audit). No schedule, new article, redirect or external profile change authorized by the prepared Phase A scope.
+
+
 ## Pending Migrations to Apply in Production
 Run these in Supabase SQL editor in order:
 

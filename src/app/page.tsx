@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
@@ -12,21 +11,19 @@ import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 import VoiceCallWidget from "@/components/VoiceCallWidget";
 import { resortJsonLd } from "@/lib/site";
+import { publicPageMetadata } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
+import seoPages from "@/data/seo-pages.json";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/" },
-};
+export const metadata = publicPageMetadata('/');
 
 export default function Home() {
   return (
     <main className="min-h-screen">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(resortJsonLd()) }}
-      />
+      <JsonLd data={resortJsonLd()} />
       <Navbar />
       <Hero />
-      <About />
+      <About intro={seoPages['/'].intro} />
       <Accommodations />
       <ResortFeatures />
       <Activities />

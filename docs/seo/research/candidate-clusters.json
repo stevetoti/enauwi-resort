@@ -1,0 +1,200 @@
+{
+  "brand": {
+    "target": "/",
+    "intent": "navigational",
+    "keywords": [
+      "enauwi beach resort",
+      "e'nauwi beach resort",
+      "e nauwi beach resort",
+      "enauwi resort vanuatu",
+      "enauwi beach resort contact",
+      "enauwi beach resort reviews",
+      "enauwi beach resort prices"
+    ]
+  },
+  "resort": {
+    "target": "/",
+    "intent": "commercial",
+    "keywords": [
+      "family beach resort efate",
+      "family resort vanuatu",
+      "family friendly resort vanuatu",
+      "beach resort efate",
+      "eratap resort",
+      "efate accommodation",
+      "efate island resorts",
+      "vanuatu beach resort",
+      "vanuatu family holiday",
+      "lagoon resort vanuatu",
+      "locally owned resort vanuatu",
+      "resort with pool efate",
+      "beach resort near port vila",
+      "family resort efate",
+      "family resort in efate",
+      "family resort eratap",
+      "family resort in eratap",
+      "family resort in vanuatu"
+    ]
+  },
+  "bungalows": {
+    "target": "/book",
+    "intent": "transactional",
+    "keywords": [
+      "beachfront bungalows efate",
+      "beachfront accommodation vanuatu",
+      "bungalows vanuatu",
+      "family bungalows vanuatu",
+      "two bedroom bungalow vanuatu",
+      "one bedroom bungalow efate",
+      "eratap accommodation",
+      "book enauwi beach resort",
+      "lagoon view bungalows vanuatu",
+      "efate bungalow accommodation",
+      "vanuatu bungalow prices",
+      "vanuatu resort booking",
+      "family accommodation efate",
+      "beachfront bungalows in efate",
+      "beachfront bungalows eratap",
+      "beachfront bungalows in eratap",
+      "beachfront bungalows vanuatu",
+      "beachfront bungalows in vanuatu"
+    ]
+  },
+  "dining": {
+    "target": "/menu",
+    "intent": "local",
+    "keywords": [
+      "beachfront restaurant efate",
+      "restaurant eratap",
+      "seafood restaurant efate",
+      "beachfront dining vanuatu",
+      "enauwi restaurant menu",
+      "restaurant south east efate",
+      "lagoon restaurant vanuatu",
+      "enauwi beach resort restaurant",
+      "beachfront restaurant in efate",
+      "beachfront restaurant eratap",
+      "beachfront restaurant in eratap",
+      "beachfront restaurant vanuatu",
+      "beachfront restaurant in vanuatu"
+    ]
+  },
+  "conferences": {
+    "target": "/services",
+    "intent": "commercial",
+    "keywords": [
+      "conference venue efate",
+      "conference room vanuatu",
+      "corporate retreat vanuatu",
+      "meeting venue efate",
+      "conference resort vanuatu",
+      "enauwi conference room",
+      "vanuatu event venue",
+      "conference venue in efate",
+      "conference venue eratap",
+      "conference venue in eratap",
+      "conference venue vanuatu",
+      "conference venue in vanuatu"
+    ]
+  },
+  "activities": {
+    "target": "/activities",
+    "intent": "commercial",
+    "keywords": [
+      "things to do on efate",
+      "efate activities",
+      "vanuatu island activities",
+      "family activities efate",
+      "tours efate",
+      "enauwi beach resort activities"
+    ]
+  },
+  "snorkelling": {
+    "target": "/activities/snorkeling-diving",
+    "intent": "commercial",
+    "keywords": [
+      "snorkelling efate",
+      "snorkeling efate",
+      "snorkelling vanuatu",
+      "vanuatu snorkelling tours",
+      "diving efate",
+      "snorkelling near eratap",
+      "dugong sightings vanuatu",
+      "snorkelling tours efate",
+      "snorkelling tours in efate",
+      "snorkelling tours eratap",
+      "snorkelling tours in eratap",
+      "snorkelling tours vanuatu",
+      "snorkelling tours in vanuatu"
+    ]
+  },
+  "island-hopping": {
+    "target": "/activities/island-hopping",
+    "intent": "commercial",
+    "keywords": [
+      "island hopping efate",
+      "vanuatu island hopping",
+      "island tours efate",
+      "island hopping near port vila"
+    ]
+  },
+  "kayaking": {
+    "target": "/activities/sunset-kayaking",
+    "intent": "commercial",
+    "keywords": [
+      "kayaking efate",
+      "sunset kayaking vanuatu",
+      "kayaking vanuatu",
+      "lagoon kayaking efate",
+      "kayaking in efate",
+      "kayaking eratap",
+      "kayaking in eratap",
+      "kayaking in vanuatu"
+    ]
+  },
+  "fishing": {
+    "target": "/activities/sport-fishing",
+    "intent": "commercial",
+    "keywords": [
+      "sport fishing efate",
+      "fishing tours vanuatu",
+      "game fishing vanuatu",
+      "fishing charters efate"
+    ]
+  },
+  "cooking": {
+    "target": "/activities/cooking-class",
+    "intent": "commercial",
+    "keywords": [
+      "vanuatu cooking class",
+      "cooking class efate",
+      "traditional vanuatu cooking"
+    ]
+  },
+  "wedding": {
+    "target": "proposed:/weddings",
+    "intent": "commercial",
+    "keywords": [
+      "beach wedding venue efate",
+      "vanuatu beach wedding",
+      "vanuatu wedding venue",
+      "eratap wedding venue"
+    ]
+  },
+  "guides": {
+    "target": "/blog",
+    "intent": "informational",
+    "keywords": [
+      "efate travel guide",
+      "vanuatu travel guide",
+      "best time to visit vanuatu",
+      "how to get to eratap",
+      "where to stay on efate with kids",
+      "what to pack for vanuatu",
+      "port vila to enauwi beach resort",
+      "vanuatu family holiday itinerary",
+      "vanuatu snorkelling safety",
+      "rainy day activities efate"
+    ]
+  }
+}

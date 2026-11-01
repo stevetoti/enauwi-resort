@@ -1,5 +1,12 @@
 # Decisions — Enauwi Beach Resort
 
+## 2026-11-01 — [Codex] SEO baseline integrity and review scope
+
+- Context: Stephen requested Golden SEO audit plus necessary SEO/keyword work; the named workflow requires approval of a concrete fix plan before site changes.
+- Decision: prepare the complete audit, candidate map and exact page-copy assets first; request approval for fix-plan.md Phase A before touching source or publishing. Preserve existing slugs and blog auto-publish behavior; no speculative article merges.
+- Reason: booking/services initial HTML and location accuracy are the clearest verified gaps. Keyword authentication failed, so all demand/difficulty/rank metrics remain unmeasured. Conference operating status conflicts with tourism listing; confirm facts before promotion. Checklist scores are diagnostic, not rankings or proof of event tracking.
+
+
 ## 2026-04-11 — Group Bookings via group_id (no junction table)
 - **Context:** Team needed multi-room reservations (group/family bookings)
 - **Decision:** Store one booking row per room, link with shared `group_id` UUID + `group_name`. Mark first as `is_group_lead`.

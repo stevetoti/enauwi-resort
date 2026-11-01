@@ -3,18 +3,24 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { getPageSEO, publicPageMetadata, pageJsonLd } from '@/lib/seo'
+import JsonLd from '@/components/seo/JsonLd'
+import { SITE_URL } from '@/lib/site'
 import { getPostBySlug, getPublishedPosts, renderMarkdown } from '@/lib/blog'
 
 export const revalidate = 600
 
-const SITE = process.env.NEXT_PUBLIC_APP_URL || 'https://www.enauwibeachresort.org'
+const SITE = SITE_URL
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = await getPostBySlug(params.slug)
   if (!post) return { title: 'Article not found | E\'Nauwi Beach Resort' }
-  const description = post.meta_description || post.excerpt || undefined
+  const reviewed = getPageSEO(`/blog/${post.slug}`)
+  const description = reviewed?.description || post.meta_description || post.excerpt || ''
+  const title = reviewed?.title || post.title
   return {
-    title: `${post.title} | E'Nauwi Beach Resort`,
+    ...publicPageMetadata(`/blog/${post.slug}`, { title, description }, post.cover_image || '/images/og-image.jpg'),
+    title,
     description,
     keywords: post.keywords || undefined,
     alternates: { canonical: `/blog/${post.slug}` },
@@ -71,7 +77,8 @@ export default async function BlogArticlePage({ params }: { params: { slug: stri
   return (
     <>
       <Navbar />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd data={jsonLd} />
+      <JsonLd data={pageJsonLd(`/blog/${post.slug}`, { name: post.title, description: post.meta_description || post.excerpt || '' }, [{ name: 'Vanuatu travel guides', path: '/blog' }])} />
       <main className="min-h-screen bg-white">
         <div className="bg-gradient-to-b from-sky-50 to-white">
           <div className="mx-auto max-w-3xl px-4 pt-28 pb-6">

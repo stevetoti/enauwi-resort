@@ -1,0 +1,14 @@
+{
+  "keywords": 30,
+  "markets": [
+    "VU",
+    "AU",
+    "NZ"
+  ],
+  "device": "mobile",
+  "language": "en",
+  "requested_depth": 100,
+  "estimated_max_usd": 4.5,
+  "budget_cap_usd": 4.9,
+  "note": "Organic rank_group is the reported position. Actual organic coverage is recorded separately. Labs metrics reflect provider historical database, not live rankings."
+}

@@ -1,4 +1,5 @@
-import type { Metadata } from 'next'
+import { getPageSEO, publicPageMetadata, pageJsonLd } from '@/lib/seo'
+import JsonLd from '@/components/seo/JsonLd'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -6,18 +7,7 @@ import { getPublishedPosts } from '@/lib/blog'
 
 export const revalidate = 600 // refresh the list every 10 minutes
 
-export const metadata: Metadata = {
-  title: "Travel Blog — Vanuatu & Efate Guides | E'Nauwi Beach Resort",
-  description:
-    "Travel tips, guides and inspiration for your Vanuatu holiday — beaches, snorkelling, activities and island life from E'Nauwi Beach Resort on Efate.",
-  alternates: { canonical: '/blog' },
-  openGraph: {
-    title: "Vanuatu & Efate Travel Guides | E'Nauwi Beach Resort",
-    description: 'Travel tips, guides and inspiration for your Vanuatu holiday.',
-    url: '/blog',
-    images: ['/images/og-image.jpg'],
-  },
-}
+export const metadata = publicPageMetadata('/blog')
 
 function formatDate(d: string | null) {
   if (!d) return ''
@@ -29,15 +19,18 @@ function formatDate(d: string | null) {
 }
 
 export default async function BlogPage() {
+  const seo = getPageSEO('/blog')!
+
   const posts = await getPublishedPosts()
 
   return (
     <>
       <Navbar />
+      <JsonLd data={pageJsonLd('/blog', { name: seo.h1, description: seo.description }, [], 'CollectionPage')} />
       <main className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
         <section className="mx-auto max-w-5xl px-4 pt-28 pb-8 text-center">
           <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-amber-600">E&apos;Nauwi Journal</p>
-          <h1 className="font-serif text-4xl font-bold text-sky-900 md:text-5xl">Vanuatu Travel Guides &amp; Island Stories</h1>
+          <h1 className="font-serif text-4xl font-bold text-sky-900 md:text-5xl">{seo.h1}</h1>
           <p className="mx-auto mt-4 max-w-2xl text-gray-600">
             Tips, guides and inspiration to help you plan the perfect island escape on Efate, Vanuatu.
           </p>

@@ -29,7 +29,7 @@ const highlights = [
   },
 ];
 
-export default function About() {
+export default function About({ intro }: { intro: string }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -77,11 +77,7 @@ export default function About() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="section-subheading"
           >
-            E&apos;Nauwi Beach Resort is a family-friendly island retreat set
-            along a peaceful beachfront with calm lagoon waters and beautiful
-            island views. The resort offers a relaxed environment ideal for
-            families, couples, and groups seeking comfort, good food, and
-            genuine island hospitality.
+            {intro}
           </motion.p>
         </div>
 

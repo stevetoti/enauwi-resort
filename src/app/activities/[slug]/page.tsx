@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation'
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
+import { getPageSEO, publicPageMetadata, pageJsonLd } from '@/lib/seo'
+import JsonLd from '@/components/seo/JsonLd'
 import { activities, getActivityBySlug } from '@/data/activities'
 import ActivityDetail from './ActivityDetail'
 
@@ -15,17 +17,10 @@ export async function generateMetadata({
   const activity = getActivityBySlug(params.slug)
   if (!activity) return { title: 'Activity Not Found' }
 
-  return {
-    title: `${activity.title} | E'Nauwi Beach Resort Activities`,
+  return publicPageMetadata(`/activities/${activity.slug}`, {
+    title: `${activity.title} | E'Nauwi Beach Resort`,
     description: activity.tagline,
-    alternates: { canonical: `/activities/${activity.slug}` },
-    openGraph: {
-      title: `${activity.title} | E'Nauwi Beach Resort`,
-      description: activity.tagline,
-      url: `/activities/${activity.slug}`,
-      images: [activity.heroImage],
-    },
-  }
+  }, activity.heroImage)
 }
 
 export default function ActivityPage({
@@ -36,5 +31,10 @@ export default function ActivityPage({
   const activity = getActivityBySlug(params.slug)
   if (!activity) notFound()
 
-  return <ActivityDetail activity={activity} />
+  return (
+    <>
+      <JsonLd data={pageJsonLd(`/activities/${activity.slug}`, { name: activity.title, description: activity.tagline }, [{ name: 'Efate activities', path: '/activities' }])} />
+      <ActivityDetail activity={activity} heading={getPageSEO(`/activities/${activity.slug}`)?.h1} />
+    </>
+  )
 }

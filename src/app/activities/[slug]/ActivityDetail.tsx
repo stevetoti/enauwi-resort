@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import { Activity, getRelatedActivities } from '@/data/activities'
 
-export default function ActivityDetail({ activity }: { activity: Activity }) {
+export default function ActivityDetail({ activity, heading = activity.title }: { activity: Activity; heading?: string }) {
   const [selectedImage, setSelectedImage] = useState(0)
   const allImages = [activity.heroImage, ...activity.gallery]
   const related = getRelatedActivities(activity.related)
@@ -60,7 +60,7 @@ export default function ActivityDetail({ activity }: { activity: Activity }) {
               animate={{ opacity: 1, y: 0 }}
               className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-3"
             >
-              {activity.title}
+              {heading}
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -80,6 +80,8 @@ export default function ActivityDetail({ activity }: { activity: Activity }) {
           {allImages.map((img, idx) => (
             <button
               key={idx}
+              aria-label={`View ${activity.title} photo ${idx + 1} of ${allImages.length}`}
+              aria-pressed={selectedImage === idx}
               onClick={() => setSelectedImage(idx)}
               className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${
                 selectedImage === idx

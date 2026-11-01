@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-11-01",
+  "provider": "DataForSEO",
+  "status": "authentication_failed",
+  "http_status": 401,
+  "metrics": "not measured",
+  "rank_positions": "not measured",
+  "cost_usd": null,
+  "cost_note": "No successful billable responses; billed cost not independently confirmed.",
+  "credential_source": "Existing company SEO configuration; no credential values copied or saved.",
+  "fallback": "Public search results and first-party site content; candidates are strategic suggestions, not measured search demand.",
+  "superseded_by": "connection.json and measured-2026-11-01/ after user supplied project-local API credentials",
+  "historical_note": "Original failed connection is retained as audit history; current connection is authenticated."
+}
