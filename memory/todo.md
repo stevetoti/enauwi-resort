@@ -2,7 +2,7 @@
 
 ## 2026-11-01 — [Codex] Booking inventory finding
 
-- [ ] All 16 existing room records are not marked available; public room searches return zero options. Confirmed on both existing live site and local build before deployment. — [Codex] 2026-11-01: Stephen explicitly requested availability remain unchanged; any future change needs a new instruction. Evidence: docs/seo/room-availability-baseline.json.
+- [x] All 16 existing room records are not marked available; — [Claude Code] 2026-11-06: enabled all 16 at the team's request (see changelog). public room searches return zero options. Confirmed on both existing live site and local build before deployment. — [Codex] 2026-11-01: Stephen explicitly requested availability remain unchanged; any future change needs a new instruction. Evidence: docs/seo/room-availability-baseline.json.
 
 
 ## 2026-11-01 — [Codex] Golden SEO follow-up
@@ -45,6 +45,10 @@ Run these in Supabase SQL editor in order:
    ALTER TABLE rooms ADD COLUMN IF NOT EXISTS bed_config TEXT;
    ALTER TABLE rooms ADD COLUMN IF NOT EXISTS tagline TEXT;
    ```
+
+## Booking
+- [ ] /book "save 10%" banner + resetting fake countdown, but no discount applied (room_discounts empty) — decide: real 10% discount or remove claim
+- [ ] Season prices (price_low_season/high_season) set on 5 rooms but booking uses price_vt only — confirm intended rates with team
 
 ## SEO Gaps (audit 2026-09-30 — [Claude Code])
 - [x] **site_settings key='seo' holds junk from another project** ("Scale Rankings Pro") — clear it; GA4 / Pixel / Google + FB verification IDs never entered, so none are live

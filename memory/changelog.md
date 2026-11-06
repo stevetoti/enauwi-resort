@@ -1,5 +1,12 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-11-06 — [Claude Code] Rooms enabled for public booking (team request)
+
+- Data only: rooms.available false -> true for all 16 bungalows (1-16). Before-state recorded in docs/seo/room-availability-baseline.json (all false). Rollback: PATCH rooms set available=false.
+- Pre-checks: availability is per room (any overlapping pending/confirmed/checked_in booking blocks it; booking POST re-checks), so rooms.quantity (2/5 on some) is NOT used and cannot cause double-booking. All rooms have price_vt (VT 18,000-27,000); online price uses price_vt only (season prices set on 5 rooms are unused by the booking flow).
+- Verified live: /api/rooms 10-13 Dec 2 guests -> 16 available; 24-27 Dec 4 guests -> 12 fit, 11 free (existing booking blocks one). Headless mobile /book shows all 16 bungalows, zero page errors. No test bookings created.
+- Found: /book banner "Book direct & save 10%" + countdown that resets to 2h on every load, while room_discounts is empty — guests are not actually given 10%. Raised with Stephen.
+
 ## 2026-11-01 — [Codex] SEO production release and actual ranking report complete
 
 - Live https://www.enauwibeachresort.org/; source becbbe1cddc3571403dcfdb39080cc5c2efc6684; deployment dpl_DnUzGEeBZ3RAXACtCFfFqJ7L7Ygq. No migrations or Edge Functions. Release branch codex/enauwi-seo-2026-11-01; main not advanced by this isolated release.
