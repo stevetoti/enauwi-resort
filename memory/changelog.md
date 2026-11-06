@@ -5,7 +5,7 @@
 - Data only: rooms.available false -> true for all 16 bungalows (1-16). Before-state recorded in docs/seo/room-availability-baseline.json (all false). Rollback: PATCH rooms set available=false.
 - Pre-checks: availability is per room (any overlapping pending/confirmed/checked_in booking blocks it; booking POST re-checks), so rooms.quantity (2/5 on some) is NOT used and cannot cause double-booking. All rooms have price_vt (VT 18,000-27,000); online price uses price_vt only (season prices set on 5 rooms are unused by the booking flow).
 - Verified live: /api/rooms 10-13 Dec 2 guests -> 16 available; 24-27 Dec 4 guests -> 12 fit, 11 free (existing booking blocks one). Headless mobile /book shows all 16 bungalows, zero page errors. No test bookings created.
-- Found: /book banner "Book direct & save 10%" + countdown that resets to 2h on every load, while room_discounts is empty — guests are not actually given 10%. Raised with Stephen.
+- Found: /book banner "Book direct & save 10%" + countdown that resets to 2h on every load, while room_discounts is empty — guests were not actually given 10%. Stephen chose to remove the claim: banner now "Book direct with E'Nauwi Beach Resort · Questions? Call +678 22170"; CountdownTimer deleted; room-card "Best rate — book direct!" -> "Total for your stay". Real per-room discounts (room_discounts) still display as before.
 
 ## 2026-11-01 — [Codex] SEO production release and actual ranking report complete
 

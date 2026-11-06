@@ -47,7 +47,7 @@ Run these in Supabase SQL editor in order:
    ```
 
 ## Booking
-- [ ] /book "save 10%" banner + resetting fake countdown, but no discount applied (room_discounts empty) — decide: real 10% discount or remove claim
+- [x] /book "save 10%" banner + resetting fake countdown, but no discount applied (room_discounts empty) — decide: real 10% discount or remove claim — [Claude Code] 2026-11-06: removed at Stephen's choice
 - [ ] Season prices (price_low_season/high_season) set on 5 rooms but booking uses price_vt only — confirm intended rates with team
 
 ## SEO Gaps (audit 2026-09-30 — [Claude Code])

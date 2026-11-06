@@ -141,42 +141,6 @@ function LiveViewers() {
   )
 }
 
-// Modern countdown timer
-function CountdownTimer() {
-  const [time, setTime] = useState({ hours: 2, minutes: 0, seconds: 0 })
-  useEffect(() => {
-    const endTime = Date.now() + 2 * 60 * 60 * 1000
-    const interval = setInterval(() => {
-      const remaining = endTime - Date.now()
-      if (remaining <= 0) {
-        clearInterval(interval)
-        return
-      }
-      setTime({
-        hours: Math.floor(remaining / (1000 * 60 * 60)),
-        minutes: Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((remaining % (1000 * 60)) / 1000)
-      })
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [])
-  return (
-    <div className="flex items-center gap-1">
-      <div className="flex flex-col items-center">
-        <span className="bg-amber-500 text-slate-900 font-bold text-sm px-2 py-1 rounded-md min-w-[32px] text-center">{String(time.hours).padStart(2, '0')}</span>
-      </div>
-      <span className="text-amber-400 font-bold">:</span>
-      <div className="flex flex-col items-center">
-        <span className="bg-amber-500 text-slate-900 font-bold text-sm px-2 py-1 rounded-md min-w-[32px] text-center">{String(time.minutes).padStart(2, '0')}</span>
-      </div>
-      <span className="text-amber-400 font-bold">:</span>
-      <div className="flex flex-col items-center">
-        <span className="bg-amber-500 text-slate-900 font-bold text-sm px-2 py-1 rounded-md min-w-[32px] text-center">{String(time.seconds).padStart(2, '0')}</span>
-      </div>
-    </div>
-  )
-}
-
 // Hero slider
 function HeroSlider() {
   const [current, setCurrent] = useState(0)
@@ -425,20 +389,14 @@ export default function BookingClient() {
       {/* WhatsApp Button */}
       <WhatsAppButton />
 
-      {/* Modern Timer Banner */}
+      {/* Direct-booking banner */}
       <div className="bg-gradient-to-r from-slate-900 to-slate-800 py-3 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center">
-              <Gift className="w-4 h-4 text-amber-400" />
-            </div>
-            <span className="text-white/90 text-sm font-medium">Book direct & save 10%</span>
-          </div>
-          <div className="hidden sm:block w-px h-6 bg-white/20" />
-          <div className="flex items-center gap-2">
-            <span className="text-white/60 text-xs uppercase tracking-wide">Ends in</span>
-            <CountdownTimer />
-          </div>
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm">
+          <span className="text-white/90 font-medium">Book direct with E&apos;Nauwi Beach Resort</span>
+          <span className="hidden sm:block w-px h-5 bg-white/20" />
+          <a href="tel:+67822170" className="text-amber-400 font-semibold hover:text-amber-300 transition-colors">
+            Questions? Call +678 22170
+          </a>
         </div>
       </div>
 
@@ -613,7 +571,7 @@ export default function BookingClient() {
                                 ) : (
                                   <>
                                     <p className="text-2xl font-bold text-gray-900">{formatVatu(calculateTotal(room))}</p>
-                                    <p className="text-xs text-green-600 font-medium">Best rate — book direct!</p>
+                                    <p className="text-xs text-gray-500">Total for your stay</p>
                                   </>
                                 )}
                               </div>
