@@ -28,8 +28,7 @@ async function sendEmail(to: string, subject: string, html: string) {
   }
 }
 
-// Room mapping with correct UUID IDs from database.
-// Prices = published rates (src/data/accommodation-rates.ts, Reservations team 7 Nov 2026).
+// Room mapping with correct UUID IDs from database
 const ROOMS = {
   'beachfront-deluxe-2': {
     id: '05e09a4e-aa78-41a0-a8ce-de9e45710e44',
@@ -40,25 +39,25 @@ const ROOMS = {
   'lagoon-view-2': {
     id: '302109a1-b014-4ce7-b5af-bb0a303fe544',
     name: 'Lagoon View Superior 2 Bedroom',
-    price: 25500,
+    price: 27000,
     maxGuests: 4
   },
   'beachfront-deluxe-1': {
     id: '6f314c7c-d38d-4ed6-bcb6-f83f2bc375a3',
     name: 'Beachfront Deluxe 1 Bedroom',
-    price: 24000,
+    price: 25000,
     maxGuests: 2
   },
   'lagoon-view-1': {
     id: '9b37897c-b1ad-40ed-a516-949c1963d487',
     name: 'Lagoon View Superior 1 Bedroom',
-    price: 20060,
+    price: 22000,
     maxGuests: 2
   },
   'garden-view-2': {
     id: 'f82af187-8b17-4d22-902e-f149e4abe7cc',
     name: 'Back Garden View 2 Bedroom',
-    price: 21250,
+    price: 23000,
     maxGuests: 4
   }
 }

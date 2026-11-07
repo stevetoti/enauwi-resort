@@ -332,7 +332,7 @@ function bookingRequestHTML(data: {
         ${req ? `<tr><td style="padding:8px 0;color:#888;font-size:14px;">Your notes</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${e(req)}</td></tr>` : ''}
         <tr style="border-top:2px solid #D4A853;"><td style="padding:12px 0;color:#0A4B78;font-weight:bold;font-size:16px;">Estimated total</td><td style="padding:12px 0;color:#0A4B78;font-weight:bold;text-align:right;font-size:16px;">${e(data.totalPrice)}</td></tr>
       </table>
-      <p style="color:#888;font-size:13px;margin:12px 0 0;">Rates include a light breakfast. No payment has been taken.</p>
+      <p style="color:#888;font-size:13px;margin:12px 0 0;">Prices include breakfast. No payment has been taken.</p>
     </div>
     <p style="color:#666;line-height:1.6;font-size:14px;">Questions? Reply to this email, write to <a href="mailto:reservation@enauwibeachresort.com" style="color:#0A4B78;">reservation@enauwibeachresort.com</a> or call <strong>+678 22170</strong>.</p>
     <p style="color:#D4A853;font-family:Georgia,serif;font-size:16px;margin-top:24px;">— The E'Nauwi Reservations Team</p>

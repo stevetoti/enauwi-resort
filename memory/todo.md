@@ -84,6 +84,6 @@ Run these in Supabase SQL editor in order:
 - [ ] Stripe/payment processor integration for online card payments
 
 ## Open (2026-11-08, [Claude Code])
-- [ ] Stephen: OK to update rooms.price_vt to the published rates? (admin/invoices still use old 18,000–27,000)
+- [x] Prices: Stephen — keep the old prices (2026-11-08). Team's 7 Nov rate list not used.
 - [ ] `/api/email/send` is unauthenticated and accepts any template type (open relay risk) — lock down
 - [ ] After deploy: one labelled test request end-to-end, then cancel it in admin

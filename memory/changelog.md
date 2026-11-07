@@ -1,5 +1,10 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-11-08 (later) — [Claude Code] Prices reverted to the old ones (Stephen) — enquiry flow kept
+- Stephen: "don't commit the changes of prices, use the old ones". Removed the team's new rate list and the rate table: homepage cards back to 30,000/27,000/25,000/22,000, booking page + API back to rooms.price_vt, chat prompt + voice agent price blocks restored exactly from d7a9bda. ReservationsNotice now shows the team's message + "subject to availability" note, no prices.
+- Kept: enquiry-only booking flow, enquiry notice at the top of the form, "request received / not confirmed" emails, WhatsApp, SMS, voice + chat wording.
+- Supersedes the rates parts of the two entries below.
+
 ## 2026-11-08 (later) — [Claude Code] Booking form: enquiry notice moved to the top
 - Stephen: make it obvious at the booking stage that it is an enquiry. Modal title "Reservation Enquiry"; bold amber box FIRST in the form ("This is an enquiry, not a confirmed booking…"); button "Send Enquiry to Reservations"; footnote "Nothing is booked yet". Build/lint/typecheck pass; previewed locally.
 - Note: Stephen's test on the LIVE (old) site created a pending booking — Bungalow 1, 8→9 Nov 2026, "This is a test" — it now blocks those dates; cancel it in admin.

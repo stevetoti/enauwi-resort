@@ -4,7 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { BookingFormData } from '@/types'
 import { generateBookingReference, getDaysBetween } from '@/lib/utils'
 import { sendBookingNotifications } from '@/lib/notifications'
-import { IS_REQUEST_MODE, nightlyRateVt } from '@/data/accommodation-rates'
+import { IS_REQUEST_MODE } from '@/data/accommodation-rates'
 // CSRF removed — bookings are public guest actions, not authenticated admin mutations
 import { requireAuth } from '@/lib/auth'
 
@@ -91,8 +91,7 @@ export async function POST(request: NextRequest) {
 
     // Calculate total price with discounts
     const nights = getDaysBetween(checkIn, checkOut)
-    // Published rate (Reservations team, 7 Nov 2026); falls back to the stored room price.
-    const basePrice = nightlyRateVt(room) * nights
+    const basePrice = room.price_vt * nights
 
     // Check for active discounts
     let discountPercent = 0

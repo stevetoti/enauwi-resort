@@ -20,13 +20,14 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import ReservationsNotice from "@/components/ReservationsNotice";
-import { rateForRoomName, RATES_NOTE, AVAILABILITY_NOTE } from "@/data/accommodation-rates";
+import { AVAILABILITY_NOTE } from "@/data/accommodation-rates";
 
 const rooms = [
   {
     id: "2br-deluxe",
     name: "Beachfront Deluxe 2 Bedroom",
     tagline: "Lagoon Beachfront",
+    price: "30,000",
     image: "/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg",
     gallery: [
       "/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg",
@@ -44,6 +45,7 @@ const rooms = [
     id: "2br-superior",
     name: "Lagoon View Superior 2 Bedroom",
     tagline: "Lagoon View",
+    price: "27,000",
     image: "/images/resort/malili-rooms/living-room-8-opt-pro.jpg",
     gallery: [
       "/images/resort/malili-rooms/living-room-8-opt-pro.jpg",
@@ -61,6 +63,7 @@ const rooms = [
     id: "1br-deluxe",
     name: "Beachfront Deluxe 1 Bedroom",
     tagline: "Lagoon Beachfront",
+    price: "25,000",
     image: "/images/resort/malili-rooms/living-room-5-opt-pro.jpg",
     gallery: [
       "/images/resort/malili-rooms/living-room-5-opt-pro.jpg",
@@ -78,6 +81,7 @@ const rooms = [
     id: "1br-superior",
     name: "Lagoon View Superior 1 Bedroom",
     tagline: "Lagoon View",
+    price: "22,000",
     image: "/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg",
     gallery: [
       "/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg",
@@ -203,7 +207,7 @@ export default function Accommodations() {
                 {/* Price overlay */}
                 <div className="absolute bottom-4 left-5">
                   <div className="text-3xl font-serif font-bold text-white drop-shadow-lg">
-                    {(rateForRoomName(room.name)?.nightlyVt ?? 0).toLocaleString("en-US")}{" "}
+                    {room.price}{" "}
                     <span className="text-sm font-sans font-normal text-white/80">
                       VT/night
                     </span>
@@ -296,7 +300,7 @@ export default function Accommodations() {
           transition={{ duration: 0.6, delay: 1 }}
           className="text-center text-gray-500 text-sm mt-8"
         >
-          All rates in Vanuatu Vatu (VT) per night. {RATES_NOTE} {AVAILABILITY_NOTE}
+          All rates in Vanuatu Vatu (VT). Prices include breakfast. Seasonal rates may apply. {AVAILABILITY_NOTE}
         </motion.p>
       </div>
     </section>

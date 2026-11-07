@@ -13,7 +13,7 @@ import {
 import { Room } from '@/types'
 import { formatVatu, getDaysBetween } from '@/lib/utils'
 import ReservationsNotice from '@/components/ReservationsNotice'
-import { nightlyRateVt, RESERVATIONS_EMAIL, RATES_NOTE } from '@/data/accommodation-rates'
+import { RESERVATIONS_EMAIL } from '@/data/accommodation-rates'
 
 // Hero images
 const heroImages = [
@@ -284,13 +284,10 @@ export default function BookingClient() {
   }, [selectedRoomParam, rooms])
 
   const calculateNights = () => checkIn && checkOut ? getDaysBetween(checkIn, checkOut) : 1
-  // Published rates (src/data/accommodation-rates.ts); a room discount still applies on top.
-  const nightly = (room: Room) => nightlyRateVt(room)
-  const getEffectivePrice = (room: Room) => room.active_discount
-    ? Math.round(nightly(room) * (100 - room.active_discount.discount_percent) / 100)
-    : nightly(room)
+  const nightly = (room: Room) => room.price_vt
+  const getEffectivePrice = (room: Room) => room.discounted_price || room.price_vt
   const calculateTotal = (room: Room) => getEffectivePrice(room) * calculateNights()
-  const calculateBaseTotal = (room: Room) => nightly(room) * calculateNights()
+  const calculateBaseTotal = (room: Room) => room.price_vt * calculateNights()
   const calculateActivitiesTotal = () => selectedActivities.reduce((sum, id) => {
     const activity = activities.find(a => a.id === id)
     return sum + (activity?.price || 0)
@@ -640,7 +637,7 @@ export default function BookingClient() {
                 <p className="font-bold">This is an enquiry, not a confirmed booking</p>
                 <p className="mt-1 text-sm leading-relaxed">
                   Your request goes to our Reservations team. They will check availability and email you to confirm
-                  before your booking is final. No payment is taken now. {RATES_NOTE}
+                  before your booking is final. No payment is taken now.
                 </p>
               </div>
 
