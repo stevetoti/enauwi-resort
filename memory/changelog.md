@@ -3,7 +3,8 @@
 ## 2026-11-08 — [Claude Code] /api/email/send locked to internal callers; test booking cancelled
 - /api/email/send was public and sent any template (booking confirmation, staff invite, password reset, …) to any address = open relay in the resort's name. Now requires header `x-internal-email-key` = sha256("enauwi-internal-email:" + SUPABASE_SERVICE_ROLE_KEY) (`src/lib/internal-email.ts`, timing-safe, fails closed). All 9 internal fetches send it (notifications ×2, contact, chat concierge, forgot-password, staff invite, invitation resend, conferences, communications). No browser code calls the route; /api/* is outside middleware.
 - Local test: no key 403, wrong key 403, correct key + unknown type 400 (no email sent).
-- NOT DEPLOYED YET (deploy needs Stephen's explicit "deploy it").
+- DEPLOYED `dpl_33pctPUk9HnwLhWEVbei8JwfZyGW` from `8929439` (Stephen: "deploy it"). Live: POST /api/email/send without key → 403; /, /book, /api/rooms 200.
+- `main` fast-forwarded 5029417 → 8929439 (`git push origin HEAD:main`); Vercel's Git build of main was auto-cancelled (same commit already in production). main now == production — work on main from here.
 - Cancelled Stephen's test booking ENW4859161IC (Bungalow 1, 8→9 Nov, "This is a test", pending → cancelled, via service role, filtered by id + email + status). Live /api/rooms 8→9 Nov now shows no booked rooms.
 
 ## 2026-11-08 — [Claude Code] Server functions moved next to the database (Mumbai)

@@ -21,27 +21,19 @@ Live site: https://www.enauwibeachresort.org (Vercel project `enauwi-resort`).
   0.65 s); all functions run in `bom1` (Mumbai) next to the Supabase DB (ap-south-1) via
   `vercel.json` `regions`.
 
-**Committed + pushed but NOT deployed:** `798b24d` — `/api/email/send` now accepts
-internal callers only (header `x-internal-email-key`, see `src/lib/internal-email.ts`).
-Before this it was an open relay. Tested locally (no key/wrong key → 403). The deploy
-was blocked pending Stephen's explicit "deploy it".
+**Also live (8 Nov):** `/api/email/send` accepts internal callers only (header
+`x-internal-email-key`, see `src/lib/internal-email.ts`) — verified live: no key → 403.
+**Branches:** `main` was fast-forwarded to the release branch and now equals production
+(`8929439`). Work on `main` from now on.
 
 **Data cleanup done:** Stephen's test booking ENW4859161IC cancelled (8→9 Nov freed).
 
 ## 2. Next steps for the agent (in order)
 
-1. **Deploy `798b24d`** once Stephen says "deploy it". Then check live:
-   `curl -X POST https://www.enauwibeachresort.org/api/email/send -H 'Content-Type: application/json' -d '{"type":"contact_form","data":{}}'`
-   must return **403**. Then send ONE labelled test enquiry via /book (tell the resort
-   team first; it emails reservation@/gm@/marketing@), check both emails arrive, and
-   cancel it in /admin/bookings.
-2. **Fast-forward `main`** to the release branch (Stephen approved fixing this; it
-   needs the same deploy go-ahead because a push to `main` triggers a Vercel production
-   deploy). `origin/main` is 5029417 and is BEHIND production; the release branch
-   `codex/enauwi-seo-2026-11-01` is a clean fast-forward of it (verified with
-   `git merge-base --is-ancestor`). Command: `git push origin codex/enauwi-seo-2026-11-01:main`.
-   After that, work on `main` again.
-3. **Re-audit the known critical issues** listed in `CLAUDE.md` ("Known Issues
+1. **One end-to-end test enquiry** via /book — tell the resort team first (it emails
+   reservation@/gm@/marketing@). Check the guest and team emails arrive, then cancel the
+   booking in /admin/bookings.
+2. **Re-audit the known critical issues** listed in `CLAUDE.md` ("Known Issues
    2026-04-06": plaintext passwords in reset endpoints, unauthenticated `/api/admin/*`
    and `/api/staff` routes, permissive RLS, localStorage sessions). A `src/middleware.ts`
    now exists but it EXCLUDES `/api/*` — check each API route for `requireAuth`. Report
