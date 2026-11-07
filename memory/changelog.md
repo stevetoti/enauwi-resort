@@ -1,6 +1,7 @@
 # Changelog — Enauwi Beach Resort
 
 ## 2026-11-08 — [Claude Code] Server functions moved next to the database (Mumbai)
+- DEPLOYED with the perf commits 0713147 (hero) + 775f692 (rooms batching) + ce58a58 (region): last `dpl_HbHWbackbkr6H5p6xEmEgQfVMeBW`. Verified live: x-vercel-id syd1::bom1; /api/rooms 0.65 s warm (1.56 s first/cold) vs 15–30 s before, JSON identical to baseline (4 cases); /book rooms visible 1.6 s normal / 3.6 s slow-4G mobile; homepage Lighthouse mobile 97 (was 72), LCP 2.2 s (was 6.0 s), measured after the hero deploy dpl_849aQ3RUHY8T7GyYSKKjvmW7z8JG.
 - Live /api/rooms after batching was still 1.3–2.1 s: functions ran in iad1 (Washington DC) — x-vercel-id syd1::iad1 — while Supabase is in ap-south-1 (Mumbai; SUPABASE_DB_URL pooler aws-1-ap-south-1). Every query crossed DC↔Mumbai.
 - vercel.json: "regions": ["bom1"] (Vercel Mumbai) for all functions — all of them use this database. Rollback: remove the line and redeploy.
 
