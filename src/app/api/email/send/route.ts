@@ -290,6 +290,108 @@ function conciergeEmailHTML(data: { guestName: string; subject: string; body: st
 </html>`
 }
 
+// ─── Website reservation REQUEST (request mode, see src/data/accommodation-rates.ts) ───
+const escHtml = (v: unknown) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+
+function bookingRequestHTML(data: {
+  guestName: string
+  roomName: string
+  checkIn: string
+  checkOut: string
+  guests: number
+  totalPrice: string
+  reference: string
+  specialRequests?: string
+}) {
+  const e = escHtml
+  const req = String(data.specialRequests || '').replace(/^\[WEBSITE REQUEST[^\]]*\]\s*/, '')
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f5f0e8;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+<div style="max-width:600px;margin:0 auto;background:#ffffff;">
+  <div style="background:linear-gradient(135deg,#0A4B78,#0D5A91);padding:40px 30px;text-align:center;">
+    <h1 style="color:#D4A853;font-size:28px;margin:0;font-family:Georgia,serif;">E'Nauwi Beach Resort</h1>
+    <p style="color:#ffffff;opacity:0.8;margin:8px 0 0;font-size:13px;letter-spacing:2px;text-transform:uppercase;">Reservation Request Received</p>
+  </div>
+  <div style="padding:30px;">
+    <h2 style="color:#0A4B78;font-size:22px;margin:0 0 8px;">Welkam, ${e(data.guestName)}!</h2>
+    <p style="color:#444;line-height:1.6;margin:0 0 16px;">Thank you for your interest in staying at E'Nauwi Beach Resort. We have received your reservation request.</p>
+    <div style="background:#FEF7E8;border:1px solid #F9D68A;border-radius:12px;padding:16px 20px;margin:0 0 24px;color:#643304;line-height:1.6;font-size:15px;">
+      <strong>Your booking is not confirmed yet.</strong> Our Reservations team will check availability and email you to confirm your booking. All bookings are subject to availability and confirmation by our Reservations team.
+    </div>
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:24px;">
+      <h3 style="color:#0A4B78;font-size:16px;margin:0 0 16px;border-bottom:2px solid #D4A853;padding-bottom:8px;">Your request</h3>
+      <table style="width:100%;border-collapse:collapse;">
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Request reference</td><td style="padding:8px 0;color:#0A4B78;font-weight:bold;text-align:right;font-size:14px;">${e(data.reference)}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Bungalow</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${e(data.roomName)}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Check-in</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${e(data.checkIn)}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Check-out</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${e(data.checkOut)}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;font-size:14px;">Guests</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${e(data.guests)}</td></tr>
+        ${req ? `<tr><td style="padding:8px 0;color:#888;font-size:14px;">Your notes</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${e(req)}</td></tr>` : ''}
+        <tr style="border-top:2px solid #D4A853;"><td style="padding:12px 0;color:#0A4B78;font-weight:bold;font-size:16px;">Estimated total</td><td style="padding:12px 0;color:#0A4B78;font-weight:bold;text-align:right;font-size:16px;">${e(data.totalPrice)}</td></tr>
+      </table>
+      <p style="color:#888;font-size:13px;margin:12px 0 0;">Rates include a light breakfast. No payment has been taken.</p>
+    </div>
+    <p style="color:#666;line-height:1.6;font-size:14px;">Questions? Reply to this email, write to <a href="mailto:reservation@enauwibeachresort.com" style="color:#0A4B78;">reservation@enauwibeachresort.com</a> or call <strong>+678 22170</strong>.</p>
+    <p style="color:#D4A853;font-family:Georgia,serif;font-size:16px;margin-top:24px;">— The E'Nauwi Reservations Team</p>
+  </div>
+  <div style="background:#083D63;padding:24px 30px;text-align:center;">
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:0;">E'Nauwi Beach Resort · Eratap, South Efate, Vanuatu</p>
+    <p style="color:#ffffff;opacity:0.6;font-size:12px;margin:4px 0 0;">📞 +678 22170 · ✉ reservation@enauwibeachresort.com</p>
+  </div>
+</div>
+</body>
+</html>`
+}
+
+function bookingRequestAdminHTML(data: {
+  guestName: string
+  guestEmail: string
+  guestPhone?: string
+  roomName: string
+  checkIn: string
+  checkOut: string
+  guests: number
+  totalPrice: string
+  reference: string
+  specialRequests?: string
+}) {
+  const e = escHtml
+  const row = (k: string, v: string) => `<tr><td style="padding:6px 0;color:#888;font-size:14px;vertical-align:top;">${k}</td><td style="padding:6px 0;color:#333;text-align:right;">${v}</td></tr>`
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#f5f0e8;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+<div style="max-width:600px;margin:0 auto;background:#ffffff;">
+  <div style="background:linear-gradient(135deg,#0A4B78,#0D5A91);padding:26px 30px;text-align:center;">
+    <h1 style="color:#D4A853;font-size:22px;margin:0;">📩 New Reservation Request</h1>
+  </div>
+  <div style="padding:26px 30px;">
+    <div style="background:#FEF7E8;border:1px solid #F9D68A;border-radius:10px;padding:14px 18px;margin-bottom:18px;color:#643304;font-size:14px;line-height:1.55;">
+      <strong>Action needed:</strong> check availability against Booking.com, then reply to the guest to confirm or offer alternatives. The guest has been told this is <strong>not confirmed yet</strong>. Reply to this email to answer the guest directly.
+    </div>
+    <table style="width:100%;border-collapse:collapse;">
+      ${row('Request ref', `<strong style="color:#0A4B78;">${e(data.reference)}</strong>`)}
+      ${row('Guest', e(data.guestName))}
+      ${row('Email', `<a href="mailto:${e(data.guestEmail)}" style="color:#0A4B78;">${e(data.guestEmail)}</a>`)}
+      ${data.guestPhone ? row('Phone', e(data.guestPhone)) : ''}
+      ${row('Bungalow', e(data.roomName))}
+      ${row('Check-in', e(data.checkIn))}
+      ${row('Check-out', e(data.checkOut))}
+      ${row('Guests', e(data.guests))}
+      ${data.specialRequests ? row('Notes', e(data.specialRequests)) : ''}
+      ${row('Estimated total', `<strong>${e(data.totalPrice)}</strong>`)}
+    </table>
+    <p style="color:#888;font-size:12px;text-align:center;margin-top:18px;">Saved as <strong>pending</strong> in the <a href="https://www.enauwibeachresort.org/admin/bookings" style="color:#0A4B78;">admin bookings</a>. Confirm it there once availability is checked, or cancel it to free the dates.</p>
+  </div>
+</div>
+</body>
+</html>`
+}
+
 function bookingAdminHTML(data: {
   guestName: string
   guestEmail: string
@@ -362,6 +464,29 @@ export async function POST(request: NextRequest) {
           to: ADMIN_EMAILS,
           subject: `🎉 New Booking: ${data.reference} — ${data.guestName}`,
           html: bookingAdminHTML(data),
+        })
+        results.push({ id: adminResult.data?.id, error: adminResult.error?.message })
+        break
+      }
+
+      case 'booking_request': {
+        // Guest: "request received — not confirmed yet"; replies go to Reservations.
+        const guestResult = await getResend().emails.send({
+          from: FROM_NOREPLY,
+          to: data.guestEmail,
+          replyTo: 'reservation@enauwibeachresort.com',
+          subject: `Reservation request received — ${data.reference} | E'Nauwi Beach Resort`,
+          html: bookingRequestHTML(data),
+        })
+        results.push({ id: guestResult.data?.id, error: guestResult.error?.message })
+
+        // Resort team: action needed; replies go straight to the guest.
+        const adminResult = await getResend().emails.send({
+          from: FROM_NOREPLY,
+          to: ADMIN_EMAILS,
+          replyTo: data.guestEmail,
+          subject: `📩 Reservation request ${data.reference} — ${data.guestName} (check availability)`,
+          html: bookingRequestAdminHTML(data),
         })
         results.push({ id: adminResult.data?.id, error: adminResult.error?.message })
         break

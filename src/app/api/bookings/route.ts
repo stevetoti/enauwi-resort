@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { BookingFormData } from '@/types'
 import { generateBookingReference, getDaysBetween } from '@/lib/utils'
 import { sendBookingNotifications } from '@/lib/notifications'
+import { IS_REQUEST_MODE, nightlyRateVt } from '@/data/accommodation-rates'
 // CSRF removed — bookings are public guest actions, not authenticated admin mutations
 import { requireAuth } from '@/lib/auth'
 
@@ -21,7 +22,8 @@ export async function POST(request: NextRequest) {
     const guestEmail = bookingData.guestEmail || bookingData.guest_email
     const guestPhone = bookingData.guestPhone || bookingData.guest_phone
     const specialRequests = bookingData.specialRequests || bookingData.special_requests
-    const paymentMethod = bookingData.payment_method || 'property'
+    // Request mode: nothing is paid or confirmed online.
+    const paymentMethod = IS_REQUEST_MODE ? 'property' : (bookingData.payment_method || 'property')
 
     // Validate required fields
     if (!checkIn || !checkOut || !roomId || !guestName || !guestEmail) {
@@ -89,7 +91,8 @@ export async function POST(request: NextRequest) {
 
     // Calculate total price with discounts
     const nights = getDaysBetween(checkIn, checkOut)
-    const basePrice = room.price_vt * nights
+    // Published rate (Reservations team, 7 Nov 2026); falls back to the stored room price.
+    const basePrice = nightlyRateVt(room) * nights
 
     // Check for active discounts
     let discountPercent = 0
@@ -164,7 +167,9 @@ export async function POST(request: NextRequest) {
         payment_method: paymentMethod === 'card' ? 'credit_card' : 'property',
         payment_status: 'unpaid',
         booking_reference: reference,
-        special_requests: specialRequests || null,
+        special_requests: IS_REQUEST_MODE
+          ? `[WEBSITE REQUEST — check availability vs Booking.com before confirming]${specialRequests ? ` ${specialRequests}` : ''}`
+          : (specialRequests || null),
         status: 'pending'
       })
       .select('*')
@@ -193,7 +198,7 @@ export async function POST(request: NextRequest) {
       totalPrice: formattedPrice,
       specialRequests,
       bookingId: booking.id,
-    }).catch(() => {})
+    }, { request: IS_REQUEST_MODE }).catch(() => {})
 
     // Return booking confirmation
     return NextResponse.json({

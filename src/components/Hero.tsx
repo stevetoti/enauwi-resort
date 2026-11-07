@@ -100,10 +100,10 @@ export default function Hero() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <a
-              href="/book"
+              href="#reservations"
               className="group relative px-10 py-4 bg-gold hover:bg-gold-light text-ocean-dark font-bold text-lg rounded-full transition-all duration-300 shadow-2xl shadow-gold/30 hover:shadow-gold/50 hover:scale-105"
             >
-              <span className="relative z-10">Book Your Paradise</span>
+              <span className="relative z-10">Reservation Enquiries</span>
             </a>
             <a
               href="#accommodations"

@@ -1,5 +1,18 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-11-08 — [Claude Code] Website bookings switched to RESERVATION REQUESTS (team request, 7 Nov)
+
+- Reservations/Marketing (7 Nov) asked to stop direct room bookings (double bookings vs Booking.com, no channel manager), point guests to reservation@, show their rates, and say all bookings are subject to confirmation. Stephen chose: keep the booking form but make every submission a request the team confirms.
+- New `src/data/accommodation-rates.ts`: `BOOKING_MODE='request'` switch (flip to 'instant' once a channel manager syncs), the team's published rates (2BR Beachfront 30,000 · 1BR Beachfront 24,000 · 2BR Lagoon 25,500 · 1BR Lagoon 20,060 · 2BR Garden 21,250, incl. light breakfast), `rateForRoomName()`.
+- New `ReservationsNotice` (team's exact message + rate table + Email Reservations / Send a request / call). On the homepage (top of Accommodations; hero CTA → "Reservation Enquiries" #reservations) and on /book.
+- /book: "Request Room" / "Request a Reservation" / "Send Reservation Request"; payment choice removed (no money taken, Stripe line + "free cancellation" claim gone); success = "Request Received — not confirmed yet"; real error messages (409 → already requested). Removed fake "N guests viewing now" (random numbers) and "X of Y available / Only N left / Book soon" (website can't see Booking.com). Prices = published rates as "Estimated total".
+- API: request mode prices from published rates, forces pay-at-property, prefixes special_requests "[WEBSITE REQUEST — check availability vs Booking.com before confirming]", status stays `pending` (team confirms/cancels in admin).
+- Notifications: new email type `booking_request` (guest: "not confirmed yet", reply-to reservation@; team: "Action needed — check Booking.com", reply-to guest, HTML-escaped). WhatsApp/SMS request text says NOT confirmed. Admin-created bookings unchanged (option defaults off).
+- Chat assistant prompt + voice agent: new rates (5 types) and "never say confirmed"; voice email/subject/agent message now "request received".
+- Nav "Book Now" → "Reservations", footer "Reservation Request", chat card "Request Booking".
+- Rooms DB `price_vt` NOT changed (feeds admin/invoices) — awaiting Stephen; website ignores it where a published rate exists.
+- Verified: typecheck, lint, production build; local `next start` desktop + 390 px: no page errors, 16 "Request Room" buttons, none of the old confirmation/scarcity wording. No test booking submitted.
+
 ## 2026-11-06 — [Claude Code] Rooms enabled for public booking (team request)
 
 - Data only: rooms.available false -> true for all 16 bungalows (1-16). Before-state recorded in docs/seo/room-availability-baseline.json (all false). Rollback: PATCH rooms set available=false.

@@ -127,7 +127,7 @@ export default function Navbar() {
                   : "bg-white/20 backdrop-blur text-white border border-white/30 hover:bg-white/30"
               }`}
             >
-              Book Now
+              Reservations
             </a>
 
             <button
@@ -181,7 +181,7 @@ export default function Navbar() {
               transition={{ delay: 0.4 }}
               className="block mt-8 text-center bg-ocean text-white py-4 rounded-2xl text-lg font-semibold shadow-xl shadow-ocean/20"
             >
-              Book Your Stay
+              Reservation Enquiries
             </motion.a>
           </motion.div>
         )}

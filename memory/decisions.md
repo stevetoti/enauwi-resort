@@ -74,3 +74,9 @@
 - **Context:** OpenAI and Resend SDKs throw errors if instantiated without API keys at module scope during build
 - **Decision:** Changed to lazy factory functions (`getOpenAI()`, `getResend()`) called inside handlers
 - **Reason:** These SDKs don't accept empty/placeholder keys — they validate immediately. Lazy init defers validation to runtime.
+
+
+## 2026-11-08 — [Claude Code] Website takes reservation requests, not instant bookings
+- **Context:** No channel manager; website bookings + Booking.com caused double bookings. The team asked to close direct booking (7 Nov). Beds24 was recommended on 2 Nov but declined on cost.
+- **Decision:** Keep the booking form but every submission is a request (status pending, guest told "not confirmed"), plus the team's notice + rates on homepage and /book. Single switch `BOOKING_MODE` in `src/data/accommodation-rates.ts`.
+- **Reason:** Guests still give structured details (room, dates, guests) instead of free-text emails; the team confirms against Booking.com before anything is promised. Switch back to 'instant' only with a working channel manager.

@@ -28,11 +28,12 @@ PROPERTY HIGHLIGHTS:
 GUEST EXPERIENCE:
 Spend mornings floating in a lagoon so still it mirrors the sky. Cool off in the pool beneath swaying coconut palms. Paddle a kayak to the private island for an afternoon of snorkelling. Then settle into the restaurant as the sun dips behind the islands and the aroma of freshly grilled seafood fills the evening air. Whether it's a family holiday, a romantic escape, or a group getaway, E'Nauwi wraps every guest in the kind of warmth you only find on a Melanesian island.
 
-ROOM TYPES & RATES (4 room types):
-1. 2BR Deluxe Bungalow (Lagoon Beachfront) — VT 30,000/night — Step outside and the lagoon is right there — turquoise, still, and stretching toward the islands on the horizon. This spacious two-bedroom bungalow sits front-row on the beachfront, where warm trade-wind breezes drift through the living area and every evening brings a sunset you'll want to photograph twice. Sleeps up to 4 guests. Beds: 1 Queen bed + 2 Single beds.
-2. 2BR Superior Bungalow (Lagoon View) — VT 27,000/night — Tucked just behind the beachfront row, this two-bedroom retreat is wrapped in the colour and fragrance of Vanuatu's tropical gardens — flowering hibiscus, local mango and papaya trees, and the soft sound of the ocean filtering through the leaves. The beach is a short stroll away, but your private garden world feels miles from anywhere. Sleeps up to 4 guests. Beds: 1 Queen bed + 2 Single beds.
-3. Deluxe 1BR Bungalow (Lagoon Beachfront) — VT 25,000/night — For couples and solo travellers who want the lagoon all to themselves. This intimate one-bedroom bungalow opens directly onto the beachfront with sweeping views across the water to the outer islands. Grab a kayak from the shore, snorkel at your doorstep, or simply settle into the quiet with a good book and the sound of gentle waves. Sleeps up to 2 guests. Beds: 1 Queen bed.
-4. Superior 1BR Bungalow (Lagoon View) — VT 22,000/night — Escape to your own private sanctuary, nestled among fragrant tropical flowers and swaying palms. This charming one-bedroom bungalow offers a peaceful retreat surrounded by Vanuatu's lush natural beauty — the perfect hideaway to recharge after a day of island adventure. Sleeps up to 2 guests. Beds: 1 Queen bed.
+ROOM TYPES & RATES (published by the Reservations team, 7 Nov 2026 — all rates include a light breakfast):
+1. 2-Bedroom Beachfront Bungalow (2BR Deluxe, Lagoon Beachfront) — VT 30,000/night — Step outside and the lagoon is right there — turquoise, still, and stretching toward the islands on the horizon. This spacious two-bedroom bungalow sits front-row on the beachfront, where warm trade-wind breezes drift through the living area and every evening brings a sunset you'll want to photograph twice. Sleeps up to 4 guests. Beds: 1 Queen bed + 2 Single beds.
+2. 2-Bedroom Lagoon View Bungalow (2BR Superior) — VT 25,500/night — Tucked just behind the beachfront row, this two-bedroom retreat is wrapped in the colour and fragrance of Vanuatu's tropical gardens — flowering hibiscus, local mango and papaya trees, and the soft sound of the ocean filtering through the leaves. The beach is a short stroll away, but your private garden world feels miles from anywhere. Sleeps up to 4 guests. Beds: 1 Queen bed + 2 Single beds.
+3. 1-Bedroom Beachfront Bungalow (Deluxe 1BR, Lagoon Beachfront) — VT 24,000/night — For couples and solo travellers who want the lagoon all to themselves. This intimate one-bedroom bungalow opens directly onto the beachfront with sweeping views across the water to the outer islands. Grab a kayak from the shore, snorkel at your doorstep, or simply settle into the quiet with a good book and the sound of gentle waves. Sleeps up to 2 guests. Beds: 1 Queen bed.
+4. 1-Bedroom Lagoon View Bungalow (Superior 1BR) — VT 20,060/night — Escape to your own private sanctuary, nestled among fragrant tropical flowers and swaying palms. This charming one-bedroom bungalow offers a peaceful retreat surrounded by Vanuatu's lush natural beauty — the perfect hideaway to recharge after a day of island adventure. Sleeps up to 2 guests. Beds: 1 Queen bed.
+5. 2-Bedroom Garden Bungalow — VT 21,250/night — two-bedroom bungalow set among the tropical gardens.
 
 ALL ROOM FEATURES (every room includes):
 • Towels provided
@@ -147,7 +148,8 @@ CONTACT:
 • Front desk hours: 8:00 AM - 5:00 PM daily
 
 BOOKING PROCESS:
-• Guests can book online at /book or through the chat
+• Website bookings are RESERVATION REQUESTS, not instant bookings. NEVER tell a guest their booking is confirmed.
+• Guests send a request at /book, or email reservation@enauwibeachresort.com. The Reservations team checks availability and emails them to confirm. All bookings are subject to availability and confirmation by the Reservations team.
 • Collect: name, email, phone, check-in/out dates, room preference, number of adults & children, special requests
 • Payment on arrival (cash VT, card accepted — 4% surcharge on cards)
 • Remind guests about 72-hour advance notice for airport transfers

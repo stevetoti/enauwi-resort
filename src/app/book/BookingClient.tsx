@@ -12,6 +12,8 @@ import {
 } from 'lucide-react'
 import { Room } from '@/types'
 import { formatVatu, getDaysBetween } from '@/lib/utils'
+import ReservationsNotice from '@/components/ReservationsNotice'
+import { nightlyRateVt, RESERVATIONS_EMAIL, RATES_NOTE } from '@/data/accommodation-rates'
 
 // Hero images
 const heroImages = [
@@ -122,25 +124,6 @@ function WeatherWidget() {
 }
 
 // Live viewers indicator
-function LiveViewers() {
-  const [viewers, setViewers] = useState(3)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setViewers(Math.floor(Math.random() * 4) + 2)
-    }, 15000)
-    return () => clearInterval(interval)
-  }, [])
-  return (
-    <div className="flex items-center gap-2 text-sm">
-      <span className="relative flex h-2 w-2">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-      </span>
-      <span className="text-gray-600">{viewers} guests viewing now</span>
-    </div>
-  )
-}
-
 // Hero slider
 function HeroSlider() {
   const [current, setCurrent] = useState(0)
@@ -245,19 +228,16 @@ export default function BookingClient() {
   const [checkOut, setCheckOut] = useState('')
   const [guests, setGuests] = useState(2)
   const [rooms, setRooms] = useState<Room[]>([])
-  const [availability, setAvailability] = useState<Record<string, { total: number; available: number }>>({})
-  const [availableCount, setAvailableCount] = useState(0)
-  const [totalRooms, setTotalRooms] = useState(0)
   const [loading, setLoading] = useState(false)
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
   const [showBookingForm, setShowBookingForm] = useState(false)
   const [bookingData, setBookingData] = useState({ name: '', email: '', phone: '', requests: '' })
   const [submitting, setSubmitting] = useState(false)
-  const [bookingSuccess, setBookingSuccess] = useState<string | null>(null)
+  const [bookingSuccess, setBookingSuccess] = useState<{ reference: string; email: string } | null>(null)
+  const [bookingError, setBookingError] = useState<string | null>(null)
   const [highlightedRoom, setHighlightedRoom] = useState<string | null>(selectedRoomParam)
   const [selectedOccasion, setSelectedOccasion] = useState('none')
   const [selectedActivities, setSelectedActivities] = useState<string[]>([])
-  const [paymentMethod, setPaymentMethod] = useState<'property' | 'card'>('property')
   
   const roomRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
@@ -278,9 +258,6 @@ export default function BookingClient() {
       const data = await response.json()
       if (!data.error) {
         setRooms(data.rooms)
-        if (data.availability) setAvailability(data.availability)
-        if (data.availableCount !== undefined) setAvailableCount(data.availableCount)
-        if (data.totalRooms !== undefined) setTotalRooms(data.totalRooms)
       }
     } catch {
       // Search failed
@@ -307,9 +284,13 @@ export default function BookingClient() {
   }, [selectedRoomParam, rooms])
 
   const calculateNights = () => checkIn && checkOut ? getDaysBetween(checkIn, checkOut) : 1
-  const getEffectivePrice = (room: Room) => room.discounted_price || room.price_vt
+  // Published rates (src/data/accommodation-rates.ts); a room discount still applies on top.
+  const nightly = (room: Room) => nightlyRateVt(room)
+  const getEffectivePrice = (room: Room) => room.active_discount
+    ? Math.round(nightly(room) * (100 - room.active_discount.discount_percent) / 100)
+    : nightly(room)
   const calculateTotal = (room: Room) => getEffectivePrice(room) * calculateNights()
-  const calculateBaseTotal = (room: Room) => room.price_vt * calculateNights()
+  const calculateBaseTotal = (room: Room) => nightly(room) * calculateNights()
   const calculateActivitiesTotal = () => selectedActivities.reduce((sum, id) => {
     const activity = activities.find(a => a.id === id)
     return sum + (activity?.price || 0)
@@ -337,6 +318,7 @@ export default function BookingClient() {
   const handleBooking = async () => {
     if (!selectedRoom || !bookingData.name || !bookingData.email) return
     setSubmitting(true)
+    setBookingError(null)
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
@@ -349,18 +331,22 @@ export default function BookingClient() {
           guest_name: bookingData.name,
           guest_email: bookingData.email,
           guest_phone: bookingData.phone,
-          special_requests: `${selectedOccasion !== 'none' ? `[${occasions.find(o => o.id === selectedOccasion)?.label}] ` : ''}${bookingData.requests}${selectedActivities.length > 0 ? ` | Activities: ${selectedActivities.join(', ')}` : ''} | Payment: ${paymentMethod === 'card' ? 'Credit Card' : 'Pay at Property'}`,
+          special_requests: `${selectedOccasion !== 'none' ? `[${occasions.find(o => o.id === selectedOccasion)?.label}] ` : ''}${bookingData.requests}${selectedActivities.length > 0 ? ` | Activities: ${selectedActivities.join(', ')}` : ''}`,
           total_price: calculateGrandTotal(selectedRoom),
-          payment_method: paymentMethod,
+          payment_method: 'property',
         }),
       })
       const data = await response.json()
       if (data.booking) {
-        setBookingSuccess(data.booking.id)
+        setBookingSuccess({ reference: data.reference || data.booking.booking_reference, email: bookingData.email })
         setShowBookingForm(false)
+      } else {
+        setBookingError(response.status === 409
+          ? 'This bungalow already has a request for those dates. Please choose another bungalow or different dates, or email our Reservations team.'
+          : `We could not send your request. Please try again, or email ${RESERVATIONS_EMAIL}.`)
       }
-    } catch (error) {
-      console.error('Booking error:', error)
+    } catch {
+      setBookingError(`We could not send your request. Please check your connection and try again, or email ${RESERVATIONS_EMAIL}.`)
     } finally {
       setSubmitting(false)
     }
@@ -373,9 +359,11 @@ export default function BookingClient() {
           <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Check className="w-10 h-10 text-emerald-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Booking Confirmed!</h2>
-          <p className="text-gray-600 mb-6">Your reservation has been confirmed. Check your email for details.</p>
-          <p className="text-sm text-gray-500 mb-6">Reference: <span className="font-mono font-bold">ENW-{bookingSuccess.slice(0, 8).toUpperCase()}</span></p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Request Received</h2>
+          <p className="text-gray-600 mb-3">Thank you! Your reservation request has been sent to our Reservations team.</p>
+          <p className="text-gray-600 mb-6"><strong>It is not confirmed yet.</strong> Our team will check availability and email you at <strong>{bookingSuccess.email}</strong> to confirm your booking.</p>
+          {bookingSuccess.reference && <p className="text-sm text-gray-500 mb-6">Request reference: <span className="font-mono font-bold">{bookingSuccess.reference}</span></p>}
+          <p className="text-sm text-gray-500 mb-6">Questions? Email <a href={`mailto:${RESERVATIONS_EMAIL}`} className="font-semibold text-blue-600 underline">{RESERVATIONS_EMAIL}</a> or call +678 22170.</p>
           <Link href="/" className="block w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
             Back to Home
           </Link>
@@ -392,7 +380,7 @@ export default function BookingClient() {
       {/* Direct-booking banner */}
       <div className="bg-gradient-to-r from-slate-900 to-slate-800 py-3 px-4">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm">
-          <span className="text-white/90 font-medium">Book direct with E&apos;Nauwi Beach Resort</span>
+          <span className="text-white/90 font-medium">Reservation requests · our Reservations team confirms availability by email</span>
           <span className="hidden sm:block w-px h-5 bg-white/20" />
           <a href="tel:+67822170" className="text-amber-400 font-semibold hover:text-amber-300 transition-colors">
             Questions? Call +678 22170
@@ -442,15 +430,15 @@ export default function BookingClient() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
+        <ReservationsNotice showRequestLink={false} headingLevel="h2" className="mb-8" />
         <div className="grid lg:grid-cols-[1fr_320px] gap-8">
           {/* Left Column - Rooms */}
           <div>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Available Rooms</h2>
-                <p className="text-gray-500 text-sm">{calculateNights()} night{calculateNights() > 1 ? 's' : ''} • {rooms.length} available</p>
+                <h2 className="text-xl font-bold text-gray-900">Our Bungalows</h2>
+                <p className="text-gray-500 text-sm">{calculateNights()} night{calculateNights() > 1 ? 's' : ''} • choose a bungalow to send a reservation request</p>
               </div>
-              <LiveViewers />
             </div>
 
             {loading ? (
@@ -466,20 +454,6 @@ export default function BookingClient() {
               </div>
             ) : (
               <div className="space-y-4">
-                {/* Availability summary */}
-                {totalRooms > 0 && (
-                  <div className="flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-gray-100">
-                    <p className="text-sm text-gray-600">
-                      <span className="font-semibold text-gray-900">{availableCount}</span> of{' '}
-                      <span className="font-semibold text-gray-900">{totalRooms}</span> rooms available for your dates
-                    </p>
-                    {availableCount <= 2 && availableCount > 0 && (
-                      <span className="text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
-                        Book soon — filling up!
-                      </span>
-                    )}
-                  </div>
-                )}
                 <div className="grid gap-4">
                 {rooms.map(room => {
                   const roomColor = getRoomTypeColor(room.name)
@@ -529,21 +503,6 @@ export default function BookingClient() {
                           </div>
                         </div>
 
-                        {/* Availability badge — only for available rooms */}
-                        {!booked && availability[room.type] && (
-                          <div className="mt-2">
-                            {availability[room.type].available <= 2 && availability[room.type].available > 0 ? (
-                              <span className="inline-flex items-center text-xs font-semibold px-2 py-1 rounded-full bg-orange-100 text-orange-700">
-                                🔥 Only {availability[room.type].available} left!
-                              </span>
-                            ) : availability[room.type].available > 2 ? (
-                              <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-700">
-                                ✓ {availability[room.type].available} of {availability[room.type].total} available
-                              </span>
-                            ) : null}
-                          </div>
-                        )}
-
                         <div className="mt-3 pt-3 border-t border-gray-100 flex items-end justify-between">
                           {booked ? (
                             <>
@@ -553,7 +512,7 @@ export default function BookingClient() {
                                 <p className="text-xs text-red-500 font-medium">Unavailable for selected dates</p>
                               </div>
                               <div className="px-6 py-2.5 rounded-xl font-semibold text-sm bg-gray-200 text-gray-500 cursor-not-allowed">
-                                Sold Out
+                                Unavailable
                               </div>
                             </>
                           ) : (
@@ -571,13 +530,13 @@ export default function BookingClient() {
                                 ) : (
                                   <>
                                     <p className="text-2xl font-bold text-gray-900">{formatVatu(calculateTotal(room))}</p>
-                                    <p className="text-xs text-gray-500">Total for your stay</p>
+                                    <p className="text-xs text-gray-500">Estimated total · {formatVatu(nightly(room))}/night</p>
                                   </>
                                 )}
                               </div>
                               <button onClick={() => { setSelectedRoom(room); setShowBookingForm(true); }}
                                 className={`${roomColor.bg} text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition`}>
-                                Book Room
+                                Request Room
                               </button>
                             </>
                           )}
@@ -672,7 +631,7 @@ export default function BookingClient() {
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setShowBookingForm(false)}>
           <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-              <h3 className="text-lg font-bold">Complete Booking</h3>
+              <h3 className="text-lg font-bold">Request a Reservation</h3>
               <button onClick={() => setShowBookingForm(false)} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
             </div>
             <div className="p-4">
@@ -681,7 +640,7 @@ export default function BookingClient() {
                 <h4 className="font-semibold text-gray-900 text-sm">{selectedRoom.name}</h4>
                 <p className="text-xs text-gray-500">{checkIn} → {checkOut} • {calculateNights()} night{calculateNights() > 1 ? 's' : ''}</p>
                 <div className="flex justify-between items-center mt-2">
-                  <span className="text-sm text-gray-600">Room ({calculateNights()} × {formatVatu(selectedRoom.price_vt)}/night)</span>
+                  <span className="text-sm text-gray-600">Room ({calculateNights()} × {formatVatu(nightly(selectedRoom))}/night)</span>
                   <span className="font-bold">{formatVatu(calculateBaseTotal(selectedRoom))}</span>
                 </div>
                 {selectedRoom.active_discount && (
@@ -697,7 +656,7 @@ export default function BookingClient() {
                   </div>
                 )}
                 <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-200">
-                  <span className="font-semibold">Total</span>
+                  <span className="font-semibold">Estimated total</span>
                   <span className="text-xl font-bold text-blue-600">{formatVatu(calculateGrandTotal(selectedRoom))}</span>
                 </div>
               </div>
@@ -726,45 +685,8 @@ export default function BookingClient() {
                 </div>
               </div>
 
-              {/* Payment Method Selection */}
-              <div className="mt-4">
-                <label className="block text-xs font-medium text-gray-700 mb-2">Payment Method *</label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button type="button" onClick={() => setPaymentMethod('property')}
-                    className={`p-3 rounded-xl border-2 text-left transition ${
-                      paymentMethod === 'property' 
-                        ? 'border-blue-500 bg-blue-50' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-lg">🏨</span>
-                      <span className="font-semibold text-sm text-gray-900">Pay at Property</span>
-                    </div>
-                    <p className="text-xs text-gray-500">Pay when you arrive at the resort</p>
-                    {paymentMethod === 'property' && (
-                      <div className="mt-2 flex items-center gap-1 text-xs text-blue-600">
-                        <Check className="w-3 h-3" /> Selected
-                      </div>
-                    )}
-                  </button>
-                  <button type="button" onClick={() => setPaymentMethod('card')}
-                    className={`p-3 rounded-xl border-2 text-left transition ${
-                      paymentMethod === 'card' 
-                        ? 'border-blue-500 bg-blue-50' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-lg">💳</span>
-                      <span className="font-semibold text-sm text-gray-900">Credit Card</span>
-                    </div>
-                    <p className="text-xs text-gray-500">Secure online payment</p>
-                    {paymentMethod === 'card' && (
-                      <div className="mt-2 flex items-center gap-1 text-xs text-blue-600">
-                        <Check className="w-3 h-3" /> Selected
-                      </div>
-                    )}
-                  </button>
-                </div>
+              <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                <strong>This is a request, not a confirmed booking.</strong> Our Reservations team will check availability and email you to confirm. No payment is taken now. {RATES_NOTE}
               </div>
 
               {selectedOccasion !== 'none' && (
@@ -776,13 +698,13 @@ export default function BookingClient() {
 
               <button onClick={handleBooking} disabled={submitting || !bookingData.name || !bookingData.email}
                 className="w-full mt-4 bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50">
-                {submitting ? 'Processing...' : paymentMethod === 'card' ? 'Pay & Book Room' : 'Confirm Booking'}
+                {submitting ? 'Sending…' : 'Send Reservation Request'}
               </button>
-              
+              {bookingError && (
+                <p role="alert" className="mt-3 rounded-lg bg-red-50 p-3 text-sm text-red-700">{bookingError}</p>
+              )}
               <p className="text-xs text-center text-gray-500 mt-3">
-                {paymentMethod === 'card' 
-                  ? '🔒 Secure payment powered by Stripe. Free cancellation up to 14 days before check-in.'
-                  : '🏨 No payment required now. Pay when you check in at the resort.'}
+                You will receive an email from our Reservations team once availability is confirmed.
               </p>
             </div>
           </div>

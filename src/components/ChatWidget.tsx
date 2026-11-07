@@ -212,7 +212,7 @@ function RoomCard({ roomKey, onSelect }: { roomKey: string; onSelect?: (roomKey:
               href={`/book`}
               className="flex-1 text-center text-xs font-semibold bg-gold text-ocean-dark py-1.5 rounded-lg hover:bg-gold-light transition-colors"
             >
-              Book Now
+              Request Booking
             </a>
           )}
           <a

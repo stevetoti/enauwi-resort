@@ -82,3 +82,8 @@ Run these in Supabase SQL editor in order:
 - [ ] Multi-currency support
 - [ ] Mobile-optimised admin layouts (some pages still desktop-first)
 - [ ] Stripe/payment processor integration for online card payments
+
+## Open (2026-11-08, [Claude Code])
+- [ ] Stephen: OK to update rooms.price_vt to the published rates? (admin/invoices still use old 18,000–27,000)
+- [ ] `/api/email/send` is unauthenticated and accepts any template type (open relay risk) — lock down
+- [ ] After deploy: one labelled test request end-to-end, then cancel it in admin

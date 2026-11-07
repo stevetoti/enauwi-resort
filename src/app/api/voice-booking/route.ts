@@ -28,7 +28,8 @@ async function sendEmail(to: string, subject: string, html: string) {
   }
 }
 
-// Room mapping with correct UUID IDs from database
+// Room mapping with correct UUID IDs from database.
+// Prices = published rates (src/data/accommodation-rates.ts, Reservations team 7 Nov 2026).
 const ROOMS = {
   'beachfront-deluxe-2': {
     id: '05e09a4e-aa78-41a0-a8ce-de9e45710e44',
@@ -39,25 +40,25 @@ const ROOMS = {
   'lagoon-view-2': {
     id: '302109a1-b014-4ce7-b5af-bb0a303fe544',
     name: 'Lagoon View Superior 2 Bedroom',
-    price: 27000,
+    price: 25500,
     maxGuests: 4
   },
   'beachfront-deluxe-1': {
     id: '6f314c7c-d38d-4ed6-bcb6-f83f2bc375a3',
     name: 'Beachfront Deluxe 1 Bedroom',
-    price: 25000,
+    price: 24000,
     maxGuests: 2
   },
   'lagoon-view-1': {
     id: '9b37897c-b1ad-40ed-a516-949c1963d487',
     name: 'Lagoon View Superior 1 Bedroom',
-    price: 22000,
+    price: 20060,
     maxGuests: 2
   },
   'garden-view-2': {
     id: 'f82af187-8b17-4d22-902e-f149e4abe7cc',
     name: 'Back Garden View 2 Bedroom',
-    price: 23000,
+    price: 21250,
     maxGuests: 4
   }
 }
@@ -155,12 +156,12 @@ export async function POST(request: NextRequest) {
 <div style="max-width:600px;margin:0 auto;background:#ffffff;">
   <div style="background:linear-gradient(135deg,#0A4B78,#0D5A91);padding:40px 30px;text-align:center;">
     <h1 style="color:#D4A853;font-size:28px;margin:0;font-family:Georgia,serif;">E'Nauwi Beach Resort</h1>
-    <p style="color:#ffffff;opacity:0.8;margin:8px 0 0;font-size:13px;letter-spacing:2px;text-transform:uppercase;">Booking Confirmation</p>
+    <p style="color:#ffffff;opacity:0.8;margin:8px 0 0;font-size:13px;letter-spacing:2px;text-transform:uppercase;">Reservation Request Received</p>
   </div>
   
   <div style="padding:30px;">
     <h2 style="color:#0A4B78;font-size:22px;margin:0 0 8px;">Welkam, ${guest_name}!</h2>
-    <p style="color:#666;line-height:1.6;margin:0 0 24px;">Thank you for your voice booking with E'Nauwi Beach Resort. Our team will confirm your reservation shortly.</p>
+    <p style="color:#666;line-height:1.6;margin:0 0 24px;">Thank you for your reservation request with E'Nauwi Beach Resort. <strong>It is not confirmed yet</strong> — our Reservations team will check availability and email you to confirm. All bookings are subject to availability and confirmation by our Reservations team.</p>
     
     <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:24px;">
       <h3 style="color:#0A4B78;font-size:16px;margin:0 0 16px;border-bottom:2px solid #D4A853;padding-bottom:8px;">Booking Details</h3>
@@ -172,7 +173,7 @@ export async function POST(request: NextRequest) {
         <tr><td style="padding:8px 0;color:#888;font-size:14px;">Guests</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${num_guests || 2}</td></tr>
         <tr><td style="padding:8px 0;color:#888;font-size:14px;">Nights</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${nights}</td></tr>
         ${special_requests ? `<tr><td style="padding:8px 0;color:#888;font-size:14px;">Notes</td><td style="padding:8px 0;color:#333;text-align:right;font-size:14px;">${special_requests}</td></tr>` : ''}
-        <tr style="border-top:2px solid #D4A853;"><td style="padding:12px 0;color:#0A4B78;font-weight:bold;font-size:16px;">Total</td><td style="padding:12px 0;color:#0A4B78;font-weight:bold;text-align:right;font-size:16px;">${totalPrice.toLocaleString()} VT (~$${Math.round(totalPrice / 120)} USD)</td></tr>
+        <tr style="border-top:2px solid #D4A853;"><td style="padding:12px 0;color:#0A4B78;font-weight:bold;font-size:16px;">Estimated total</td><td style="padding:12px 0;color:#0A4B78;font-weight:bold;text-align:right;font-size:16px;">${totalPrice.toLocaleString()} VT (~$${Math.round(totalPrice / 120)} USD)</td></tr>
       </table>
     </div>
     
@@ -191,7 +192,7 @@ export async function POST(request: NextRequest) {
 
     const emailSent = await sendEmail(
       guest_email,
-      `Booking Confirmation - ${bookingRef} | E'Nauwi Beach Resort`,
+      `Reservation request received - ${bookingRef} | E'Nauwi Beach Resort`,
       emailHtml
     )
 
@@ -204,7 +205,7 @@ export async function POST(request: NextRequest) {
       total_price: `${totalPrice.toLocaleString()} VT`,
       nights,
       email_sent: emailSent,
-      message: `Booking ${bookingRef} created successfully for ${guest_name}. ${room.name} for ${nights} night(s) at ${totalPrice.toLocaleString()} VT total. Confirmation email ${emailSent ? 'sent' : 'pending'} to ${guest_email}.`
+      message: `Reservation request ${bookingRef} received for ${guest_name}: ${room.name} for ${nights} night(s), estimated ${totalPrice.toLocaleString()} VT. IMPORTANT: tell the guest this is NOT confirmed yet — the Reservations team will check availability and email them at ${guest_email} to confirm. Request email ${emailSent ? 'sent' : 'pending'}.`
     })
 
   } catch {

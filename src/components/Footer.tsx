@@ -29,7 +29,7 @@ const footerLinks = [
       { label: "Getting Here", href: "/#location" },
       { label: "Travel Blog", href: "/blog" },
       { label: "Services & Experiences", href: "/services" },
-      { label: "Book a Room", href: "/book" },
+      { label: "Reservation Request", href: "/book" },
       { label: "Terms & Policies", href: "/terms" },
       { label: "Contact Us", href: "/#contact" },
     ],

@@ -44,21 +44,24 @@ export interface NotificationResult {
 
 export async function sendBookingNotifications(
   baseUrl: string,
-  data: BookingNotificationData
+  data: BookingNotificationData,
+  options: { request?: boolean } = {}
 ): Promise<NotificationResult[]> {
   const results: NotificationResult[] = []
+  // request = website reservation REQUEST (not confirmed until Reservations replies)
+  const request = options.request === true
 
-  // 1. Email — guest confirmation + resort admin alert
-  results.push(await sendEmailNotification(baseUrl, data))
+  // 1. Email — guest confirmation (or "request received") + resort admin alert
+  results.push(await sendEmailNotification(baseUrl, data, request))
 
   // 2. WhatsApp — if guest provided a phone number
   if (data.guestPhone) {
-    results.push(await sendWhatsAppNotification(baseUrl, data))
+    results.push(await sendWhatsAppNotification(baseUrl, data, request))
   }
 
   // 3. SMS via VanuConnect — if guest provided a phone number
   if (data.guestPhone) {
-    results.push(await sendSMSNotification(baseUrl, data))
+    results.push(await sendSMSNotification(baseUrl, data, request))
   }
 
   // Log summary
@@ -158,14 +161,15 @@ export async function sendBookingUpdateNotifications(
 
 async function sendEmailNotification(
   baseUrl: string,
-  data: BookingNotificationData
+  data: BookingNotificationData,
+  request = false
 ): Promise<NotificationResult> {
   try {
     const response = await fetch(`${baseUrl}/api/email/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        type: 'booking_confirmation',
+        type: request ? 'booking_request' : 'booking_confirmation',
         data: {
           guestName: data.guestName,
           guestEmail: data.guestEmail,
@@ -201,13 +205,17 @@ async function sendEmailNotification(
 
 async function sendWhatsAppNotification(
   baseUrl: string,
-  data: BookingNotificationData
+  data: BookingNotificationData,
+  request = false
 ): Promise<NotificationResult> {
   try {
     const response = await fetch(`${baseUrl}/api/notifications/whatsapp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      body: JSON.stringify(request ? {
+        phone: data.guestPhone,
+        message: buildRequestMessage(data),
+      } : {
         phone: data.guestPhone,
         template: 'booking_confirmation',
         data: {
@@ -242,7 +250,8 @@ async function sendWhatsAppNotification(
 
 async function sendSMSNotification(
   baseUrl: string,
-  data: BookingNotificationData
+  data: BookingNotificationData,
+  request = false
 ): Promise<NotificationResult> {
   try {
     const response = await fetch(`${baseUrl}/api/notifications/sms`, {
@@ -250,7 +259,7 @@ async function sendSMSNotification(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         phone: data.guestPhone,
-        message: buildSMSMessage(data),
+        message: request ? buildRequestMessage(data) : buildSMSMessage(data),
       })
     })
 
@@ -282,6 +291,19 @@ function buildSMSMessage(data: BookingNotificationData): string {
     ``,
     `E'Nauwi Beach Resort`,
     `📞 +678 22170`,
+  ].join('\n')
+}
+
+// Website reservation REQUEST — deliberately says "not confirmed yet".
+function buildRequestMessage(data: BookingNotificationData): string {
+  return [
+    `Hi ${data.guestName}, thank you for your reservation request at E'Nauwi Beach Resort. 🌺`,
+    `Request ref: ${data.reference}`,
+    `${data.roomName}`,
+    `${data.checkIn} → ${data.checkOut}`,
+    ``,
+    `This is NOT confirmed yet. Our Reservations team will check availability and email you to confirm.`,
+    `reservation@enauwibeachresort.com · +678 22170`,
   ].join('\n')
 }
 
