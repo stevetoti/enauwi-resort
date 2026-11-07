@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { randomBytes } from 'crypto'
 import { requireAuth } from '@/lib/auth'
+import { internalEmailHeaders } from '@/lib/internal-email'
 
 // POST send staff invitation
 export async function POST(request: NextRequest) {
@@ -100,7 +101,7 @@ export async function POST(request: NextRequest) {
 
     await fetch(`${request.nextUrl.origin}/api/email/send`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: internalEmailHeaders(),
       body: JSON.stringify({
         type: 'staff_invitation',
         data: {

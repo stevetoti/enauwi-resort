@@ -85,5 +85,5 @@ Run these in Supabase SQL editor in order:
 
 ## Open (2026-11-08, [Claude Code])
 - [x] Prices: Stephen — keep the old prices (2026-11-08). Team's 7 Nov rate list not used.
-- [ ] `/api/email/send` is unauthenticated and accepts any template type (open relay risk) — lock down
+- [x] `/api/email/send` locked to internal callers (2026-11-08, [Claude Code]) — committed; deploy pending
 - [ ] After deploy: one labelled test request end-to-end, then cancel it in admin

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { internalEmailHeaders } from '@/lib/internal-email'
 
 const VANUCONNECT_SMS_API = 'https://zqxcrvjsnunjuelmrydm.supabase.co/functions/v1/send-sms-api'
 
@@ -82,7 +83,7 @@ export async function POST(request: NextRequest) {
           // Send via internal email API
           const emailResponse = await fetch(`${request.nextUrl.origin}/api/email/send`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: internalEmailHeaders(),
             body: JSON.stringify({
               type: 'concierge_email',
               data: {

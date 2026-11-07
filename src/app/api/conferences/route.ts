@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { internalEmailHeaders } from '@/lib/internal-email'
 
 // GET all conference bookings
 export async function GET(request: NextRequest) {
@@ -75,7 +76,7 @@ export async function PATCH(request: NextRequest) {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://enauwi-resort.vercel.app'
       await fetch(`${baseUrl}/api/email/send`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: internalEmailHeaders(),
         body: JSON.stringify({
           type: 'concierge_email',
           data: {

@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import { randomBytes, createHash } from 'crypto'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { requireCsrf } from '@/lib/csrf'
+import { internalEmailHeaders } from '@/lib/internal-email'
 
 function hashToken(token: string): string {
   return createHash('sha256').update(token).digest('hex')
@@ -70,7 +71,7 @@ export async function POST(request: NextRequest) {
     try {
       await fetch(`${request.nextUrl.origin}/api/email/send`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: internalEmailHeaders(),
         body: JSON.stringify({
           type: 'password_reset',
           data: {

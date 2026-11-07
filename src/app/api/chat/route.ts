@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { createServiceSupabase } from '@/lib/supabase-server'
+import { internalEmailHeaders } from '@/lib/internal-email'
 
 const getOpenAI = () => new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -455,7 +456,7 @@ export async function POST(request: NextRequest) {
           const baseUrl = request.nextUrl.origin
           await fetch(`${baseUrl}/api/email/send`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: internalEmailHeaders(),
             body: JSON.stringify({
               type: 'concierge_email',
               data: {

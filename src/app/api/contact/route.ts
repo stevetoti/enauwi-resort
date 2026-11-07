@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceSupabase } from '@/lib/supabase-server'
+import { internalEmailHeaders } from '@/lib/internal-email'
 export async function POST(request: NextRequest) {
   try {
     const supabase = createServiceSupabase()
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
     notificationPromises.push(
       fetch(`${baseUrl}/api/email/send`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: internalEmailHeaders(),
         body: JSON.stringify({
           type: 'contact_form',
           data: { name, email, phone, subject, message }

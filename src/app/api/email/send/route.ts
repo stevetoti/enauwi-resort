@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { INTERNAL_EMAIL_HEADER, isInternalEmailRequest } from '@/lib/internal-email'
 
 const getResend = () => new Resend(process.env.RESEND_API_KEY)
 
@@ -437,6 +438,10 @@ function bookingAdminHTML(data: {
 
 // ─── API Handler ──────────────────────────────────────────────────
 export async function POST(request: NextRequest) {
+  // Internal callers only (see src/lib/internal-email.ts).
+  if (!isInternalEmailRequest(request.headers.get(INTERNAL_EMAIL_HEADER))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
   try {
     const body = await request.json()
     const { type, data } = body

@@ -1,3 +1,5 @@
+import { internalEmailHeaders } from '@/lib/internal-email'
+
 /**
  * Unified Notification Service for E'Nauwi Beach Resort
  *
@@ -87,7 +89,7 @@ export async function sendBookingUpdateNotifications(
   try {
     const response = await fetch(`${baseUrl}/api/email/send`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: internalEmailHeaders(),
       body: JSON.stringify({
         type: 'booking_updated',
         data: {
@@ -167,7 +169,7 @@ async function sendEmailNotification(
   try {
     const response = await fetch(`${baseUrl}/api/email/send`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: internalEmailHeaders(),
       body: JSON.stringify({
         type: request ? 'booking_request' : 'booking_confirmation',
         data: {
