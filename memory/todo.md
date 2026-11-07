@@ -86,4 +86,8 @@ Run these in Supabase SQL editor in order:
 ## Open (2026-11-08, [Claude Code])
 - [x] Prices: Stephen — keep the old prices (2026-11-08). Team's 7 Nov rate list not used.
 - [x] `/api/email/send` locked to internal callers (2026-11-08, [Claude Code]) — committed; deploy pending
-- [ ] After deploy: one labelled test request end-to-end, then cancel it in admin
+- [ ] After deploying 798b24d: verify /api/email/send returns 403 live; one labelled test enquiry end-to-end (tell the team first), then cancel it — see memory/HANDOFF.md
+- [ ] Fast-forward main to codex/enauwi-seo-2026-11-01 (needs deploy go-ahead) — see memory/HANDOFF.md
+- [ ] Re-audit CLAUDE.md 'Known Issues' (admin/staff API auth, reset passwords, RLS) — report before changing
+- [ ] Tours not in operation: waiting for Shaniella's list (GM request 2 Nov)
+- [ ] Replace invalid VERCEL_TOKEN in .env.local (Stephen)
