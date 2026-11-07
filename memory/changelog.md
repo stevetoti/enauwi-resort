@@ -1,6 +1,7 @@
 # Changelog — Enauwi Beach Resort
 
 ## 2026-11-08 (later) — [Claude Code] Prices reverted to the old ones (Stephen) — enquiry flow kept
+- DEPLOYED `dpl_27JgpH9kwafVb2eti3fY7RTzzN2W` from `63c2802` (branch codex/enauwi-seo-2026-11-01, Stephen: "push the new changes"), aliased enauwi-resort.vercel.app. Verified live www.enauwibeachresort.org: homepage notice + old prices; /book bundle has the enquiry box + "Send Enquiry to Reservations", no "Booking Confirmed"/"Confirm Booking"/fake viewers. Deployed via saved CLI login: VERCEL_TOKEN in .env.local is INVALID. Untracked ChatGPT image stashed for the deploy and restored.
 - Stephen: "don't commit the changes of prices, use the old ones". Removed the team's new rate list and the rate table: homepage cards back to 30,000/27,000/25,000/22,000, booking page + API back to rooms.price_vt, chat prompt + voice agent price blocks restored exactly from d7a9bda. ReservationsNotice now shows the team's message + "subject to availability" note, no prices.
 - Kept: enquiry-only booking flow, enquiry notice at the top of the form, "request received / not confirmed" emails, WhatsApp, SMS, voice + chat wording.
 - Supersedes the rates parts of the two entries below.
