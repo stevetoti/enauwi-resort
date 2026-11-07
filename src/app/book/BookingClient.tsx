@@ -631,10 +631,19 @@ export default function BookingClient() {
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setShowBookingForm(false)}>
           <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-              <h3 className="text-lg font-bold">Request a Reservation</h3>
+              <h3 className="text-lg font-bold">Reservation Enquiry</h3>
               <button onClick={() => setShowBookingForm(false)} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
             </div>
             <div className="p-4">
+              {/* Request notice — first thing the guest reads */}
+              <div role="note" className="mb-4 rounded-xl border-2 border-amber-300 bg-amber-50 p-4 text-amber-900">
+                <p className="font-bold">This is an enquiry, not a confirmed booking</p>
+                <p className="mt-1 text-sm leading-relaxed">
+                  Your request goes to our Reservations team. They will check availability and email you to confirm
+                  before your booking is final. No payment is taken now. {RATES_NOTE}
+                </p>
+              </div>
+
               {/* Room Summary */}
               <div className="bg-gray-50 rounded-xl p-3 mb-4">
                 <h4 className="font-semibold text-gray-900 text-sm">{selectedRoom.name}</h4>
@@ -685,10 +694,6 @@ export default function BookingClient() {
                 </div>
               </div>
 
-              <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-                <strong>This is a request, not a confirmed booking.</strong> Our Reservations team will check availability and email you to confirm. No payment is taken now. {RATES_NOTE}
-              </div>
-
               {selectedOccasion !== 'none' && (
                 <div className="mt-3 p-3 bg-pink-50 rounded-xl flex items-center gap-2">
                   <Gift className="w-4 h-4 text-pink-500" />
@@ -698,13 +703,13 @@ export default function BookingClient() {
 
               <button onClick={handleBooking} disabled={submitting || !bookingData.name || !bookingData.email}
                 className="w-full mt-4 bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50">
-                {submitting ? 'Sending…' : 'Send Reservation Request'}
+                {submitting ? 'Sending…' : 'Send Enquiry to Reservations'}
               </button>
               {bookingError && (
                 <p role="alert" className="mt-3 rounded-lg bg-red-50 p-3 text-sm text-red-700">{bookingError}</p>
               )}
               <p className="text-xs text-center text-gray-500 mt-3">
-                You will receive an email from our Reservations team once availability is confirmed.
+                Nothing is booked yet: our Reservations team will email you to confirm availability.
               </p>
             </div>
           </div>
