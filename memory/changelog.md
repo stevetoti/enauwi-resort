@@ -1,5 +1,12 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-11-08 — [Claude Code] Homepage speed: hero text no longer waits for JavaScript
+- Measured live (Lighthouse 12.2.1 mobile, local Chrome; PSI API quota exhausted): score 72, FCP 2.9 s, LCP 6.0 s; LCP = hero text, hidden by framer-motion `initial={{opacity:0}}` until JS hydrated (throttled: text painted at 5.4–5.8 s). 655 KiB oversized images.
+- Hero.tsx is now a server component: framer-motion removed; CSS transform-only entrance (`hero-rise`), CSS particles at fixed positions (were Math.random in render), CSS scroll bob; prefers-reduced-motion respected. Fixed missing spaces on mobile ("afternoonsand", "hospitalityon").
+- Image sizes: Navbar + Footer logo `sizes="56px"` (was downloading 640–750 px), About aerial `sizes="(max-width: 1024px) 100vw, 50vw"` (was 1920 px on phones).
+- Local production build: score 93, FCP 0.9 s, LCP 3.2 s, SI 1.2 s, image waste 175 KiB; throttled LCP text at 0.84 s. (Localhost — live numbers will be somewhat lower.)
+- Not changed: /api/rooms takes ~2 s server-side (booking page room list) — follow-up.
+
 ## 2026-11-08 (later) — [Claude Code] Prices reverted to the old ones (Stephen) — enquiry flow kept
 - DEPLOYED `dpl_27JgpH9kwafVb2eti3fY7RTzzN2W` from `63c2802` (branch codex/enauwi-seo-2026-11-01, Stephen: "push the new changes"), aliased enauwi-resort.vercel.app. Verified live www.enauwibeachresort.org: homepage notice + old prices; /book bundle has the enquiry box + "Send Enquiry to Reservations", no "Booking Confirmed"/"Confirm Booking"/fake viewers. Deployed via saved CLI login: VERCEL_TOKEN in .env.local is INVALID. Untracked ChatGPT image stashed for the deploy and restored.
 - Stephen: "don't commit the changes of prices, use the old ones". Removed the team's new rate list and the rate table: homepage cards back to 30,000/27,000/25,000/22,000, booking page + API back to rooms.price_vt, chat prompt + voice agent price blocks restored exactly from d7a9bda. ReservationsNotice now shows the team's message + "subject to availability" note, no prices.

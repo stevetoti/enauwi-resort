@@ -52,6 +52,7 @@ export default function Footer() {
                   src="/logo-enauwi.png"
                   alt="E'Nauwi Beach Resort"
                   fill
+                  sizes="56px"
                   className="object-contain"
                 />
               </div>

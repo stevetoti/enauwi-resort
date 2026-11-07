@@ -95,6 +95,7 @@ export default function About({ intro }: { intro: string }) {
                 alt="E'Nauwi Beach Resort aerial view of the lagoon and palm trees"
                 width={800}
                 height={600}
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="w-full h-[400px] lg:h-[500px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ocean/15 to-transparent" />
