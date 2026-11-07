@@ -1,5 +1,9 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-11-08 — [Claude Code] Server functions moved next to the database (Mumbai)
+- Live /api/rooms after batching was still 1.3–2.1 s: functions ran in iad1 (Washington DC) — x-vercel-id syd1::iad1 — while Supabase is in ap-south-1 (Mumbai; SUPABASE_DB_URL pooler aws-1-ap-south-1). Every query crossed DC↔Mumbai.
+- vercel.json: "regions": ["bom1"] (Vercel Mumbai) for all functions — all of them use this database. Rollback: remove the line and redeploy.
+
 ## 2026-11-08 — [Claude Code] Booking page room list: 15–30 s → <1 s
 - /api/rooms with dates ran 4 sequential Supabase queries PER room (16 rooms = 64 round trips). Live timings before: 14.6–29.7 s with dates, 2.4–2.6 s without.
 - Rewritten to 4 batched queries run in parallel (rooms list, overlapping bookings, room_availability overrides in range ordered by date, active discounts room-specific or resort-wide) + the existing rooms query; same rules (blocked dates, first price override, best discount, booked-last sort, type counts). No-dates path batched too.
