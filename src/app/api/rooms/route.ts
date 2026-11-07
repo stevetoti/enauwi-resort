@@ -26,98 +26,94 @@ export async function GET(request: NextRequest) {
     const { data: rooms, error: roomsError } = await roomQuery
     if (roomsError) throw roomsError
 
-    // If no dates, return rooms with availability count
-    if (!checkIn || !checkOut) {
-      // Count how many of each room type are available
-      const roomsWithAvailability = await Promise.all(
-        (rooms || []).map(async (room) => {
-          // Get active discount for today
-          const today = new Date().toISOString().split('T')[0]
-          const { data: discounts } = await supabase
+    const roomList = rooms || []
+    const roomIds = roomList.map((r) => r.id)
+
+    // Best active discount per room (room-specific or resort-wide), one query for all rooms.
+    type Discount = { name: string; discount_percent: number }
+    const discountFor = (
+      rows: { room_id: string | null; name: string; discount_percent: number }[],
+      roomId: string
+    ): Discount | null => {
+      let best: Discount | null = null
+      for (const d of rows) {
+        if (d.room_id !== null && d.room_id !== roomId) continue
+        if (!best || d.discount_percent > best.discount_percent) best = { name: d.name, discount_percent: d.discount_percent }
+      }
+      return best
+    }
+    const discountsQuery = (from: string, to: string) =>
+      roomIds.length
+        ? supabase
             .from('room_discounts')
-            .select('name, discount_percent')
+            .select('room_id, name, discount_percent')
             .eq('is_active', true)
-            .lte('start_date', today)
-            .gte('end_date', today)
-            .or(`room_id.eq.${room.id},room_id.is.null`)
-            .order('discount_percent', { ascending: false })
-            .limit(1)
+            .lte('start_date', from)
+            .gte('end_date', to)
+            .or(`room_id.in.(${roomIds.join(',')}),room_id.is.null`)
+        : Promise.resolve({ data: [] as { room_id: string | null; name: string; discount_percent: number }[], error: null })
 
-          const discount = discounts?.[0] || null
-
-          return {
-            ...room,
-            active_discount: discount,
-            discounted_price: discount
-              ? Math.round(room.price_vt * (1 - discount.discount_percent / 100))
-              : null,
-          }
-        })
-      )
-
+    // If no dates, return rooms with today's discount
+    if (!checkIn || !checkOut) {
+      const today = new Date().toISOString().split('T')[0]
+      const { data: discountRows, error: discountError } = await discountsQuery(today, today)
+      if (discountError) throw discountError
+      const roomsWithAvailability = roomList.map((room) => {
+        const discount = discountFor(discountRows || [], room.id)
+        return {
+          ...room,
+          active_discount: discount,
+          discounted_price: discount
+            ? Math.round(room.price_vt * (1 - discount.discount_percent / 100))
+            : null,
+        }
+      })
       return NextResponse.json({ rooms: roomsWithAvailability })
     }
 
-    // With dates: filter by availability and add counts
-    // First get ALL rooms of each type to count total
-    const { data: allRooms } = await supabase
-      .from('rooms')
-      .select('id, name, type')
-      .eq('available', true)
+    // With dates: 4 queries for all rooms, in parallel (was 4 sequential queries PER room).
+    const [allRoomsRes, conflictsRes, availabilityRes, discountsRes] = await Promise.all([
+      supabase.from('rooms').select('id, name, type').eq('available', true),
+      // Overlap: existing check_in < searchCheckOut AND existing check_out > searchCheckIn
+      roomIds.length
+        ? supabase
+            .from('bookings')
+            .select('room_id')
+            .in('room_id', roomIds)
+            .in('status', ['pending', 'confirmed', 'checked_in'])
+            .lt('check_in', checkOut)
+            .gt('check_out', checkIn)
+        : Promise.resolve({ data: [] as { room_id: string }[], error: null }),
+      // Date overrides (blocked dates + price overrides) in the stay range
+      roomIds.length
+        ? supabase
+            .from('room_availability')
+            .select('room_id, date, available, price_override')
+            .in('room_id', roomIds)
+            .gte('date', checkIn)
+            .lte('date', checkOut)
+            .order('date')
+        : Promise.resolve({ data: [] as { room_id: string; date: string; available: boolean | null; price_override: number | null }[], error: null }),
+      discountsQuery(checkIn, checkOut),
+    ])
+    for (const r of [allRoomsRes, conflictsRes, availabilityRes, discountsRes]) {
+      if (r.error) throw r.error
+    }
+    const allRooms = allRoomsRes.data
 
-    const allRoomsWithStatus = []
     const bookedRoomIds = new Set<string>()
+    for (const c of conflictsRes.data || []) bookedRoomIds.add(c.room_id)
+    const priceOverride = new Map<string, number>()
+    for (const row of availabilityRes.data || []) {
+      if (row.available === false) bookedRoomIds.add(row.room_id)
+      if (row.price_override != null && !priceOverride.has(row.room_id)) priceOverride.set(row.room_id, row.price_override)
+    }
 
-    for (const room of rooms || []) {
-      // Check for conflicting bookings (overlap: existing check_in < searchCheckOut AND existing check_out > searchCheckIn)
-      const { data: conflicts } = await supabase
-        .from('bookings')
-        .select('id')
-        .eq('room_id', room.id)
-        .in('status', ['pending', 'confirmed', 'checked_in'])
-        .lt('check_in', checkOut)
-        .gt('check_out', checkIn)
-
-      // Check room_availability for specific date overrides
-      const { data: unavailableDates } = await supabase
-        .from('room_availability')
-        .select('id')
-        .eq('room_id', room.id)
-        .gte('date', checkIn)
-        .lte('date', checkOut)
-        .eq('available', false)
-
-      const isBooked = (conflicts && conflicts.length > 0) || (unavailableDates && unavailableDates.length > 0)
-
-      if (isBooked) {
-        bookedRoomIds.add(room.id)
-      }
-
-      // Check for price overrides
-      const { data: priceOverrides } = await supabase
-        .from('room_availability')
-        .select('price_override')
-        .eq('room_id', room.id)
-        .gte('date', checkIn)
-        .lte('date', checkOut)
-        .not('price_override', 'is', null)
-
-      const price = priceOverrides?.[0]?.price_override || room.price_vt
-
-      // Get active discount for the check-in date
-      const { data: discounts } = await supabase
-        .from('room_discounts')
-        .select('name, discount_percent')
-        .eq('is_active', true)
-        .lte('start_date', checkIn)
-        .gte('end_date', checkOut)
-        .or(`room_id.eq.${room.id},room_id.is.null`)
-        .order('discount_percent', { ascending: false })
-        .limit(1)
-
-      const discount = discounts?.[0] || null
-
-      allRoomsWithStatus.push({
+    const allRoomsWithStatus = roomList.map((room) => {
+      const isBooked = bookedRoomIds.has(room.id)
+      const price = priceOverride.get(room.id) || room.price_vt
+      const discount = discountFor(discountsRes.data || [], room.id)
+      return {
         ...room,
         price_vt: price,
         is_booked: isBooked,
@@ -125,8 +121,8 @@ export async function GET(request: NextRequest) {
         discounted_price: !isBooked && discount
           ? Math.round(price * (1 - discount.discount_percent / 100))
           : null,
-      })
-    }
+      }
+    })
 
     // Sort: available rooms first, then booked
     allRoomsWithStatus.sort((a, b) => (a.is_booked === b.is_booked ? 0 : a.is_booked ? 1 : -1))

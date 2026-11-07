@@ -1,5 +1,10 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-11-08 — [Claude Code] Booking page room list: 15–30 s → <1 s
+- /api/rooms with dates ran 4 sequential Supabase queries PER room (16 rooms = 64 round trips). Live timings before: 14.6–29.7 s with dates, 2.4–2.6 s without.
+- Rewritten to 4 batched queries run in parallel (rooms list, overlapping bookings, room_availability overrides in range ordered by date, active discounts room-specific or resort-wide) + the existing rooms query; same rules (blocked dates, first price override, best discount, booked-last sort, type counts). No-dates path batched too.
+- Verified identical JSON vs live baseline for 5 cases (no dates; 8–9 Nov 2 guests; 24–27 Dec 4 guests; 10–13 Dec 2 guests; includeAll) — all SAME incl. order. Local timing 0.52–0.69 s.
+
 ## 2026-11-08 — [Claude Code] Homepage speed: hero text no longer waits for JavaScript
 - Measured live (Lighthouse 12.2.1 mobile, local Chrome; PSI API quota exhausted): score 72, FCP 2.9 s, LCP 6.0 s; LCP = hero text, hidden by framer-motion `initial={{opacity:0}}` until JS hydrated (throttled: text painted at 5.4–5.8 s). 655 KiB oversized images.
 - Hero.tsx is now a server component: framer-motion removed; CSS transform-only entrance (`hero-rise`), CSS particles at fixed positions (were Math.random in render), CSS scroll bob; prefers-reduced-motion respected. Fixed missing spaces on mobile ("afternoonsand", "hospitalityon").
