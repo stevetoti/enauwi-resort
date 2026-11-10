@@ -206,7 +206,12 @@ export default function ServicesClient() {
                     )}
                     <div className="flex items-baseline gap-2">
                       {service.unit_price === 0 ? (
-                        <span className="text-lg font-bold text-green">Complimentary</span>
+                        <span className="text-lg font-bold text-green">
+                          {/* 0 = no fixed price: "complimentary" items, or e.g. laundry "charged per item" */}
+                          {service.price_unit === 'complimentary'
+                            ? 'Complimentary'
+                            : service.price_unit.charAt(0).toUpperCase() + service.price_unit.slice(1)}
+                        </span>
                       ) : (
                         <>
                           <span className="text-2xl font-bold text-ocean">
@@ -439,9 +444,8 @@ function ConferenceBookingModal({ onClose }: { onClose: () => void }) {
                 }}
                 className="w-full px-3 py-2 border border-ocean/10 rounded-xl focus:ring-2 focus:ring-ocean/20 focus:border-ocean/30 transition-all text-ocean"
               >
-                {/* PLACEHOLDER PRICES shown here */}
-                <option value="half_day">Half Day (VT 25,000*)</option>
-                <option value="full_day">Full Day (VT 45,000*)</option>
+                <option value="full_day">Full Day (VT 80,000)</option>
+                <option value="half_day">Half Day (rate on request)</option>
               </select>
             </div>
           </div>

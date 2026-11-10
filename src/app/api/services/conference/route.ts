@@ -27,7 +27,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Determine pricing based on booking type
-    // PLACEHOLDER PRICES - Update with real pricing when available
+    // Price comes from the services table (Full Day = VT 80,000 per day, team rate
+    // Nov 2026). Half day has no published rate — recorded as 0 for the team to quote.
     const type = bookingType || 'full_day'
     let totalPrice = 0
 
@@ -42,8 +43,7 @@ export async function POST(request: NextRequest) {
     if (confService) {
       totalPrice = confService.unit_price
     } else {
-      // Fallback PLACEHOLDER PRICES
-      totalPrice = type === 'half_day' ? 25000 : 45000
+      totalPrice = type === 'half_day' ? 0 : 80000
     }
 
     const serviceId = confService?.id || null

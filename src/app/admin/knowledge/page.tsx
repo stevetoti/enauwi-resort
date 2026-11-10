@@ -52,7 +52,7 @@ const CATEGORIES = [
 const ROOMS_DATA: RoomInfo[] = [
   {
     name: 'Beachfront Deluxe 2 Bedroom',
-    price: 30000,
+    price: 27000,
     description: 'Lagoon beachfront with stunning sunset views',
     maxGuests: 4,
     beds: '1 Queen + 2 Single beds',
@@ -60,7 +60,7 @@ const ROOMS_DATA: RoomInfo[] = [
   },
   {
     name: 'Lagoon View Superior 2 Bedroom',
-    price: 27000,
+    price: 23000,
     description: 'Garden setting with peek-through beach views',
     maxGuests: 4,
     beds: '1 Queen + 2 Single beds',
@@ -68,7 +68,7 @@ const ROOMS_DATA: RoomInfo[] = [
   },
   {
     name: 'Beachfront Deluxe 1 Bedroom',
-    price: 25000,
+    price: 22000,
     description: 'Lagoon beachfront, kayaking at your doorstep',
     maxGuests: 2,
     beds: '1 Queen bed',
@@ -76,7 +76,7 @@ const ROOMS_DATA: RoomInfo[] = [
   },
   {
     name: 'Lagoon View Superior 1 Bedroom',
-    price: 22000,
+    price: 18000,
     description: 'Garden retreat, peaceful private sanctuary',
     maxGuests: 2,
     beds: '1 Queen bed',

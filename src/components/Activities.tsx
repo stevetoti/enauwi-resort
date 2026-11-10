@@ -11,10 +11,17 @@ import {
   Cake,
   Heart,
   Compass,
+  Clock,
   ArrowRight,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  WEEKLY_TOURS,
+  MORE_ACTIVITIES,
+  TOUR_BOOKING_NOTE,
+  tourPrice,
+} from "@/data/resort-offerings";
 
 const resortActivities = [
   {
@@ -53,7 +60,7 @@ const resortActivities = [
     icon: Baby,
     title: "Kids Club",
     description:
-      "Trampoline, jumping castle, and a fun daily schedule — 8am coloring & games, 10am treasure hunt, 1pm kayak adventure. Nanny service available 8am–8pm.",
+      "Trampoline, jumping castle, and a fun daily schedule — 8am coloring & games, 10am treasure hunt, 1pm kayak adventure. Nanny services available 8am–8pm (VT 2,000 per hour).",
     image: "/images/resort/lagoon-island-view-sm.jpg",
     tag: "Family",
   },
@@ -75,16 +82,6 @@ const resortActivities = [
   },
 ];
 
-const adventureLinks = [
-  { title: "Snorkeling & Diving", slug: "snorkeling-diving" },
-  { title: "Island Hopping", slug: "island-hopping" },
-  { title: "Cultural Village Tour", slug: "cultural-village-tour" },
-  { title: "Sport Fishing", slug: "sport-fishing" },
-  { title: "Rainforest Hiking", slug: "jungle-trek" },
-  { title: "Sunset Kayaking", slug: "sunset-kayaking" },
-  { title: "Sand Drawing Experience", slug: "sand-drawing" },
-  { title: "Cooking Class", slug: "cooking-class" },
-];
 
 export default function Activities() {
   const ref = useRef(null);
@@ -178,47 +175,75 @@ export default function Activities() {
           ))}
         </div>
 
-        {/* Island Adventures Section */}
+        {/* Daily Tours & Activities (the resort's own weekly schedule) */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.8 }}
           className="mt-16"
+          id="tours"
         >
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-ocean/5 rounded-full mb-4">
               <Compass size={14} className="text-ocean" />
               <span className="text-ocean/70 text-sm font-medium uppercase tracking-wider">
-                Off-Site Adventures
+                Daily Tours &amp; Activities
               </span>
             </div>
             <h3 className="font-serif text-2xl sm:text-3xl font-bold text-ocean mb-3">
-              Explore{" "}
-              <span className="text-gold-gradient">Efate Island</span>
+              Explore. Connect.{" "}
+              <span className="text-gold-gradient">Experience Eratap.</span>
             </h3>
             <p className="text-ocean/60 text-base max-w-2xl mx-auto">
-              Guided excursions and island experiences available through the resort.
+              Guided tours run by the resort every day of the week.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {adventureLinks.map((adv) => (
-              <Link
-                key={adv.slug}
-                href={`/activities/${adv.slug}`}
-                className="group flex items-center justify-between gap-3 px-5 py-4 bg-white rounded-2xl border border-ocean/10 hover:border-ocean/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {WEEKLY_TOURS.map((tour) => (
+              <div
+                key={tour.id}
+                className="flex flex-col px-5 py-5 bg-white rounded-2xl border border-ocean/10 hover:border-ocean/30 hover:shadow-md transition-all duration-300"
               >
-                <span className="text-ocean font-medium text-sm group-hover:text-ocean-dark transition-colors">
-                  {adv.title}
-                </span>
-                <ArrowRight
-                  size={14}
-                  className="text-ocean/30 group-hover:text-gold transition-colors shrink-0"
-                />
-              </Link>
+                <p className="text-gold-dark text-xs font-bold uppercase tracking-wider">{tour.day}</p>
+                <h4 className="font-serif text-lg font-bold text-ocean mt-1">{tour.name}</h4>
+                <p className="flex items-start gap-1.5 text-ocean/60 text-xs mt-1">
+                  <Clock size={12} className="mt-0.5 shrink-0" />
+                  <span>
+                    {tour.times.join(" · ")}
+                    {tour.place ? ` · ${tour.place}` : ""}
+                  </span>
+                </p>
+                <ul className="mt-3 space-y-1 text-ocean/70 text-sm flex-1">
+                  {tour.highlights.map((h) => (
+                    <li key={h} className="flex gap-2">
+                      <span className="text-gold">•</span>
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className={`mt-4 text-sm font-semibold ${tour.adultPrice === 0 ? "text-green-700" : "text-ocean"}`}>
+                  {tourPrice(tour)}
+                </p>
+              </div>
             ))}
           </div>
-          <div className="text-center mt-6">
+
+          <div className="mt-8 bg-ocean/5 rounded-2xl p-5 sm:p-6">
+            <h4 className="font-serif text-lg font-bold text-ocean mb-3 text-center">More Activities</h4>
+            <dl className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {MORE_ACTIVITIES.map((a) => (
+                <div key={a.id} className="bg-white rounded-xl border border-ocean/10 px-4 py-3">
+                  <dt className="text-ocean font-semibold text-sm">{a.name}</dt>
+                  <dd className="text-ocean/70 text-sm mt-1">{a.price}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <p className="text-center text-ocean/60 text-sm mt-6 max-w-2xl mx-auto">{TOUR_BOOKING_NOTE}</p>
+
+          <div className="text-center mt-4">
             <Link
               href="/activities"
               className="inline-flex items-center gap-1.5 text-ocean font-semibold text-sm hover:text-gold transition-colors"

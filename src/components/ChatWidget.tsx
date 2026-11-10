@@ -56,7 +56,7 @@ const roomData: Record<string, { name: string; image: string; price: string; des
   '2br deluxe': {
     name: '2BR Deluxe Beachfront',
     image: '/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg',
-    price: '30,000 VT',
+    price: '27,000 VT',
     description: 'Lagoon beachfront with 1 Queen + 2 Single beds',
     amenities: ['🏖️ Beachfront', '👥 4 Guests', '❄️ AC'],
     apiKey: 'beachfront-deluxe-2',
@@ -64,7 +64,7 @@ const roomData: Record<string, { name: string; image: string; price: string; des
   '2br superior': {
     name: '2BR Superior Lagoon View',
     image: '/images/resort/malili-rooms/living-room-8-opt-pro.jpg',
-    price: '27,000 VT',
+    price: '23,000 VT',
     description: 'Lagoon view with 1 Queen + 2 Single beds',
     amenities: ['🌊 Lagoon View', '👥 4 Guests', '❄️ AC'],
     apiKey: 'lagoon-view-2',
@@ -72,7 +72,7 @@ const roomData: Record<string, { name: string; image: string; price: string; des
   '1br deluxe': {
     name: '1BR Deluxe Beachfront',
     image: '/images/resort/malili-rooms/living-room-5-opt-pro.jpg',
-    price: '25,000 VT',
+    price: '22,000 VT',
     description: 'Lagoon beachfront with Queen bed',
     amenities: ['🏖️ Beachfront', '👥 2 Guests', '❄️ AC'],
     apiKey: 'beachfront-deluxe-1',
@@ -80,10 +80,18 @@ const roomData: Record<string, { name: string; image: string; price: string; des
   '1br superior': {
     name: '1BR Superior Lagoon View',
     image: '/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg',
-    price: '22,000 VT',
+    price: '18,000 VT',
     description: 'Lagoon view with Queen bed',
     amenities: ['🌊 Lagoon View', '👥 2 Guests', '❄️ AC'],
     apiKey: 'lagoon-view-1',
+  },
+  '2br garden': {
+    name: '2BR Garden View',
+    image: '/images/resort/malili-rooms/living-room-6-opt-pro.jpg',
+    price: '19,550 VT',
+    description: 'Garden setting, two bedrooms',
+    amenities: ['🌺 Garden View', '👥 4 Guests', '❄️ AC'],
+    apiKey: 'garden-view-2',
   },
 }
 
@@ -151,17 +159,20 @@ function detectRoomMentions(text: string): string[] {
     }
   }
   // Also detect by price patterns
-  if (lower.includes('30,000') || lower.includes('30000')) {
+  if (lower.includes('27,000') || lower.includes('27000')) {
     if (!rooms.includes('2br deluxe')) rooms.push('2br deluxe')
   }
-  if (lower.includes('27,000') || lower.includes('27000')) {
+  if (lower.includes('23,000') || lower.includes('23000')) {
     if (!rooms.includes('2br superior')) rooms.push('2br superior')
   }
-  if (lower.includes('25,000') || lower.includes('25000')) {
+  if (lower.includes('22,000') || lower.includes('22000')) {
     if (!rooms.includes('1br deluxe')) rooms.push('1br deluxe')
   }
-  if (lower.includes('22,000') || lower.includes('22000')) {
+  if (lower.includes('18,000') || lower.includes('18000')) {
     if (!rooms.includes('1br superior')) rooms.push('1br superior')
+  }
+  if (lower.includes('19,550') || lower.includes('19550') || lower.includes('garden')) {
+    if (!rooms.includes('2br garden')) rooms.push('2br garden')
   }
   // Detect by room type keywords
   if (lower.includes('2 bedroom') || lower.includes('two bedroom') || lower.includes('2br')) {
@@ -443,7 +454,7 @@ export default function ChatWidget() {
           if (checkIn && checkOut) {
             setBookingData(prev => ({ ...prev, check_in_date: checkIn, check_out_date: checkOut }))
             setBookingStep('room')
-            addAssistantMessage(`Great! Check-in: **${checkIn}**, Check-out: **${checkOut}**\n\n🏨 Which room type would you prefer?\n\n1. **2BR Deluxe Beachfront** - 30,000 VT/night (4 guests)\n2. **2BR Superior Lagoon View** - 27,000 VT/night (4 guests)\n3. **1BR Deluxe Beachfront** - 25,000 VT/night (2 guests)\n4. **1BR Superior Lagoon View** - 22,000 VT/night (2 guests)\n\nJust type the number or room name!`)
+            addAssistantMessage(`Great! Check-in: **${checkIn}**, Check-out: **${checkOut}**\n\n🏨 Which room type would you prefer?\n\n1. **2BR Deluxe Beachfront** - 27,000 VT/night (4 guests)\n2. **2BR Superior Lagoon View** - 23,000 VT/night (4 guests)\n3. **1BR Deluxe Beachfront** - 22,000 VT/night (2 guests)\n4. **1BR Superior Lagoon View** - 18,000 VT/night (2 guests)\n5. **2BR Garden View** - 19,550 VT/night (4 guests)\n\nAll rates include breakfast.\n\nJust type the number or room name!`)
             return
           }
         }
@@ -455,7 +466,9 @@ export default function ChatWidget() {
         const lower = input.toLowerCase()
         let roomType = ''
         
-        if (lower.includes('1') || lower.includes('2br deluxe') || lower.includes('beachfront') && lower.includes('2')) {
+        if (lower.includes('garden') || lower.trim() === '5') {
+          roomType = 'garden-view-2'
+        } else if (lower.includes('1') || lower.includes('2br deluxe') || lower.includes('beachfront') && lower.includes('2')) {
           roomType = 'beachfront-deluxe-2'
         } else if (lower.includes('2') || lower.includes('2br superior') || lower.includes('lagoon') && lower.includes('2')) {
           roomType = 'lagoon-view-2'
@@ -464,7 +477,7 @@ export default function ChatWidget() {
         } else if (lower.includes('4') || lower.includes('1br superior') || lower.includes('lagoon') && lower.includes('1')) {
           roomType = 'lagoon-view-1'
         } else {
-          addAssistantMessage('Please select a room:\n1. 2BR Deluxe Beachfront\n2. 2BR Superior Lagoon View\n3. 1BR Deluxe Beachfront\n4. 1BR Superior Lagoon View')
+          addAssistantMessage('Please select a room:\n1. 2BR Deluxe Beachfront\n2. 2BR Superior Lagoon View\n3. 1BR Deluxe Beachfront\n4. 1BR Superior Lagoon View\n5. 2BR Garden View')
           return
         }
         

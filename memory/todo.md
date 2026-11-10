@@ -1,5 +1,10 @@
 # Todo — Enauwi Beach Resort
 
+## 2026-11-10 — [Claude Code] Open questions from the team-request update
+- [ ] Team: conference HALF-day rate (hidden until given); laundry per-item prices; whether late checkout VT 10,000 means "until 6 PM" or "past 6 PM" (worded exactly as their email)
+- [ ] Team: Garden View card uses Bungalow 13's photo and a short generic description — send preferred photo/text
+- [ ] Blog articles still mention generic activities (volcano/diving etc.) — review if the team wants them aligned with the tour list
+
 ## 2026-11-01 — [Codex] Booking inventory finding
 
 - [x] All 16 existing room records are not marked available; — [Claude Code] 2026-11-06: enabled all 16 at the team's request (see changelog). public room searches return zero options. Confirmed on both existing live site and local build before deployment. — [Codex] 2026-11-01: Stephen explicitly requested availability remain unchanged; any future change needs a new instruction. Evidence: docs/seo/room-availability-baseline.json.

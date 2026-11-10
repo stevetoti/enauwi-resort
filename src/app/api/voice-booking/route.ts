@@ -33,31 +33,31 @@ const ROOMS = {
   'beachfront-deluxe-2': {
     id: '05e09a4e-aa78-41a0-a8ce-de9e45710e44',
     name: 'Beachfront Deluxe 2 Bedroom',
-    price: 30000,
+    price: 27000,
     maxGuests: 4
   },
   'lagoon-view-2': {
     id: '302109a1-b014-4ce7-b5af-bb0a303fe544',
     name: 'Lagoon View Superior 2 Bedroom',
-    price: 27000,
+    price: 23000,
     maxGuests: 4
   },
   'beachfront-deluxe-1': {
     id: '6f314c7c-d38d-4ed6-bcb6-f83f2bc375a3',
     name: 'Beachfront Deluxe 1 Bedroom',
-    price: 25000,
+    price: 22000,
     maxGuests: 2
   },
   'lagoon-view-1': {
     id: '9b37897c-b1ad-40ed-a516-949c1963d487',
     name: 'Lagoon View Superior 1 Bedroom',
-    price: 22000,
+    price: 18000,
     maxGuests: 2
   },
   'garden-view-2': {
     id: 'f82af187-8b17-4d22-902e-f149e4abe7cc',
-    name: 'Back Garden View 2 Bedroom',
-    price: 23000,
+    name: 'Garden View 2 Bedroom',
+    price: 19550,
     maxGuests: 4
   }
 }

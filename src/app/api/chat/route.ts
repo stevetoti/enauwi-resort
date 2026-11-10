@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { createServiceSupabase } from '@/lib/supabase-server'
 import { internalEmailHeaders } from '@/lib/internal-email'
+import { offeringsKnowledge } from '@/data/resort-offerings'
 
 const getOpenAI = () => new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -11,7 +12,7 @@ const getOpenAI = () => new OpenAI({
 const RESORT_KNOWLEDGE = `
 RESORT: E'Nauwi Beach Resort
 LOCATION: South East Efate, SHEFA Province, Vanuatu
-WEBSITE: https://enauwibeachresort.com
+WEBSITE: https://www.enauwibeachresort.org
 
 ABOUT US:
 Tucked along a quiet stretch of South East Efate, E'Nauwi Beach Resort is where warm sand, calm lagoon waters, and genuine Melanesian hospitality come together. This is not a place that tries to impress — it's a place that lets you breathe, reconnect, and remember what matters. Ideal for families, couples, and groups seeking comfort, good food, and genuine island hospitality.
@@ -24,16 +25,17 @@ PROPERTY HIGHLIGHTS:
 • Outdoor swimming pool surrounded by coconut palms
 • Kayaking & Snorkeling on the lagoon and private island
 • Family-friendly facilities including kids trampoline, jumping castle, and Kids Club
-• Nanny Service available 8am - 8pm daily
+• Nanny Service available 8am - 8pm daily (VT 2,000 per hour)
 
 GUEST EXPERIENCE:
 Spend mornings floating in a lagoon so still it mirrors the sky. Cool off in the pool beneath swaying coconut palms. Paddle a kayak to the private island for an afternoon of snorkelling. Then settle into the restaurant as the sun dips behind the islands and the aroma of freshly grilled seafood fills the evening air. Whether it's a family holiday, a romantic escape, or a group getaway, E'Nauwi wraps every guest in the kind of warmth you only find on a Melanesian island.
 
-ROOM TYPES & RATES (4 room types):
-1. 2BR Deluxe Bungalow (Lagoon Beachfront) — VT 30,000/night — Step outside and the lagoon is right there — turquoise, still, and stretching toward the islands on the horizon. This spacious two-bedroom bungalow sits front-row on the beachfront, where warm trade-wind breezes drift through the living area and every evening brings a sunset you'll want to photograph twice. Sleeps up to 4 guests. Beds: 1 Queen bed + 2 Single beds.
-2. 2BR Superior Bungalow (Lagoon View) — VT 27,000/night — Tucked just behind the beachfront row, this two-bedroom retreat is wrapped in the colour and fragrance of Vanuatu's tropical gardens — flowering hibiscus, local mango and papaya trees, and the soft sound of the ocean filtering through the leaves. The beach is a short stroll away, but your private garden world feels miles from anywhere. Sleeps up to 4 guests. Beds: 1 Queen bed + 2 Single beds.
-3. Deluxe 1BR Bungalow (Lagoon Beachfront) — VT 25,000/night — For couples and solo travellers who want the lagoon all to themselves. This intimate one-bedroom bungalow opens directly onto the beachfront with sweeping views across the water to the outer islands. Grab a kayak from the shore, snorkel at your doorstep, or simply settle into the quiet with a good book and the sound of gentle waves. Sleeps up to 2 guests. Beds: 1 Queen bed.
-4. Superior 1BR Bungalow (Lagoon View) — VT 22,000/night — Escape to your own private sanctuary, nestled among fragrant tropical flowers and swaying palms. This charming one-bedroom bungalow offers a peaceful retreat surrounded by Vanuatu's lush natural beauty — the perfect hideaway to recharge after a day of island adventure. Sleeps up to 2 guests. Beds: 1 Queen bed.
+ROOM TYPES & RATES (5 room types — all rates include breakfast):
+1. 2BR Deluxe Bungalow (Lagoon Beachfront) — VT 27,000/night — Step outside and the lagoon is right there — turquoise, still, and stretching toward the islands on the horizon. This spacious two-bedroom bungalow sits front-row on the beachfront, where warm trade-wind breezes drift through the living area and every evening brings a sunset you'll want to photograph twice. Sleeps up to 4 guests. Beds: 1 Queen bed + 2 Single beds.
+2. 2BR Superior Bungalow (Lagoon View) — VT 23,000/night — Tucked just behind the beachfront row, this two-bedroom retreat is wrapped in the colour and fragrance of Vanuatu's tropical gardens — flowering hibiscus, local mango and papaya trees, and the soft sound of the ocean filtering through the leaves. The beach is a short stroll away, but your private garden world feels miles from anywhere. Sleeps up to 4 guests. Beds: 1 Queen bed + 2 Single beds.
+3. Deluxe 1BR Bungalow (Lagoon Beachfront) — VT 22,000/night — For couples and solo travellers who want the lagoon all to themselves. This intimate one-bedroom bungalow opens directly onto the beachfront with sweeping views across the water to the outer islands. Grab a kayak from the shore, snorkel at your doorstep, or simply settle into the quiet with a good book and the sound of gentle waves. Sleeps up to 2 guests. Beds: 1 Queen bed.
+4. Superior 1BR Bungalow (Lagoon View) — VT 18,000/night — Escape to your own private sanctuary, nestled among fragrant tropical flowers and swaying palms. This charming one-bedroom bungalow offers a peaceful retreat surrounded by Vanuatu's lush natural beauty — the perfect hideaway to recharge after a day of island adventure. Sleeps up to 2 guests. Beds: 1 Queen bed.
+5. 2BR Garden View Bungalow — VT 19,550/night — Two-bedroom bungalow surrounded by the resort's tropical gardens, a short walk from the beach. Sleeps up to 4 guests.
 
 ALL ROOM FEATURES (every room includes):
 • Towels provided
@@ -52,12 +54,12 @@ GENERAL RESORT FEATURES:
 • Lounge Area — relax with an ocean breeze
 • Children Play Area — jumping castle, TV screen corner for movies & cartoons
 • Room Service — delivered to your door (charges apply)
-• Shuttle Service — airport & local transfers
+• Airport Shuttle — VT 3,000 per adult, VT 1,500 per child (5–17 years)
 • Beach Volleyball Area — sandy court by the shore
 • Wi-Fi throughout the resort
 • Complimentary Parking
 • Tropical Gardens — frangipani, palms & fruit trees
-• Guest Laundry — wash & fold available (charges apply)
+• Guest Laundry — charged per item
 • Iron on request
 • Kids Club — supervised fun for little ones
 • On-site Restaurant — fresh island cuisine daily
@@ -80,12 +82,12 @@ Conference room amenities:
 • Whiteboard & markers
 • Projector & screen
 • TV Screen
-Contact marketing@enauwibeachresort.com for conference bookings and pricing.
+Conference room hire: VT 80,000 per day. Contact marketing@enauwibeachresort.com for conference bookings.
 
 CHECK-IN / CHECK-OUT:
 • Check-in: 2:00 PM
 • Check-out: 10:00 AM
-• Late check-out: VUV 2,500 per hour (subject to availability)
+• Late checkout: extended checkout past 6:00 PM — VT 10,000 (subject to availability)
 
 CANCELLATION POLICY:
 • 14+ days prior to check-in — Free cancellation, full refund
@@ -97,21 +99,22 @@ CANCELLATION POLICY:
 FEES & CHARGES:
 • Tourism Levy: VUV 200 per room per day (charged at check-out)
 • Credit card surcharge: 4%
-• Late check-out: VUV 2,500 per hour
-• Guest Laundry: charges apply
+• Late checkout (past 6:00 PM): VT 10,000
+• Guest Laundry: charged per item
+• Nanny Services: VT 2,000 per hour
 • Room Service: charges apply
 • Cash and credit cards accepted
 
 AIRPORT TRANSFER:
 • The resort offers shuttle transfers from the airport
-• Adults: VUV 2,000 per person (one-way)
-• Children (≤12 years): VUV 1,000 per person (one-way)
+• Adults: VT 3,000 per adult
+• Children (5–17 years): VT 1,500 per child
 • Guests MUST contact the property 72 hours prior to arrival to arrange pick-up
 • Guests receive an email 7 days before arrival with check-in instructions
 
 CHILDREN POLICY:
 • Children are welcome. Child / extra-person charges apply (rates vary by room type and occupancy). Children are NOT free of charge, and meals are not complimentary for children. Ask guests to confirm current child rates with the resort when booking.
-• Nanny Service: 8am - 8pm daily
+• Nanny Service: 8am - 8pm daily (VT 2,000 per hour)
 • Kids Club available
 • Roll-away beds available upon request
 
@@ -154,6 +157,8 @@ BOOKING PROCESS:
 • Payment on arrival (cash VT, card accepted — 4% surcharge on cards)
 • Remind guests about 72-hour advance notice for airport transfers
 • Remind guests about Tourism Levy of VUV 200/room/day at checkout
+
+${offeringsKnowledge()}
 `
 
 // ─── Language-specific system prompts ─────────────────────────────────────────
@@ -247,12 +252,12 @@ Towel, Internet, Air Con long living room, Bathrobe, TV, Ceiling Fan, Telephone,
 
 IMPORTANT POLICIES LONG BISLAMA:
 • Check-in: 2:00 PM / Check-out: 10:00 AM
-• Late check-out: VUV 2,500 per hour
-• Pikinini anda long 12 yia i stap fri long rum blong papa mo mama
+• Late checkout (afta 6:00 PM): VT 10,000
+• Pikinini i welkam, be i gat sas blong pikinini (i no fri) — askem resort blong praes
 • Nanny Service: 8am - 8pm evri dei
 • Tourism Levy: VUV 200 per rum per dei (pem long check-out)
 • Credit card: 4% surcharge
-• Airport shuttle: VUV 2,000 blong bigman, VUV 1,000 blong pikinini
+• Airport shuttle: VT 3,000 blong bigman, VT 1,500 blong pikinini (5–17 yia)
 • Yu mas kontaktem resort 72 hours bifo yu kasem ples blong arrangem transfer
 • Cancelation: 14+ days = fri, 14 days = 50% refund, 7 days = no refund
 • Non-refundable rates: no cancelation, 100% charged

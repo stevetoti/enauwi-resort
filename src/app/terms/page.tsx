@@ -37,7 +37,7 @@ export default function TermsPage() {
             </div>
           </div>
           <ul className="mt-4 space-y-2 text-sm text-ocean/70">
-            <li>• Late check-out: <strong className="text-ocean">VUV 2,500 per hour</strong> (subject to availability)</li>
+            <li>• Late checkout: extended checkout past 6:00 PM — <strong className="text-ocean">VT 10,000</strong> (subject to availability)</li>
             <li>• The front desk is open daily from <strong className="text-ocean">8:00 AM – 5:00 PM</strong></li>
             <li>• An email with check-in instructions is sent <strong className="text-ocean">7 days before arrival</strong></li>
             <li>• If arriving after 5:00 PM, please <strong className="text-ocean">contact the property in advance</strong></li>
@@ -107,11 +107,11 @@ export default function TermsPage() {
           <div className="grid sm:grid-cols-2 gap-4 mb-4">
             <div className="bg-ocean/5 rounded-xl p-4">
               <p className="text-sm text-ocean/70 font-medium">Adults</p>
-              <p className="text-xl font-bold text-ocean">VUV 2,000 <span className="text-sm font-normal text-ocean/50">per person, one-way</span></p>
+              <p className="text-xl font-bold text-ocean">VT 3,000 <span className="text-sm font-normal text-ocean/50">per adult</span></p>
             </div>
             <div className="bg-ocean/5 rounded-xl p-4">
-              <p className="text-sm text-ocean/70 font-medium">Children (≤12 years)</p>
-              <p className="text-xl font-bold text-ocean">VUV 1,000 <span className="text-sm font-normal text-ocean/50">per child, one-way</span></p>
+              <p className="text-sm text-ocean/70 font-medium">Children (5–17 years)</p>
+              <p className="text-xl font-bold text-ocean">VT 1,500 <span className="text-sm font-normal text-ocean/50">per child</span></p>
             </div>
           </div>
           <div className="bg-gold/10 border border-gold/20 rounded-xl p-4">
@@ -131,7 +131,7 @@ export default function TermsPage() {
             <p className="text-ocean/60 text-sm mt-1">Children are welcome at the resort. Child / extra-person charges apply and vary by room type and occupancy — please confirm current child rates with the resort when booking.</p>
           </div>
           <ul className="space-y-2 text-sm text-ocean/70">
-            <li>• Nanny Service available daily <strong className="text-ocean">8:00 AM – 8:00 PM</strong></li>
+            <li>• Nanny services available daily <strong className="text-ocean">8:00 AM – 8:00 PM</strong> — <strong className="text-ocean">VT 2,000 per hour</strong></li>
             <li>• Kids trampoline and jumping castle on property</li>
             <li>• Kids Club available</li>
             <li>• Roll-away beds available upon request (subject to availability)</li>
@@ -159,7 +159,7 @@ export default function TermsPage() {
                 </tr>
                 <tr>
                   <td className="py-3 text-ocean/60">Late check-out</td>
-                  <td className="py-3 text-right font-semibold text-ocean">VUV 2,500 per hour <span className="font-normal text-ocean/50">(subject to availability)</span></td>
+                  <td className="py-3 text-right font-semibold text-ocean">VT 10,000 <span className="font-normal text-ocean/50">(extended checkout past 6:00 PM, subject to availability)</span></td>
                 </tr>
                 <tr>
                   <td className="py-3 text-ocean/60">Extra adult (roll-away bed)</td>
@@ -171,7 +171,15 @@ export default function TermsPage() {
                 </tr>
                 <tr>
                   <td className="py-3 text-ocean/60">Guest Laundry</td>
-                  <td className="py-3 text-right font-semibold text-ocean">Charges apply</td>
+                  <td className="py-3 text-right font-semibold text-ocean">Charged per item</td>
+                </tr>
+                <tr>
+                  <td className="py-3 text-ocean/60">Nanny services</td>
+                  <td className="py-3 text-right font-semibold text-ocean">VT 2,000 per hour</td>
+                </tr>
+                <tr>
+                  <td className="py-3 text-ocean/60">Conference room hire</td>
+                  <td className="py-3 text-right font-semibold text-ocean">VT 80,000 per day</td>
                 </tr>
                 <tr>
                   <td className="py-3 text-ocean/60">Room Service</td>
@@ -202,8 +210,8 @@ export default function TermsPage() {
             <li>• An email with check-in instructions will be sent <strong className="text-ocean">7 days before arrival</strong>.</li>
             <li>• Children are welcome; <strong className="text-ocean">child / extra-person charges apply</strong> (rates vary by room and occupancy — confirm with the resort when booking).</li>
             <li>• Only <strong className="text-ocean">registered guests</strong> are allowed in the guestrooms.</li>
-            <li>• Airport shuttle: <strong className="text-ocean">VUV 2,000/adult</strong>, <strong className="text-ocean">VUV 1,000/child</strong> (one-way).</li>
-            <li>• Late checkout: <strong className="text-ocean">VUV 2,500/hour</strong> (subject to availability).</li>
+            <li>• Airport shuttle: <strong className="text-ocean">VT 3,000 per adult</strong>, <strong className="text-ocean">VT 1,500 per child</strong> (5–17 years).</li>
+            <li>• Late checkout: extended checkout past 6:00 PM — <strong className="text-ocean">VT 10,000</strong> (subject to availability).</li>
             <li>• Roll-away beds: available on request.</li>
             <li>• Credit card surcharge: <strong className="text-ocean">4%</strong>.</li>
             <li>• Tourism Levy: <strong className="text-ocean">VUV 200/room/day</strong> (charged at checkout).</li>

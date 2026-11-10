@@ -17,7 +17,7 @@ const steps = [
     title: "Scenic Drive to the Resort",
     description:
       "Our shuttle service can pick you up from the airport — enjoy the scenic coastal drive through lush tropical countryside. Contact us 72 hours prior to arrange pick-up.",
-    highlight: "VUV 2,000/adult · VUV 1,000/child",
+    highlight: "VT 3,000 per adult · VT 1,500 per child (5–17)",
   },
   {
     icon: MapPin,

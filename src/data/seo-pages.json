@@ -13,9 +13,9 @@
   },
   "/activities": {
     "title": "Things to Do on Efate | E'Nauwi Beach Resort",
-    "description": "Explore things to do on Efate from E'Nauwi Beach Resort, including kayaking, snorkelling and island activities. Enquire about current availability.",
+    "description": "Daily guided tours and activities at E'Nauwi Beach Resort, Eratap, Efate: Epakor Stream kayak and nature walks, village and handicraft tours, island tours, snorkeling, boat tours and surfing.",
     "h1": "Things to Do on Efate, Vanuatu",
-    "intro": "Explore activities from E'Nauwi Beach Resort on Efate Island, Vanuatu. Discover lagoon kayaking, snorkelling, and island experiences, then contact the resort to confirm availability, weather conditions, suitability, and any additional costs."
+    "intro": "Join the resort's own daily tours on Efate — kayak to the Epakor Stream, walk through Eratap village and local handicrafts, tour the island by kayak or boat — plus snorkeling, boat tours, surfing and Castaway Island trips. Book at the Front Desk by the day before."
   },
   "/services": {
     "title": "Conference Enquiries Efate | E'Nauwi Beach Resort",
@@ -39,54 +39,6 @@
     "title": "Terms, Conditions & Policies | E'Nauwi Beach Resort",
     "description": "Check-in and check-out times, cancellation policy and booking terms for E'Nauwi Beach Resort on Efate, Vanuatu.",
     "h1": "Terms, Conditions & Policies",
-    "intro": null
-  },
-  "/activities/snorkeling-diving": {
-    "title": "Snorkelling on Efate | E'Nauwi Beach Resort",
-    "description": "Explore snorkelling on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
-    "h1": "Snorkelling on Efate",
-    "intro": null
-  },
-  "/activities/island-hopping": {
-    "title": "Island Hopping on Efate | E'Nauwi Beach Resort",
-    "description": "Explore island Hopping on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
-    "h1": "Island Hopping on Efate",
-    "intro": null
-  },
-  "/activities/sport-fishing": {
-    "title": "Sport Fishing on Efate | E'Nauwi Beach Resort",
-    "description": "Explore sport Fishing on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
-    "h1": "Sport Fishing on Efate",
-    "intro": null
-  },
-  "/activities/sunset-spa": {
-    "title": "Spa & Relaxation on Efate | E'Nauwi Beach Resort",
-    "description": "Explore spa & Relaxation on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
-    "h1": "Spa & Relaxation on Efate",
-    "intro": null
-  },
-  "/activities/volcano-trek": {
-    "title": "Guided Viewpoint Trek on Efate | E'Nauwi Beach Resort",
-    "description": "Explore guided Viewpoint Trek on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
-    "h1": "Guided Viewpoint Trek on Efate",
-    "intro": null
-  },
-  "/activities/turtle-watching": {
-    "title": "Turtle Watching on Efate | E'Nauwi Beach Resort",
-    "description": "Explore turtle Watching on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
-    "h1": "Turtle Watching on Efate",
-    "intro": null
-  },
-  "/activities/cooking-class": {
-    "title": "Vanuatu Cooking Class | E'Nauwi Beach Resort",
-    "description": "Explore vanuatu Cooking Class from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
-    "h1": "Vanuatu Cooking Class",
-    "intro": null
-  },
-  "/activities/sunset-kayaking": {
-    "title": "Sunset Kayaking on Efate | E'Nauwi Beach Resort",
-    "description": "Explore sunset Kayaking on Efate from E'Nauwi Beach Resort, Vanuatu. Ask our team about current availability, conditions and suitability.",
-    "h1": "Sunset Kayaking on Efate",
     "intro": null
   },
   "/blog/kayaking-in-vanuatu-a-beginners-guide-to-paddling-efates-lagoons": {
@@ -188,7 +140,7 @@
   "/blog/best-beaches-efate-vanuatu": {
     "title": "Best Beaches on Efate: A Visitor's Guide",
     "description": "Read best Beaches on Efate: A Visitor's Guide with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
-    "h1": "Best Beaches in Efate, Vanuatu \u2014 A Visitor's Guide",
+    "h1": "Best Beaches in Efate, Vanuatu — A Visitor's Guide",
     "intro": null
   },
   "/blog/snorkelling-efate-dugongs": {
@@ -206,13 +158,13 @@
   "/blog/when-to-visit-vanuatu": {
     "title": "When to Visit Vanuatu: A Seasonal Guide",
     "description": "Read when to Visit Vanuatu: A Seasonal Guide with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
-    "h1": "When to Visit Vanuatu \u2014 A Seasonal Travel Guide",
+    "h1": "When to Visit Vanuatu — A Seasonal Travel Guide",
     "intro": null
   },
   "/blog/beachfront-bungalows-vs-villas-enauwi": {
     "title": "Beachfront Bungalows at E'Nauwi: Where to Stay",
     "description": "Read beachfront Bungalows at E'Nauwi: Where to Stay with practical ideas from E'Nauwi Beach Resort. Plan your Efate, Vanuatu holiday and explore stays.",
-    "h1": "Beachfront Bungalows vs Villas \u2014 Where to Stay at E'Nauwi",
+    "h1": "Beachfront Bungalows vs Villas — Where to Stay at E'Nauwi",
     "intro": null
   },
   "/blog/vanuatu-honeymoon-wedding-getaways": {

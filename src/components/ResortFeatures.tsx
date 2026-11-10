@@ -2,6 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { GUEST_SERVICES } from "@/data/resort-offerings";
 import {
   Wine,
   Sofa,
@@ -32,14 +33,15 @@ const resortFeatures = [
   { icon: Sofa, label: "Lounge Area", detail: "Relax with an ocean breeze" },
   { icon: Baby, label: "Children Play Area", detail: "Jumping castle, TV corner — free movies & cartoons" },
   { icon: ConciergeBell, label: "Room Service", detail: "Charges apply" },
-  { icon: Bus, label: "Shuttle Service", detail: "Airport & local transfers" },
+  { icon: Bus, label: "Airport Shuttle", detail: "VT 3,000 adult · VT 1,500 child (5–17)" },
   { icon: Volleyball, label: "Beach Volleyball", detail: "Sandy court by the shore" },
   { icon: Wifi, label: "Wi-Fi", detail: "Stay connected" },
   { icon: ParkingCircle, label: "Parking", detail: "Complimentary on-site" },
   { icon: TreePalm, label: "Tropical Gardens", detail: "Frangipani, palms & fruit trees" },
-  { icon: WashingMachine, label: "Guest Laundry", detail: "Charges apply" },
+  { icon: WashingMachine, label: "Guest Laundry", detail: "Charged per item" },
   { icon: Shirt, label: "Iron on Request", detail: "For a polished look" },
   { icon: Users, label: "Kids Club", detail: "Supervised fun for little ones" },
+  { icon: Baby, label: "Nanny Services", detail: "VT 2,000 per hour" },
   { icon: UtensilsCrossed, label: "On-site Restaurant", detail: "Fresh island cuisine daily" },
   { icon: Waves, label: "Swimming Pool", detail: "Surrounded by coconut palms" },
   { icon: Star, label: "Massage Hut", detail: "Relaxing island spa treatments" },
@@ -124,6 +126,32 @@ export default function ResortFeatures() {
           ))}
         </motion.div>
 
+        {/* Guest services & charges (rates from the Reservations team) */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          className="bg-white rounded-3xl p-6 sm:p-8 border border-ocean/10 shadow-sm mb-12"
+        >
+          <h3 className="font-serif text-2xl font-bold text-ocean-dark mb-1 text-center">
+            Services &amp; Charges
+          </h3>
+          <p className="text-gray-500 text-sm text-center mb-6">
+            Arrange any of these with our Front Desk or Reservations team.
+          </p>
+          <dl className="divide-y divide-gray-100">
+            {GUEST_SERVICES.map((service) => (
+              <div key={service.name} className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 py-3">
+                <dt className="text-ocean-dark font-medium">
+                  {service.name}
+                  {service.detail && <span className="block text-gray-500 text-xs font-normal">{service.detail}</span>}
+                </dt>
+                <dd className="text-gold-dark font-semibold text-sm sm:text-right">{service.price}</dd>
+              </div>
+            ))}
+          </dl>
+        </motion.div>
+
         {/* Conference Facilities */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -148,6 +176,9 @@ export default function ResortFeatures() {
               workshops, and team-building events — with modern AV equipment
               and the kind of scenery that sparks fresh thinking. Catering
               available separately.
+            </p>
+            <p className="text-gold-light font-semibold text-lg mt-4">
+              Conference room hire: VT 80,000 per day
             </p>
           </div>
 

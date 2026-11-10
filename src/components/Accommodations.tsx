@@ -27,7 +27,7 @@ const rooms = [
     id: "2br-deluxe",
     name: "Beachfront Deluxe 2 Bedroom",
     tagline: "Lagoon Beachfront",
-    price: "30,000",
+    price: "27,000",
     image: "/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg",
     gallery: [
       "/images/resort/malili-rooms/living-lagoon-view-opt-pro.jpg",
@@ -45,7 +45,7 @@ const rooms = [
     id: "2br-superior",
     name: "Lagoon View Superior 2 Bedroom",
     tagline: "Lagoon View",
-    price: "27,000",
+    price: "23,000",
     image: "/images/resort/malili-rooms/living-room-8-opt-pro.jpg",
     gallery: [
       "/images/resort/malili-rooms/living-room-8-opt-pro.jpg",
@@ -63,7 +63,7 @@ const rooms = [
     id: "1br-deluxe",
     name: "Beachfront Deluxe 1 Bedroom",
     tagline: "Lagoon Beachfront",
-    price: "25,000",
+    price: "22,000",
     image: "/images/resort/malili-rooms/living-room-5-opt-pro.jpg",
     gallery: [
       "/images/resort/malili-rooms/living-room-5-opt-pro.jpg",
@@ -81,7 +81,7 @@ const rooms = [
     id: "1br-superior",
     name: "Lagoon View Superior 1 Bedroom",
     tagline: "Lagoon View",
-    price: "22,000",
+    price: "18,000",
     image: "/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg",
     gallery: [
       "/images/resort/malili-rooms/bungalow-patio-1-opt-pro.jpg",
@@ -93,6 +93,19 @@ const rooms = [
       "Our one-bedroom back-row bungalow is tucked among lush flowers, offering a peaceful and private retreat surrounded by natural beauty.",
     guests: "Up to 2 Guests",
     bed: "1 Queen bed",
+    popular: false,
+  },
+  {
+    id: "2br-garden",
+    name: "Garden View 2 Bedroom",
+    tagline: "Garden View",
+    price: "19,550",
+    image: "/images/resort/malili-rooms/living-room-6-opt-pro.jpg",
+    gallery: ["/images/resort/malili-rooms/living-room-6-opt-pro.jpg"],
+    description:
+      "Our two-bedroom garden view bungalows are surrounded by the resort's tropical gardens — a quiet, great-value base for families and small groups, a short walk from the beach.",
+    guests: "Up to 4 Guests",
+    bed: "Queen bed + Single beds",
     popular: false,
   },
 ];
@@ -165,14 +178,14 @@ export default function Accommodations() {
           >
             Fall asleep to the rhythm of the lagoon in a beachfront bungalow, or
             wake to birdsong in a garden retreat wrapped in tropical flowers.
-            Four distinct settings — one unforgettable island feeling.
+            Five distinct settings — one unforgettable island feeling.
           </motion.p>
         </div>
 
         {/* Reservations notice — website takes requests; the team confirms availability */}
         <ReservationsNotice className="mb-12 text-left" />
 
-        {/* Room Cards — 2x2 grid */}
+        {/* Room Cards — 2-column grid (an odd last card is centred) */}
         <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
           {rooms.map((room, idx) => (
             <motion.div
@@ -181,6 +194,8 @@ export default function Accommodations() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.3 + idx * 0.12 }}
               className={`group relative bg-white rounded-3xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-2xl ${
+                idx === rooms.length - 1 && rooms.length % 2 === 1 ? "md:col-span-2 md:max-w-[calc(50%-0.75rem)] lg:max-w-[calc(50%-1rem)] md:mx-auto md:w-full" : ""
+              } ${
                 room.popular
                   ? "ring-2 ring-gold/40"
                   : "border border-gray-100"
@@ -300,7 +315,7 @@ export default function Accommodations() {
           transition={{ duration: 0.6, delay: 1 }}
           className="text-center text-gray-500 text-sm mt-8"
         >
-          All rates in Vanuatu Vatu (VT). Prices include breakfast. Seasonal rates may apply. {AVAILABILITY_NOTE}
+          All rates are per night in Vanuatu Vatu (VT) and include breakfast. {AVAILABILITY_NOTE}
         </motion.p>
       </div>
     </section>

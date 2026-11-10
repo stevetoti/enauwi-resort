@@ -8,10 +8,11 @@ import Image from 'next/image'
 import { 
   Calendar, Users, ChevronLeft, ChevronRight, Check, X,
   MessageCircle, Sun, Gift, Heart, Cake, Sparkles,
-  Waves, Camera, Fish, MapPin, Plus, Minus
+  Waves, Fish, MapPin, Plus, Minus
 } from 'lucide-react'
 import { Room } from '@/types'
 import { formatVatu, getDaysBetween } from '@/lib/utils'
+import { MORE_ACTIVITIES, WEEKLY_TOURS } from '@/data/resort-offerings'
 import ReservationsNotice from '@/components/ReservationsNotice'
 import { RESERVATIONS_EMAIL } from '@/data/accommodation-rates'
 
@@ -94,11 +95,25 @@ const getRoomTypeColor = (name: string) => {
 
 
 // Activities for add-ons
+// Bookable extras — the resort's own tours and activities (src/data/resort-offerings.ts).
+// The estimate counts one adult per activity; tours are arranged with the Front Desk.
 const activities = [
-  { id: 'snorkel', name: 'Snorkeling Trip', price: 5000, icon: Fish, duration: '2 hours', description: 'Explore vibrant coral reefs' },
-  { id: 'island', name: 'Island Hopping', price: 8000, icon: MapPin, duration: 'Half day', description: 'Visit 3 nearby islands' },
-  { id: 'kayak', name: 'Kayak Adventure', price: 3000, icon: Waves, duration: '1.5 hours', description: 'Paddle through the lagoon' },
-  { id: 'photo', name: 'Sunset Photoshoot', price: 12000, icon: Camera, duration: '1 hour', description: 'Professional beach photos' },
+  ...MORE_ACTIVITIES.map(a => ({
+    id: a.id,
+    name: a.name,
+    price: a.addOnPrice,
+    unit: a.addOnUnit,
+    detail: a.price,
+    icon: a.id === 'snorkeling' ? Fish : Waves,
+  })),
+  ...WEEKLY_TOURS.filter(t => t.adultPrice > 0).map(t => ({
+    id: t.id,
+    name: t.name,
+    price: t.adultPrice,
+    unit: 'per adult',
+    detail: `${t.day} · ${t.times[0]} · child ${formatVatu(t.childPrice)}`,
+    icon: MapPin,
+  })),
 ]
 
 // Special occasions
@@ -590,10 +605,11 @@ export default function BookingClient() {
                     <act.icon className={`w-5 h-5 ${selectedActivities.includes(act.id) ? 'text-blue-600' : 'text-gray-400'}`} />
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-900">{act.name}</p>
-                      <p className="text-xs text-gray-500">{act.duration} · {act.description}</p>
+                      <p className="text-xs text-gray-500">{act.detail}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-bold text-gray-900">{formatVatu(act.price)}</p>
+                      <p className="text-[10px] text-gray-400">{act.unit}</p>
                       {selectedActivities.includes(act.id) ? (
                         <Minus className="w-4 h-4 text-blue-600 ml-auto" />
                       ) : (
@@ -603,6 +619,7 @@ export default function BookingClient() {
                   </button>
                 ))}
               </div>
+              <p className="mt-3 text-xs text-gray-500">Tours are booked with the Front Desk by the day before; the estimate counts one adult per activity.</p>
               {selectedActivities.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-gray-200 flex justify-between text-sm">
                   <span className="text-gray-600">Activities total:</span>
