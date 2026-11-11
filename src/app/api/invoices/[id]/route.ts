@@ -1,21 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { requireAuth } from '@/lib/auth'
+import { canManageInvoices, paidAmount, statusFor } from '@/lib/invoice-payments'
 
-// Authorised to void/delete invoices (managers or staff with edit rights)
-function canManageInvoices(session: {
-  role?: string
-  permissions?: Record<string, Record<string, boolean>>
-}): boolean {
-  const role = String(session.role || '').toLowerCase()
-  const p = session.permissions || {}
-  return (
-    ['super_admin', 'admin', 'manager'].includes(role) ||
-    !!p?.invoices?.edit || !!p?.invoices?.delete ||
-    !!p?.bookings?.edit || !!p?.bookings?.delete ||
-    !!p?.finance?.edit
-  )
-}
+const FULL = '*, items:invoice_items(*), payments:invoice_payments(*)'
 
 // GET single invoice
 export async function GET(
@@ -28,7 +16,7 @@ export async function GET(
 
     const { data, error } = await supabaseAdmin
       .from('invoices')
-      .select('*, items:invoice_items(*)')
+      .select(FULL)
       .eq('id', params.id)
       .single()
 
@@ -74,7 +62,17 @@ export async function PATCH(
       const discountPercent = Number(body.discount_percent) || 0
       const discountAmount = Math.round(baseTotal * discountPercent / 100)
       const subtotal = baseTotal - discountAmount
-      const paymentStatus = body.payment_status ? String(body.payment_status) : 'unpaid'
+      // Payment status follows what has actually been received (part payments are
+      // recorded separately, see ./payments). Only a document with nothing paid yet
+      // can be set to paid in full from the edit form.
+      const { data: cur } = await supabaseAdmin
+        .from('invoices')
+        .select('total, amount_paid, payment_status, paid_at')
+        .eq('id', params.id)
+        .single()
+      let amountPaid = cur ? paidAmount(cur) : 0
+      if (amountPaid === 0 && body.payment_status === 'paid') amountPaid = subtotal
+      const paymentStatus = statusFor(amountPaid, subtotal)
 
       const { error: updErr } = await supabaseAdmin
         .from('invoices')
@@ -89,8 +87,9 @@ export async function PATCH(
           total: subtotal,
           payment_method: body.payment_method ? String(body.payment_method) : 'property',
           payment_status: paymentStatus,
+          amount_paid: amountPaid,
           notes: body.notes ? String(body.notes) : null,
-          ...(paymentStatus === 'paid' ? { paid_at: new Date().toISOString() } : {}),
+          ...(paymentStatus === 'paid' && !cur?.paid_at ? { paid_at: new Date().toISOString() } : {}),
         })
         .eq('id', params.id)
       if (updErr) throw updErr
@@ -110,7 +109,7 @@ export async function PATCH(
 
       const { data: full } = await supabaseAdmin
         .from('invoices')
-        .select('*, items:invoice_items(*)')
+        .select(FULL)
         .eq('id', params.id)
         .single()
       return NextResponse.json(full)
@@ -118,11 +117,34 @@ export async function PATCH(
 
     const updates: Record<string, unknown> = {}
 
-    if (body.payment_status) {
-      updates.payment_status = body.payment_status
-      if (body.payment_status === 'paid') {
-        updates.paid_at = new Date().toISOString()
+    if (body.payment_status === 'paid') {
+      // "Mark as Paid": record whatever is still outstanding as the final payment
+      const { data: cur } = await supabaseAdmin
+        .from('invoices')
+        .select('total, amount_paid, payment_status, payment_method')
+        .eq('id', params.id)
+        .single()
+      if (cur) {
+        const balance = Math.max(0, cur.total - paidAmount(cur))
+        const now = new Date().toISOString()
+        if (balance > 0) {
+          const { error: payErr } = await supabaseAdmin.from('invoice_payments').insert({
+            invoice_id: params.id,
+            amount: balance,
+            method: body.payment_method ? String(body.payment_method) : cur.payment_method || null,
+            paid_at: now,
+            received_by: body.received_by || null,
+            received_by_name: body.received_by_name ? String(body.received_by_name) : null,
+            note: 'Balance paid in full',
+          })
+          if (payErr) throw payErr
+        }
+        updates.amount_paid = cur.total
+        updates.paid_at = now
       }
+      updates.payment_status = 'paid'
+    } else if (body.payment_status === 'unpaid' || body.payment_status === 'partial') {
+      updates.payment_status = body.payment_status
     }
     if (body.notes !== undefined) updates.notes = body.notes
 
@@ -168,7 +190,7 @@ export async function PATCH(
       .from('invoices')
       .update(updates)
       .eq('id', params.id)
-      .select('*, items:invoice_items(*)')
+      .select(FULL)
       .single()
 
     if (error) throw error

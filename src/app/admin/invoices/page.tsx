@@ -18,8 +18,16 @@ import {
   Download,
   Trash2,
   Pencil,
+  Wallet,
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
+import {
+  type InvoicePayment,
+  PAYMENT_METHODS,
+  methodLabel,
+  outstandingAmount,
+  paidAmount,
+} from '@/lib/invoice-payments'
 import { csrfHeaders } from '@/lib/csrf-client'
 import { createClientSupabase } from '@/lib/supabase'
 
@@ -73,6 +81,8 @@ interface Invoice {
   voided_at?: string | null
   voided_by_name?: string | null
   void_reason?: string | null
+  amount_paid?: number | null
+  payments?: InvoicePayment[]
 }
 
 interface StaffOption { id: string; name: string }
@@ -114,6 +124,24 @@ function safeDate(value: string | null | undefined): string {
   return isNaN(d.getTime()) ? '—' : formatDate(value)
 }
 
+function sortedPayments(invoice: Invoice): InvoicePayment[] {
+  return [...(invoice.payments || [])].sort((a, b) => a.paid_at.localeCompare(b.paid_at))
+}
+
+function lastPaymentDate(invoice: Invoice): string | null {
+  const p = sortedPayments(invoice)
+  return p.length ? p[p.length - 1].paid_at : invoice.paid_at
+}
+
+function statusLabel(status: string | null | undefined): string {
+  if (status === 'paid') return 'Paid'
+  if (status === 'partial') return 'Part paid'
+  return 'Unpaid'
+}
+
+const esc = (v: unknown) =>
+  String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+
 // Build a Word-openable (.doc) HTML document for an invoice/receipt
 function buildInvoiceWordHtml(invoice: Invoice, isReceipt: boolean): string {
   const docTitle = invoice.doc_type === 'quote' ? 'QUOTATION' : isReceipt ? 'RECEIPT' : 'INVOICE'
@@ -132,6 +160,18 @@ function buildInvoiceWordHtml(invoice: Invoice, isReceipt: boolean): string {
       </tr>`
     )
     .join('')
+
+  const isQuote = invoice.doc_type === 'quote'
+  const paid = paidAmount(invoice)
+  const due = outstandingAmount(invoice)
+  const pays = sortedPayments(invoice)
+  const paymentRows = !isQuote && pays.length
+    ? `<p style="margin:10px 0 4px;"><b>Payments Received</b></p>
+  <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;margin-bottom:12px;">
+    <thead><tr style="background:#f1f5f9;"><th style="padding:6px 8px;text-align:left;">Date</th><th style="padding:6px 8px;text-align:left;">Method</th><th style="padding:6px 8px;text-align:left;">Received by</th><th style="padding:6px 8px;text-align:right;">Amount</th></tr></thead>
+    <tbody>${pays.map((p) => `<tr><td style="padding:5px 8px;border-bottom:1px solid #e2e8f0;">${safeDate(p.paid_at)}</td><td style="padding:5px 8px;border-bottom:1px solid #e2e8f0;">${esc(methodLabel(p.method))}</td><td style="padding:5px 8px;border-bottom:1px solid #e2e8f0;">${esc(p.received_by_name || '—')}</td><td style="padding:5px 8px;border-bottom:1px solid #e2e8f0;text-align:right;">${formatCurrency(p.amount)}</td></tr>`).join('')}</tbody>
+  </table>`
+    : ''
 
   const datesBlock = invoice.booking_id
     ? `<p style="margin:2px 0;"><b>Check-in:</b> ${safeDate(invoice.check_in)} &nbsp; <b>Check-out:</b> ${safeDate(invoice.check_out)}${invoice.num_guests ? ` &nbsp; <b>Guests:</b> ${invoice.num_guests}` : ''}</p>`
@@ -154,7 +194,7 @@ function buildInvoiceWordHtml(invoice: Invoice, isReceipt: boolean): string {
     <td style="vertical-align:top;">
       <p style="margin:2px 0;"><b>${docTitle} Number:</b> ${invoice.invoice_number}</p>
       <p style="margin:2px 0;"><b>Date:</b> ${safeDate(invoice.issued_at)}</p>
-      ${isReceipt && invoice.paid_at ? `<p style="margin:2px 0;"><b>Payment Date:</b> ${safeDate(invoice.paid_at)}</p>` : ''}
+      ${isReceipt && lastPaymentDate(invoice) ? `<p style="margin:2px 0;"><b>Payment Date:</b> ${safeDate(lastPaymentDate(invoice))}</p>` : ''}
     </td>
     <td style="vertical-align:top;text-align:right;">
       <p style="margin:2px 0;"><b>Bill To</b></p>
@@ -177,11 +217,14 @@ function buildInvoiceWordHtml(invoice: Invoice, isReceipt: boolean): string {
       <table style="width:100%;border-collapse:collapse;">
         <tr><td style="padding:3px 0;color:#6b7280;">Subtotal</td><td style="padding:3px 0;text-align:right;">${formatCurrency(invoice.subtotal)}</td></tr>
         ${invoice.discount_amount > 0 ? `<tr><td style="padding:3px 0;color:#15803d;">Discount${invoice.discount_name ? ` (${invoice.discount_name})` : ''} ${invoice.discount_percent ? `${invoice.discount_percent}%` : ''}</td><td style="padding:3px 0;text-align:right;color:#15803d;">-${formatCurrency(invoice.discount_amount)}</td></tr>` : ''}
-        <tr><td style="padding:6px 0;border-top:2px solid #439de5;font-weight:bold;font-size:13pt;">Total</td><td style="padding:6px 0;border-top:2px solid #439de5;text-align:right;font-weight:bold;font-size:13pt;">${formatCurrency(invoice.total)}</td></tr>
+        <tr><td style="padding:6px 0;border-top:2px solid #439de5;font-weight:bold;font-size:13pt;">${isQuote ? 'Total' : 'Total Invoice Amount'}</td><td style="padding:6px 0;border-top:2px solid #439de5;text-align:right;font-weight:bold;font-size:13pt;">${formatCurrency(invoice.total)}</td></tr>
+        ${isQuote ? '' : `<tr><td style="padding:3px 0;color:#15803d;">Amount Paid</td><td style="padding:3px 0;text-align:right;color:#15803d;">${formatCurrency(paid)}</td></tr>
+        <tr><td style="padding:5px 0;border-top:1px solid #e2e8f0;font-weight:bold;color:${due > 0 ? '#b91c1c' : '#15803d'};">Outstanding Balance</td><td style="padding:5px 0;border-top:1px solid #e2e8f0;text-align:right;font-weight:bold;color:${due > 0 ? '#b91c1c' : '#15803d'};">${formatCurrency(due)}</td></tr>`}
       </table>
     </td>
   </tr></table>
-  <p style="margin:2px 0;"><b>Payment:</b> ${invoice.payment_method || 'Not specified'} &nbsp; <b>Status:</b> ${(invoice.payment_status || 'unpaid').toUpperCase()}</p>
+  ${paymentRows}
+  <p style="margin:2px 0;"><b>Payment:</b> ${methodLabel(invoice.payment_method) || 'Not specified'} &nbsp; <b>Status:</b> ${statusLabel(invoice.payment_status).toUpperCase()}</p>
   ${invoice.created_by_name ? `<p style="margin:2px 0;"><b>Created by:</b> ${invoice.created_by_name}</p>` : ''}
   ${invoice.received_by_name ? `<p style="margin:2px 0;"><b>Payment received by:</b> ${invoice.received_by_name}</p>` : ''}
   ${datesBlock}
@@ -207,7 +250,7 @@ function statusBadge(status: string) {
     case 'partial':
       return (
         <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
-          <Clock className="h-3 w-3" /> Partial
+          <Clock className="h-3 w-3" /> Part paid
         </span>
       )
     default:
@@ -529,6 +572,7 @@ function ManualInvoiceModal({
   const [guestPhone, setGuestPhone] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('property')
   const [paymentStatus, setPaymentStatus] = useState('unpaid')
+  const [depositAmount, setDepositAmount] = useState(0)
   const [discountPercent, setDiscountPercent] = useState(0)
   const [notes, setNotes] = useState('')
   const [createdBy, setCreatedBy] = useState('')
@@ -588,7 +632,7 @@ function ManualInvoiceModal({
 
   function reset() {
     setGuestName(''); setGuestEmail(''); setGuestPhone(''); setPaymentMethod('property')
-    setPaymentStatus('unpaid'); setDiscountPercent(0); setNotes('')
+    setPaymentStatus('unpaid'); setDepositAmount(0); setDiscountPercent(0); setNotes('')
     setItems([{ description: '', quantity: 1, unit_price: 0 }]); setError(''); setCombineName(''); setCreatedBy('')
   }
 
@@ -605,6 +649,9 @@ function ManualInvoiceModal({
     setError('')
     if (!guestName.trim()) { setError('Guest name is required'); return }
     if (!items.some((it) => it.description.trim())) { setError('Add at least one line item with a description'); return }
+    if (!isEdit && !isQuote && paymentStatus === 'partial' && (depositAmount <= 0 || depositAmount >= total)) {
+      setError('Enter the amount paid now — more than zero and less than the total (or choose "Paid in full")'); return
+    }
     setSaving(true)
     try {
       const cleanItems = items.filter((it) => it.description.trim())
@@ -631,6 +678,7 @@ function ManualInvoiceModal({
                 guest_phone: guestPhone || undefined,
                 payment_method: paymentMethod,
                 payment_status: paymentStatus,
+                amount_paid: paymentStatus === 'partial' ? Math.round(depositAmount) : undefined,
                 discount_percent: Number(discountPercent) || 0,
                 notes: notes || undefined,
                 created_by: createdBy || undefined,
@@ -774,16 +822,40 @@ function ManualInvoiceModal({
                   <option value="cash">Cash</option>
                 </select>
               </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Status</label>
-                <select value={paymentStatus} onChange={(e) => setPaymentStatus(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500">
-                  <option value="unpaid">Unpaid</option>
-                  <option value="partial">Partial</option>
-                  <option value="paid">Paid</option>
-                </select>
-              </div>
+              {!isEdit && !isQuote ? (
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Payment received now</label>
+                  <select value={paymentStatus} onChange={(e) => setPaymentStatus(e.target.value)}
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500">
+                    <option value="unpaid">Nothing yet (unpaid)</option>
+                    <option value="partial">Deposit / part payment</option>
+                    <option value="paid">Paid in full</option>
+                  </select>
+                </div>
+              ) : isEdit && !isQuote ? (
+                <div className="text-xs text-gray-500 sm:pt-6">
+                  Status: <span className="font-semibold">{statusLabel(editInvoice?.payment_status)}</span>. Record deposits and payments from the invoice screen.
+                </div>
+              ) : null}
             </div>
+
+            {!isEdit && !isQuote && paymentStatus === 'partial' && (
+              <div className="rounded-lg border border-amber-200 bg-amber-50/60 p-3">
+                <label className="block text-xs font-medium text-amber-900 mb-1">Amount paid now (VT) *</label>
+                <div className="flex flex-wrap items-center gap-2">
+                  <input type="number" min={0} value={depositAmount}
+                    onChange={(e) => setDepositAmount(parseFloat(e.target.value) || 0)}
+                    className="w-40 rounded-lg border border-gray-300 px-3 py-2 text-sm text-right focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500" />
+                  <button type="button" onClick={() => setDepositAmount(Math.round(total / 2))}
+                    className="rounded-lg border border-amber-300 bg-white px-3 py-2 text-xs font-medium text-amber-800 hover:bg-amber-100">
+                    50% deposit
+                  </button>
+                  <span className="text-xs text-amber-900">
+                    Outstanding after this: <b>{formatCurrency(Math.max(0, total - depositAmount))}</b>
+                  </span>
+                </div>
+              </div>
+            )}
 
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Notes</label>
@@ -861,7 +933,76 @@ function InvoiceDetail({
   const printRef = useRef<HTMLDivElement>(null)
 
   const isQuote = invoice.doc_type === 'quote'
-  const canShowReceipt = !isQuote && invoice.payment_status === 'paid'
+  const paid = paidAmount(invoice)
+  const due = outstandingAmount(invoice)
+  const payments = sortedPayments(invoice)
+  const canShowReceipt = !isQuote && paid > 0
+
+  // Record a deposit / part payment
+  const [showPayment, setShowPayment] = useState(false)
+  const [payAmount, setPayAmount] = useState(0)
+  const [payMethod, setPayMethod] = useState('cash')
+  const [payDate, setPayDate] = useState('')
+  const [payReceivedBy, setPayReceivedBy] = useState('')
+  const [payNote, setPayNote] = useState('')
+  const [payError, setPayError] = useState('')
+  const [paySaving, setPaySaving] = useState(false)
+
+  function openPayment() {
+    setPayAmount(paid === 0 ? Math.min(due, Math.round(invoice.total / 2)) : due)
+    setPayMethod(PAYMENT_METHODS.some((m) => m.value === invoice.payment_method) ? invoice.payment_method : 'cash')
+    setPayDate(new Date().toISOString().slice(0, 10))
+    setPayReceivedBy('')
+    setPayNote('')
+    setPayError('')
+    setShowPayment(true)
+  }
+
+  async function savePayment() {
+    setPayError('')
+    if (!(payAmount > 0)) { setPayError('Enter the amount received'); return }
+    if (payAmount > due) { setPayError(`That is more than the outstanding balance of ${formatCurrency(due)}`); return }
+    setPaySaving(true)
+    try {
+      const res = await fetch(`/api/invoices/${invoice.id}/payments`, {
+        method: 'POST',
+        headers: csrfHeaders(),
+        body: JSON.stringify({
+          amount: Math.round(payAmount),
+          method: payMethod,
+          paid_at: payDate || undefined,
+          received_by: payReceivedBy || undefined,
+          received_by_name: staff.find((s) => s.id === payReceivedBy)?.name || undefined,
+          note: payNote || undefined,
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || 'Failed to record payment')
+      setShowPayment(false)
+      onStatusUpdate()
+    } catch (err) {
+      setPayError(err instanceof Error ? err.message : 'Failed to record payment')
+    } finally {
+      setPaySaving(false)
+    }
+  }
+
+  async function removePayment(p: InvoicePayment) {
+    if (!confirm(`Remove the payment of ${formatCurrency(p.amount)} from ${safeDate(p.paid_at)}? The balance will go back up.`)) return
+    setBusy(true)
+    try {
+      const res = await fetch(`/api/invoices/${invoice.id}/payments?paymentId=${encodeURIComponent(p.id)}`, {
+        method: 'DELETE',
+        headers: csrfHeaders(),
+      })
+      if (!res.ok) throw new Error('Failed to remove payment')
+      onStatusUpdate()
+    } catch (err) {
+      console.error('Failed to remove payment:', err)
+    } finally {
+      setBusy(false)
+    }
+  }
 
   async function handleConvert() {
     if (!confirm('Convert this quotation into an invoice? It will get a new invoice number.')) return
@@ -1001,6 +1142,16 @@ function InvoiceDetail({
           </button>
         )}
 
+        {!isQuote && !invoice.voided && due > 0 && (
+          <button
+            onClick={openPayment}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-green-600 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50"
+          >
+            <Wallet className="h-4 w-4" />
+            Record Payment
+          </button>
+        )}
+
         {!isQuote && invoice.payment_status !== 'paid' && (
           <button
             onClick={() => setShowReceivedBy(true)}
@@ -1008,7 +1159,7 @@ function InvoiceDetail({
             className="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
           >
             {markingPaid ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-            Mark as Paid
+            {paid > 0 ? 'Mark Paid in Full' : 'Mark as Paid'}
           </button>
         )}
 
@@ -1050,8 +1201,10 @@ function InvoiceDetail({
       {showReceivedBy && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 print:hidden">
           <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900">Mark as Paid</h3>
-            <p className="mt-1 text-sm text-gray-500">Who received this payment?</p>
+            <h3 className="text-lg font-semibold text-gray-900">{paid > 0 ? 'Mark Paid in Full' : 'Mark as Paid'}</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              {paid > 0 ? `Records the outstanding balance of ${formatCurrency(due)} as paid. ` : ''}Who received this payment?
+            </p>
             <select value={receivedBy} onChange={(e) => setReceivedBy(e.target.value)}
               className="mt-3 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm">
               <option value="">Select staff member…</option>
@@ -1061,6 +1214,66 @@ function InvoiceDetail({
               <button onClick={() => setShowReceivedBy(false)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
               <button onClick={confirmMarkPaid} disabled={markingPaid} className="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50">
                 {markingPaid ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />} Confirm Paid
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Record payment dialog */}
+      {showPayment && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 print:hidden">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900">Record a Payment</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Total {formatCurrency(invoice.total)} · Paid {formatCurrency(paid)} · Outstanding <b className="text-gray-800">{formatCurrency(due)}</b>
+            </p>
+            {payError && (
+              <div className="mt-3 flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+                <AlertCircle className="h-4 w-4 shrink-0" /> {payError}
+              </div>
+            )}
+            <label className="mt-4 block text-xs font-medium text-gray-600">Amount received (VT) *</label>
+            <input type="number" min={0} value={payAmount} onChange={(e) => setPayAmount(parseFloat(e.target.value) || 0)}
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-right" />
+            <div className="mt-2 flex flex-wrap gap-2">
+              {paid === 0 && (
+                <button type="button" onClick={() => setPayAmount(Math.min(due, Math.round(invoice.total / 2)))}
+                  className="rounded-lg border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50">50% deposit</button>
+              )}
+              <button type="button" onClick={() => setPayAmount(due)}
+                className="rounded-lg border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50">Full balance</button>
+              <span className="ml-auto self-center text-xs text-gray-500">
+                Balance after: <b>{formatCurrency(Math.max(0, due - (payAmount || 0)))}</b>
+              </span>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-600">Method</label>
+                <select value={payMethod} onChange={(e) => setPayMethod(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm">
+                  {PAYMENT_METHODS.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600">Date received</label>
+                <input type="date" value={payDate} max={new Date().toISOString().slice(0, 10)} onChange={(e) => setPayDate(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+              </div>
+            </div>
+            <label className="mt-3 block text-xs font-medium text-gray-600">Received by</label>
+            <select value={payReceivedBy} onChange={(e) => setPayReceivedBy(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm">
+              <option value="">Select staff member…</option>
+              {staff.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+            <label className="mt-3 block text-xs font-medium text-gray-600">Note <span className="font-normal text-gray-400">(optional, e.g. bank reference)</span></label>
+            <input value={payNote} onChange={(e) => setPayNote(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            <div className="mt-5 flex justify-end gap-2">
+              <button onClick={() => setShowPayment(false)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
+              <button onClick={savePayment} disabled={paySaving} className="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50">
+                {paySaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wallet className="h-4 w-4" />} Save Payment
               </button>
             </div>
           </div>
@@ -1124,9 +1337,9 @@ function InvoiceDetail({
             <p className="mt-0.5 text-sm text-gray-500">
               Date: {safeDate(invoice.issued_at)}
             </p>
-            {receiptMode && invoice.paid_at && (
+            {receiptMode && lastPaymentDate(invoice) && (
               <p className="mt-0.5 text-sm text-gray-500">
-                Payment Date: {safeDate(invoice.paid_at)}
+                Payment Date: {safeDate(lastPaymentDate(invoice))}
               </p>
             )}
           </div>
@@ -1200,18 +1413,71 @@ function InvoiceDetail({
               </div>
             )}
             <div className="flex justify-between border-t border-gray-200 pt-2 text-base font-bold text-gray-900">
-              <span>Total</span>
+              <span>{isQuote ? 'Total' : 'Total Invoice Amount'}</span>
               <span>{formatCurrency(invoice.total)}</span>
             </div>
+            {!isQuote && (
+              <>
+                <div className="flex justify-between text-sm text-green-700">
+                  <span>Amount Paid</span>
+                  <span>{formatCurrency(paid)}</span>
+                </div>
+                <div className={`flex justify-between border-t border-gray-200 pt-2 text-base font-bold ${due > 0 ? 'text-red-700' : 'text-green-700'}`}>
+                  <span>Outstanding Balance</span>
+                  <span>{formatCurrency(due)}</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
+
+        {/* Payments received */}
+        {!isQuote && payments.length > 0 && (
+          <div className="mb-8">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">Payments Received</p>
+            <div className="overflow-hidden rounded-lg border border-gray-200">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-50 text-left">
+                    <th className="px-4 py-2 font-semibold text-gray-600">Date</th>
+                    <th className="px-4 py-2 font-semibold text-gray-600">Method</th>
+                    <th className="px-4 py-2 font-semibold text-gray-600">Received by</th>
+                    <th className="px-4 py-2 text-right font-semibold text-gray-600">Amount</th>
+                    {canManage && <th className="w-10 print:hidden" />}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {payments.map((p) => (
+                    <tr key={p.id}>
+                      <td className="px-4 py-2 text-gray-700">
+                        {safeDate(p.paid_at)}
+                        {p.note && <span className="block text-xs text-gray-400">{p.note}</span>}
+                      </td>
+                      <td className="px-4 py-2 text-gray-600">{methodLabel(p.method)}</td>
+                      <td className="px-4 py-2 text-gray-600">{p.received_by_name || '—'}</td>
+                      <td className="px-4 py-2 text-right font-medium text-gray-800">{formatCurrency(p.amount)}</td>
+                      {canManage && (
+                        <td className="px-2 py-2 text-right print:hidden">
+                          <button onClick={() => removePayment(p)} disabled={busy} title="Remove this payment"
+                            className="rounded p-1 text-gray-300 hover:bg-red-50 hover:text-red-600 disabled:opacity-40">
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* Payment & Booking Info */}
         <div className="mb-8 grid grid-cols-2 gap-6 rounded-lg bg-gray-50 p-4 text-sm">
           <div className="space-y-1.5">
             <p className="text-gray-500">
               <span className="font-medium text-gray-700">Payment:</span>{' '}
-              {invoice.payment_method || 'Not specified'}
+              {invoice.payment_method ? methodLabel(invoice.payment_method) : 'Not specified'}
             </p>
             <p className="text-gray-500">
               <span className="font-medium text-gray-700">Status:</span>{' '}
@@ -1224,13 +1490,13 @@ function InvoiceDetail({
                       : 'text-red-700'
                 }`}
               >
-                {invoice.payment_status}
+                {statusLabel(invoice.payment_status)}
               </span>
             </p>
-            {receiptMode && invoice.paid_at && (
+            {receiptMode && lastPaymentDate(invoice) && (
               <p className="text-gray-500">
-                <span className="font-medium text-gray-700">Paid:</span>{' '}
-                {formatCurrency(invoice.total)} on {formatDate(invoice.paid_at)}
+                <span className="font-medium text-gray-700">Paid to date:</span>{' '}
+                {formatCurrency(paid)} (last payment {safeDate(lastPaymentDate(invoice))})
               </p>
             )}
             {invoice.created_by_name && (
@@ -1558,7 +1824,12 @@ export default function AdminInvoicesPage() {
                     <td className="px-4 py-3 text-right font-medium text-gray-800">
                       {formatCurrency(inv.total)}
                     </td>
-                    <td className="px-4 py-3 text-center">{statusBadge(inv.payment_status)}</td>
+                    <td className="px-4 py-3 text-center">
+                      {statusBadge(inv.payment_status)}
+                      {docType === 'invoice' && inv.payment_status === 'partial' && (
+                        <span className="mt-0.5 block text-[11px] text-amber-700">{formatCurrency(outstandingAmount(inv))} due</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => viewInvoice(inv.id)}

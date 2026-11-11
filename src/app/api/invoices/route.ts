@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { requireAuth } from '@/lib/auth'
+import { statusFor } from '@/lib/invoice-payments'
 
 // ── Next sequential invoice number (ENW-00001) ──────────────────
 async function nextInvoiceNumber(): Promise<string> {
@@ -86,7 +87,8 @@ async function createManualInvoice(body: Record<string, unknown>): Promise<NextR
     tax_amount: 0,
     total,
     payment_method: body.payment_method ? String(body.payment_method) : 'property',
-    payment_status: body.payment_status ? String(body.payment_status) : 'unpaid',
+    payment_status: 'unpaid',
+    amount_paid: 0,
     notes: body.notes ? String(body.notes) : null,
     special_requests: null,
     created_by: body.created_by ? String(body.created_by) : null,
@@ -108,6 +110,30 @@ async function createManualInvoice(body: Record<string, unknown>): Promise<NextR
 
   if (invoiceError) throw invoiceError
 
+  // Payment taken when the invoice is created: paid in full, or a deposit/part payment
+  if (!isQuote) {
+    const requested = String(body.payment_status || 'unpaid')
+    const deposit = Math.round(Number(body.amount_paid) || 0)
+    const amount = requested === 'paid' ? total : requested === 'partial' ? Math.min(Math.max(deposit, 0), total) : 0
+    if (amount > 0) {
+      const status = statusFor(amount, total)
+      const now = new Date().toISOString()
+      await supabaseAdmin.from('invoice_payments').insert({
+        invoice_id: invoice.id,
+        amount,
+        method: body.payment_method ? String(body.payment_method) : null,
+        paid_at: now,
+        received_by: body.created_by ? String(body.created_by) : null,
+        received_by_name: body.created_by_name ? String(body.created_by_name) : null,
+        note: status === 'paid' ? 'Paid in full' : 'Deposit / part payment',
+      })
+      await supabaseAdmin
+        .from('invoices')
+        .update({ amount_paid: amount, payment_status: status, ...(status === 'paid' ? { paid_at: now } : {}) })
+        .eq('id', invoice.id)
+    }
+  }
+
   await supabaseAdmin.from('invoice_items').insert(
     items.map((it) => ({
       invoice_id: invoice.id,
@@ -121,7 +147,7 @@ async function createManualInvoice(body: Record<string, unknown>): Promise<NextR
 
   const { data: fullInvoice } = await supabaseAdmin
     .from('invoices')
-    .select('*, items:invoice_items(*)')
+    .select('*, items:invoice_items(*), payments:invoice_payments(*)')
     .eq('id', invoice.id)
     .single()
 
@@ -142,7 +168,7 @@ export async function GET(request: NextRequest) {
 
     let query = supabaseAdmin
       .from('invoices')
-      .select('*, items:invoice_items(*)')
+      .select('*, items:invoice_items(*), payments:invoice_payments(*)')
       .order('created_at', { ascending: false })
 
     if (bookingId) {
@@ -264,7 +290,8 @@ export async function POST(request: NextRequest) {
         tax_amount: taxAmount,
         total,
         payment_method: booking.payment_method || 'property',
-        payment_status: booking.payment_status || 'unpaid',
+        payment_status: booking.payment_status === 'paid' ? 'paid' : 'unpaid',
+        amount_paid: booking.payment_status === 'paid' ? total : 0,
         notes: booking.notes,
         special_requests: booking.special_requests,
         created_by: body.created_by ? String(body.created_by) : null,
@@ -294,7 +321,7 @@ export async function POST(request: NextRequest) {
     // Fetch complete invoice with items
     const { data: fullInvoice } = await supabaseAdmin
       .from('invoices')
-      .select('*, items:invoice_items(*)')
+      .select('*, items:invoice_items(*), payments:invoice_payments(*)')
       .eq('id', invoice.id)
       .single()
 

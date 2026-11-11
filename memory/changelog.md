@@ -1,5 +1,13 @@
 # Changelog — Enauwi Beach Resort
 
+## 2026-11-11 — [Claude Code] Invoices: part payments / deposits (Marketing request, 11 Nov) — NOT deployed
+- Request (Shaniella, marketing@, cc gm@ + reservation@): record part/half payments; invoice + receipt show Total Invoice Amount / Amount Paid / Outstanding Balance.
+- Migration `supabase/migrations/20261111_invoice_part_payments.sql` (additive): `invoices.amount_paid` INT default 0; new `invoice_payments` (amount, method, paid_at, received_by(_name), note; RLS service-only); backfill amount_paid = total for invoices already `paid` (263 rows). NOT applied yet — must run BEFORE the code deploys (code selects `payments:invoice_payments(*)`).
+- `src/lib/invoice-payments.ts`: paidAmount (legacy paid → total), outstandingAmount, statusFor (unpaid/partial/paid), PAYMENT_METHODS, canManageInvoices (moved from [id] route).
+- API: new `/api/invoices/[id]/payments` GET/POST (rejects ≤0, > outstanding, quotes, void) / DELETE ?paymentId= (managers only, recomputes). "Mark as Paid" now records the remaining balance as a payment. Manual create: "Payment received now" = nothing / deposit (amount, 50% button) / paid in full → payment row. Edit: status derived from amount paid vs new total. Booking-generated invoices start unpaid with amount_paid 0.
+- Admin /admin/invoices: Record Payment dialog (amount prefilled 50% for first payment / full balance, method, date, received by, note), totals show Amount Paid + Outstanding Balance (red/green), "Payments Received" table (managers can remove a mistaken entry), receipts available once anything is paid (shows paid to date + last payment date), "Part paid" badge + "VT x due" in the list, Word download has the same totals + payment table.
+- Verified: tsc, eslint, next build. NOT verified with real data — needs the migration; plan: test on one invoice the team names, or a test invoice voided afterwards.
+
 ## 2026-11-10 — [Claude Code] Team requests (emails 8 Nov + tours flyer): rates, services & charges, tours
 
 Source: "Novemeber 10/" folder (2 emails from reservation@ + "Tours & Activities.docx" flyer image). Stephen: "rectify and report to them".

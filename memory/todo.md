@@ -1,5 +1,9 @@
 # Todo — Enauwi Beach Resort
 
+## 2026-11-11 — [Claude Code] Part payments on invoices
+- [ ] Stephen: approve → apply `supabase/migrations/20261111_invoice_part_payments.sql` to production FIRST, then deploy the code (commit below). Agent DB access: MCP has no permission on this project and SUPABASE_DB_URL password is stale — use the SQL editor or refresh the password.
+- [ ] After deploy: one end-to-end check (deposit → receipt → balance → paid in full) on a test invoice, then void it; tell Shaniella it is live.
+
 ## 2026-11-10 — [Claude Code] Open questions from the team-request update
 - [ ] Team: conference HALF-day rate (hidden until given); laundry per-item prices; whether late checkout VT 10,000 means "until 6 PM" or "past 6 PM" (worded exactly as their email)
 - [ ] Team: Garden View card uses Bungalow 13's photo and a short generic description — send preferred photo/text
