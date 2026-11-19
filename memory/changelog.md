@@ -1,6 +1,11 @@
 # Changelog — Enauwi Beach Resort
 
-## 2026-11-11 — [Claude Code] Invoices: part payments / deposits (Marketing request, 11 Nov) — NOT deployed
+## 2026-11-19 — [Claude Code] Part payments: migration applied, code deploying
+- Stephen added SUPABASE_ACCESS_TOKEN (personal access token, .env.local) → Management API `POST /v1/projects/{ref}/database/query` now works for DDL (MCP + CLI accounts still lack access; DB password still stale).
+- Applied `20261111_invoice_part_payments.sql` to production. Verified: invoices.amount_paid exists; 269 paid invoices backfilled (0 mismatches vs total); invoice_payments exists, RLS on; REST embed `payments:invoice_payments(*)` works.
+- Then pushed dbef62b to main (Git production deploy) after tsc/lint/build pass.
+
+## 2026-11-11 — [Claude Code] Invoices: part payments / deposits (Marketing request, 11 Nov) — deployed 19 Nov (see above)
 - Request (Shaniella, marketing@, cc gm@ + reservation@): record part/half payments; invoice + receipt show Total Invoice Amount / Amount Paid / Outstanding Balance.
 - Migration `supabase/migrations/20261111_invoice_part_payments.sql` (additive): `invoices.amount_paid` INT default 0; new `invoice_payments` (amount, method, paid_at, received_by(_name), note; RLS service-only); backfill amount_paid = total for invoices already `paid` (263 rows). NOT applied yet — must run BEFORE the code deploys (code selects `payments:invoice_payments(*)`).
 - `src/lib/invoice-payments.ts`: paidAmount (legacy paid → total), outstandingAmount, statusFor (unpaid/partial/paid), PAYMENT_METHODS, canManageInvoices (moved from [id] route).
