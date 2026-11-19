@@ -2,8 +2,11 @@
 # Vercel Ignored Build Step Script
 # Skips builds when only documentation or non-code files change
 
-# Get the diff between current commit and previous
-DIFF_FILES=$(git diff --name-only HEAD^ HEAD 2>/dev/null)
+# Compare against the commit of the LAST SUCCESSFUL deployment (Vercel provides it),
+# not just the previous commit — otherwise a push of [code commit, docs commit]
+# was skipped because only the last commit (docs) was checked (19 Nov 2026).
+BASE="${VERCEL_GIT_PREVIOUS_SHA:-HEAD^}"
+DIFF_FILES=$(git diff --name-only "$BASE" HEAD 2>/dev/null)
 
 # If git diff fails (no previous commit), allow build
 if [ $? -ne 0 ]; then

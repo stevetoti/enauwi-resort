@@ -3,7 +3,7 @@
 ## 2026-11-19 — [Claude Code] Part payments: migration applied, code deploying
 - Stephen added SUPABASE_ACCESS_TOKEN (personal access token, .env.local) → Management API `POST /v1/projects/{ref}/database/query` now works for DDL (MCP + CLI accounts still lack access; DB password still stale).
 - Applied `20261111_invoice_part_payments.sql` to production. Verified: invoices.amount_paid exists; 269 paid invoices backfilled (0 mismatches vs total); invoice_payments exists, RLS on; REST embed `payments:invoice_payments(*)` works.
-- Then pushed dbef62b to main (Git production deploy) after tsc/lint/build pass.
+- Then pushed dbef62b + 8f2c3cd to main after tsc/lint/build pass — Vercel CANCELED it: vercel-build-check.sh (Ignored Build Step) only diffed HEAD^..HEAD, and HEAD was the docs commit. Fixed the script to diff against $VERCEL_GIT_PREVIOUS_SHA (last successful deploy), falling back to HEAD^; pushed that fix to trigger the build.
 
 ## 2026-11-11 — [Claude Code] Invoices: part payments / deposits (Marketing request, 11 Nov) — deployed 19 Nov (see above)
 - Request (Shaniella, marketing@, cc gm@ + reservation@): record part/half payments; invoice + receipt show Total Invoice Amount / Amount Paid / Outstanding Balance.
