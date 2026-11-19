@@ -1,9 +1,11 @@
 # Changelog — Enauwi Beach Resort
 
-## 2026-11-19 — [Claude Code] Part payments: migration applied, code deploying
+## 2026-11-19 — [Claude Code] Part payments: LIVE (migration applied, deployed, tested)
 - Stephen added SUPABASE_ACCESS_TOKEN (personal access token, .env.local) → Management API `POST /v1/projects/{ref}/database/query` now works for DDL (MCP + CLI accounts still lack access; DB password still stale).
 - Applied `20261111_invoice_part_payments.sql` to production. Verified: invoices.amount_paid exists; 269 paid invoices backfilled (0 mismatches vs total); invoice_payments exists, RLS on; REST embed `payments:invoice_payments(*)` works.
 - Then pushed dbef62b + 8f2c3cd to main after tsc/lint/build pass — Vercel CANCELED it: vercel-build-check.sh (Ignored Build Step) only diffed HEAD^..HEAD, and HEAD was the docs commit. Fixed the script to diff against $VERCEL_GIT_PREVIOUS_SHA (last successful deploy), falling back to HEAD^; pushed that fix to trigger the build.
+- DEPLOYED: f868be2 (Git production build, Ready). Live /api/invoices/{id}/payments → 401 without session (route present).
+- E2E test 9/9 PASS on the production DATABASE through a local `next start` of the same commit (prod rejects a locally minted session: Vercel's SUPABASE_SERVICE_ROLE_KEY ≠ .env.local's key — not pulled, by design). Test invoice ENW-00408 "TEST — Pacific Wave Digital": create with VT 5,000 deposit → partial; over-payment rejected (400); +2,000 → 7,000 partial; Mark as Paid → balance 3,000 recorded, paid 10,000, 3 payment rows; further payment rejected; admin list "Part paid · VT 5,000 due" and detail Total/Amount Paid/Outstanding + Payments Received verified; then VOIDED (reason recorded). Production numbering: ENW-00408 now exists as a voided test invoice.
 
 ## 2026-11-11 — [Claude Code] Invoices: part payments / deposits (Marketing request, 11 Nov) — deployed 19 Nov (see above)
 - Request (Shaniella, marketing@, cc gm@ + reservation@): record part/half payments; invoice + receipt show Total Invoice Amount / Amount Paid / Outstanding Balance.
